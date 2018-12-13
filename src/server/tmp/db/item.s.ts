@@ -7,11 +7,12 @@ export class Mine extends Struct {
 
     num: number;
     count: number;
-    hp: number;
+    hps: Array<number>;
 	static _$info =  new StructInfo("server/tmp/db/item.Mine",3376229243, null, [new FieldInfo("num", 
 new EnumType( Type.U32 ), null), new FieldInfo("count", 
-new EnumType( Type.U32 ), null), new FieldInfo("hp", 
-new EnumType( Type.U32 ), null) ]);
+new EnumType( Type.U32 ), null), new FieldInfo("hps", 
+new EnumType( Type.Arr, 
+new EnumType( Type.U32 ) ), null) ]);
 
 
 
@@ -20,7 +21,10 @@ new EnumType( Type.U32 ), null) ]);
 	bonDecode(bb:BonBuffer) {
 		this.num = bb.readInt();
 		this.count = bb.readInt();
-		this.hp = bb.readInt();
+		this.hps = bb.readArray(() => {
+	return     bb.readInt();
+})
+;
 	}
 
 	bonEncode(bb:BonBuffer) {        
@@ -28,7 +32,10 @@ new EnumType( Type.U32 ), null) ]);
                 
         bb.writeInt(this.count);
                 
-        bb.writeInt(this.hp);
+        bb.writeArray(this.hps, (el) => {    
+            bb.writeInt(el);
+            
+        });
         
 	}
 }
@@ -282,9 +289,15 @@ export class Prizes extends Struct {
 
     id: number;
     prize: Item;
+    uid: number;
+    src: string;
+    time: number;
 	static _$info =  new StructInfo("server/tmp/db/item.Prizes",3184642608,  new Map( [["primary","id"],["db","file"],["dbMonitor","true"],["hasmgr","false"]]), [new FieldInfo("id", 
 new EnumType( Type.U32 ), null), new FieldInfo("prize", 
-new EnumType( Type.Enum, Item._$info ), null) ]);
+new EnumType( Type.Enum, Item._$info ), null), new FieldInfo("uid", 
+new EnumType( Type.U32 ), null), new FieldInfo("src", 
+new EnumType( Type.Str ), null), new FieldInfo("time", 
+new EnumType( Type.U32 ), null) ]);
 
 
 
@@ -293,12 +306,21 @@ new EnumType( Type.Enum, Item._$info ), null) ]);
 	bonDecode(bb:BonBuffer) {
 		this.id = bb.readInt();
 		this.prize =  bb.readBonCode((<any>this)._$EnumTypeMap?(<any>this)._$EnumTypeMap(this.prize):Item);
+		this.uid = bb.readInt();
+		this.src = bb.readUtf8();
+		this.time = bb.readInt();
 	}
 
 	bonEncode(bb:BonBuffer) {        
         bb.writeInt(this.id);
                 
         bb.writeBonCode(this.prize);
+                
+        bb.writeInt(this.uid);
+                
+        bb.writeUtf8(this.src);
+                
+        bb.writeInt(this.time);
         
 	}
 }

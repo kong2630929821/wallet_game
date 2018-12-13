@@ -2,8 +2,8 @@
 //矿山
 struct Mine {
     num: u32, //编号
-    count:u32, //数量
-    hp:u32,//剩余血量
+    count: u32, //数量
+    hps: &[u32], //血量数组
 }
 
 //锄头
@@ -63,4 +63,7 @@ struct Items {
 struct Prizes {
     id: u32,
     prize: Item,
+    uid: u32,
+    src: String,
+    time: u32,
 }
