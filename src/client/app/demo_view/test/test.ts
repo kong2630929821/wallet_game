@@ -10,6 +10,8 @@ import * as store from '../../data/store';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../../server/tmp/rpc/user.s';
 import { clientRpcFunc } from '../../net/init';
 import { login as loginUser } from '../../../../server/tmp/rpc/user.p';
+import { award as awardR } from '../../../../server/tmp/rpc/test.p';
+import { Test as Test2 } from '../../../../server/tmp/rpc/test.s';
 import { UserInfo } from '../../../../server/tmp/db/user.s';
 
 
@@ -27,11 +29,21 @@ export const login = () => {
     });
 };
 
+export const award = () => {
+    clientRpcFunc(awardR, 200101, (r: Test2) => {
+        console.log(r);
+    });
+};
+
 let props = {
     bts: [
         {
             "name": "登录",
             "func": () => { login() },
+        },
+        {
+            "name": "奖励方法",
+            "func": () => { award() },
         }
     ], //按钮数组
 };
