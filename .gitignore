@@ -11,8 +11,8 @@ node_modules
 /src/.depend
 /src/pi_pt
 /src/pi
-
 *.c.ts
 *.s.ts
 *.p.ts
 !/src/earn/server/cfg/server.c.ts
+/package-lock.json
