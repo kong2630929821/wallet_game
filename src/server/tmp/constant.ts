@@ -16,6 +16,8 @@ export const ID_INDEX_TABLE = 'server/tmp/db/user.IDIndex';
 export const USER_ACC_TABLE = 'server/tmp/db/user.UserAcc';
 //用户基础信息表
 export const USER_INFO_TABLE = 'server/tmp/db/user.UserInfo';
+//用户物品信息表
+export const USER_ITEMS_TABLE = 'server/tmp/db/item.Items';
 
 //在线表
 export const USER_ONLINE_TABLE = 'server/tmp/db/user.Online';
