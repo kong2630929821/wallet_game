@@ -39,11 +39,11 @@ export class PlayHome extends Widget {
             mineLast: 0,// 矿山剩余量
             rankNum: 1,// 挖矿排名
             page: [
-                'app-view-earn-client-view-mining-rankList', // 挖矿排名
-                'app-view-earn-client-view-mining-dividend', // 领分红
-                'app-view-earn-client-view-redEnvelope-writeRedEnv', // 发红包
-                'app-view-earn-client-view-exchange-exchange', // 兑换
-                'app-view-earn-client-view-mining-addMine'  // 任务
+                'earn-client-view-mining-rankList', // 挖矿排名
+                'earn-client-view-mining-dividend', // 领分红
+                'earn-client-view-redEnvelope-writeRedEnv', // 发红包
+                'earn-client-view-exchange-exchange', // 兑换
+                'earn-client-view-mining-addMine'  // 任务
             ],
             doMining: false,  // 点击挖矿，数字动画效果执行
             firstClick: true,
@@ -91,15 +91,43 @@ export class PlayHome extends Widget {
         
     }
 
+        /**
+     * 福利活动进入
+     * @param ind 福利顺序
+     */
+    public goActivity(ind: number) {
+        switch (ind) {
+            case 0:
+                popNew('earn-client-app-view-activity-inviteFriend');//邀请好友
+                break;
+            case 1:
+                popNew('earn-client-app-view-activity-verifyPhone');//验证手机
+                break;
+            case 2:
+                popNew('earn-client-app-view-openBox-openBox');//开宝箱
+                break;
+            case 3:
+                popNew('earn-client-app-view-turntable-turntable');//大转盘
+                break;
+            case 4:
+                popNew('earn-client-app-view-ticketCenter-ticketCenter');//奖券中心
+                break;
+
+            default:
+
+                break;
+        }
+    }
+
     public diggingStoneClick() {
-        popNew('earn-client-app-view-activity-diggingStones-home');
+        popNew('earn-client-activity-diggingStones-home');
     }
 
     /**
      * 打开我的设置
      */
     public showMine() {
-        popNew('app-view-mine-home-home');
+        popNew('mine-home-home');
     }
 
     /**
@@ -144,7 +172,7 @@ export class PlayHome extends Widget {
      * 采矿说明点击
      */
     public miningInstructionsClick() {
-        popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
+        popNew('earn-client-view-activity-diggingStones-diggingRule');
     }
 
 }
