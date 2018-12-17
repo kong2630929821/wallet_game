@@ -1,25 +1,25 @@
 /**
  * 只有后端可以用的util
  */
-import { iterDb, read } from '../../pi_pt/db';
-import { Mgr, Tr } from '../../pi_pt/rust/pi_db/mgr';
-import { WARE_NAME } from '../../server/data/constant';
+import { getEnv } from '../../pi_pt/net/rpc_server';
+import { Bucket } from '../../utils/db';
+import * as CONSTANT from './constant';
+import { IDIndex } from './db/user.s';
 
-/**
- * 用于测试的时候遍历表
- * @param dbMgr db manager
- * @param tableStruct table struct
- */
-export const iterTable = (dbMgr:Mgr, tableStruct:any) => {
-    read(dbMgr, (tr: Tr) => {
-        console.log('login read---------------:');
-        // 角色基础
-        const iterBase = iterDb(tr, WARE_NAME, tableStruct._$info.name, null, false, null); // 取from表的迭代器
-        let elBase = iterBase.nextElem();
-        while (elBase) {
-            console.log('elBase----------------read---------------', elBase);
-            elBase = iterBase.nextElem();
+
+//获取唯一ID
+export const get_index_id = (index: string) => {
+    const dbMgr = getEnv().getDbMgr();
+    const IndexIDBucket = new Bucket('file', CONSTANT.ID_INDEX_TABLE, dbMgr);
+    let r = new IDIndex();
+    IndexIDBucket.readAndWrite(index, (v) => {
+        r.index = index;
+        if (!v[0]) {
+            r.id = 1
+        } else {
+            r.id = v[0].id + 1
         }
+        return r;
     });
+    return r.id
 };
-
