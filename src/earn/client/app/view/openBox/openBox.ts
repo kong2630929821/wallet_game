@@ -1,10 +1,11 @@
+
 /**
  * 开宝箱 - 首页
  */
 
 
-import { Widget } from "../../../../../../pi/widget/widget";
-import { popNew } from "../../../../../../pi/ui/root";
+import { Widget } from "../../../../../pi/widget/widget";
+import { popNew } from "../../../../../pi/ui/root";
 
 
 interface Props {
@@ -85,7 +86,7 @@ export class OpenBox extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('app-view-earn-client-view-openBox-openBoxHistory',{type:2});
+        popNew('earn-client-app-view-openBox-openBoxHistory',{type:2});
     }
 
     /**

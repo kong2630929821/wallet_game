@@ -3,7 +3,7 @@
  */
 
 
-import { Widget } from "../../../../../../pi/widget/widget";
+import { Widget } from "../../../../../pi/widget/widget";
 
 interface Props{
     type:number;

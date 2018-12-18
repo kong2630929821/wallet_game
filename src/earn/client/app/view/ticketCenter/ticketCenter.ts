@@ -3,8 +3,8 @@
  */
 
 
-import { Widget } from "../../../../../../pi/widget/widget";
-import { popNew } from "../../../../../../pi/ui/root";
+import { Widget } from "../../../../../pi/widget/widget";
+import { popNew } from "../../../../../pi/ui/root";
 
 
 export class TicketCenter extends Widget {
@@ -15,14 +15,14 @@ export class TicketCenter extends Widget {
      * 查看玩法
      */
     public goRule(){
-        popNew('app-view-earn-client-view-ticketCenter-playRule');
+        popNew('earn-client-app-view-ticketCenter-playRule');
     }
 
     /**
      * 查看历史记录
      */
     public goHistory() {
-        popNew('app-view-earn-exchange-exchangeHistory');
+        popNew('earn-client-app-view-openBox-openBoxHistory');
     }
 
     /**
