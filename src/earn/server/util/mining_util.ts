@@ -11,13 +11,17 @@ import { RandomSeedMgr } from './randomSeedMgr';
 
 // 处理挖矿单次事件(一次点击)
 export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
+    console.log('doMininng in!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
+    console.log('dbMgr in!!!!!!!!!!!!');
     const cfgs: WeightMiningCfg[] = [];
     const weights = [];
     let maxWeights = 0;
+    console.log('!!!!!!!!!!!!!!before read');
     read(dbMgr, (tr: Tr) => {
         let maxCount = 0;
         const iterCfg = iterDb(tr, MEMORY_NAME, WeightMiningCfg._$info.name, hoeType, false, null);
+        console.log('!!!!!!!!!!!!!!iterCfg:', iterCfg);
         do {
             const elCfg = iterCfg.nextElem();
             console.log('elCfg----------------read---------------', elCfg);

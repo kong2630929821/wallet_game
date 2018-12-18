@@ -12,6 +12,10 @@ struct SpecificMine {
     mineNum:u32
 }
 
+struct Seed {
+    seed: u32
+}
+
 //挖矿结果
 struct MiningResult {
     itemQuery: ItemQuery,
