@@ -22,19 +22,12 @@ export const get_item = (itemQuery: ItemQuery): Item => {
     const itemInfo = item_query(itemQuery.uid);
     if (!itemInfo) return;
     const items = itemInfo.item;
-    const itemList = [];
     for (const item of items) {
-        if (item.enum_type === itemQuery.enumType) {
-            itemList.push(item.value);
-            continue;
-        }
-    }
-    for (let i = 0; i < itemList.length; i++) {
-        if (itemList[i].num === itemQuery.itemType) {
+        if (item.value.num === itemQuery.itemType) {
             const resutlItem = new Item();
             resutlItem.enum_type = itemQuery.enumType;
-            resutlItem.value = itemList[i];
-
+            resutlItem.value = item.value;
+            
             return resutlItem;
         }
     }

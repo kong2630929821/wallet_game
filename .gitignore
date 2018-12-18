@@ -14,3 +14,4 @@ node_modules
 *.c.ts
 *.s.ts
 *.p.ts
+/src/earn/xlsx/*.rs
