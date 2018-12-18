@@ -14,4 +14,7 @@ node_modules
 *.c.ts
 *.s.ts
 *.p.ts
+!/src/earn/server/cfg/server.c.ts
+/package-lock.json
+/src/app
 /src/earn/xlsx/*.rs
