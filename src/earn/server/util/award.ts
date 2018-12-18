@@ -3,7 +3,7 @@
  * 这里处理冒险相关逻辑
  */
 // ===================================================== 导入
-import { isAverageAward, isRateAward, isWeightAward } from '../cfg/award.s';
+import { isAverageAward, isRateAward, isWeightAward } from '../../xlsx/award.s';
 import { RandomSeedMgr } from './randomSeedMgr';
 // ===================================================== 导出
 

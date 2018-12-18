@@ -17,3 +17,4 @@ node_modules
 !/src/earn/server/cfg/server.c.ts
 /package-lock.json
 /src/app
+/src/earn/xlsx/*.rs
