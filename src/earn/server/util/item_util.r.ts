@@ -1,13 +1,14 @@
 /**
  * 
  */
-import { ItemQuery, SpecificMine } from '../rpc/itemQuery.s';
+import { ItemQuery } from '../rpc/itemQuery.s';
 
 import { BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
 import { getEnv } from '../../../pi_pt/net/rpc_server';
+import { WARE_NAME } from '../data/constant';
 import { get_item, item_query } from '../rpc/user_item.r';
 
 // #[rpc=rpcServer]
@@ -17,7 +18,7 @@ export const doTest = (uid: number): Items => {
     return;
 };
 
-// 添加制定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
+// 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
 export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
@@ -51,7 +52,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     items[itemIndex] = item;
     itemInfo.item = items;
     itemBucket.update(uid, itemInfo);
-    
+
     return item;
 };
 
@@ -87,33 +88,42 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     return item;
 };
 
-export const reduce_mine = (itemQuery: ItemQuery, mineNum): boolean => {
+// 矿山扣血
+export const reduce_mine = (itemQuery: ItemQuery, mineNum:number, hits:number): number => {
     const uid = itemQuery.uid;
-    const enumNum = itemQuery.enumType;
-    if (enumNum === 1) {
-        const typeNum = itemQuery.itemType;
-        const itemInfo = item_query(uid);
-        const item = get_item(itemQuery);
-        const mine = <Mine>item.value;
-        mine.count = mine.count - 1;
-        mine.hps.splice(mineNum, 1);
-        const items = itemInfo.item;
-        let itemIndex;
-        for (const item1 of items) {
-            if (item1.value.num === typeNum) {
-                itemIndex = items.indexOf(item1);
-                break;
-            }
+    const typeNum = itemQuery.itemType;
+    const itemInfo = item_query(uid);
+    const item = get_item(itemQuery);
+    const mine = <Mine>item.value;
+    const leftHp = mine.hps[mineNum] - hits;
+    // 获取Item对象在数组中的下标
+    const items = itemInfo.item;
+    const dbMgr = getEnv().getDbMgr();
+    const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    let itemIndex;
+    for (const item1 of items) {
+        if (item1.value.num === typeNum) {
+            itemIndex = items.indexOf(item1);
+            break;
         }
-        const dbMgr = getEnv().getDbMgr();
-        const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
+    }
+    if (leftHp > 0) {
+        mine.hps[mineNum] = leftHp;
+        item.value = mine;
         items[itemIndex] = item;
         itemInfo.item = items;
         itemBucket.update(uid, itemInfo);
 
-        return true;
+        return leftHp;
     } else {
-        return false;
+        mine.count = mine.count - 1;
+        mine.hps.splice(mineNum, 1);
+        item.value = mine;
+        items[itemIndex] = item;
+        itemInfo.item = items;
+        itemBucket.update(uid, itemInfo);
+
+        return 0;
     }
 
 };

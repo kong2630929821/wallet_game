@@ -24,9 +24,8 @@ export const award = (award: number): Test => {
 // #[rpc=rpcServer]
 export const db_test = (uid: number): Items => {
     items_init(uid);
-    const items = item_query(uid);
 
-    return items;
+    return item_query(uid);
 };
 
 // #[rpc=rpcServer]
@@ -35,7 +34,6 @@ export const item_add = (count: number): Item => {
     itemQuery.uid = 7;
     itemQuery.enumType = 1;
     itemQuery.itemType = 1001;
-    const item = add_itemCount(itemQuery, count);
-    
-    return item;
+
+    return add_itemCount(itemQuery, count);
 };
