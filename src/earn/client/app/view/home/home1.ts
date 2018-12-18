@@ -7,6 +7,9 @@ import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
+import { Item } from '../../../../server/data/db/item.s';
+import { getAllGoods, login } from '../../net/rpc';
+import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,16 +31,8 @@ export class PlayHome extends Widget {
      */
     public init() {
         this.language = this.config.value[getLang()];
-        
         this.props = {
             ...this.props,
-            ktBalance: 0.00,// kt余额
-            ethBalance: 0.00,// eth余额
-            holdMines: 0,// 累计挖矿
-            mines: 0,// 今日可挖数量
-            hasWallet: false, // 是否已经创建钱包
-            mineLast: 0,// 矿山剩余量
-            rankNum: 1,// 挖矿排名
             page: [
                 'app-view-earn-client-view-mining-rankList', // 挖矿排名
                 'app-view-earn-client-view-mining-dividend', // 领分红
@@ -45,12 +40,6 @@ export class PlayHome extends Widget {
                 'app-view-earn-client-view-exchange-exchange', // 兑换
                 'app-view-earn-client-view-mining-addMine'  // 任务
             ],
-            doMining: false,  // 点击挖矿，数字动画效果执行
-            firstClick: true,
-            isAbleBtn: false,  // 点击挖矿，按钮动画效果执行
-            miningNum: ` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
-                <span>+{{it1.thisNum}}</span>
-            </div>`,
             scroll: false,
             scrollHeight: 0,
             refresh: false,
@@ -87,8 +76,11 @@ export class PlayHome extends Widget {
         };
         setTimeout(() => {
             this.scrollPage();
-        });
-        
+        },17);
+        setTimeout(() => {
+            const uid = 7;
+            getAllGoods();
+        },2000);
     }
 
     public diggingStoneClick() {
@@ -151,3 +143,7 @@ export class PlayHome extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
+
+register('goods',(goods:Item[]) => {
+    console.log('goods change ',goods);
+});

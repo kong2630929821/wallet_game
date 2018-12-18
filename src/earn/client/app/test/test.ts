@@ -32,6 +32,7 @@ export const get_items = () => {
     const uid = 7;
     clientRpcFunc(db_test, uid, (r: Items) => {
         console.log(r);
+
     });
 };
 
@@ -94,6 +95,7 @@ export class Test extends Widget {
 
     public onTap(a: any) {
         props.bts[a].func();
+        // console.log('click ',props.bts[a].name);
     }
 }
 

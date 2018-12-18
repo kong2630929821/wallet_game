@@ -1,12 +1,11 @@
 <div class="new-page" style="display: flex;flex-direction: column;" ev-refresh-click="refreshPage">
-    
     <div w-class="contain" on-scroll="scrollPage" id="earn-home">
         <div w-class="topBack">
             <div w-class="stone-card" on-tap="diggingStoneClick">
                 <div w-class="holded-hoes">
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:120,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:6,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:20,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
                     <div w-class="gift-box">
                         <img src="../../res/image1/gift.png"/>
                     </div>

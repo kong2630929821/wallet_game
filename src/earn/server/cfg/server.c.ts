@@ -5,7 +5,7 @@ import { cfgMgr } from '../../../pi/util/cfg';
 import { HttpsCfg, MqttCfg, NetCfg, NetMgr, RpcCfg } from '../../../pi_pt/init/server_cfg.s';
 
 const netMgr = new NetMgr('netMgr', []);
-const netCfg = new NetCfg('0.0.0.0:1234', 'tcp', true, netMgr, []);
+const netCfg = new NetCfg('0.0.0.0:2234', 'tcp', true, netMgr, []);
 const mqttCfg = new MqttCfg(netCfg, 1024 * 1024, 500 * 1000, 'mqttServer', []);
 const rpcCfg = new RpcCfg(mqttCfg, 'rpcServer', ['mqttServer']);
 const httpsCfg = new HttpsCfg('0.0.0.0', 8088, 5000, 10000, '../dst/');
