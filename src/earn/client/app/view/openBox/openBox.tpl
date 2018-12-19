@@ -36,15 +36,15 @@
             {{% 余票}}
             <div w-class="ticket">
                 <div on-tap="change(0)" w-class="ticket-item {{it.selectTicket===0?'select':''}}">
-                    <img src="../../res/image/silverTicket1.png" width="100%;" style="margin-top:15px;"/>
+                    <img src="../../res/image/silverTicket.png" width="100%;" style="margin-top:15px;"/>
                     <div w-class="ticket-num">0</div>
                 </div>
                 <div on-tap="change(1)" w-class="ticket-item {{it.selectTicket===1?'select':''}}">
-                    <img src="../../res/image/goldTicket1.png" width="100%;" style="margin-top:15px;"/>
+                    <img src="../../res/image/goldTicket.png" width="100%;" style="margin-top:15px;"/>
                     <div w-class="ticket-num">0</div>
                 </div>
                 <div on-tap="change(2)" w-class="ticket-item {{it.selectTicket===2?'select':''}}">
-                    <img src="../../res/image/diamondTicket1.png" width="100%;" style="margin-top:15px;"/>
+                    <img src="../../res/image/diamondTicket.png" width="100%;" style="margin-top:15px;"/>
                     <div w-class="ticket-num">0</div>
                 </div>
             </div>

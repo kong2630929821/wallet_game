@@ -32,7 +32,8 @@
 }
 
 .hasTicket{
-    height:248px;
+    height:150px;
+    background: #FCDC3C;
 }
 
 .activity{
@@ -56,67 +57,65 @@
     color:rgba(34,34,34,1);
 }
 
-.getTicket-title{
-    margin-top:65px;
-    padding-left:30px;
-    display:flex;
-    flex-direction:column;
-}
-.getTicket-title-name{
-    height:50px;
-    font-size:36px;
-    font-weight:500;
-    color:#222222;
-    line-height:50px;
-}
-.getTicket-title-dsc{
-    margin-top:20px;
-    height:33px;
-    font-size:24px;
-    font-weight:400;
-    color:#888888;
-    line-height:33px;
-}
 
 .hasKT{
     height: 160px;
     margin-top: 45px;
     text-align:center;
+    background-color:#FCDC3C;
 }
 
-.getTicket{
-    margin-top:20px;
-    display:flex;
-    justify-content:space-between;
-}
 .getTicket-item{
     display: flex;
-    flex-direction: column;
+    justify-content:space-between;
     align-items: center;
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom:10px;
 }
-.ticket-show{
-    height: 330px;
-    width: 230px;
+.getTicket-title-name{
+    height:50px;
+    font-size:36px;
+    font-weight:500;
+    line-height:50px;
+}
+.ticket-num{
+    font-size:24px;
+    text-align: center;
+}
+.getTicket-dsc{
+    margin-right:80px;
+    display: flex;
+    flex-direction: column;
+}
+.ticket-name{
+    height:45px;
+    font-size:32px;
+    color:#222222;
+    line-height:45px;
 }
 .ticket-KT{
-    height: 100px;
+    height: 50px;
     text-align: center;
-    line-height: 120px;
-    font-size: 36px;
-    color: #888888;
+    line-height: 70px;
+    font-size: 24px;
+    color: #222222;
 }
 .getTicket-btn{
-    margin-top:36px;
-    width:150px;
-    height:60px;
-    background:linear-gradient(27deg,rgba(243,148,57,1) 0%,rgba(248,188,69,1) 100%);
-    box-shadow:0px 10px 5px 0px rgba(248,141,60,0.1);
-    border-radius:30px;
+    width:180px;
+    height:100%;
+    padding:30px 60px;
+    background:#222222;
     text-align: center;
     line-height: 60px;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 500;
     color: white;
+}
+
+.notEnough{
+    background:#CCCCCC;
 }
 
 .end{
@@ -124,7 +123,7 @@
     text-align: center;
     font-size: 28px;
     font-weight: 400;
-    color: #888888;
+    color: #222222;
 }
 
 
