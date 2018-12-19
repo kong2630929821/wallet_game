@@ -21,9 +21,9 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class PlayHome extends Widget {
     public ok: () => void;
-    public language:any;
-    public props:any;
-    public config:any;
+    public language: any;
+    public props: any;
+    public config: any;
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
@@ -46,53 +46,53 @@ export class PlayHome extends Widget {
             scrollHeight: 0,
             refresh: false,
             avatar: '../../res/image1/default_avatar.png',
-            welfareActivities:[{
-                img:'btn_yun_5.png',
-                title:'邀请好友',
-                desc:'累计邀请有好礼'
-            },{
-                img:'btn_yun_6.png',
-                title:'验证手机',
-                desc:'额外赠送2500KT'
-            },{
-                img:'btn_yun_7.png',
-                title:'开宝箱',
-                desc:'不定期上新物品'
-            },{
-                img:'btn_yun_8.png',
-                title:'大转盘',
-                desc:'试试我的手气'
-            },{
-                img:'btn_yun_9.png',
-                title:'奖券中心',
-                desc:'可以抽奖兑换物品'
-            },{
-                img:'btn_yun_10.png',
-                title:'兑换物品',
-                desc:'不定期上新物品'
-            },{
-                img:'btn_yun_11.png',
-                title:'我的物品',
-                desc:'兑换和中奖的物品'
+            welfareActivities: [{
+                img: 'btn_yun_5.png',
+                title: '邀请好友',
+                desc: '累计邀请有好礼'
+            }, {
+                img: 'btn_yun_6.png',
+                title: '验证手机',
+                desc: '额外赠送2500KT'
+            }, {
+                img: 'btn_yun_7.png',
+                title: '开宝箱',
+                desc: '不定期上新物品'
+            }, {
+                img: 'btn_yun_8.png',
+                title: '大转盘',
+                desc: '试试我的手气'
+            }, {
+                img: 'btn_yun_9.png',
+                title: '奖券中心',
+                desc: '可以抽奖兑换物品'
+            }, {
+                img: 'btn_yun_10.png',
+                title: '兑换物品',
+                desc: '不定期上新物品'
+            }, {
+                img: 'btn_yun_11.png',
+                title: '我的物品',
+                desc: '兑换和中奖的物品'
             }],
-            copperHoe:0,
-            silverHoe:0,
-            goldHoe:0,
-            hoeType:HoeType
+            copperHoe: 0,
+            silverHoe: 0,
+            goldHoe: 0,
+            hoeType: HoeType
         };
 
         setTimeout(() => {
             this.scrollPage();
-        },17);
+        }, 17);
         setTimeout(() => {
             getAllGoods();
-	        },2000);
+        }, 2000);
         console.log(this.props.hoeType);
     }
-        /**
-     * 福利活动进入
-     * @param ind 福利顺序
-     */
+    /**
+ * 福利活动进入
+ * @param ind 福利顺序
+ */
     public goActivity(ind: number) {
         switch (ind) {
             case 0:
@@ -115,6 +115,7 @@ export class PlayHome extends Widget {
 
                 break;
         }
+    }
     public diggingStoneClick() {
         popNew('earn-client-app-view-activity-diggingStones-home');
     }
@@ -182,8 +183,8 @@ export class PlayHome extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('goods',(goods:Item[]) => {
-    console.log('goods change ',goods);
-    const w:any = forelet.getWidget(WIDGET_NAME);
+register('goods', (goods: Item[]) => {
+    console.log('goods change ', goods);
+    const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();
 });
