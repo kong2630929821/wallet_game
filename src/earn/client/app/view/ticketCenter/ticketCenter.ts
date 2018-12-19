@@ -43,6 +43,13 @@ export class TicketCenter extends Widget {
     }
 
     /**
+     * 奖券合成 
+     */
+    public goCompound(){
+        popNew('earn-client-app-view-ticketCenter-ticketCompound');
+    }
+
+    /**
      * 查看历史记录
      */
     public goHistory() {

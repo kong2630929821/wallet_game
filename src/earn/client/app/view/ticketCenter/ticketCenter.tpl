@@ -5,7 +5,7 @@
     <div w-class="content">
         {{% 顶部标题}}
         <div w-class="top-title">
-            <widget w-class="top-btn" w-tag="pi-ui-lang">{"zh_Hans":"合成奖券","zh_Hant":"合成獎券","en":""}</widget>
+            <widget w-class="top-btn" on-tap="goCompound" w-tag="pi-ui-lang">{"zh_Hans":"合成奖券","zh_Hant":"合成獎券","en":""}</widget>
             <widget w-class="getTicket-title-name" w-tag="pi-ui-lang">{"zh_Hans":"我的奖券","zh_Hant":"我的獎券","en":""}</widget>
             <widget w-class="top-btn" on-tap="goRule" w-tag="pi-ui-lang">{"zh_Hans":"玩法","zh_Hant":"玩法","en":""}</widget>
         </div>

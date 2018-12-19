@@ -54,11 +54,10 @@ export class OpenBox extends Widget {
      */
     public openBox(num:number){
         if(this.props.boxList[num].isOpen){
-            alert('已经打开了！')
 
             return;
         }
-
+        popNew('earn-client-app-view-component-lotteryModal',{type:2});
         this.props.boxList[num].isOpen = true;
         this.paint();
     }

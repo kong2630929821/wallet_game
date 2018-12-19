@@ -55,6 +55,7 @@ export class Turntable extends Widget {
         $turn.style.transform = 'rotate(3600deg)';
         this.paint();
         setTimeout(() => {
+            popNew('earn-client-app-view-component-lotteryModal',{type:2});
             this.props.isTurn = false;
             $turn.style.transition = 'none';
             $turn.style.transform = 'none';
