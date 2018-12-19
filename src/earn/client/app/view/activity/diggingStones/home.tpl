@@ -15,10 +15,13 @@
         <div w-class="digging-num">今日已挖矿山 0/9 座</div>
         <div w-class="digging-tips">{{it.diggingTips}}</div>
         <div w-class="award-container">
-            <div w-class="award-item"><img src="../../../res/image1/btn_yun_5.png" w-class="award-icon"/></div>
-            <div w-class="award-item"><img src="../../../res/image1/btn_yun_5.png" w-class="award-icon" /></div>
-            <div w-class="award-item"><img src="../../../res/image1/btn_yun_5.png" w-class="award-icon"/></div>
-            <div w-class="award-item"><img src="../../../res/image1/btn_yun_5.png" w-class="award-icon"/></div>
+            <div w-class="award-item">
+                <img src="../../../res/image/KT.png" w-class="award-icon"/>
+                <div w-class="award-num">+<span>100</span></div>
+            </div>
+            <div w-class="award-item"><img src="../../../res/image/GT.png" w-class="award-icon" /></div>
+            <div w-class="award-item"><img src="../../../res/image/ETH.png" w-class="award-icon"/></div>
+            <div w-class="award-item"><img src="../../../res/image/BTC.png" w-class="award-icon"/></div>
         </div>
         <div w-class="stone-area">
             {{for index,item of it.curStones}}

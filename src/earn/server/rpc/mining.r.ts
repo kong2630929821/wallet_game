@@ -23,6 +23,8 @@ export const mining = (itemQuery:ItemQuery):RandomSeedMgr => {
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     seedBucket.put(uid, { seed, hoeType });
 
+    console.log('====================================');
+    
     return new RandomSeedMgr(seed);
 };
 

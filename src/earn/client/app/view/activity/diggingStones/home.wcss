@@ -39,9 +39,23 @@
     position: absolute;
     right: 35px;
     top: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 .award-item{
+    display: flex;
+    align-items: center;
     margin-bottom: 20px;
+    height:40px;
+    background:rgba(229,229,229,1);
+    border-radius:25px;
+    border:2px solid rgba(255,255,255,1);
+    font-size:32px;
+    color:rgba(34,34,34,1);
+}
+.award-num{
+    margin: 0 10px;
 }
 .award-icon{
     width: 40px;
