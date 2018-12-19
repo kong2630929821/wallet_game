@@ -4,15 +4,16 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-import { Hoe, Item, Items, Mine, MineSeed, MiningResponse } from '../../../server/data/db/item.s';
+import { Hoe, Item, Items, Mine } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
-import { mining, mining_result } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
+import { ItemQuery } from '../../../server/rpc/itemQuery.s';
+import { mining } from '../../../server/rpc/mining.p';
+import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { get_item, item_query } from '../../../server/rpc/user_item.p';
+import { get_item } from '../../../server/rpc/user_item.p';
+import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -55,13 +56,12 @@ export const item_test1 = () => {
 
 // 给指定用户添加指定类型物品
 export const item_test2 = () => {
-    const count = 1;
+    const count = 3;
     clientRpcFunc(item_add, count, (r: Item) => {
         console.log(r);
     });
 };
 
-// 获取随机种子
 export const get_seed = () => {
     const itemQuery = new ItemQuery();
     itemQuery.uid = 7;
@@ -136,6 +136,7 @@ export class Test extends Widget {
 
     public onTap(a: any) {
         props.bts[a].func();
+        // console.log('click ',props.bts[a].name);
     }
 }
 

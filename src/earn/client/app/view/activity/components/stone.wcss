@@ -12,7 +12,7 @@
     overflow: hidden;
 }
 .hp{
-    width: 30%;
     background:rgba(170,64,17,1);
     height: 100%;
+    border-radius:7px;
 }

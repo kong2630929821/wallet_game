@@ -18,6 +18,7 @@ export const mining = (itemQuery:ItemQuery):Seed => {
     const seed = Math.floor(Math.random() * 233280 + 1);
     const uid = itemQuery.uid;
     const hoeType = itemQuery.itemType;
+    console.log('mining = ',itemQuery);
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     seedBucket.put(uid, [seed, hoeType]);
