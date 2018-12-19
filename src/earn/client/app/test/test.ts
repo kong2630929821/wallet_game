@@ -4,16 +4,17 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-import { Hoe, Item, Items, Mine } from '../../../server/data/db/item.s';
+import { Invite } from '../../../server/data/db/invite.s';
+import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { ItemQuery } from '../../../server/rpc/itemQuery.s';
-import { mining } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
+import { cdkey } from '../../../server/rpc/invite.p';
+import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
+import { mining, mining_result } from '../../../server/rpc/mining.p';
+import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { get_item } from '../../../server/rpc/user_item.p';
-import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
+import { get_item, item_query } from '../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -26,6 +27,13 @@ export const login = () => {
     userType.value = walletLoginReq;
 
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
+        console.log(r);
+    });
+};
+
+export const invite = () => {
+    const code = 'QOTJZB';
+    clientRpcFunc(cdkey, code, (r: Invite) => {
         console.log(r);
     });
 };
@@ -67,7 +75,7 @@ export const get_seed = () => {
     itemQuery.uid = 7;
     itemQuery.enumType = 2;
     itemQuery.itemType = 2003;
-    clientRpcFunc(mining, itemQuery, (r:Seed) => {
+    clientRpcFunc(mining, itemQuery, (r: Seed) => {
         console.log(r);
     });
 };
@@ -81,7 +89,7 @@ export const mining_test = () => {
     itemQuery.itemType = 1001;
     miningResult.itemQuery = itemQuery;
     miningResult.mineNum = 0;
-    clientRpcFunc(mining_result, miningResult, (r:MiningResponse) => {
+    clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
 };
@@ -89,7 +97,7 @@ export const mining_test = () => {
 export const hit = () => {
     console.log('function in !!!!!!!!!!!');
     const pid = 200106;
-    clientRpcFunc(hit_test, pid, (r:Seed) => {
+    clientRpcFunc(hit_test, pid, (r: Seed) => {
         console.log(r);
     });
 };
@@ -99,6 +107,10 @@ const props = {
         {
             name: '登录',
             func: () => { login(); }
+        },
+        {
+            name: '兑换奖励',
+            func: () => { invite(); }
         },
         {
             name: '奖励方法',

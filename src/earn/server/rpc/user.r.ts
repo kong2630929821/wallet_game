@@ -19,13 +19,14 @@ export const login = (user: UserType): UserInfo => {
     const dbMgr = getEnv().getDbMgr();
     const userInfo = new UserInfo();
     const loginReq = new LoginReq();
+    let openid;
     if (user.enum_type === UserType_Enum.WALLET) {
         const walletLoginReq = <WalletLoginReq>user.value;
-        const openid = walletLoginReq.openid;
+        openid = walletLoginReq.openid;
         const sign = walletLoginReq.sign;
         // TODO 验证签名
         const userAccountBucket = new Bucket('file', UserAcc._$info.name, dbMgr);
-        console.log('------login-------',userAccountBucket.get(openid));
+        console.log('------login-------', userAccountBucket.get(openid));
         const v = userAccountBucket.get(openid)[0];
         if (!v) {
             // 注册用户
@@ -51,6 +52,7 @@ export const login = (user: UserType): UserInfo => {
     const session = getEnv().getSession();
     write(dbMgr, (tr: Tr) => {
         session.set(tr, 'uid', loginReq.uid.toString());
+        session.set(tr, 'openid', openid.toString());
     });
 
     // 添加到在线表
@@ -98,4 +100,28 @@ export const close_connect = (e: NetEvent) => {
         }
 
     }
+};
+
+// 获取uid
+export const getUid = () => {
+    const dbMgr = getEnv().getDbMgr();
+    const session = getEnv().getSession();
+    let uid;
+    read(dbMgr, (tr: Tr) => {
+        uid = session.get(tr, 'uid');
+    });
+
+    return parseInt(uid, 10);
+};
+
+// 获取openid
+export const getOpenid = () => {
+    const dbMgr = getEnv().getDbMgr();
+    const session = getEnv().getSession();
+    let openid;
+    read(dbMgr, (tr: Tr) => {
+        openid = session.get(tr, 'openid');
+    });
+
+    return parseInt(openid, 10);
 };
