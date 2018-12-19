@@ -28,7 +28,6 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const beforeCount = item.value.count;
     const afterCount = beforeCount + count;
     const items = itemInfo.item;
-    // let itemIndex = items.indexOf(item);
     let itemIndex;
     for (const item1 of items) {
         if (item1.value.num === typeNum) {
@@ -39,6 +38,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const dbMgr = getEnv().getDbMgr();
     const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
     if (enumNum === 1) {
+        if (count > 1) return;
         const hp = get_mine_hp(typeNum);
         let hpList = [];
         const mine = <Mine>item.value;
@@ -65,8 +65,8 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const item = get_item(itemQuery);
     const beforeCount = item.value.count;
     const afterCount = beforeCount - count;
+    if (afterCount < 0) return;
     const items = itemInfo.item;
-
     let itemIndex;
     for (const item1 of items) {
         if (item1.value.num === typeNum) {
@@ -201,10 +201,24 @@ export const items_init = (uid: number): boolean => {
     return true;
 };
 
-// 随机(根据配置)获取矿山类型
-// export const get_mine_type = ():number => {
+// 获取矿山总数
+export const get_mine_total = (uid:number):number => {
+    const items = item_query(uid).item;
+    let mineTotal = 0;
+    for (let i = 0; i < item_query.length; i ++) {
+        if (items[i].enum_type === 1) {
+            mineTotal = mineTotal + items[i].value.count;
+            continue;
+        }
+    }
 
-// }
+    return mineTotal;
+};
+
+// 随机(根据配置)获取矿山类型
+export const get_mine_type = ():number => {
+    return 1001; // test
+};
 
 // 根据配置返回指定类型矿山的血量
 export const get_mine_hp = (mineType: number): number => {

@@ -29,6 +29,15 @@ export class RandomSeedMgr {
         return Math.round(min + (max - min) * seed / RandomSeedMgr.maxSeed);
     }
 
+    //
+    public static randNumber = (seed:number): number => {
+        const max = 233280;
+        const a = 9527;
+        const c = 813521;
+        
+        return (a * seed + c) % max;
+    }
+
     // 检查概率是否通过
     public static checkProbability = (probability: number, seed: number) => {
         return probability >= 1 || (probability >= seed / RandomSeedMgr.maxSeed);

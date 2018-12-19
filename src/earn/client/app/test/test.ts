@@ -32,9 +32,8 @@ export const login = () => {
 
 export const get_items = () => {
     const uid = 7;
-    clientRpcFunc(db_test, uid, (r: Items) => {
+    clientRpcFunc(item_query, uid, (r: Items) => {
         console.log(r);
-
     });
 };
 
@@ -66,9 +65,31 @@ export const item_test2 = () => {
 export const get_seed = () => {
     const itemQuery = new ItemQuery();
     itemQuery.uid = 7;
+    itemQuery.enumType = 2;
+    itemQuery.itemType = 2003;
+    clientRpcFunc(mining, itemQuery, (r:Seed) => {
+        console.log(r);
+    });
+};
+
+export const mining_test = () => {
+    const miningResult = new MiningResult();
+    miningResult.hit = 20;
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 7;
     itemQuery.enumType = 1;
     itemQuery.itemType = 1001;
-    clientRpcFunc(mining, itemQuery, (r:RandomSeedMgr) => {
+    miningResult.itemQuery = itemQuery;
+    miningResult.mineNum = 0;
+    clientRpcFunc(mining_result, miningResult, (r:MiningResponse) => {
+        console.log(r);
+    });
+};
+
+export const hit = () => {
+    console.log('function in !!!!!!!!!!!');
+    const pid = 200106;
+    clientRpcFunc(hit_test, pid, (r:Seed) => {
         console.log(r);
     });
 };
@@ -98,6 +119,10 @@ const props = {
         {
             name: '随机种子',
             func: () => { get_seed(); }
+        },
+        {
+            name: '挖矿',
+            func: () => { mining_test(); }
         }
     ] // 按钮数组
 };
