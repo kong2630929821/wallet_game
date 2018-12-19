@@ -20,7 +20,9 @@ export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
     console.log('!!!!!!!!!!!!!!before read');
     read(dbMgr, (tr: Tr) => {
         let maxCount = 0;
-        const iterCfg = iterDb(tr, MEMORY_NAME, WeightMiningCfg._$info.name, hoeType, false, null);
+        const pid = hoeType * 100 + 1;
+        console.log('!!!!!!!!!!!!!!pid', pid);
+        const iterCfg = iterDb(tr, MEMORY_NAME, WeightMiningCfg._$info.name, pid, false, null);
         console.log('!!!!!!!!!!!!!!iterCfg:', iterCfg);
         do {
             const elCfg = iterCfg.nextElem();

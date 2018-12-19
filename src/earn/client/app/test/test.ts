@@ -4,11 +4,11 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
+import { Hoe, Item, Items, Mine, MineSeed, MiningResponse } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
+import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
@@ -82,6 +82,14 @@ export const mining_test = () => {
     miningResult.itemQuery = itemQuery;
     miningResult.mineNum = 0;
     clientRpcFunc(mining_result, miningResult, (r:MiningResponse) => {
+        console.log(r);
+    });
+};
+
+export const hit = () => {
+    console.log('function in !!!!!!!!!!!');
+    const pid = 200106;
+    clientRpcFunc(hit_test, pid, (r:Seed) => {
         console.log(r);
     });
 };

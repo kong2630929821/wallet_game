@@ -14,10 +14,7 @@ export const item_query = (uid: number): Items => {
     const dbMgr = getEnv().getDbMgr();
     const userItemBucket = new Bucket('file', Items._$info.name, dbMgr);
     const items = <Items>userItemBucket.get(uid)[0];
-    if (!items) {
-        items_init(uid);
-        item_query(uid);
-    }
+    if (!items) return;
 
     return items;
 };

@@ -41,17 +41,19 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     const seedAndHoe = <MineSeed>seedBucket.get(itemQuery.uid)[0];
-    const seed = seedAndHoe.seed;
+    if (!seedAndHoe) return;
+    let seed = seedAndHoe.seed;
     console.log('!!!!!!!!!!!!!!seed:', seed);
     const hoeType = seedAndHoe.hoeType;
     console.log('!!!!!!!!!!!!!!hoeType:', hoeType);
-    const randomMgr = new RandomSeedMgr(seed);
     let sumHits = 0;
     console.log('!!!!!!!!!!!!!!before');
     for (let i = 0; i < count; i ++) {
+        const randomMgr = new RandomSeedMgr(seed);
         const hit = doMining(hoeType, randomMgr);
         // hits.push(hit)
         sumHits = sumHits + hit;
+        seed = RandomSeedMgr.randNumber(seed);
     }
     console.log('!!!!!!!!!!!!!!sumhits:', sumHits);
     const leftHp = reduce_mine(itemQuery, mineNum, sumHits);
@@ -65,7 +67,10 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         miningresponse.leftHp = 0;
         miningresponse.isAward = true;
         const v = [];
-        doAward(itemQuery.itemType, randomMgr, v);
+        const randomMgr = new RandomSeedMgr(seed);
+        const pid = itemQuery.itemType * 100 + 1;
+        doAward(pid, randomMgr, v);
+        console.log('award result!!!!!!!!!!!!!!!!!:', v);
         const itemNum = v[0][0];
         const itemCount = v[0][1];
         const leftMines = get_mine_total(itemQuery.uid);
