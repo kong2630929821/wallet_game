@@ -33,7 +33,7 @@ export const item_add = (count: number): Item => {
     const itemQuery = new ItemQuery();
     itemQuery.uid = 7;
     itemQuery.enumType = 1;
-    itemQuery.itemType = 1001;
+    itemQuery.itemType = 1003;
 
     return add_itemCount(itemQuery, count);
 };

@@ -3,9 +3,9 @@
         <div w-class="topBack">
             <div w-class="stone-card" on-tap="diggingStoneClick">
                 <div w-class="holded-hoes">
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:0,img:"../../../res/image/gold_hoe.png" }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.copperHoe }},hoeType:{{ it.hoeType.CopperHoe }} }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.silverHoe }},hoeType:{{ it.hoeType.SilverHoe }} }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }} }</earn-client-app-view-activity-components-holdedHoe>
                     <div w-class="gift-box">
                         <img src="../../res/image1/gift.png"/>
                     </div>

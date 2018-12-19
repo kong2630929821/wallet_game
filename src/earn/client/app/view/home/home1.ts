@@ -8,8 +8,10 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getAllGoods, login } from '../../net/rpc';
+import { getAllGoods } from '../../net/rpc';
 import { register } from '../../store/memstore';
+import { getHoeCount } from '../../utils/util';
+import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -72,15 +74,20 @@ export class PlayHome extends Widget {
                 img:'btn_yun_11.png',
                 title:'我的物品',
                 desc:'兑换和中奖的物品'
-            }]
+            }],
+            copperHoe:0,
+            silverHoe:0,
+            goldHoe:0,
+            hoeType:HoeType
         };
+
         setTimeout(() => {
             this.scrollPage();
         },17);
         setTimeout(() => {
-            const uid = 7;
             getAllGoods();
         },2000);
+        console.log(this.props.hoeType);
     }
 
     public diggingStoneClick() {
@@ -133,12 +140,18 @@ export class PlayHome extends Widget {
     }
 
     /**
-     * 采矿说明点击
+     * 采矿说明点击..
      */
     public miningInstructionsClick() {
         popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
     }
 
+    public updateHoe() {
+        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
+        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
@@ -146,4 +159,6 @@ export class PlayHome extends Widget {
 
 register('goods',(goods:Item[]) => {
     console.log('goods change ',goods);
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateHoe();
 });

@@ -57,7 +57,7 @@ export const item_test1 = () => {
 
 // 给指定用户添加指定类型物品
 export const item_test2 = () => {
-    const count = 1;
+    const count = 3;
     clientRpcFunc(item_add, count, (r: Item) => {
         console.log(r);
     });
@@ -66,8 +66,8 @@ export const item_test2 = () => {
 export const get_seed = () => {
     const itemQuery = new ItemQuery();
     itemQuery.uid = 7;
-    itemQuery.enumType = 2;
-    itemQuery.itemType = 2003;
+    itemQuery.enumType = 1;
+    itemQuery.itemType = 1001;
     clientRpcFunc(mining, itemQuery, (r:RandomSeedMgr) => {
         console.log(r);
     });
