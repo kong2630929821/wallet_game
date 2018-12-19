@@ -1,13 +1,14 @@
 /**
  * 
  */
-import { ItemQuery, SpecificMine } from '../rpc/itemQuery.s';
+import { ItemQuery } from '../rpc/itemQuery.s';
 
 import { BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
 import { getEnv } from '../../../pi_pt/net/rpc_server';
+import { WARE_NAME } from '../data/constant';
 import { get_item, item_query } from '../rpc/user_item.r';
 
 // #[rpc=rpcServer]
@@ -17,7 +18,7 @@ export const doTest = (uid: number): Items => {
     return;
 };
 
-// 添加制定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
+// 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
 export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
@@ -27,7 +28,6 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const beforeCount = item.value.count;
     const afterCount = beforeCount + count;
     const items = itemInfo.item;
-    // let itemIndex = items.indexOf(item);
     let itemIndex;
     for (const item1 of items) {
         if (item1.value.num === typeNum) {
@@ -38,6 +38,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const dbMgr = getEnv().getDbMgr();
     const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
     if (enumNum === 1) {
+        if (count > 1) return;
         const hp = get_mine_hp(typeNum);
         let hpList = [];
         const mine = <Mine>item.value;
@@ -51,7 +52,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     items[itemIndex] = item;
     itemInfo.item = items;
     itemBucket.update(uid, itemInfo);
-    
+
     return item;
 };
 
@@ -64,8 +65,8 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const item = get_item(itemQuery);
     const beforeCount = item.value.count;
     const afterCount = beforeCount - count;
+    if (afterCount < 0) return;
     const items = itemInfo.item;
-
     let itemIndex;
     for (const item1 of items) {
         if (item1.value.num === typeNum) {
@@ -87,33 +88,42 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     return item;
 };
 
-export const reduce_mine = (itemQuery: ItemQuery, mineNum): boolean => {
+// 矿山扣血
+export const reduce_mine = (itemQuery: ItemQuery, mineNum:number, hits:number): number => {
     const uid = itemQuery.uid;
-    const enumNum = itemQuery.enumType;
-    if (enumNum === 1) {
-        const typeNum = itemQuery.itemType;
-        const itemInfo = item_query(uid);
-        const item = get_item(itemQuery);
-        const mine = <Mine>item.value;
-        mine.count = mine.count - 1;
-        mine.hps.splice(mineNum, 1);
-        const items = itemInfo.item;
-        let itemIndex;
-        for (const item1 of items) {
-            if (item1.value.num === typeNum) {
-                itemIndex = items.indexOf(item1);
-                break;
-            }
+    const typeNum = itemQuery.itemType;
+    const itemInfo = item_query(uid);
+    const item = get_item(itemQuery);
+    const mine = <Mine>item.value;
+    const leftHp = mine.hps[mineNum] - hits;
+    // 获取Item对象在数组中的下标
+    const items = itemInfo.item;
+    const dbMgr = getEnv().getDbMgr();
+    const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    let itemIndex;
+    for (const item1 of items) {
+        if (item1.value.num === typeNum) {
+            itemIndex = items.indexOf(item1);
+            break;
         }
-        const dbMgr = getEnv().getDbMgr();
-        const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
+    }
+    if (leftHp > 0) {
+        mine.hps[mineNum] = leftHp;
+        item.value = mine;
         items[itemIndex] = item;
         itemInfo.item = items;
         itemBucket.update(uid, itemInfo);
 
-        return true;
+        return leftHp;
     } else {
-        return false;
+        mine.count = mine.count - 1;
+        mine.hps.splice(mineNum, 1);
+        item.value = mine;
+        items[itemIndex] = item;
+        itemInfo.item = items;
+        itemBucket.update(uid, itemInfo);
+
+        return 0;
     }
 
 };
@@ -191,10 +201,24 @@ export const items_init = (uid: number): boolean => {
     return true;
 };
 
-// 随机(根据配置)获取矿山类型
-// export const get_mine_type = ():number => {
+// 获取矿山总数
+export const get_mine_total = (uid:number):number => {
+    const items = item_query(uid).item;
+    let mineTotal = 0;
+    for (let i = 0; i < item_query.length; i ++) {
+        if (items[i].enum_type === 1) {
+            mineTotal = mineTotal + items[i].value.count;
+            continue;
+        }
+    }
 
-// }
+    return mineTotal;
+};
+
+// 随机(根据配置)获取矿山类型
+export const get_mine_type = ():number => {
+    return 1001; // test
+};
 
 // 根据配置返回指定类型矿山的血量
 export const get_mine_hp = (mineType: number): number => {

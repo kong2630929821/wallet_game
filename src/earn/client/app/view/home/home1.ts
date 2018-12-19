@@ -3,10 +3,15 @@
  */
 // ================================ 导入
 import { Json } from '../../../../../pi/lang/type';
-import { getLang } from '../../../../../pi/util/lang';
-import { Widget } from '../../../../../pi/widget/widget';
 import { popNew } from '../../../../../pi/ui/root';
+import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
+import { Item } from '../../../../server/data/db/item.s';
+import { getAllGoods } from '../../net/rpc';
+import { register } from '../../store/memstore';
+import { getHoeCount } from '../../utils/util';
+import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,29 +33,15 @@ export class PlayHome extends Widget {
      */
     public init() {
         this.language = this.config.value[getLang()];
-        
         this.props = {
             ...this.props,
-            ktBalance: 0.00,// kt余额
-            ethBalance: 0.00,// eth余额
-            holdMines: 0,// 累计挖矿
-            mines: 0,// 今日可挖数量
-            hasWallet: false, // 是否已经创建钱包
-            mineLast: 0,// 矿山剩余量
-            rankNum: 1,// 挖矿排名
             page: [
-                'earn-client-view-mining-rankList', // 挖矿排名
-                'earn-client-view-mining-dividend', // 领分红
-                'earn-client-view-redEnvelope-writeRedEnv', // 发红包
-                'earn-client-view-exchange-exchange', // 兑换
-                'earn-client-view-mining-addMine'  // 任务
+                'app-view-earn-client-view-mining-rankList', // 挖矿排名
+                'app-view-earn-client-view-mining-dividend', // 领分红
+                'app-view-earn-client-view-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-client-view-exchange-exchange', // 兑换
+                'app-view-earn-client-view-mining-addMine'  // 任务
             ],
-            doMining: false,  // 点击挖矿，数字动画效果执行
-            firstClick: true,
-            isAbleBtn: false,  // 点击挖矿，按钮动画效果执行
-            miningNum: ` <div class="miningNum" style="animation:{{it1.doMining?'move 0.5s':''}}">
-                <span>+{{it1.thisNum}}</span>
-            </div>`,
             scroll: false,
             scrollHeight: 0,
             refresh: false,
@@ -83,14 +74,21 @@ export class PlayHome extends Widget {
                 img:'btn_yun_11.png',
                 title:'我的物品',
                 desc:'兑换和中奖的物品'
-            }]
+            }],
+            copperHoe:0,
+            silverHoe:0,
+            goldHoe:0,
+            hoeType:HoeType
         };
+
         setTimeout(() => {
             this.scrollPage();
-        });
-        
+        },17);
+        setTimeout(() => {
+            getAllGoods();
+	        },2000);
+        console.log(this.props.hoeType);
     }
-
         /**
      * 福利活动进入
      * @param ind 福利顺序
@@ -117,17 +115,15 @@ export class PlayHome extends Widget {
 
                 break;
         }
-    }
-
     public diggingStoneClick() {
-        popNew('earn-client-activity-diggingStones-home');
+        popNew('earn-client-app-view-activity-diggingStones-home');
     }
 
     /**
      * 打开我的设置
      */
     public showMine() {
-        popNew('mine-home-home');
+        popNew('app-view-mine-home-home');
     }
 
     /**
@@ -169,13 +165,25 @@ export class PlayHome extends Widget {
     }
 
     /**
-     * 采矿说明点击
+     * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('earn-client-view-activity-diggingStones-diggingRule');
+        popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
     }
 
+    public updateHoe() {
+        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
+        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.paint();
+    }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
+
+register('goods',(goods:Item[]) => {
+    console.log('goods change ',goods);
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateHoe();
+});

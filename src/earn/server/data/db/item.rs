@@ -47,6 +47,15 @@ enum Item {
     KT(KT),
 }
 
+//挖矿返回结果
+struct MiningResponse{
+    isAward: bool, //矿山是否挖破
+    isEmpty:bool, //矿山数量
+    leftHp: u32, //矿山剩余血量
+    award: Item, //奖励物品
+    newMine: Mine //矿山数量为0时 赠送矿山
+}
+
 /**
 *物品表
 */
@@ -66,4 +75,14 @@ struct Prizes {
     uid: u32,
     src: String,
     time: u32,
+}
+
+/**
+*随机种子内存表
+*/
+#[primary=uid,db=memory,dbMonitor=true,hasmgr=false]
+struct MineSeed {
+    uid: u32,
+    seed: u32,
+    hoeType: u32
 }
