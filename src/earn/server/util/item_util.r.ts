@@ -7,9 +7,13 @@ import { BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
+import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { WARE_NAME } from '../data/constant';
+import { MineHpCfg } from '../../xlsx/item.s';
+import { MEMORY_NAME, WARE_NAME } from '../data/constant';
 import { get_item, item_query } from '../rpc/user_item.r';
+import { doAward } from './award.t';
+import { RandomSeedMgr } from './randomSeedMgr';
 
 // #[rpc=rpcServer]
 export const doTest = (uid: number): Items => {
@@ -20,13 +24,16 @@ export const doTest = (uid: number): Items => {
 
 // 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
 export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
+    console.log('add_itemCount in!!!!!!!!!!!!!!');
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
     const typeNum = itemQuery.itemType;
     const itemInfo = item_query(uid);
     const item = get_item(itemQuery);
     const beforeCount = item.value.count;
+    console.log('beforeCount:!!!!!!!!!!!!!!', beforeCount);
     const afterCount = beforeCount + count;
+    console.log('afterCount:!!!!!!!!!!!!!!', afterCount);
     const items = itemInfo.item;
     let itemIndex;
     for (const item1 of items) {
@@ -40,18 +47,21 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     if (enumNum === 1) {
         if (count > 1) return;
         const hp = get_mine_hp(typeNum);
+        console.log('hp:!!!!!!!!!!!!!!', hp);
         let hpList = [];
         const mine = <Mine>item.value;
         hpList = mine.hps;
         hpList.push(hp);
         mine.count = afterCount;
         mine.hps = hpList;
+        console.log('mine:!!!!!!!!!!!!!!', mine);
     } else {
         item.value.count = afterCount;
     }
     items[itemIndex] = item;
     itemInfo.item = items;
     itemBucket.update(uid, itemInfo);
+    item.value.count = count;
 
     return item;
 };
@@ -90,6 +100,7 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
 
 // 矿山扣血
 export const reduce_mine = (itemQuery: ItemQuery, mineNum:number, hits:number): number => {
+    console.log('reduce_mine in!!!!!!!!!!!!!!');
     const uid = itemQuery.uid;
     const typeNum = itemQuery.itemType;
     const itemInfo = item_query(uid);
@@ -164,13 +175,13 @@ export const items_init = (uid: number): boolean => {
             btc.num = 3001;
             btc.count = 0;
             const eth = new ETH();
-            eth.num = 3002;
+            eth.num = 4001;
             eth.count = 0;
             const st = new ST();
-            st.num = 3003;
+            st.num = 5001;
             st.count = 0;
             const kt = new KT();
-            kt.num = 3004;
+            kt.num = 6001;
             kt.count = 0;
             const itemsTmp = [mine1, mine2, mine3, hoe1, hoe2, hoe3, btc, eth, st, kt];
             const items: Item[] = [];
@@ -217,10 +228,20 @@ export const get_mine_total = (uid:number):number => {
 
 // 随机(根据配置)获取矿山类型
 export const get_mine_type = ():number => {
-    return 1001; // test
+    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
+    const pid = 100401; // 配置中按权重获取矿山类型的主键
+    const v = [];
+    doAward(pid, randomMgr, v);
+    // console.log('doAward v:!!!!!!!!!!!!!', v);
+    
+    return v[0][0];
 };
 
 // 根据配置返回指定类型矿山的血量
 export const get_mine_hp = (mineType: number): number => {
-    return 100; // test
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(MEMORY_NAME, MineHpCfg._$info.name, dbMgr);
+    console.log('doAward v:!!!!!!!!!!!!!', bucket.get(mineType)[0]);
+
+    return bucket.get(mineType)[0].hp;
 };

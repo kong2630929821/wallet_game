@@ -49,11 +49,8 @@ enum Item {
 
 //挖矿返回结果
 struct MiningResponse{
-    isAward: bool, //矿山是否挖破
-    isEmpty:bool, //矿山数量
     leftHp: u32, //矿山剩余血量
-    award: Item, //奖励物品
-    newMine: Mine //矿山数量为0时 赠送矿山
+    award: Option<Item>, //奖励物品
 }
 
 /**
