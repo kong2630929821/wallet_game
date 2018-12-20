@@ -3,14 +3,14 @@
  */
 import { ItemQuery } from '../rpc/itemQuery.s';
 
-import { BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
+import { AwardMap, BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
 import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { MineHpCfg } from '../../xlsx/item.s';
-import { MEMORY_NAME, WARE_NAME } from '../data/constant';
+import { BTC_TYPE, DIAMOND_HOE_TYPE, ETH_TYPE, GOLD_HOE_TYPE, HUGE_MINE_TYPE, IRON_HOE_TYPE, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, SMALL_MINE_TYPE, ST_TYPE, WARE_NAME } from '../data/constant';
 import { get_item, item_query } from '../rpc/user_item.r';
 import { doAward } from './award.t';
 import { RandomSeedMgr } from './randomSeedMgr';
@@ -159,29 +159,29 @@ export const items_init = (uid: number): boolean => {
             const initCount = 0;
             const hps = [];
             const mine1 = new Mine();
-            mine_constractor(mine1, 1001, initCount, hps);
+            mine_constractor(mine1, SMALL_MINE_TYPE, initCount, hps);
             const mine2 = new Mine();
-            mine_constractor(mine2, 1002, initCount, hps);
+            mine_constractor(mine2, MIDDLE_MINE_TYPE, initCount, hps);
             const mine3 = new Mine();
-            mine_constractor(mine3, 1003, initCount, hps);
+            mine_constractor(mine3, HUGE_MINE_TYPE, initCount, hps);
             const hoe1 = new Hoe();
-            hoe_constractor(hoe1, 2001, initCount);
+            hoe_constractor(hoe1, IRON_HOE_TYPE, initCount);
             const hoe2 = new Hoe();
-            hoe_constractor(hoe2, 2002, initCount);
+            hoe_constractor(hoe2, GOLD_HOE_TYPE, initCount);
             const hoe3 = new Hoe();
-            hoe_constractor(hoe3, 2003, initCount);
+            hoe_constractor(hoe3, DIAMOND_HOE_TYPE, initCount);
             // 账号余额初始化值应从钱包接口获取，暂时为0
             const btc = new BTC();
-            btc.num = 3001;
+            btc.num = BTC_TYPE;
             btc.count = 0;
             const eth = new ETH();
-            eth.num = 4001;
+            eth.num = ETH_TYPE;
             eth.count = 0;
             const st = new ST();
-            st.num = 5001;
+            st.num = ST_TYPE;
             st.count = 0;
             const kt = new KT();
-            kt.num = 6001;
+            kt.num = KT_TYPE;
             kt.count = 0;
             const itemsTmp = [mine1, mine2, mine3, hoe1, hoe2, hoe3, btc, eth, st, kt];
             const items: Item[] = [];
@@ -244,4 +244,31 @@ export const get_mine_hp = (mineType: number): number => {
     console.log('doAward v:!!!!!!!!!!!!!', bucket.get(mineType)[0]);
 
     return bucket.get(mineType)[0].hp;
+};
+
+// 获取用户获奖id列表
+export const get_award_ids = (uid: number): AwardMap => {
+    console.log('get_award_ids in !!!!!!!!!!!!!!!', uid);
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
+    const awardMap = bucket.get<number, [AwardMap]>(uid)[0];
+    console.log('dawardMap:!!!!!!!!!!!!!', bucket.get(uid)[0]);
+    if (!awardMap) {
+        const blankAwardMap = new AwardMap();
+        blankAwardMap.uid = uid;
+        blankAwardMap.awards = [];
+        console.log('null awardMap in !!!!!!!!!!!!!!!', blankAwardMap);
+
+        return blankAwardMap;
+    } else {
+        return awardMap;
+    }
+};
+
+// 获取1970年1月1日距今的时间(单位：天)
+export const get_today  = ():number => {
+    const timestamps = new Date().getTime();
+    console.log('timestamps !!!!!!!!!!!!!!!', timestamps);
+
+    return Math.round(timestamps / (1000 * 60 * 60 * 24));
 };

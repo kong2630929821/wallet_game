@@ -4,15 +4,15 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
+import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
-import { Test as Test2 } from '../../../server/rpc/test.s';
+import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, get_item, item_query } from '../../../server/rpc/user_item.p';
+import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { clientRpcFunc } from '../net/init';
 
@@ -88,9 +88,34 @@ export const mining_test = () => {
     });
 };
 
+// 添加矿山
 export const test_add_mine = () => {
     const uid = 9;
     clientRpcFunc(add_mine, uid, (r:Mine) => {
+        console.log(r);
+    });
+};
+
+// 锄头模拟
+export const test_hits = () => {
+    const hoeType = 2002;
+    clientRpcFunc(hit_test, hoeType, (r:Hits) => {
+        console.log(r);
+    });
+};
+
+// 奖励查询
+export const award_query_test = () => {
+    const uid = 9;
+    clientRpcFunc(award_query, uid, (r:AwardList) => {
+        console.log(r);
+    });
+};
+
+// 奖励查询
+export const today_test = () => {
+    const uid = 9;
+    clientRpcFunc(get_todayMineNum, uid, (r:TodayMineNum) => {
         console.log(r);
     });
 };
@@ -128,6 +153,18 @@ const props = {
         {
             name: '添加矿山',
             func: () => { test_add_mine(); }
+        },
+        {
+            name: '锄头模拟',
+            func: () => { test_hits(); }
+        },
+        {
+            name: '奖励查询',
+            func: () => { award_query_test(); }
+        },
+        {
+            name: '奖励查询1',
+            func: () => { today_test(); }
         }
     ] // 按钮数组
 };
