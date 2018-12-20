@@ -3,15 +3,16 @@
  * 连接钱包服务器封装
  */
 import { WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
-import { KJUR } from './sample-ecdsa';
 
 // 签名
 export const sign = (msg: string, privateKey: string) => {
-    const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
-    sig.init({ d: privateKey, curve: 'secp256k1' });
-    sig.updateString(msg);
+    // const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
+    // sig.init({ d: privateKey, curve: 'secp256k1' });
+    // sig.updateString(msg);
 
-    return sig.sign();
+    // return sig.sign();
+
+    return 'testsign';
 };
 
 // json转字符串为uri并按照字典排序

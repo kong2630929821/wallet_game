@@ -25,5 +25,5 @@ export const get_index_id = (index: string) => {
 };
 
 export const getcdkey = (uid: number | string, code: string) => {
-    return uid + code;
+    return `${uid}:${code}`;
 };

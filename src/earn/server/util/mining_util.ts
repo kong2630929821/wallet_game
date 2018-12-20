@@ -13,7 +13,6 @@ import { RandomSeedMgr } from './randomSeedMgr';
 export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
     console.log('doMininng in!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
-    console.log('dbMgr in!!!!!!!!!!!!');
     const cfgs: WeightMiningCfg[] = [];
     const weights = [];
     let maxWeights = 0;

@@ -4,7 +4,7 @@
 import { randomInt } from '../../../pi/util/math';
 import { Hoe, Item, Items, Mine, MineSeed } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
-import { add_itemCount, items_init } from '../util/item_util.r';
+import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { ItemQuery, Seed } from './itemQuery.s';
@@ -31,10 +31,12 @@ export const db_test = (uid: number): Items => {
 
 // #[rpc=rpcServer]
 export const item_add = (count: number): Item => {
+    console.log('add test in!!!!!!!!!!');
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
+    itemQuery.uid = 9;
     itemQuery.enumType = 1;
-    itemQuery.itemType = 1003;
+    itemQuery.itemType = get_mine_type();
+    console.log('itemType:!!!!!!!!!', itemQuery.itemType);
 
     return add_itemCount(itemQuery, count);
 };

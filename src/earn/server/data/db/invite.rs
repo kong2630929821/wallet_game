@@ -1,3 +1,4 @@
+#[enum=Item]
 #[path=./]
 use item.s::{Item};
 
