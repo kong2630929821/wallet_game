@@ -61,6 +61,7 @@ export class Turntable extends Widget {
             $turn.style.transform = 'none';
         }, 6000);
     }
+    
     /**
      * 更改宝箱类型
      * @param num 票种
