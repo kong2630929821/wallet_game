@@ -18,3 +18,4 @@ node_modules
 /package-lock.json
 /src/app
 /src/earn/xlsx/*.rs
+/src/earn/client/app/xls/*.rs
