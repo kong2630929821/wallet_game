@@ -55,13 +55,13 @@ export class Turntable extends Widget {
         $turn.style.transform = 'rotate(3600deg)';
         this.paint();
         setTimeout(() => {
-            popNew('earn-client-app-view-component-lotteryModal',{type:2});
+            popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
             this.props.isTurn = false;
             $turn.style.transition = 'none';
             $turn.style.transform = 'none';
         }, 6000);
     }
-    
+
     /**
      * 更改宝箱类型
      * @param num 票种
@@ -79,7 +79,7 @@ export class Turntable extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-openBox-openBoxHistory', { type: 2 });
+        popNew('earn-client-app-view-myProduct-myProduct', { type: 1 });
     }
 
     /**

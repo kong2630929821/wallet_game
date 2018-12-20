@@ -85,7 +85,7 @@ export class OpenBox extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-openBox-openBoxHistory',{type:2});
+        popNew('earn-client-app-view-myProduct-myProduct',{type:2});
     }
 
     /**

@@ -110,7 +110,12 @@ export class PlayHome extends Widget {
             case 4:
                 popNew('earn-client-app-view-ticketCenter-ticketCenter');//奖券中心
                 break;
-
+            case 5:
+                popNew('earn-client-app-view-exchange-exchange');//奖券兑换
+                break;
+            case 6:
+                popNew('earn-client-app-view-myProduct-myProduct');//我的物品
+                break;
             default:
 
                 break;

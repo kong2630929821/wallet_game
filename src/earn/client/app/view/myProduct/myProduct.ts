@@ -1,5 +1,5 @@
 /**
- * 开宝箱 --中奖记录
+ * 我的物品、中奖记录
  */
 
 
@@ -12,7 +12,7 @@ interface Props{
 
 
 
-export class TicketCenter extends Widget {
+export class MyProduct extends Widget {
     public ok: () => void;
 
     public props:Props ={

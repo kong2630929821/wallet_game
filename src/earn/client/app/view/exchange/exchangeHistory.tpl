@@ -1,14 +1,9 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"中将记录","zh_Hant":"中獎記錄","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"兑换记录","zh_Hant":"兌換記錄","en":""} }}
     <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col">
         {{if it.history.length !==0}}
-        {{% 顶部提示}}
-        <div w-class="tips">
-            <widget w-tag="pi-ui-lang">{"zh_Hans":"部分卡券及实物奖品已放入我的背包，等待兑换","zh_Hant":"部分卡券及實物獎品已放入我的背包，等待兌換","en":""}</widget>
-        </div>
-
 
         {{% 列表}}
 
