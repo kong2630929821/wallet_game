@@ -75,9 +75,9 @@ export class PlayHome extends Widget {
                 title:'我的物品',
                 desc:'兑换和中奖的物品'
             }],
-            copperHoe:0,
-            silverHoe:0,
-            goldHoe:0,
+            copperHoe:getHoeCount(HoeType.CopperHoe),
+            silverHoe:getHoeCount(HoeType.SilverHoe),
+            goldHoe:getHoeCount(HoeType.GoldHoe),
             hoeType:HoeType
         };
 

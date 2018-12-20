@@ -26,7 +26,13 @@
         <div w-class="stone-area">
             {{for index,item of it.curStones}}
             <div on-down="stoneClick(e,{{item.type}},{{item.index}})" w-class="stone-item" style="{{ it.stoneStyle[index] }}">
-                <earn-client-app-view-activity-components-stone>{ stoneType:{{item.type}},hp:{{item.hp}},selected:{{ item.type === it.stoneType && item.index === it.stoneIndex}} }</earn-client-app-view-activity-components-stone>
+                <earn-client-app-view-activity-components-stone>{ 
+                    stoneType:{{item.type}},
+                    hp:{{item.hp}},
+                    selected:{{ item.type === it.stoneType && item.index === it.stoneIndex}},
+                    lossHp:{{ it.lossHp }},
+                    beginMining:{{ it.countDownStart }}
+                }</earn-client-app-view-activity-components-stone>
             </div>
             {{end}}
         </div>

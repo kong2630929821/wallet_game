@@ -4,10 +4,11 @@
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item } from '../../../../../server/data/db/item.s';
-import { beginMining } from '../../../net/rpc';
+import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
+import { readyMining, startMining } from '../../../net/rpc';
 import { register } from '../../../store/memstore';
 import { hoeUseDuration, stonesMax } from '../../../utils/constants';
-import { getHoeCount, randomStones } from '../../../utils/util';
+import { calcMiningArray, getHoeCount, randomStones } from '../../../utils/util';
 import { HoeType } from '../../../xls/hoeType.s';
 
 // ================================ 导出
@@ -18,6 +19,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class DiggingStonesHome extends Widget {
     public ok:() => void;
     public props:any;
+    public hits:number[] = [];
     public create() {
         super.create();
         this.init();
@@ -50,8 +52,10 @@ export class DiggingStonesHome extends Widget {
             countDownTimer:0,
             diggingTips:'请选择锄头',
             curStones,          // 当前显示的矿山
-            leftStones          // 剩余的矿山
+            leftStones,          // 剩余的矿山
+            lossHp:1            // 当前掉血数
         };
+
     }
 
     public closeClick() {
@@ -65,7 +69,7 @@ export class DiggingStonesHome extends Widget {
     }
 
     public stoneClick(e:any,itype:number,index:number) {
-        console.log(index,itype);
+        // console.log(index,itype);
         // 没有选中锄头
         if (this.props.hoeSelected < 0) return;
 
@@ -83,7 +87,18 @@ export class DiggingStonesHome extends Widget {
         if (this.props.stoneIndex !== index || this.props.stoneType !== itype) return;
         // 准备开始挖矿
         if (!this.props.countDownStart) {
-            beginMining(this.props.hoeSelected);
+            readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
+                if (this.props.hoeSelected === HoeType.CopperHoe) {
+                    this.props.copperHoe--;
+                } else if (this.props.hoeSelected === HoeType.SilverHoe) {
+                    this.props.silverHoe--;
+                } else {
+                    this.props.goldHoe--;
+                }
+                const hits = calcMiningArray(this.props.hoeSelected,r.seed);
+                this.hits = hits;
+                this.paint();
+            });
             this.props.countDownStart = true;
             this.props.diggingTips = `倒计时 ${this.props.countDown} S`;
             this.countDown();
@@ -93,7 +108,21 @@ export class DiggingStonesHome extends Widget {
         }
 
         this.props.diggingCount++;
+        this.bloodLoss();
+
         this.paint();
+    }
+
+    // 矿山掉血
+    public bloodLoss() {
+        for (let i = 0; i < this.props.curStones.length; i++) {
+            const stone = this.props.curStones[i];
+            if (stone.type === this.props.stoneType && stone.index === this.props.stoneIndex) {
+                this.props.lossHp = this.hits[this.props.diggingCount - 1];
+                stone.hp -= this.props.lossHp;
+                break;
+            }
+        }
     }
 
     public countDown() {
@@ -102,6 +131,7 @@ export class DiggingStonesHome extends Widget {
             this.props.countDown--;
             this.props.diggingTips = `倒计时 ${this.props.countDown} S`;
             if (!this.props.countDown) {
+                startMining(this.props.stoneType,this.props.stoneIndex,this.props.diggingCount);
                 this.props.stoneIndex = -1;
                 this.props.stoneType = -1;
                 this.props.countDownStart = false;
@@ -109,6 +139,7 @@ export class DiggingStonesHome extends Widget {
                 this.props.hoeSelected = -1;
                 this.props.diggingTips = '请选择锄头';
                 console.log(`挖了${this.props.diggingCount}次`);
+                
                 this.props.diggingCount = 0;
                 clearTimeout(this.props.countDownTimer);
             }
@@ -116,12 +147,17 @@ export class DiggingStonesHome extends Widget {
         },1000);
     }
 
+    public updateHoe() {
+        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
+        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.paint();
+    }
 }
 
 // ===================================================== 立即执行
 
 register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.init();
-    w && w.paint();
+    w && w.updateHoe();
 });

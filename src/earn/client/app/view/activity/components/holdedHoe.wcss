@@ -1,7 +1,7 @@
 .box{
     width:90px;
     height:90px;
-    background:rgba(255,255,255,1);
+    background-color:rgba(255,255,255,1);
     border-radius:18px;
     border:2px solid rgba(204,204,204,1);
     display: flex;
