@@ -22,7 +22,7 @@
 .mine-card{
     width:750px;
     height:650px;
-    background-image: url(../../res/image/digging_mines_bg1.png);
+    background-image: url(../../res/image/mining_bg.png);
     position: relative;
 }
 .holded-hoes{

@@ -75,9 +75,9 @@ export class PlayHome extends Widget {
                 title:'我的物品',
                 desc:'兑换和中奖的物品'
             }],
-            copperHoe:getHoeCount(HoeType.CopperHoe),
-            silverHoe:getHoeCount(HoeType.SilverHoe),
+            ironHoe:getHoeCount(HoeType.IronHoe),
             goldHoe:getHoeCount(HoeType.GoldHoe),
+            diamondHoe:getHoeCount(HoeType.DiamondHoe),
             hoeType:HoeType
         };
 
@@ -91,7 +91,7 @@ export class PlayHome extends Widget {
     }
 
     public miningClick() {
-        popNew('earn-client-app-view-activity-diggingStones-home');
+        popNew('earn-client-app-view-activity-mining-home');
     }
 
     /**
@@ -143,13 +143,13 @@ export class PlayHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
+        popNew('app-view-earn-client-view-activity-mining-miningRule');
     }
 
     public updateHoe() {
-        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
-        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
         this.paint();
     }
 }

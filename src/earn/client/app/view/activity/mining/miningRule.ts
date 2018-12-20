@@ -3,7 +3,7 @@
  */
 import { Widget } from '../../../../../../pi/widget/widget';
 
-export class DiggingRule extends Widget {
+export class MiningRule extends Widget {
     public ok:() => void;
     public props:any;
     public create() {

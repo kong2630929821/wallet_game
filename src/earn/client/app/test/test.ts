@@ -13,7 +13,6 @@ import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, get_item, item_query } from '../../../server/rpc/user_item.p';
-import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {

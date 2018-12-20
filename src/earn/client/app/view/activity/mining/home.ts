@@ -16,7 +16,7 @@ import { HoeType } from '../../../xls/hoeType.s';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-export class DiggingminesHome extends Widget {
+export class MiningHome extends Widget {
     public ok:() => void;
     public props:any;
     public hits:number[] = [];
@@ -39,18 +39,18 @@ export class DiggingminesHome extends Widget {
         ];
         this.props = {
             mineStyle,
-            copperHoe:getHoeCount(HoeType.CopperHoe),     // 铜锄头数量
-            silverHoe:getHoeCount(HoeType.SilverHoe),     // 银锄头数量
-            goldHoe:getHoeCount(HoeType.GoldHoe),       // 金锄头数量
+            ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
+            goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
+            diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
             hoeType:HoeType,   // 锄头类型
             hoeSelected:-1,    // 选中的锄头
             mineType:-1,       // 选中的矿山类型 
             mineIndex:-1,     // 选中的矿山index
             countDownStart:false,  // 
-            diggingCount:0,
+            miningCount:0,
             countDown:hoeUseDuration,
             countDownTimer:0,
-            diggingTips:'请选择锄头',
+            miningTips:'请选择锄头',
             curmines,          // 当前显示的矿山
             leftmines,          // 剩余的矿山
             lossHp:1            // 当前掉血数
@@ -64,7 +64,7 @@ export class DiggingminesHome extends Widget {
     public selectHoeClick(e:any,hopeType:HoeType) {
         console.log('select index',hopeType);
         this.props.hoeSelected = hopeType;
-        this.props.diggingTips = '请选择矿山';
+        this.props.miningTips = '请选择矿山';
         this.paint();
     }
 
@@ -77,7 +77,7 @@ export class DiggingminesHome extends Widget {
         if ((this.props.mineIndex !== index || this.props.mineType !== itype) && !this.props.countDownStart) {
             this.props.mineIndex = index;
             this.props.mineType = itype;
-            this.props.diggingTips = '准备开始挖矿';
+            this.props.miningTips = '准备开始挖矿';
             this.paint();
 
             return;
@@ -88,26 +88,26 @@ export class DiggingminesHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                if (this.props.hoeSelected === HoeType.CopperHoe) {
-                    this.props.copperHoe--;
-                } else if (this.props.hoeSelected === HoeType.SilverHoe) {
-                    this.props.silverHoe--;
-                } else {
+                if (this.props.hoeSelected === HoeType.IronHoe) {
+                    this.props.ironHoe--;
+                } else if (this.props.hoeSelected === HoeType.GoldHoe) {
                     this.props.goldHoe--;
+                } else {
+                    this.props.diamondHoe--;
                 }
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
                 this.paint();
             });
             this.props.countDownStart = true;
-            this.props.diggingTips = `倒计时 ${this.props.countDown} S`;
+            this.props.miningTips = `倒计时 ${this.props.countDown} S`;
             this.countDown();
             this.paint();
 
             return;
         }
 
-        this.props.diggingCount++;
+        this.props.miningCount++;
         this.bloodLoss();
 
         this.paint();
@@ -118,7 +118,7 @@ export class DiggingminesHome extends Widget {
         for (let i = 0; i < this.props.curmines.length; i++) {
             const mine = this.props.curmines[i];
             if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
-                this.props.lossHp = this.hits[this.props.diggingCount - 1];
+                this.props.lossHp = this.hits[this.props.miningCount - 1];
                 mine.hp -= this.props.lossHp;
                 break;
             }
@@ -129,18 +129,18 @@ export class DiggingminesHome extends Widget {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
-            this.props.diggingTips = `倒计时 ${this.props.countDown} S`;
+            this.props.miningTips = `倒计时 ${this.props.countDown} S`;
             if (!this.props.countDown) {
-                startMining(this.props.mineType,this.props.mineIndex,this.props.diggingCount);
+                startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount);
                 this.props.mineIndex = -1;
                 this.props.mineType = -1;
                 this.props.countDownStart = false;
                 this.props.countDown = hoeUseDuration;
                 this.props.hoeSelected = -1;
-                this.props.diggingTips = '请选择锄头';
-                console.log(`挖了${this.props.diggingCount}次`);
+                this.props.miningTips = '请选择锄头';
+                console.log(`挖了${this.props.miningCount}次`);
                 
-                this.props.diggingCount = 0;
+                this.props.miningCount = 0;
                 clearTimeout(this.props.countDownTimer);
             }
             this.paint();
@@ -148,9 +148,9 @@ export class DiggingminesHome extends Widget {
     }
 
     public updateHoe() {
-        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
-        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
         this.paint();
     }
 }

@@ -9,7 +9,7 @@
     margin:67px 20px;
     background-color: #fff;
     flex: 1 0 0;
-    background-image: url(../../../res/image/digging_mines_bg.png);
+    background-image: url(../../../res/image/mining_bg.png);
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 12px;

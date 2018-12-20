@@ -3,6 +3,7 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
+import { MineHpCfg } from '../../../xlsx/item.s';
 import { WeightMiningCfg } from '../../../xlsx/miningCfg.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
@@ -127,5 +128,12 @@ export const calcMiningArray = (hoeType:HoeType,seed: number) => {
  * @param mineType 矿山类型
  */
 export const getMiningMaxHp = (mineType:MineType) => {
+    const cfgs = getMap(MineHpCfg._$info.name);
+    for (const [k,v] of cfgs) {
+        if (v.id === mineType) {
+            return v.hp;
+        }
+    }
+
     return 0;
 };

@@ -2,18 +2,18 @@
     <div w-class="body">
         <div w-class="choose-tip">选择锄头</div>
         <div w-class="holded-hoes" >
-            <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.CopperHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.copperHoe }},hoeType:{{ it.hoeType.CopperHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
-            </div>
-            <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.SilverHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.silverHoe }},hoeType:{{ it.hoeType.SilverHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+            <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
+                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
             <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.GoldHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+                <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+            </div>
+            <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.DiamondHoe}})">
+                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
         </div>
         <div w-class="digging-num">今日已挖矿山 0/9 座</div>
-        <div w-class="digging-tips">{{it.diggingTips}}</div>
+        <div w-class="digging-tips">{{it.miningTips}}</div>
         <div w-class="award-container">
             <div w-class="award-item">
                 <img src="../../../res/image/KT.png" w-class="award-icon"/>
