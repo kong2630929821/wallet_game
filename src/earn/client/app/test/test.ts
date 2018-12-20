@@ -4,16 +4,30 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
+<<<<<<< HEAD
 import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
+=======
+import { Invite } from '../../../server/data/db/invite.s';
+import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
+>>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
 import { UserInfo } from '../../../server/data/db/user.s';
+import { cdkey } from '../../../server/rpc/invite.p';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
+<<<<<<< HEAD
 import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
 import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
+=======
+import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
+import { Test as Test2 } from '../../../server/rpc/test.s';
+import { login as loginUser } from '../../../server/rpc/user.p';
+import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
+import { get_item, item_query } from '../../../server/rpc/user_item.p';
+>>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -26,6 +40,13 @@ export const login = () => {
     userType.value = walletLoginReq;
 
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
+        console.log(r);
+    });
+};
+
+export const invite = () => {
+    const code = 'QOTJZB';
+    clientRpcFunc(cdkey, code, (r: Invite) => {
         console.log(r);
     });
 };
@@ -68,7 +89,7 @@ export const get_seed = () => {
     itemQuery.uid = 9;
     itemQuery.enumType = 2;
     itemQuery.itemType = 2001;
-    clientRpcFunc(mining, itemQuery, (r:Seed) => {
+    clientRpcFunc(mining, itemQuery, (r: Seed) => {
         console.log(r);
     });
 };
@@ -83,7 +104,7 @@ export const mining_test = () => {
     itemQuery.itemType = 1001;
     miningResult.itemQuery = itemQuery;
     miningResult.mineNum = 0;
-    clientRpcFunc(mining_result, miningResult, (r:MiningResponse) => {
+    clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
 };
@@ -91,7 +112,7 @@ export const mining_test = () => {
 // 添加矿山
 export const test_add_mine = () => {
     const uid = 9;
-    clientRpcFunc(add_mine, uid, (r:Mine) => {
+    clientRpcFunc(add_mine, uid, (r: Mine) => {
         console.log(r);
     });
 };
@@ -125,6 +146,10 @@ const props = {
         {
             name: '登录',
             func: () => { login(); }
+        },
+        {
+            name: '兑换奖励',
+            func: () => { invite(); }
         },
         {
             name: '奖励方法',
