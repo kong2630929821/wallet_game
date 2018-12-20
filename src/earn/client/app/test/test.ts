@@ -4,15 +4,15 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-import { Hoe, Item, Items, Mine } from '../../../server/data/db/item.s';
+import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { ItemQuery } from '../../../server/rpc/itemQuery.s';
-import { mining } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
+import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
+import { mining, mining_result } from '../../../server/rpc/mining.p';
+import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { get_item } from '../../../server/rpc/user_item.p';
+import { add_mine, get_item, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { clientRpcFunc } from '../net/init';
 
@@ -31,7 +31,7 @@ export const login = () => {
 };
 
 export const get_items = () => {
-    const uid = 7;
+    const uid = 9;
     clientRpcFunc(item_query, uid, (r: Items) => {
         console.log(r);
     });
@@ -46,7 +46,7 @@ export const award = () => {
 // 获取指定用户指定类型物品
 export const item_test1 = () => {
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
+    itemQuery.uid = 9;
     itemQuery.enumType = 1;
     itemQuery.itemType = 1001;
     clientRpcFunc(get_item, itemQuery, (r: Item) => {
@@ -56,27 +56,29 @@ export const item_test1 = () => {
 
 // 给指定用户添加指定类型物品
 export const item_test2 = () => {
-    const count = 3;
+    const count = 1;
     clientRpcFunc(item_add, count, (r: Item) => {
         console.log(r);
     });
 };
 
+// 获取挖矿随机种子
 export const get_seed = () => {
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
+    itemQuery.uid = 9;
     itemQuery.enumType = 2;
-    itemQuery.itemType = 2003;
+    itemQuery.itemType = 2001;
     clientRpcFunc(mining, itemQuery, (r:Seed) => {
         console.log(r);
     });
 };
 
+// 挖矿测试
 export const mining_test = () => {
     const miningResult = new MiningResult();
-    miningResult.hit = 20;
+    miningResult.hit = 30;
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
+    itemQuery.uid = 9;
     itemQuery.enumType = 1;
     itemQuery.itemType = 1001;
     miningResult.itemQuery = itemQuery;
@@ -86,10 +88,9 @@ export const mining_test = () => {
     });
 };
 
-export const hit = () => {
-    console.log('function in !!!!!!!!!!!');
-    const pid = 200106;
-    clientRpcFunc(hit_test, pid, (r:Seed) => {
+export const test_add_mine = () => {
+    const uid = 9;
+    clientRpcFunc(add_mine, uid, (r:Mine) => {
         console.log(r);
     });
 };
@@ -123,6 +124,10 @@ const props = {
         {
             name: '挖矿',
             func: () => { mining_test(); }
+        },
+        {
+            name: '添加矿山',
+            func: () => { test_add_mine(); }
         }
     ] // 按钮数组
 };
