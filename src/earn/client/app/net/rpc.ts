@@ -11,7 +11,7 @@ import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/use
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
-import { StoneType } from '../xls/stoneType.s';
+import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
 
 /**
@@ -62,15 +62,15 @@ export const readyMining = (hoeType:HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (stoneType:StoneType,stoneIndex:number,diggingCount:number) => {
+export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
     return new Promise(resolve => {
         const result = new MiningResult();
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.MINE;
-        itemQuery.itemType = stoneType;
+        itemQuery.itemType = mineType;
         result.itemQuery = itemQuery;
-        result.mineNum = stoneIndex;
+        result.mineNum = mineIndex;
         result.hit = diggingCount;
         console.log('startMining result = ',result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {

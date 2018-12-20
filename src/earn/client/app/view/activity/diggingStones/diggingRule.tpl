@@ -47,22 +47,22 @@
             </div>
             <div w-class="title">矿山</div>
             <div>
-                <div w-class="stone-type-title">矿山分类</div>
-                <div w-class="stone-type">
-                    <div w-class="stone-type-item">
-                        <img src="../../../res/image/small_stone.png" style="width:168px;height:122px;"/>
-                        <div w-class="stone-name">小矿山</div>
+                <div w-class="mine-type-title">矿山分类</div>
+                <div w-class="mine-type">
+                    <div w-class="mine-type-item">
+                        <img src="../../../res/image/small_mine.png" style="width:168px;height:122px;"/>
+                        <div w-class="mine-name">小矿山</div>
                     </div>
-                    <div w-class="stone-type-item" style="margin:0 20px;">
-                        <img src="../../../res/image/mid_stone.png" style="width:220px;height:161px;"/>
-                        <div w-class="stone-name">中矿山</div>
+                    <div w-class="mine-type-item" style="margin:0 20px;">
+                        <img src="../../../res/image/mid_mine.png" style="width:220px;height:161px;"/>
+                        <div w-class="mine-name">中矿山</div>
                     </div>
-                    <div w-class="stone-type-item">
-                        <img src="../../../res/image/big_stone.png" style="width:250px;height:203px;"/>
-                        <div w-class="stone-name">大矿山</div>
+                    <div w-class="mine-type-item">
+                        <img src="../../../res/image/big_mine.png" style="width:250px;height:203px;"/>
+                        <div w-class="mine-name">大矿山</div>
                     </div>
                 </div>
-                <div w-class="stone-desc">每日登陆都会赠送矿山，矿场最多储备9座矿山，消耗掉矿山会继续赠送。</div>
+                <div w-class="mine-desc">每日登陆都会赠送矿山，矿场最多储备9座矿山，消耗掉矿山会继续赠送。</div>
             </div>
         </div>
     </div>

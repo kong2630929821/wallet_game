@@ -9,7 +9,7 @@
     margin:67px 20px;
     background-color: #fff;
     flex: 1 0 0;
-    background-image: url(../../../res/image/digging_stones_bg.png);
+    background-image: url(../../../res/image/digging_mines_bg.png);
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 12px;
@@ -61,10 +61,10 @@
     width: 40px;
     height: 40px;
 }
-.stone-area{
+.mine-area{
     position: relative;
 }
-.stone-item{
+.mine-item{
     position: absolute;
 }
 .box1{

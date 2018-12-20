@@ -23,16 +23,16 @@
             <div w-class="award-item"><img src="../../../res/image/ETH.png" w-class="award-icon"/></div>
             <div w-class="award-item"><img src="../../../res/image/BTC.png" w-class="award-icon"/></div>
         </div>
-        <div w-class="stone-area">
-            {{for index,item of it.curStones}}
-            <div on-down="stoneClick(e,{{item.type}},{{item.index}})" w-class="stone-item" style="{{ it.stoneStyle[index] }}">
-                <earn-client-app-view-activity-components-stone>{ 
-                    stoneType:{{item.type}},
+        <div w-class="mine-area">
+            {{for index,item of it.curmines}}
+            <div on-down="mineClick(e,{{item.type}},{{item.index}})" w-class="mine-item" style="{{ it.mineStyle[index] }}">
+                <earn-client-app-view-activity-components-mine>{ 
+                    mineType:{{item.type}},
                     hp:{{item.hp}},
-                    selected:{{ item.type === it.stoneType && item.index === it.stoneIndex}},
+                    selected:{{ item.type === it.mineType && item.index === it.mineIndex}},
                     lossHp:{{ it.lossHp }},
                     beginMining:{{ it.countDownStart }}
-                }</earn-client-app-view-activity-components-stone>
+                }</earn-client-app-view-activity-components-mine>
             </div>
             {{end}}
         </div>
@@ -42,7 +42,7 @@
                 <img src="../../../res/image1/gift.png"/>
             </div>
         </div>
-        <img src="../../../res/image/close_stone.png" w-class="close" on-tap="closeClick"/>
+        <img src="../../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
     </div>
 
 </div>

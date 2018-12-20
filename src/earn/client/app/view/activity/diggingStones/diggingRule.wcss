@@ -86,7 +86,7 @@
     font-size:28px;
     color:rgba(69,126,239,1);
 }
-.stone-type-title{
+.mine-type-title{
     font-size:32px;
     font-weight:500;
     color:rgba(34,34,34,1);
@@ -94,22 +94,22 @@
     margin-top: 100px;
     font-family:"PingFangSC-Medium";
 }
-.stone-type{
+.mine-type{
     display: flex;
     align-items: flex-end;
 }
-.stone-type-item{
+.mine-type-item{
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.stone-name{
+.mine-name{
     font-size:28px;
     font-weight:400;
     color:rgba(136,136,136,1);
     line-height:50px;
 }
-.stone-desc{
+.mine-desc{
     font-size:28px;
     color:rgba(136,136,136,1);
     line-height:50px;

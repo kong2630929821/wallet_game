@@ -1,38 +1,34 @@
 /**
- * stone
+ * mine
  */
 import { getRealNode } from '../../../../../../pi/widget/painter';
 import { Widget } from '../../../../../../pi/widget/widget';
-import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { bigStoneHpMax, midStoneHpMax, smallStoneHpMax } from '../../../utils/constants';
-import { calcMiningArray } from '../../../utils/util';
-import { HoeType } from '../../../xls/hoeType.s';
-import { StoneType } from '../../../xls/stoneType.s';
+import { getMiningMaxHp } from '../../../utils/util';
+import { MineType } from '../../../xls/mineType.s';
 
 interface Props {
-    stoneType:StoneType;
+    mineType:MineType;
     hp:number;
     selected:boolean;
     lossHp:number;
     beginMining:boolean;
 }
-export class Stone extends Widget {
+export class Mine extends Widget {
     public props:any;
     public $parent:any;
     public $imgContainer:any;
     public setProps(props:Props,oldProps:Props) {
-        // console.log('Stone ',props);
         let imgUrl = '../../../res/image/';
         let hpMax = 0;
-        if (props.stoneType === StoneType.SmallStone) {
-            imgUrl = props.selected ? `${imgUrl}small_stone_active.png` :`${imgUrl}small_stone.png`;
-            hpMax = smallStoneHpMax;
-        } else if (props.stoneType === StoneType.MidStone) {
-            imgUrl = props.selected ? `${imgUrl}mid_stone_active.png` : `${imgUrl}mid_stone.png`;
-            hpMax = midStoneHpMax;
+        if (props.mineType === MineType.SmallMine) {
+            imgUrl = props.selected ? `${imgUrl}small_mine_active.png` :`${imgUrl}small_mine.png`;
+            hpMax = getMiningMaxHp(MineType.SmallMine);
+        } else if (props.mineType === MineType.MidMine) {
+            imgUrl = props.selected ? `${imgUrl}mid_mine_active.png` : `${imgUrl}mid_mine.png`;
+            hpMax = getMiningMaxHp(MineType.MidMine);
         } else {
-            imgUrl = props.selected ? `${imgUrl}big_stone_active.png` : `${imgUrl}big_stone.png`;
-            hpMax = bigStoneHpMax;
+            imgUrl = props.selected ? `${imgUrl}big_mine_active.png` : `${imgUrl}big_mine.png`;
+            hpMax = getMiningMaxHp(MineType.BigMine);
         }
        
         this.props = {
@@ -44,7 +40,7 @@ export class Stone extends Widget {
 
     }
 
-    public stoneClick(event:any) {
+    public mineClick(event:any) {
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = `animated rubberBand`;
         setTimeout(() => {

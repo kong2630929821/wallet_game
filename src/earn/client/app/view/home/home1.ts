@@ -90,7 +90,7 @@ export class PlayHome extends Widget {
         console.log(this.props.hoeType);
     }
 
-    public diggingStoneClick() {
+    public miningClick() {
         popNew('earn-client-app-view-activity-diggingStones-home');
     }
 

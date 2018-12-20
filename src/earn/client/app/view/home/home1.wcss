@@ -19,10 +19,10 @@
     height: 341px;
     border-radius: 18px;
 }
-.stone-card{
+.mine-card{
     width:750px;
     height:650px;
-    background-image: url(../../res/image/digging_stones_bg1.png);
+    background-image: url(../../res/image/digging_mines_bg1.png);
     position: relative;
 }
 .holded-hoes{
@@ -49,8 +49,8 @@
     font-size: 24px;
     line-height: 33px;
 }
-.stone{
-    background-image: url(../../res/image/big_stone.png);
+.mine{
+    background-image: url(../../res/image/big_mine.png);
     width: 350px;
     height: 285px;
     position: absolute;
@@ -58,7 +58,7 @@
     bottom: 40px;
     transform: translateX(-50%);
 }
-.holded-stone{
+.holded-mine{
     width:150px;
     height:60px;
     background:linear-gradient(27deg,rgba(243,148,57,1) 0%,rgba(248,188,69,1) 100%);

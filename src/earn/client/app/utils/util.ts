@@ -7,8 +7,8 @@ import { WeightMiningCfg } from '../../../xlsx/miningCfg.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
-import { StoneType } from '../xls/stoneType.s';
-import { bigStoneHpMax, midStoneHpMax, miningMaxHits, smallStoneHpMax } from './constants';
+import { MineType } from '../xls/mineType.s';
+import { miningMaxHits } from './constants';
 
 /**
  * 获取锄头对象
@@ -28,37 +28,35 @@ export const getHoeCount = (hoeType:HoeType) => {
 /**
  * 获取随机显示的矿山列表
  */
-export const randomStones = () => {
+export const randomMines = () => {
     const goods = getStore('goods');
-    const stones = [];
-    const diggingedStones = [];
+    const mines = [];
+    const miningedMines = [];
     for (let i = 0;i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
             for (let j = 0;j < good.value.hps.length;j++) {
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
-                const stone = {
+                const mine = {
                     type:itype,
                     index:j,
                     hp
                 };
-                if (itype === StoneType.SmallStone && hp < smallStoneHpMax) {
-                    diggingedStones.push(stone);
-                } else if (itype === StoneType.MidStone && hp < midStoneHpMax) {
-                    diggingedStones.push(stone);
-                } else if (itype === StoneType.BigStone && hp < bigStoneHpMax) {
-                    diggingedStones.push(stone);
+                if (itype === MineType.SmallMine && hp < getMiningMaxHp(MineType.SmallMine)) {
+                    miningedMines.push(mine);
+                } else if (itype === MineType.MidMine && hp < getMiningMaxHp(MineType.MidMine)) {
+                    miningedMines.push(mine);
+                } else if (itype === MineType.BigMine && hp < getMiningMaxHp(MineType.BigMine)) {
+                    miningedMines.push(mine);
                 } else {
-                    stones.push(stone);
+                    mines.push(mine);
                 }
             }
         }
     }
-    // console.log('randomStones stones= ',stones);
-    // console.log('randomStones diggingedStones= ',diggingedStones);
 
-    return [...shuffle(diggingedStones),...shuffle(stones)];
+    return [...shuffle(miningedMines),...shuffle(mines)];
 };
 
 // 数组乱序
@@ -122,4 +120,12 @@ export const calcMiningArray = (hoeType:HoeType,seed: number) => {
     // console.log(`hopeType = ${hoeType}, hits = `,hits);
 
     return hits;
+};
+
+/**
+ * 获取矿山最大血量
+ * @param mineType 矿山类型
+ */
+export const getMiningMaxHp = (mineType:MineType) => {
+    return 0;
 };
