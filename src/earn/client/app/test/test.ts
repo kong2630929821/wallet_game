@@ -4,17 +4,30 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
+<<<<<<< HEAD
+import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
+=======
 import { Invite } from '../../../server/data/db/invite.s';
 import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
+>>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
+<<<<<<< HEAD
+import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
+import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
+import { login as loginUser } from '../../../server/rpc/user.p';
+import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
+import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
+import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
+=======
 import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { get_item, item_query } from '../../../server/rpc/user_item.p';
+>>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -96,9 +109,34 @@ export const mining_test = () => {
     });
 };
 
+// 添加矿山
 export const test_add_mine = () => {
     const uid = 9;
     clientRpcFunc(add_mine, uid, (r: Mine) => {
+        console.log(r);
+    });
+};
+
+// 锄头模拟
+export const test_hits = () => {
+    const hoeType = 2002;
+    clientRpcFunc(hit_test, hoeType, (r:Hits) => {
+        console.log(r);
+    });
+};
+
+// 奖励查询
+export const award_query_test = () => {
+    const uid = 9;
+    clientRpcFunc(award_query, uid, (r:AwardList) => {
+        console.log(r);
+    });
+};
+
+// 奖励查询
+export const today_test = () => {
+    const uid = 9;
+    clientRpcFunc(get_todayMineNum, uid, (r:TodayMineNum) => {
         console.log(r);
     });
 };
@@ -140,6 +178,18 @@ const props = {
         {
             name: '添加矿山',
             func: () => { test_add_mine(); }
+        },
+        {
+            name: '锄头模拟',
+            func: () => { test_hits(); }
+        },
+        {
+            name: '奖励查询',
+            func: () => { award_query_test(); }
+        },
+        {
+            name: '奖励查询1',
+            func: () => { today_test(); }
         }
     ] // 按钮数组
 };
