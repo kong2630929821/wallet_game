@@ -15,7 +15,7 @@ import { miningMaxHits } from './constants';
  * 获取锄头对象
  */
 export const getHoeCount = (hoeType:HoeType) => {
-    const goods = getStore('goods');
+    const goods = getStore('mine/goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
@@ -27,10 +27,35 @@ export const getHoeCount = (hoeType:HoeType) => {
 };
 
 /**
+ * 获取所有矿山
+ */
+export const getAllMines = () => {
+    const goods = getStore('mine/goods');
+    const mines = [];
+    for (let i = 0;i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.MINE) {
+            for (let j = 0;j < good.value.hps.length;j++) {
+                if (good.value.count <= 0) break;
+                const hp = good.value.hps[j];
+                const itype = good.value.num;
+                const mine = {
+                    type:itype,
+                    index:j,
+                    hp
+                };
+                mines.push(mine);
+            }
+        }
+    }
+    
+    return mines;
+};
+/**
  * 获取随机显示的矿山列表
  */
 export const randomMines = () => {
-    const goods = getStore('goods');
+    const goods = getStore('mine/goods');
     const mines = [];
     const miningedMines = [];
     for (let i = 0;i < goods.length; i++) {

@@ -113,13 +113,22 @@ const handlerMap: HandlerMap = new HandlerMap();
 // 全局内存数据库
 const store:Store = {
     uid:9,
-    goods:[]
+    mine:{
+        goods:[],
+        miningedNumber:0
+    }
+    
 };
 
+export interface Mine {
+    goods:Item[];   // all goods
+    miningedNumber:0;  // 今天已挖矿山数量
+}
 /**
  * Store的声明
  */
 export interface Store {
     uid:number;     // user uid
-    goods:Item[];   // all goods
+    mine:Mine;      // 矿山相关
+    
 }

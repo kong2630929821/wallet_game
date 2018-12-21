@@ -187,7 +187,7 @@ export class PlayHome extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('goods', (goods: Item[]) => {
+register('mine/goods', (goods: Item[]) => {
     console.log('goods change ', goods);
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();

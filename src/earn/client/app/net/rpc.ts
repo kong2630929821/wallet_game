@@ -1,10 +1,10 @@
 /**
  * rpc通信
  */
-import { Item_Enum, Items, MiningResponse } from '../../../server/data/db/item.s';
+import { Item_Enum, Items, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { ItemQuery, MiningResult } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
-import { item_query } from '../../../server/rpc/user_item.p';
+import { get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
@@ -18,7 +18,7 @@ export const getAllGoods = () => {
     const uid = getStore('uid');
     clientRpcFunc(item_query, uid, (r: Items) => {
         console.log('getAllGoods ',r);
-        setStore('goods',r.item);
+        setStore('mine/goods',r.item);
     });
 };
 
@@ -34,6 +34,7 @@ export const readyMining = (hoeType:HoeType) => {
         console.log('beginMining itemQuery = ',itemQuery);
         clientRpcFunc(mining, itemQuery, (r: RandomSeedMgr) => {
             console.log('beginMining ',r);
+            getAllGoods();
             resolve(r);
         });
     });
@@ -57,5 +58,13 @@ export const startMining = (mineType:MineType,mineIndex:number,diggingCount:numb
             console.log('startMining MiningResponse = ',r);
             resolve(r);
         });
+    });
+};
+
+export const getTodayMineNum = () => {
+    const uid = getStore('uid');
+    clientRpcFunc(get_todayMineNum, uid, (r: TodayMineNum) => {
+        console.log('getTodayMineNum TodayMineNum = ',r);
+        setStore('mine/miningedNumber',r.mineNum);
     });
 };

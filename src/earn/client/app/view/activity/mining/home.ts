@@ -6,10 +6,10 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { readyMining, startMining } from '../../../net/rpc';
-import { register } from '../../../store/memstore';
-import { hoeUseDuration, MineMax } from '../../../utils/constants';
-import { calcMiningArray, getHoeCount, randomMines } from '../../../utils/util';
+import { getAllGoods, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
+import { getStore, register } from '../../../store/memstore';
+import { hoeUseDuration } from '../../../utils/constants';
+import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
 import { HoeType } from '../../../xls/hoeType.s';
 
 // ================================ 导出
@@ -21,25 +21,23 @@ export class MiningHome extends Widget {
     public ok:() => void;
     public props:any;
     public hits:number[] = [];
+    public mineStyle:string[] = [
+        'right:98px;top:370px;',
+        'left:145px;top:395px;',
+        'right:110px;top:505px;',
+        'left:108px;top:578px;',
+        'right:177px;top:710px;',
+        'left:56px;top:786px;',
+        'right:0px;top:854px;',
+        'left:239px;top:870px;'
+    ];
     public create() {
         super.create();
         this.init();
     }
 
     public init() {
-        const mines = randomMines();
-        const curMines = mines.splice(0,MineMax); 
-        const leftMines = mines;
-        console.log('curMines = ',curMines);
-        console.log('leftMines = ',leftMines);
-        const mineStyle = [
-            'left:50%;top:-70px;transform: translateX(-50%);',
-            'left:-20px;top:190px;',
-            'right:-10px;top:220px;',
-            'right:100px;top:480px;'
-        ];
         this.props = {
-            mineStyle,
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
             diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
@@ -52,21 +50,34 @@ export class MiningHome extends Widget {
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
             miningTips:'请选择锄头',   // 挖矿提示
-            curMines,          // 当前显示的矿山
-            leftMines,          // 剩余的矿山
+            havMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardType:0,   // 矿山爆掉的奖励类型
-            awardNumber:0          // 奖励数目
+            awardNumber:0,          // 奖励数目
+            miningedNumber:getStore('mine/miningedNumber')  // 已挖矿山数目
         };
-
+        this.mineLocationInit();   // 矿山位置初始化
+        getTodayMineNum();
     }
 
     public signInClick() {
         popNew('earn-client-app-view-activity-mining-signIn');
     }
+
+    public welfareClick() {
+        popNew('earn-client-app-view-activity-mining-welfare');
+    }
+
     public closeClick() {
         this.ok && this.ok();
+    }
+
+    public mineLocationInit() {
+        const mineStyle = shuffle(this.mineStyle);
+        for (let i = 0;i < this.props.havMines.length;i++) {
+            this.props.havMines[i].location = mineStyle[i];
+        }
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
         console.log('select index',hopeType);
@@ -95,13 +106,13 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                if (this.props.hoeSelected === HoeType.IronHoe) {
-                    this.props.ironHoe--;
-                } else if (this.props.hoeSelected === HoeType.GoldHoe) {
-                    this.props.goldHoe--;
-                } else {
-                    this.props.diamondHoe--;
-                }
+                // if (this.props.hoeSelected === HoeType.IronHoe) {
+                //     this.props.ironHoe--;
+                // } else if (this.props.hoeSelected === HoeType.GoldHoe) {
+                //     this.props.goldHoe--;
+                // } else {
+                //     this.props.diamondHoe--;
+                // }
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
                 this.paint();
@@ -122,13 +133,13 @@ export class MiningHome extends Widget {
 
     // 矿山掉血
     public bloodLoss() {
-        for (let i = 0; i < this.props.curMines.length; i++) {
-            const mine = this.props.curMines[i];
+        for (let i = 0; i < this.props.havMines.length; i++) {
+            const mine = this.props.havMines[i];
             if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1];
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
-                    // this.deleteBoomMine();
+                    this.deleteBoomMine();
                     this.initMiningState();
                 }
                 break;
@@ -138,7 +149,7 @@ export class MiningHome extends Widget {
 
     // 爆炸矿山消失
     public deleteBoomMine() {
-        this.props.curMines = this.props.curMines.filter(item => {
+        this.props.havMines = this.props.havMines.filter(item => {
             return item.type !== this.props.mineType || item.index !== this.props.mineIndex;
         });
         this.paint();
@@ -158,6 +169,7 @@ export class MiningHome extends Widget {
     public initMiningState() {
         startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
             if (r.leftHp <= 0) {
+                getAllGoods();
                 this.props.awardType = r.award.enum_type;
                 this.props.awardNumber = r.award.value.count;
                 this.paint();
@@ -174,17 +186,19 @@ export class MiningHome extends Widget {
         this.props.miningCount = 0;
         clearTimeout(this.props.countDownTimer);
     }
-    public updateHoe() {
+    public updateMine() {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
+        // this.props.havMines = getAllMines();
+        this.props.miningedNumber = getStore('mine/miningedNumber');
         this.paint();
     }
 }
 
 // ===================================================== 立即执行
 
-register('goods',(goods:Item[]) => {
+register('mine',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateHoe();
+    w && w.updateMine();
 });

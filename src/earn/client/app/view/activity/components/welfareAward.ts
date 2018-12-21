@@ -16,7 +16,7 @@ export class WelfareAward extends Widget {
         } else {
             imgUrl = `${imgUrl}box1.png`;
         }
-        console.log(props);
+        // console.log(props);
         this.props = {
             ...props,
             imgUrl
