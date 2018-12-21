@@ -38,8 +38,20 @@ export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
     const itemQuery = new ItemQuery();
     itemQuery.uid = 9;
-    itemQuery.enumType = 1;
-    itemQuery.itemType = get_mine_type();
+    itemQuery.enumType = 2;
+    itemQuery.itemType = 2001;
+    console.log('itemType:!!!!!!!!!', itemQuery.itemType);
+
+    return add_itemCount(itemQuery, count);
+};
+
+// #[rpc=rpcServer]
+export const item_addticket = (count: number): Item => {
+    console.log('add test in!!!!!!!!!!');
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 9;
+    itemQuery.enumType = 7;
+    itemQuery.itemType = 7001;
     console.log('itemType:!!!!!!!!!', itemQuery.itemType);
 
     return add_itemCount(itemQuery, count);

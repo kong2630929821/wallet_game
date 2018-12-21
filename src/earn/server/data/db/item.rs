@@ -36,6 +36,12 @@ struct KT {
     count: u32 //数量
 }
 
+//奖券
+struct Ticket {
+    num: u32, //编号
+    count: u32 //数量
+}
+
 
 //物品枚举
 enum Item {
@@ -45,6 +51,7 @@ enum Item {
     ETH(ETH),
     ST(ST),
     KT(KT),
+    TICKET(Ticket), //奖券
 }
 
 //挖矿返回结果
