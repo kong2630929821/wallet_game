@@ -5,16 +5,17 @@
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
-import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardList, Hoe, Item, Items, Mine, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
-import { Test as Test2 } from '../../../server/rpc/test.s';
+import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
+import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
+import { ticket_compose } from '../../../server/rpc/ticket.p';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, get_item, item_query } from '../../../server/rpc/user_item.p';
+import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -22,7 +23,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2';
+    walletLoginReq.openid = 'test';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
 
@@ -120,10 +121,21 @@ export const award_query_test = () => {
     });
 };
 
-// 奖励查询
-export const today_test = () => {
-    const uid = 9;
-    clientRpcFunc(get_todayMineNum, uid, (r:TodayMineNum) => {
+// 添加奖券
+export const add_ticket = () => {
+    const count = 6;
+    clientRpcFunc(item_addticket, count, (r: Item) => {
+        console.log(r);
+    });
+};
+
+// 合成奖券
+export const compose_ticket = () => {
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 9;
+    itemQuery.enumType = 7;
+    itemQuery.itemType = 7001;
+    clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
         console.log(r);
     });
 };
@@ -151,7 +163,7 @@ const props = {
             func: () => { item_test1(); }
         },
         {
-            name: '添加物品',
+            name: '添加锄头',
             func: () => { item_test2(); }
         },
         {
@@ -175,8 +187,12 @@ const props = {
             func: () => { award_query_test(); }
         },
         {
-            name: '奖励查询1',
-            func: () => { today_test(); }
+            name: '添加奖券',
+            func: () => { add_ticket(); }
+        },
+        {
+            name: '合成奖券',
+            func: () => { compose_ticket(); }
         }
     ] // 按钮数组
 };

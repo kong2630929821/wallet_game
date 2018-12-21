@@ -3,14 +3,16 @@
  */
 import { ItemQuery } from '../rpc/itemQuery.s';
 
-import { AwardMap, BTC, ETH, Hoe, Item, Items, KT, Mine, ST } from '../data/db/item.s';
+import { AwardMap, BTC, ETH, Hoe, Item, Items, KT, Mine, ST, Ticket } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
 import { randomInt } from '../../../pi/util/math';
+import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { MineHpCfg } from '../../xlsx/item.s';
-import { BTC_TYPE, DIAMOND_HOE_TYPE, ETH_TYPE, GOLD_HOE_TYPE, HUGE_MINE_TYPE, IRON_HOE_TYPE, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, SMALL_MINE_TYPE, ST_TYPE, WARE_NAME } from '../data/constant';
+import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
+import { ItemInitCfg, MineHpCfg } from '../../xlsx/item.s';
+import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MAX_TYPE_NUM, MEMORY_NAME, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
 import { get_item, item_query } from '../rpc/user_item.r';
 import { doAward } from './award.t';
 import { RandomSeedMgr } from './randomSeedMgr';
@@ -25,6 +27,7 @@ export const doTest = (uid: number): Items => {
 // 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
 export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     console.log('add_itemCount in!!!!!!!!!!!!!!');
+    if (count < 0) return;
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
     const typeNum = itemQuery.itemType;
@@ -68,6 +71,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
 
 // 扣除物品(不包含Mine类)
 export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
+    console.log('reduce_item in!!!!!!!!!!!!!!');
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
     const typeNum = itemQuery.itemType;
@@ -75,6 +79,7 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     const item = get_item(itemQuery);
     const beforeCount = item.value.count;
     const afterCount = beforeCount - count;
+    console.log('afterCount !!!!!!!!!!!!!!', afterCount);
     if (afterCount < 0) return;
     const items = itemInfo.item;
     let itemIndex;
@@ -85,15 +90,15 @@ export const reduce_itemCount = (itemQuery: ItemQuery, count: number): Item => {
         }
     }
     const dbMgr = getEnv().getDbMgr();
-    const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
+    const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
     if (enumNum === 1) {
-        // todo:异常处理
+        return;
     } else {
         item.value.count = afterCount;
     }
     items[itemIndex] = item;
     itemInfo.item = items;
-    itemBucket.update(uid, itemInfo);
+    itemBucket.put(uid, itemInfo);
 
     return item;
 };
@@ -140,7 +145,7 @@ export const reduce_mine = (itemQuery: ItemQuery, mineNum:number, hits:number): 
 };
 
 // 用户物品数据库初始化
-export const items_init = (uid: number): boolean => {
+export const items_init1 = (uid: number): boolean => {
     console.log('item init in!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
@@ -212,6 +217,88 @@ export const items_init = (uid: number): boolean => {
     return true;
 };
 
+// 用户物品数据库根据配置初始化
+export const items_init = (uid: number) => {
+    console.log('item init in!!!!!!!!!!!!!');
+    const dbMgr = getEnv().getDbMgr();
+    const itemInfo = new Items();
+    const items = [];
+    read(dbMgr, (tr: Tr) => {
+        const iterCfg = iterDb(tr, MEMORY_NAME, ItemInitCfg._$info.name, 0, false, null); // 取from表的迭代器
+        console.log('!!!!!!!!!!!!!!iterCfg:', iterCfg);
+        let maxid = MAX_TYPE_NUM;
+        do {
+            const elCfg = iterCfg.nextElem();
+            if (!elCfg) return;
+            console.log('elCfg----------------read---------------', elCfg);
+            const cfg:ItemInitCfg = elCfg[1];
+            const enumNum = cfg.enumNum;
+            const typeNum = cfg.typeNum;
+            const count = cfg.count;
+            switch (enumNum) {
+                case MINE_ENUM_NUM:
+                    const mine = new Mine();
+                    mine.num = typeNum;
+                    mine.count = count;
+                    mine.hps = [];
+                    const itemMine = new Item(enumNum, mine);
+                    items.push(itemMine);
+                    break;
+                case HOE_ENUM_NUM:
+                    const hoe = new Hoe();
+                    hoe.num = typeNum;
+                    hoe.count = count;
+                    const itemHoe = new Item(enumNum, hoe);
+                    items.push(itemHoe);
+                    break;
+                case BTC_ENUM_NUM:
+                    const btc = new BTC();
+                    btc.num = typeNum;
+                    btc.count = count;
+                    const itemBtc = new Item(enumNum, btc);
+                    items.push(itemBtc);
+                    break;
+                case ETH_ENUM_NUM:
+                    const eth = new ETH();
+                    eth.num = typeNum;
+                    eth.count = count;
+                    const itemEth = new Item(enumNum, eth);
+                    items.push(itemEth);
+                    break;
+                case ST_ENUM_NUM:
+                    const st = new ST();
+                    st.num = typeNum;
+                    st.count = count;
+                    const itemSt = new Item(enumNum, st);
+                    items.push(itemSt);
+                    break;
+                case KT_ENUM_NUM:
+                    const kt = new KT();
+                    kt.num = typeNum;
+                    kt.count = count;
+                    const itemKt = new Item(enumNum, kt);
+                    items.push(itemKt);
+                    break;
+                case TICKET_ENUM_NUM:
+                    const ticket = new Ticket();
+                    ticket.num = typeNum;
+                    ticket.count = count;
+                    const itemTicket = new Item(enumNum, ticket);
+                    items.push(itemTicket);
+                    break;
+                default:
+            }
+            console.log('!!!!!!!!!!!!!!ITEMS:', items);
+            maxid --;
+        } while (maxid > 0);
+    });
+    itemInfo.uid = uid;
+    itemInfo.item = items;
+    const bucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    bucket.put(uid, itemInfo);
+    
+};
+
 // 获取矿山总数
 export const get_mine_total = (uid:number):number => {
     const items = item_query(uid).item;
@@ -229,7 +316,7 @@ export const get_mine_total = (uid:number):number => {
 // 随机(根据配置)获取矿山类型
 export const get_mine_type = ():number => {
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const pid = 100401; // 配置中按权重获取矿山类型的主键
+    const pid = GET_RANDOM_MINE; // 配置中按权重获取矿山类型的主键
     const v = [];
     doAward(pid, randomMgr, v);
     // console.log('doAward v:!!!!!!!!!!!!!', v);
