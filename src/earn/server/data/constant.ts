@@ -55,8 +55,8 @@ export const SILVER_TICKET_ROTARY = 100701; // 银券大转盘
 export const GOLD_TICKET_ROTARY = 100801; // 金券大转盘
 export const RAINBOW_TICKET_ROTARY = 100901; // 彩券大转盘
 export const SILVER_TICKET_TREASUREBOX = 101001; // 银券宝箱
-export const GOLD_TICKET_TREASUREBOX = 101101; // 银券宝箱
-export const RAINBOW_TICKET_TREASUREBOX = 101201; // 银券宝箱
+export const GOLD_TICKET_TREASUREBOX = 101101; // 金券宝箱
+export const RAINBOW_TICKET_TREASUREBOX = 101201; // 彩券宝箱
 
 // 合成消耗奖券
 export const TICKET_COMPOSE_COUNT = 3;

@@ -50,13 +50,14 @@ export const add_award = (itemQuery:ItemQuery, count:number, src:string):Item =>
     const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
     awardMap.awards = awardList;
     mapBucket.put(uid, awardMap);
+    console.log('db write ok!!!!!!!!!!!!!!!!!:');
 
     return item;
 };
 
 // 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
 export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
-    console.log('add_itemCount in!!!!!!!!!!!!!!');
+    console.log('add_itemCount in!!!!!!!!!!!!!!', itemQuery);
     if (count < 0) return;
     const uid = itemQuery.uid;
     const enumNum = itemQuery.enumType;
@@ -72,6 +73,7 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
     for (const item1 of items) {
         if (item1.value.num === typeNum) {
             itemIndex = items.indexOf(item1);
+            console.log('itemIndex:!!!!!!!!!!!!!!', itemIndex);
             break;
         }
     }
@@ -87,13 +89,12 @@ export const add_itemCount = (itemQuery: ItemQuery, count: number): Item => {
         hpList.push(hp);
         mine.count = afterCount;
         mine.hps = hpList;
-        console.log('mine:!!!!!!!!!!!!!!', mine);
     } else {
         item.value.count = afterCount;
     }
     items[itemIndex] = item;
     itemInfo.item = items;
-    itemBucket.update(uid, itemInfo);
+    itemBucket.put(uid, itemInfo);
     item.value.count = count;
 
     return item;

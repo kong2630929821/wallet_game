@@ -57,6 +57,7 @@ export const ticket_rotary = (itemQuery:ItemQuery):Item => {
         default:
             return;
     }
+    console.log('pid!!!!!!!!!!!!!!!!!!!!', pid);
     if (!reduce_itemCount(itemQuery, TICKET_ROTARY_COUNT)) return;
     const v = [];
     doAward(pid, randomMgr, v);
@@ -65,6 +66,7 @@ export const ticket_rotary = (itemQuery:ItemQuery):Item => {
     awardItemQuery.uid = itemQuery.uid;
     awardItemQuery.itemType = v[0][0];
     awardItemQuery.enumType = get_enumType(awardItemQuery.itemType);
+    console.log('itemenumType!!!!!!!!!!!!!!!!!!!!', awardItemQuery.enumType);
 
     return add_award(awardItemQuery, count, AWARD_SRC_ROTARY);
 };

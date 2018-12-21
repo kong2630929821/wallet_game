@@ -46,9 +46,17 @@ export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
 // 获取物品枚举编号
 export const get_enumType = (itemType:number):number => {
     switch (itemType) {
-        case SMALL_MINE_TYPE || MIDDLE_MINE_TYPE || HUGE_MINE_TYPE:
+        case SMALL_MINE_TYPE:
             return MINE_ENUM_NUM;
-        case IRON_HOE_TYPE || GOLD_HOE_TYPE || DIAMOND_HOE_TYPE:
+        case MIDDLE_MINE_TYPE:
+            return MINE_ENUM_NUM;
+        case HUGE_MINE_TYPE:
+            return MINE_ENUM_NUM;
+        case IRON_HOE_TYPE:
+            return HOE_ENUM_NUM;
+        case GOLD_HOE_TYPE:
+            return HOE_ENUM_NUM;
+        case DIAMOND_HOE_TYPE:
             return HOE_ENUM_NUM;
         case BTC_TYPE:
             return BTC_ENUM_NUM;
@@ -58,7 +66,11 @@ export const get_enumType = (itemType:number):number => {
             return ST_ENUM_NUM;
         case KT_TYPE:
             return KT_ENUM_NUM;
-        case SILVER_TICKET_TYPE | GOLD_TICKET_TYPE | RAINBOW_TICKET_TYPE:
+        case SILVER_TICKET_TYPE:
+            return TICKET_ENUM_NUM;
+        case GOLD_TICKET_TYPE:
+            return TICKET_ENUM_NUM;
+        case RAINBOW_TICKET_TYPE:
             return TICKET_ENUM_NUM;
         default:
             return;
