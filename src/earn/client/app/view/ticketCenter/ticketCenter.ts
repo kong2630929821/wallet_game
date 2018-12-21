@@ -2,17 +2,14 @@
  * 奖券中心-首页
  */
 
-
-import { Widget } from "../../../../../pi/widget/widget";
-import { popNew } from "../../../../../pi/ui/root";
-
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
 
 export class TicketCenter extends Widget {
     public ok: () => void;
     public props = {
         KTbalance: 500
-    }
-
+    };
 
     /**
      * 活动跳转
@@ -21,10 +18,10 @@ export class TicketCenter extends Widget {
     public goActivity(num: number) {
         switch (num) {
             case 0:
-                popNew('earn-client-app-view-openBox-openBox');//开宝箱
+                popNew('earn-client-app-view-openBox-openBox');// 开宝箱
                 break;
             case 1:
-                popNew('earn-client-app-view-turntable-turntable');//大转盘
+                popNew('earn-client-app-view-turntable-turntable');// 大转盘
                 break;
             case 2:
                 break;
@@ -32,7 +29,6 @@ export class TicketCenter extends Widget {
                 break;
 
             default:
-                break;
         }
     }
     /**
@@ -45,7 +41,7 @@ export class TicketCenter extends Widget {
     /**
      * 奖券合成 
      */
-    public goCompound(){
+    public goCompound() {
         popNew('earn-client-app-view-ticketCenter-ticketCompound');
     }
 

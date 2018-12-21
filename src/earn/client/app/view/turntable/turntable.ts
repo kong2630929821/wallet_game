@@ -2,10 +2,8 @@
  * 大转盘 - 首页
  */
 
-
-import { Widget } from "../../../../../pi/widget/widget";
-import { popNew } from "../../../../../pi/ui/root";
-
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
 
 interface Props {
     selectTicket: number;
@@ -21,16 +19,16 @@ export class Turntable extends Widget {
         turnNum: 30,
         isTurn: false,
         turntableList: [
-            { 'text': '耳机', 'name': 'icono-headphone' },
-            { 'text': 'iPhone', 'name': 'icono-iphone' },
-            { 'text': '相机', 'name': 'icono-camera' },
-            { 'text': '咖啡杯', 'name': 'icono-cup' },
-            { 'text': '日历', 'name': 'icono-calendar' },
-            { 'text': '键盘', 'name': '' },
-            { 'text': '键盘', 'name': '' },
-            { 'text': '键盘', 'name': '' }
+            { text: '耳机', name: 'icono-headphone' },
+            { text: 'iPhone', name: 'icono-iphone' },
+            { text: '相机', name: 'icono-camera' },
+            { text: '咖啡杯', name: 'icono-cup' },
+            { text: '日历', name: 'icono-calendar' },
+            { text: '键盘', name: '' },
+            { text: '键盘', name: '' },
+            { text: '键盘', name: '' }
         ]
-    }
+    };
 
     /**
      * 初始转盘

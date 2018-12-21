@@ -2,21 +2,18 @@
  * 我的物品、中奖记录
  */
 
-
-import { Widget } from "../../../../../pi/widget/widget";
+import { Widget } from '../../../../../pi/widget/widget';
 import { popNew } from "../../../../../pi/ui/root";
 
-interface Props{
+interface Props {
     type:number;
     history:any;
 }
 
-
-
 export class MyProduct extends Widget {
     public ok: () => void;
 
-    public props:Props ={
+    public props:Props = {
         type :0,
         history:[
             {
@@ -35,9 +32,9 @@ export class MyProduct extends Widget {
                 time:'2018.12.28'
             }
         ]
-    }
+    };
 
-    public setProps(props:any){
+    public setProps(props:any) {
         super.setProps(this.props);
         this.props = {
             ...this.props,

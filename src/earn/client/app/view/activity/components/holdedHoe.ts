@@ -14,12 +14,12 @@ export class HoldedHoe extends Widget {
     public props:any;
     public setProps(props:Props,oldProps:Props) {
         let imgUrl = '../../../res/image/';
-        if (props.hoeType === HoeType.CopperHoe) {
-            imgUrl = `${imgUrl}copper_hoe.png`;
-        } else if (props.hoeType === HoeType.SilverHoe) {
-            imgUrl = `${imgUrl}silver_hoe.png`;
-        } else {
+        if (props.hoeType === HoeType.IronHoe) {
+            imgUrl = `${imgUrl}iron_hoe.png`;
+        } else if (props.hoeType === HoeType.GoldHoe) {
             imgUrl = `${imgUrl}gold_hoe.png`;
+        } else {
+            imgUrl = `${imgUrl}diamond_hoe.png`;
         }
         this.props = {
             ...props,

@@ -75,10 +75,10 @@ export class PlayHome extends Widget {
                 title: '我的物品',
                 desc: '兑换和中奖的物品'
             }],
-            copperHoe: 0,
-            silverHoe: 0,
-            goldHoe: 0,
-            hoeType: HoeType
+            ironHoe:getHoeCount(HoeType.IronHoe),
+            goldHoe:getHoeCount(HoeType.GoldHoe),
+            diamondHoe:getHoeCount(HoeType.DiamondHoe),
+            hoeType:HoeType
         };
 
         setTimeout(() => {
@@ -90,39 +90,38 @@ export class PlayHome extends Widget {
         console.log(this.props.hoeType);
     }
     /**
- * 福利活动进入
- * @param ind 福利顺序
- */
+     * 福利活动进入
+     * @param ind 福利顺序
+     */
     public goActivity(ind: number) {
         switch (ind) {
             case 0:
-                popNew('earn-client-app-view-activity-inviteFriend');//邀请好友
+                popNew('earn-client-app-view-activity-inviteFriend');// 邀请好友
                 break;
             case 1:
-                popNew('earn-client-app-view-activity-verifyPhone');//验证手机
+                popNew('earn-client-app-view-activity-verifyPhone');// 验证手机
                 break;
             case 2:
-                popNew('earn-client-app-view-openBox-openBox');//开宝箱
+                popNew('earn-client-app-view-openBox-openBox');// 开宝箱
                 break;
             case 3:
-                popNew('earn-client-app-view-turntable-turntable');//大转盘
+                popNew('earn-client-app-view-turntable-turntable');// 大转盘
                 break;
             case 4:
-                popNew('earn-client-app-view-ticketCenter-ticketCenter');//奖券中心
+                popNew('earn-client-app-view-ticketCenter-ticketCenter');// 奖券中心
                 break;
             case 5:
-                popNew('earn-client-app-view-exchange-exchange');//奖券兑换
+                popNew('earn-client-app-view-exchange-exchange');// 奖券兑换
                 break;
             case 6:
-                popNew('earn-client-app-view-myProduct-myProduct');//我的物品
+                popNew('earn-client-app-view-myProduct-myProduct');// 我的物品
                 break;
             default:
-
-                break;
         }
     }
-    public diggingStoneClick() {
-        popNew('earn-client-app-view-activity-diggingStones-home');
+
+    public miningClick() {
+        popNew('earn-client-app-view-activity-mining-home');
     }
 
     /**
@@ -174,13 +173,13 @@ export class PlayHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('app-view-earn-client-view-activity-diggingStones-diggingRule');
+        popNew('earn-client-app-view-activity-mining-miningRule');
     }
 
     public updateHoe() {
-        this.props.copperHoe = getHoeCount(HoeType.CopperHoe);
-        this.props.silverHoe = getHoeCount(HoeType.SilverHoe);
+        this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
+        this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
         this.paint();
     }
 }

@@ -1,11 +1,11 @@
 <div class="new-page" style="display: flex;flex-direction: column;" ev-refresh-click="refreshPage">
     <div w-class="contain" on-scroll="scrollPage" id="earn-home">
         <div w-class="topBack">
-            <div w-class="stone-card" on-tap="diggingStoneClick">
+            <div w-class="mine-card" on-tap="miningClick">
                 <div w-class="holded-hoes">
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.copperHoe }},hoeType:{{ it.hoeType.CopperHoe }} }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.silverHoe }},hoeType:{{ it.hoeType.SilverHoe }} }</earn-client-app-view-activity-components-holdedHoe>
-                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }} }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }} }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }} }</earn-client-app-view-activity-components-holdedHoe>
+                    <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }} }</earn-client-app-view-activity-components-holdedHoe>
                     <div w-class="gift-box">
                         <img src="../../res/image1/gift.png"/>
                     </div>
@@ -14,8 +14,9 @@
                     <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
                     <div w-class="action">看广告得锄头</div>
                 </div>
-                <div w-class="stone"></div>
-                <div w-class="holded-stone">我的矿星</div>
+                <div w-class="mine" style="left:165px;bottom:150px;"><img src="../../res/image/big_mine.png"/></div>
+                <div w-class="mine" style="right:118px;bottom:236px;"><img src="../../res/image/small_mine.png"/></div>
+                <div w-class="holded-mine">我的矿星</div>
                 <div w-class="medals">
                     <div w-class="medal-tip">我的勋章</div>
                     {{for i of [0,0,0,0,0,0,0,0]}}

@@ -112,7 +112,7 @@ const handlerMap: HandlerMap = new HandlerMap();
 
 // 全局内存数据库
 const store:Store = {
-    uid:7,
+    uid:9,
     goods:[]
 };
 

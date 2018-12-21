@@ -3,8 +3,8 @@
  * 活动-验证手机号
  */
 
-import { Widget } from "../../../../../pi/widget/widget";
-import { popNew } from "../../../../../pi/ui/root";
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
 
 export class VerifyPhone extends Widget {
     public ok : () => void;

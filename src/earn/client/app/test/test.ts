@@ -4,30 +4,17 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
-<<<<<<< HEAD
-import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
-=======
 import { Invite } from '../../../server/data/db/invite.s';
-import { Hoe, Item, Items, Mine, MiningResponse } from '../../../server/data/db/item.s';
->>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
+import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
 import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
-<<<<<<< HEAD
-import { award as awardR, db_test, hit_test, item_add } from '../../../server/rpc/test.p';
-import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
-import { login as loginUser } from '../../../server/rpc/user.p';
-import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
-import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-=======
 import { award as awardR, db_test, item_add } from '../../../server/rpc/test.p';
 import { Test as Test2 } from '../../../server/rpc/test.s';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { get_item, item_query } from '../../../server/rpc/user_item.p';
->>>>>>> 648b7222e1dad03d8009fd628bd35d5874d4b823
+import { add_mine, get_item, item_query } from '../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -77,7 +64,7 @@ export const item_test1 = () => {
 
 // 给指定用户添加指定类型物品
 export const item_test2 = () => {
-    const count = 1;
+    const count = 5;
     clientRpcFunc(item_add, count, (r: Item) => {
         console.log(r);
     });

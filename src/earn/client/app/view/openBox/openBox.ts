@@ -3,10 +3,8 @@
  * 开宝箱 - 首页
  */
 
-
-import { Widget } from "../../../../../pi/widget/widget";
-import { popNew } from "../../../../../pi/ui/root";
-
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
 
 interface Props {
     selectTicket: number;
@@ -19,52 +17,52 @@ export class OpenBox extends Widget {
         selectTicket: 0,
         boxList: [
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
+                isOpen: false
             },
             {
-                isOpen: false,
-            },
+                isOpen: false
+            }
         ]
-    }
+    };
 
     /**
      * 打开单个宝箱 
      * @param num 宝箱序数
      */
-    public openBox(num:number){
-        if(this.props.boxList[num].isOpen){
+    public openBox(num:number) {
+        if (this.props.boxList[num].isOpen) {
 
             return;
         }
-        popNew('earn-client-app-view-component-lotteryModal',{type:2});
+        popNew('earn-client-app-view-component-lotteryModal',{ type:2 });
         this.props.boxList[num].isOpen = true;
         this.paint();
     }
     /**
      * 重置所有宝箱
      */
-    public resetBoxList(){
+    public resetBoxList() {
         this.props.boxList.forEach(element => {
             element.isOpen = false;
         });
@@ -85,7 +83,7 @@ export class OpenBox extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-myProduct-myProduct',{type:2});
+        popNew('earn-client-app-view-myProduct-myProduct',{ type:2 });
     }
 
     /**
