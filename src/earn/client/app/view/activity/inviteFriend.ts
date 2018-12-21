@@ -2,15 +2,13 @@
  * 活动-邀请好友
  */
 
-import { Widget } from "../../../../../pi/widget/widget";
-import { getLang } from "../../../../../pi/util/lang";
-import { getInviteCode } from "../../../../../app/net/pull";
-import { LuckyMoneyType } from "../../../../../app/store/interface";
-import { ShareToPlatforms } from "../../../../../pi/browser/shareToPlatforms";
-import { copyToClipboard, popNewMessage } from "../../../../../app/utils/tools";
-import { makeScreenShot } from "../../../../../app/logic/native";
-
-
+import { makeScreenShot } from '../../../../../app/logic/native';
+import { getInviteCode } from '../../../../../app/net/pull';
+import { LuckyMoneyType } from '../../../../../app/store/interface';
+import { copyToClipboard, popNewMessage } from '../../../../../app/utils/tools';
+import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
+import { getLang } from '../../../../../pi/util/lang';
+import { Widget } from '../../../../../pi/widget/widget';
 
 interface Props {
     showPage:string;

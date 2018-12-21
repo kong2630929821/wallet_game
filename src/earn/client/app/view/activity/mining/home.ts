@@ -1,6 +1,7 @@
 /**
  * digging mines home
  */
+import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
@@ -61,6 +62,9 @@ export class MiningHome extends Widget {
 
     }
 
+    public signInClick() {
+        popNew('earn-client-app-view-activity-mining-signIn');
+    }
     public closeClick() {
         this.ok && this.ok();
     }

@@ -4,6 +4,7 @@
 
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
+import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, Hoe, Item, Items, Mine, MiningResponse, Prizes, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';

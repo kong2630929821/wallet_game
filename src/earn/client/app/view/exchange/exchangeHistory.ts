@@ -2,20 +2,17 @@
  * 奖券兑换 --兑换记录
  */
 
+import { Widget } from '../../../../../pi/widget/widget';
 
-import { Widget } from "../../../../../pi/widget/widget";
-
-interface Props{
+interface Props {
     type:number;
     history:any;
 }
 
-
-
 export class ExchangeHistory extends Widget {
     public ok: () => void;
 
-    public props:Props ={
+    public props:Props = {
         type :0,
         history:[
             {
@@ -34,16 +31,15 @@ export class ExchangeHistory extends Widget {
                 time:'2018.12.28'
             }
         ]
-    }
+    };
 
-    public setProps(props:any){
+    public setProps(props:any) {
         super.setProps(this.props);
         this.props = {
             ...this.props,
             type:props.type
-        }
+        };
     }
-
 
     /**
      * 返回上一页

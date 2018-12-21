@@ -62,7 +62,7 @@
                     </div>
                     <div w-class="action-tips">看广告得锄头</div>
                 </div>
-                <div w-class="ad-item" style="margin:0 35px">
+                <div w-class="ad-item" style="margin:0 35px" on-tap="signInClick">
                     <div w-class="gift-box">
                         <img src="../../../res/image1/gift.png"/>
                     </div>

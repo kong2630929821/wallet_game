@@ -1,0 +1,33 @@
+.box{
+    width:140px;
+    height:150px;
+    background-color:rgba(204,204,204,1);
+    box-shadow:0px 0px 10px 0px rgba(34,34,34,0.15);
+    border-radius:12px;
+    border:2px solid rgba(255,255,255,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.received_bg{
+    background-color: #FFF465;
+}
+.gift{
+    width:97px;
+    height:100px;
+}
+.continue-days{
+    font-size:32px;
+    font-weight:500;
+    color:rgba(136,136,136,1);
+    line-height:45px;
+    position: absolute;
+    right: 10px;
+    top: 8px;
+}
+.received{
+    position: absolute;
+    right: 0;
+    top: 5px;
+}
