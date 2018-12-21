@@ -20,12 +20,12 @@ export class TicketCenter extends Widget {
             {
                 name: 'zeroExchange',
                 title: { "zh_Hans": "0元兑换", "zh_Hant": "0元兌換", "en": "" },
-                component:'earn-client-app-view-exchange-exchangeVirtual'
+                component:'earn-client-app-view-exchange-virtualList'
             },
             {
                 name: 'saleExchange',
                 title: { "zh_Hans": "特价换购", "zh_Hant": "特價換購", "en": "" },
-                component:'earn-client-app-view-exchange-exchangeEntity'
+                component:'earn-client-app-view-exchange-entityList'
             }
         ],
 

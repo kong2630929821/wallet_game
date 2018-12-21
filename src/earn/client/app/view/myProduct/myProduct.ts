@@ -4,6 +4,7 @@
 
 
 import { Widget } from "../../../../../pi/widget/widget";
+import { popNew } from "../../../../../pi/ui/root";
 
 interface Props{
     type:number;
@@ -44,6 +45,9 @@ export class MyProduct extends Widget {
         }
     }
 
+    public goProductDetail(item:any){
+        popNew('earn-client-app-view-myProduct-productDetail',{name:item.name});
+    }
 
     /**
      * 返回上一页

@@ -1,8 +1,8 @@
 <div>
     <div w-class="body">
 
-        {{for ind,item in it.list}}
-        <div w-class="item">
+        {{for i,item in it.list}}
+        <div w-class="item" on-tap="goProductDetail({{i}})">
             <img src="../../res/image/balloon.png" width="340px" height="250px;" alt="" />
             <div w-class="item-desc">qweqw啊大苏打大苏打实打实大苏打eqwe</div>
             <div w-class="item-money">

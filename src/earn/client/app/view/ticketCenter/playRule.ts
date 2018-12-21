@@ -1,9 +1,10 @@
+
 /**
  * 奖券中心-玩法
  */
 
+import { Widget } from "../../../../../pi/widget/widget";
 
-import { Widget } from "../../../../../../pi/widget/widget";
 
 export class TicketCenter extends Widget {
     public ok: () => void;
