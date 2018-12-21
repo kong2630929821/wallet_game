@@ -11,18 +11,12 @@
         </div>
         {{% 拥有券数}}
         <div w-class="top-title">
-            <div w-class="">
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"银券","zh_Hant":"银券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
+            {{for i,item in it.ticketList}}
+            <div>
+                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{{item.name}}</widget>
+                <div w-class="ticket-num">{{item.balance}}</div>
             </div>
-            <div w-class="">
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
-            </div>
-            <div w-class="">
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"彩券","zh_Hant":"彩券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
-            </div>
+            {{end}}
         </div>
         <div w-class="body">
 
@@ -58,30 +52,19 @@
             </div>
 
             {{% 领券}}
+
+            {{for i,item in it.ticketList}}
             <div w-class="getTicket-item mat" style="margin-top:20px;">
-                <img src="../../res/image/silverTicket.png" height="70%" style="margin-left:30px;"/>
+                <img src="../../res/image/ticket0.png" height="70%" style="margin-left:30px;" />
                 <div w-class="getTicket-dsc">
-                    <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"领奖券","zh_Hant":"領獎券","en":""}</widget>
-                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值500KT","zh_Hant":"價值500KT","en":""}</widget>
+                    <widget w-class="ticket-name" w-tag="pi-ui-lang">{{item.name}}</widget>
+                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值{{item.price}}KT","zh_Hant":"價值{{item.price}}KT","en":""}</widget>
                 </div>
-                <div w-class="getTicket-btn" style="background:{{it.KTbalance<500?'#cccccc':'#222222'}}">领取</div>
-            </div>
-            <div w-class="getTicket-item mat">
-                <img src="../../res/image/goldTicket.png" height="70%" style="margin-left:30px;"/>
-                <div w-class="getTicket-dsc">
-                    <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"领奖券","zh_Hant":"領獎券","en":""}</widget>
-                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值1500KT","zh_Hant":"價值1500KT","en":""}</widget>
+                <div w-class="getTicket-btn" style="background:{{it.KTbalance<item.price?'#cccccc':'#222222'}}">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"领取","zh_Hant":"領取","en":""}</widget>
                 </div>
-                <div w-class="getTicket-btn" style="background:{{it.KTbalance<1500?'#cccccc':'#222222'}}">领取</div>
             </div>
-            <div w-class="getTicket-item mat">
-                <img src="../../res/image/diamondTicket.png" height="70%" style="margin-left:30px;"/>
-                <div w-class="getTicket-dsc">
-                    <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"领奖券","zh_Hant":"領獎券","en":""}</widget>
-                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值2000KT","zh_Hant":"價值2000KT","en":""}</widget>
-                </div>
-                <div w-class="getTicket-btn" style="background:{{it.KTbalance<2000?'#cccccc':'#222222'}}">领取</div>
-            </div>
+            {{end}}
 
             {{% 结束}}
             <div w-class="end">

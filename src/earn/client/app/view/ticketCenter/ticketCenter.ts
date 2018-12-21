@@ -8,7 +8,27 @@ import { Widget } from '../../../../../pi/widget/widget';
 export class TicketCenter extends Widget {
     public ok: () => void;
     public props = {
-        KTbalance: 500
+        KTbalance: 500,
+        ticketList: [
+            {
+                type: 7001,
+                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                balance: 0,
+                price:500
+            },
+            {
+                type: 7002,
+                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                balance: 0,
+                price:1500
+            },
+            {
+                type: 7003,
+                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                balance: 0,
+                price:2000
+            }
+        ]
     };
 
     /**
@@ -31,6 +51,26 @@ export class TicketCenter extends Widget {
             default:
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * 查看玩法
      */

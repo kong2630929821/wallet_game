@@ -7,10 +7,10 @@
             <div w-class="box-list">
                 {{for i,item in it.boxList}}
                     <div w-class="box" on-tap="openBox({{i}})">
-                       {{if item.isOpen}}
-                         <img src="../../res/image/boxOpen{{it.selectTicket}}.png" height="100%;" style="margin:0px auto;"/>
+                       {{if item === 1}}
+                         <img src="../../res/image/boxOpen{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;"/>
                        {{else}}
-                         <img src="../../res/image/box{{it.selectTicket}}.png" height="100%;" style="margin:0px auto;"/>
+                         <img src="../../res/image/box{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;"/>
                        {{end}}
                     </div>
                 {{end}}
@@ -19,13 +19,9 @@
             <div w-class="sale">
                 <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：2","zh_Hant":"售價：2","en":""}</widget>
-                    {{if it.selectTicket===0}} 
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"银券","zh_Hant":"銀券","en":""}</widget>
-                    {{elseif it.selectTicket===1}}   
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>  
-                    {{elseif it.selectTicket===2}} 
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"彩券","zh_Hant":"彩券","en":""}</widget>  
-                    {{end}}    
+
+                    <widget w-tag="pi-ui-lang">{{it.selectTicket.name}}</widget>  
+                   
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"/1个","zh_Hant":"/1個","en":""}</widget>
                 </div>
                 <div w-class="sale-btn" on-tap="resetBoxList">
@@ -35,18 +31,12 @@
 
             {{% 余票}}
             <div w-class="ticket">
-                <div on-tap="change(0)" w-class="ticket-item {{it.selectTicket===0?'select':''}}">
-                    <img src="../../res/image/silverTicket.png" width="100%;" style="margin-top:15px;"/>
-                    <div w-class="ticket-num">0</div>
-                </div>
-                <div on-tap="change(1)" w-class="ticket-item {{it.selectTicket===1?'select':''}}">
-                    <img src="../../res/image/goldTicket.png" width="100%;" style="margin-top:15px;"/>
-                    <div w-class="ticket-num">0</div>
-                </div>
-                <div on-tap="change(2)" w-class="ticket-item {{it.selectTicket===2?'select':''}}">
-                    <img src="../../res/image/diamondTicket.png" width="100%;" style="margin-top:15px;"/>
-                    <div w-class="ticket-num">0</div>
-                </div>
+                {{for i,item in it.ticketList}}
+                    <div on-tap="change({{i}})" w-class="ticket-item {{it.selectTicket.type===item.type ?'select':''}}">
+                        <img src="../../res/image/ticket{{i}}.png" width="100%;" style="margin-top:15px;"/>
+                        <div w-class="ticket-num">{{item.balance}}</div>
+                    </div>
+                {{end}}
             </div>
 
         </div>
