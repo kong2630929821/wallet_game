@@ -3,7 +3,7 @@
  */
 import { ItemQuery } from '../rpc/itemQuery.s';
 
-import { AwardMap, BTC, ETH, Hoe, Item, Items, KT, Mine, ST, Ticket } from '../data/db/item.s';
+import { AwardMap, BTC, ETH, Hoe, Item, Items, KT, Mine, Prizes, ST, Ticket } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
@@ -12,7 +12,8 @@ import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { ItemInitCfg, MineHpCfg } from '../../xlsx/item.s';
-import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MAX_TYPE_NUM, MEMORY_NAME, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
+import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MAX_TYPE_NUM, MEMORY_NAME, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
+import { get_index_id } from '../data/util';
 import { get_item, item_query } from '../rpc/user_item.r';
 import { doAward } from './award.t';
 import { RandomSeedMgr } from './randomSeedMgr';
@@ -22,6 +23,35 @@ export const doTest = (uid: number): Items => {
     console.log('item query in !!!!!!!!!!!!');
 
     return;
+};
+
+// 添加奖品
+export const add_award = (itemQuery:ItemQuery, count:number, src:string):Item => {
+    const uid = itemQuery.uid;
+    const item = add_itemCount(itemQuery, count);
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Prizes._$info.name, dbMgr);
+    const prizeid = get_index_id(INDEX_PRIZE);
+    // 奖励详情写入数据库
+    console.log('prizeid!!!!!!!!!!!!!!!!!:', prizeid);
+    const prize = new Prizes();
+    prize.id = prizeid;
+    prize.prize = item;
+    prize.src = src;
+    prize.uid = uid;
+    prize.time = new Date().valueOf();
+    bucket.put(prizeid, prize);
+    console.log('detail!!!!!!!!!!!!!!!!!:', bucket.get(prizeid)[0]);
+    const awardMap = <AwardMap>get_award_ids(uid);
+    let awardList = [];
+    awardList = awardMap.awards;
+    awardList.push(prizeid);
+    console.log('awardList!!!!!!!!!!!!!!!!!:', awardList);
+    const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
+    awardMap.awards = awardList;
+    mapBucket.put(uid, awardMap);
+
+    return item;
 };
 
 // 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)

@@ -3,7 +3,7 @@
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { WARE_NAME } from '../data/constant';
+import { MAX_ONEDAY_MINING, WARE_NAME } from '../data/constant';
 import { AwardList, BTC, ETH, Hoe, Item, Items, KT, Mine, Prizes, ST, TodayMineNum } from '../data/db/item.s';
 import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, items_init1 } from '../util/item_util.r';
 import { ItemQuery } from './itemQuery.s';
@@ -11,7 +11,7 @@ import { ItemQuery } from './itemQuery.s';
 // 添加矿山
 // #[rpc=rpcServer]
 export const add_mine = (uid: number): Mine => {
-    // if (get_mine_total(uid) >= 9) return;
+    if (get_mine_total(uid) >= MAX_ONEDAY_MINING) return;
     const itemQuery = new ItemQuery();
     itemQuery.uid = uid;
     itemQuery.enumType = 1;

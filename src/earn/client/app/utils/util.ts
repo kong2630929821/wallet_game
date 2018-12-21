@@ -3,8 +3,8 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
+import { WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
-import { WeightMiningCfg } from '../../../xlsx/miningCfg.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';

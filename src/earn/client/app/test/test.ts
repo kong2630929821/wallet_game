@@ -140,6 +140,17 @@ export const compose_ticket = () => {
     });
 };
 
+// 转盘
+export const ticket_rotary_test = () => {
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 9;
+    itemQuery.enumType = 7;
+    itemQuery.itemType = 7001;
+    clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
@@ -193,6 +204,10 @@ const props = {
         {
             name: '合成奖券',
             func: () => { compose_ticket(); }
+        },
+        {
+            name: '转盘',
+            func: () => { ticket_rotary_test(); }
         }
     ] // 按钮数组
 };
