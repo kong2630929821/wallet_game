@@ -1,0 +1,103 @@
+.new-page{
+    background-color:rgba(50,50,50,0.5);
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+.body{
+    position: relative;
+    margin:67px 20px;
+    background-color: #fff;
+    flex: 1 0 0;
+    background-image: url(../../../res/image/mining_bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 40px 30px;
+}
+.choose-tip{
+    font-size: 36px;
+    line-height: 50px;
+}
+.holded-hoes{
+    display: flex;
+    margin: 30px 0;
+}
+.digging-num{
+    font-size: 28px;
+    line-height: 40px;
+    margin-bottom: 30px;
+}
+.digging-tips{
+    font-size:48px;
+    color:rgba(255,255,255,1);
+    line-height:67px;
+    margin-top: 12px;
+}
+.award-container{
+    position: absolute;
+    right: 35px;
+    top: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.award-item{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    height:40px;
+    background:rgba(229,229,229,1);
+    border-radius:25px;
+    border:2px solid rgba(255,255,255,1);
+    font-size:32px;
+    color:rgba(34,34,34,1);
+}
+.award-num{
+    margin: 0 10px;
+}
+.award-icon{
+    width: 40px;
+    height: 40px;
+}
+.mine-area{
+    position: relative;
+}
+.mine-item{
+    position: absolute;
+}
+.box1{
+    position: absolute;
+    bottom: 40px;
+    left: 15px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.action-tips{
+    font-size:20px;
+    line-height:33px;
+    margin-top: 10px;
+}
+.gift-box{
+    width:90px;
+    height:90px;
+    background:rgba(255,255,255,1);
+    border-radius:18px;
+    border:2px solid rgba(204,204,204,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.close{
+}
+.ad-items{
+    display: flex;
+}
+.ad-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -1,0 +1,56 @@
+.body{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    background: #F9F9F9;
+    padding: 20px;
+}
+
+.item{
+    height: 400px;
+    width: 48%;
+    margin: 0 1%;
+    margin-top: 10px;
+    background:white;
+}
+.item-desc{
+    height:40px;
+    padding: 0 20px;
+    margin: 10px 0px 10px;
+    font-size:28px;
+    color:#222222;
+    line-height:40px;
+    overflow: hidden;
+    text-overflow:ellipsis; 
+    white-space: nowrap;
+}
+
+.item-money{
+    height: 60px;
+    padding: 0px 20px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+.money-one{
+    margin-right: 20px;
+    display: flex;
+}
+.money-num{
+    margin-left: 5px;
+    height:40px;
+    font-size:28px;
+    color:#222222;
+    line-height:40px;
+}
+.real-money{
+    margin-left: 5px;
+    height:40px;
+    font-size:28px;
+    color:white;
+    background:#318DE6;
+    border-radius:3px;
+    line-height:40px;
+    padding: 0 5px;
+}

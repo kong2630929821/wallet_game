@@ -19,3 +19,4 @@ node_modules
 /src/app
 /src/earn/xlsx/*.rs
 /src/earn/client/app/xls/*.rs
+/src/earn/client/app/xls/*.s.ts
