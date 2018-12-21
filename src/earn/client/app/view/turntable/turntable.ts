@@ -4,18 +4,25 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
 
 interface Props {
-    selectTicket: number;
+    selectTicket: any;
     turntableList: any;
     turnNum: number;
     isTurn: boolean;
+    ticketList:any;
 }
 export class Turntable extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        selectTicket: 0,
+        selectTicket: {
+            type: SILVER_TICKET_TYPE,
+            name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+            balance: 0,
+            turntableName:{"zh_Hans":"初级大转盘","zh_Hant":"初級大轉盤","en":""}
+        },
         turnNum: 30,
         isTurn: false,
         turntableList: [
@@ -27,6 +34,26 @@ export class Turntable extends Widget {
             { text: '键盘', name: '' },
             { text: '键盘', name: '' },
             { text: '键盘', name: '' }
+        ],
+        ticketList: [
+            {
+                type: SILVER_TICKET_TYPE,
+                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                balance: 0,
+                turntableName:{"zh_Hans":"初级大转盘","zh_Hant":"初級大轉盤","en":""}
+            },
+            {
+                type: GOLD_TICKET_TYPE,
+                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                balance: 0,
+                turntableName:{"zh_Hans":"中级大转盘","zh_Hant":"中級大轉盤","en":""}
+            },
+            {
+                type: RAINBOW_TICKET_TYPE,
+                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                balance: 0,
+                turntableName:{"zh_Hans":"高级大转盘","zh_Hant":"高級大轉盤","en":""}
+            }
         ]
     };
 
@@ -40,7 +67,7 @@ export class Turntable extends Widget {
     }
 
     /**
-     * 
+     * 开奖
      */
     public goLottery() {
         if (this.props.isTurn) {
@@ -69,7 +96,7 @@ export class Turntable extends Widget {
 
             return;
         }
-        this.props.selectTicket = num;
+        this.props.selectTicket = this.props.ticketList[num];
         this.paint();
     }
 

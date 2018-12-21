@@ -9,6 +9,7 @@ import { clientRpcFunc } from '../../net/init';
 import { item_query } from '../../../../server/rpc/user_item.p';
 import { Items } from '../../../../server/data/db/item.s';
 import { getStore } from '../../store/memstore';
+import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
 
 
 
@@ -24,24 +25,24 @@ export class OpenBox extends Widget {
 
     public props: Props = {
         selectTicket: {
-            type: 7001,
+            type: SILVER_TICKET_TYPE,
             name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
             balance: 0,
         },
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], //0:未开 1:已开
         ticketList: [
             {
-                type: 7001,
+                type: SILVER_TICKET_TYPE,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
             },
             {
-                type: 7002,
+                type: GOLD_TICKET_TYPE,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
             },
             {
-                type: 7003,
+                type: RAINBOW_TICKET_TYPE,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
             }

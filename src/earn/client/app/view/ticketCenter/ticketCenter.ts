@@ -4,6 +4,7 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
 
 export class TicketCenter extends Widget {
     public ok: () => void;
@@ -11,19 +12,19 @@ export class TicketCenter extends Widget {
         KTbalance: 500,
         ticketList: [
             {
-                type: 7001,
+                type: SILVER_TICKET_TYPE,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
                 priceKT: 500
             },
             {
-                type: 7002,
+                type: GOLD_TICKET_TYPE,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
                 priceKT: 1500
             },
             {
-                type: 7003,
+                type: RAINBOW_TICKET_TYPE,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
                 priceKT: 2000
