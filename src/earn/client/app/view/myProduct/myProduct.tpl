@@ -13,7 +13,7 @@
         {{% 列表}}
 
         {{for i,item in it.history}}
-        <div w-class="mat item" on-tap="goProductDetail({{item}})">
+        <div w-class="mat item" on-tap="goProductDetail({{i}})">
             <img src="{{item.img}}" width="210px;"/>
             <div w-class="item-text">
                 <div style="height:45px;font-size:32px;margin-bottom: 20px;">{{item.name}}</div>

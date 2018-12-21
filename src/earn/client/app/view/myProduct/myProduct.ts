@@ -45,8 +45,8 @@ export class MyProduct extends Widget {
         }
     }
 
-    public goProductDetail(item:any){
-        popNew('earn-client-app-view-myProduct-productDetail',{name:item.name});
+    public goProductDetail(index:number){
+        popNew('earn-client-app-view-myProduct-productDetail',{name:this.props.history[index].name});
     }
 
     /**
