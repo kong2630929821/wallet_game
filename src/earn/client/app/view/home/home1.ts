@@ -143,7 +143,7 @@ export class PlayHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('app-view-earn-client-view-activity-mining-miningRule');
+        popNew('earn-client-app-view-activity-mining-miningRule');
     }
 
     public updateHoe() {

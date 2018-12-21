@@ -3,7 +3,7 @@
  */
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
-import { Item } from '../../../../../server/data/db/item.s';
+import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
 import { readyMining, startMining } from '../../../net/rpc';
 import { register } from '../../../store/memstore';
@@ -27,10 +27,10 @@ export class MiningHome extends Widget {
 
     public init() {
         const mines = randomMines();
-        const curmines = mines.splice(0,MineMax); 
-        const leftmines = mines;
-        console.log('curmines = ',curmines);
-        console.log('leftmines = ',leftmines);
+        const curMines = mines.splice(0,MineMax); 
+        const leftMines = mines;
+        console.log('curMines = ',curMines);
+        console.log('leftMines = ',leftMines);
         const mineStyle = [
             'left:50%;top:-70px;transform: translateX(-50%);',
             'left:-20px;top:190px;',
@@ -46,14 +46,17 @@ export class MiningHome extends Widget {
             hoeSelected:-1,    // 选中的锄头
             mineType:-1,       // 选中的矿山类型 
             mineIndex:-1,     // 选中的矿山index
-            countDownStart:false,  // 
-            miningCount:0,
-            countDown:hoeUseDuration,
-            countDownTimer:0,
-            miningTips:'请选择锄头',
-            curmines,          // 当前显示的矿山
-            leftmines,          // 剩余的矿山
-            lossHp:1            // 当前掉血数
+            countDownStart:false,  // 是否开始倒计时
+            miningCount:0,             // 挖矿次数
+            countDown:hoeUseDuration,  // 倒计时时间
+            countDownTimer:0,        // 倒计时定时器
+            miningTips:'请选择锄头',   // 挖矿提示
+            curMines,          // 当前显示的矿山
+            leftMines,          // 剩余的矿山
+            lossHp:1,           // 当前掉血数
+            allAwardType:Item_Enum,// 奖励所有类型
+            awardType:0,   // 矿山爆掉的奖励类型
+            awardNumber:0          // 奖励数目
         };
 
     }
@@ -115,38 +118,58 @@ export class MiningHome extends Widget {
 
     // 矿山掉血
     public bloodLoss() {
-        for (let i = 0; i < this.props.curmines.length; i++) {
-            const mine = this.props.curmines[i];
+        for (let i = 0; i < this.props.curMines.length; i++) {
+            const mine = this.props.curMines[i];
             if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1];
                 mine.hp -= this.props.lossHp;
+                if (mine.hp <= 0) {
+                    // this.deleteBoomMine();
+                    this.initMiningState();
+                }
                 break;
             }
         }
     }
 
+    // 爆炸矿山消失
+    public deleteBoomMine() {
+        this.props.curMines = this.props.curMines.filter(item => {
+            return item.type !== this.props.mineType || item.index !== this.props.mineIndex;
+        });
+        this.paint();
+    }
     public countDown() {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
             this.props.miningTips = `倒计时 ${this.props.countDown} S`;
             if (!this.props.countDown) {
-                startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount);
-                this.props.mineIndex = -1;
-                this.props.mineType = -1;
-                this.props.countDownStart = false;
-                this.props.countDown = hoeUseDuration;
-                this.props.hoeSelected = -1;
-                this.props.miningTips = '请选择锄头';
-                console.log(`挖了${this.props.miningCount}次`);
-                
-                this.props.miningCount = 0;
-                clearTimeout(this.props.countDownTimer);
+                this.initMiningState();
             }
             this.paint();
         },1000);
     }
 
+    public initMiningState() {
+        startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
+            if (r.leftHp <= 0) {
+                this.props.awardType = r.award.enum_type;
+                this.props.awardNumber = r.award.value.count;
+                this.paint();
+            }
+        });
+        this.props.mineIndex = -1;
+        this.props.mineType = -1;
+        this.props.countDownStart = false;
+        this.props.countDown = hoeUseDuration;
+        this.props.hoeSelected = -1;
+        this.props.miningTips = '请选择锄头';
+        console.log(`挖了${this.props.miningCount}次`);
+        
+        this.props.miningCount = 0;
+        clearTimeout(this.props.countDownTimer);
+    }
     public updateHoe() {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);

@@ -55,7 +55,7 @@ export const item_test1 = () => {
 
 // 给指定用户添加指定类型物品
 export const item_test2 = () => {
-    const count = 1;
+    const count = 5;
     clientRpcFunc(item_add, count, (r: Item) => {
         console.log(r);
     });

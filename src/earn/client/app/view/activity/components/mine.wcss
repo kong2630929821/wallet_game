@@ -5,17 +5,25 @@
 }
 .hp-bg{
     position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
     width:100px;
-    height:10px;
+    height:20px;
     background:rgba(204,204,204,1);
+    border:5px solid rgba(255,255,255,1);
     border-radius:7px;
     overflow: hidden;
 }
 .hp{
     background:rgba(170,64,17,1);
     height: 100%;
-    border-radius:7px;
 }
 .grayscale{ 
     filter: grayscale(100%);
+}
+.hoe{
+    position: absolute;
+    top: 30px;
+    left: 50px;
 }

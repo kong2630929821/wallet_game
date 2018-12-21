@@ -9,6 +9,13 @@
                 <div w-class="hoe-type">
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
+                            <img src="../../../res/image/iron_hoe.png"/>
+                        </div>
+                        <div w-class="hoe-name">铁锄头</div>
+                    </div>
+                    <div w-class="dividing">></div>
+                    <div w-class="hoe-item">
+                        <div w-class="hoe-box">
                             <img src="../../../res/image/gold_hoe.png"/>
                         </div>
                         <div w-class="hoe-name">金锄头</div>
@@ -16,16 +23,9 @@
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../res/image/silver_hoe.png"/>
+                            <img src="../../../res/image/diamond_hoe.png"/>
                         </div>
-                        <div w-class="hoe-name">银锄头</div>
-                    </div>
-                    <div w-class="dividing">></div>
-                    <div w-class="hoe-item">
-                        <div w-class="hoe-box">
-                            <img src="../../../res/image/copper_hoe.png"/>
-                        </div>
-                        <div w-class="hoe-name">铁锄头</div>
+                        <div w-class="hoe-name">钻石锄头</div>
                     </div>
                 </div>
             </div>
@@ -51,15 +51,15 @@
                 <div w-class="mine-type">
                     <div w-class="mine-type-item">
                         <img src="../../../res/image/small_mine.png" style="width:168px;height:122px;"/>
-                        <div w-class="mine-name">小矿山</div>
+                        <div w-class="mine-name">普通矿山</div>
                     </div>
                     <div w-class="mine-type-item" style="margin:0 20px;">
                         <img src="../../../res/image/mid_mine.png" style="width:220px;height:161px;"/>
-                        <div w-class="mine-name">中矿山</div>
+                        <div w-class="mine-name">富饶矿山</div>
                     </div>
                     <div w-class="mine-type-item">
                         <img src="../../../res/image/big_mine.png" style="width:250px;height:203px;"/>
-                        <div w-class="mine-name">大矿山</div>
+                        <div w-class="mine-name">稀世矿山</div>
                     </div>
                 </div>
                 <div w-class="mine-desc">每日登陆都会赠送矿山，矿场最多储备9座矿山，消耗掉矿山会继续赠送。</div>

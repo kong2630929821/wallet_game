@@ -4,11 +4,13 @@
 import { getRealNode } from '../../../../../../pi/widget/painter';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { getMiningMaxHp } from '../../../utils/util';
+import { HoeType } from '../../../xls/hoeType.s';
 import { MineType } from '../../../xls/mineType.s';
 
 interface Props {
     mineType:MineType;
     hp:number;
+    selectedHoe:HoeType;
     selected:boolean;
     lossHp:number;
     beginMining:boolean;
@@ -18,23 +20,33 @@ export class Mine extends Widget {
     public $parent:any;
     public $imgContainer:any;
     public setProps(props:Props,oldProps:Props) {
-        let imgUrl = '../../../res/image/';
+        let mineImgUrl = '../../../res/image/';
         let hpMax = 0;
         if (props.mineType === MineType.SmallMine) {
-            imgUrl = props.selected ? `${imgUrl}small_mine_active.png` :`${imgUrl}small_mine.png`;
+            mineImgUrl = props.selected ? `${mineImgUrl}small_mine_active.png` :`${mineImgUrl}small_mine.png`;
             hpMax = getMiningMaxHp(MineType.SmallMine);
         } else if (props.mineType === MineType.MidMine) {
-            imgUrl = props.selected ? `${imgUrl}mid_mine_active.png` : `${imgUrl}mid_mine.png`;
+            mineImgUrl = props.selected ? `${mineImgUrl}mid_mine_active.png` : `${mineImgUrl}mid_mine.png`;
             hpMax = getMiningMaxHp(MineType.MidMine);
         } else {
-            imgUrl = props.selected ? `${imgUrl}big_mine_active.png` : `${imgUrl}big_mine.png`;
+            mineImgUrl = props.selected ? `${mineImgUrl}big_mine_active.png` : `${mineImgUrl}big_mine.png`;
             hpMax = getMiningMaxHp(MineType.BigMine);
         }
        
+        let hoeImgUrl = '../../../res/image/';
+        if (props.selectedHoe === HoeType.IronHoe) {
+            hoeImgUrl = `${hoeImgUrl}iron_hoe.png`;
+        } else if (props.selectedHoe === HoeType.GoldHoe) {
+            hoeImgUrl = `${hoeImgUrl}gold_hoe.png` ;
+        } else {
+            hoeImgUrl = `${hoeImgUrl}diamond_hoe.png`;
+        }
+
         this.props = {
             ...props,
             hpMax,
-            imgUrl
+            mineImgUrl,
+            hoeImgUrl
         };
         super.setProps(this.props,oldProps);
 

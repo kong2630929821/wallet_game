@@ -14,7 +14,8 @@
                     <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
                     <div w-class="action">看广告得锄头</div>
                 </div>
-                <div w-class="mine"></div>
+                <div w-class="mine" style="left:165px;bottom:150px;"><img src="../../res/image/big_mine.png"/></div>
+                <div w-class="mine" style="right:118px;bottom:236px;"><img src="../../res/image/small_mine.png"/></div>
                 <div w-class="holded-mine">我的矿星</div>
                 <div w-class="medals">
                     <div w-class="medal-tip">我的勋章</div>
