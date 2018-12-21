@@ -1,0 +1,81 @@
+.modal-mask{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px;
+    background-color: rgba(50, 50, 50, 0.5);
+}
+
+.body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 600px;
+    height:650px;
+    border-radius: 12px;
+    position:relative;
+}
+
+
+.bg{
+    height:100%;
+    width:100%;
+}
+.bg-top{
+    margin-top:150px;
+    height:250px;
+    width:100%;
+    background:linear-gradient(180deg,#FFF68A 0%,#FEE952;
+    box-shadow:0px 0px 20px 0px rgba(0,0,0,0.2);
+    border-radius:12px 12px 0px 0px;
+}
+.bg-bottom{
+    width:100%;
+    height:250px;
+    border-radius:0px 0px 12px 12px;
+    background-color:white;
+}
+
+
+.content{
+    width:100%;
+    height:100%;
+    position:absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.prize-img{
+    width: 450px;
+    height: 220px;
+    background: white;
+    border-radius: 12px;
+    text-align: center;
+    padding: 20px 0px;
+}
+.prize-name{
+    margin-top:10px;
+    height:50px;
+    font-size:36px;
+    color:#222222;
+    line-height:50px;
+}
+.tips{
+    margin-top:15px;
+    height:40px;
+    font-size:28px;
+    color:#888888;
+}
+
+.closeBtn{
+    margin-top:60px;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
