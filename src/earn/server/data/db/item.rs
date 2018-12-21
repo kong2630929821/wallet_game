@@ -75,6 +75,23 @@ struct Prizes {
 }
 
 /**
+*奖品MAP表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct AwardMap {
+    uid: u32,
+    awards: Option<&[u32]>
+}
+
+/**
+*获奖信息列表
+*/
+struct AwardList {
+    uid: u32,
+    awards: Option<&[Prizes]>
+}
+
+/**
 *随机种子内存表
 */
 #[primary=uid,db=memory,dbMonitor=true,hasmgr=false]
@@ -82,4 +99,13 @@ struct MineSeed {
     uid: u32,
     seed: u32,
     hoeType: u32
+}
+
+/**
+*单日矿山数量表
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+struct TodayMineNum {
+    id: String,
+    mineNum: u32
 }

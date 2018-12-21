@@ -2,13 +2,16 @@
  * 
  */
 import { randomInt } from '../../../pi/util/math';
-import { Hoe, Item, Items, Mine, MineSeed } from '../data/db/item.s';
+import { getEnv } from '../../../pi_pt/net/rpc_server';
+import { Bucket } from '../../utils/db';
+import { WARE_NAME } from '../data/constant';
+import { Hoe, Item, Items, Mine, MineSeed, Prizes } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
 import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { ItemQuery, Seed } from './itemQuery.s';
-import { Test } from './test.s';
+import { Hits, Test } from './test.s';
 import { item_query } from './user_item.r';
 
 // #[rpc=rpcServer]
@@ -23,10 +26,11 @@ export const award = (award: number): Test => {
 };
 
 // #[rpc=rpcServer]
-export const db_test = (uid: number): Items => {
-    items_init(uid);
+export const db_test = (pid: number): Prizes => {
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Prizes._$info.name, dbMgr);
 
-    return item_query(uid);
+    return bucket.get(pid)[0];
 };
 
 // #[rpc=rpcServer]
@@ -42,12 +46,23 @@ export const item_add = (count: number): Item => {
 };
 
 // #[rpc=rpcServer]
-export const hit_test = (hoeType:number): Seed => {
+export const hit_test = (hoeType:number): Hits => {
     console.log('hit test in !!!!!!!!!!!!!');
-    const randomSeedMgr = new RandomSeedMgr(2563);
-    const hit = doMining(hoeType, randomSeedMgr);
-    const mineseed = new Seed();
-    mineseed.seed = hit;
+    const hits = [];
+    const seeds = [];
+    const random = new RandomSeedMgr(200);
+    let seed = random.seed;
+    for (let i = 0; i < 200; i ++) {
+        seeds.push[seed];
+        console.log('seed:!!!!!!!!!!!!!!!!!!', seed);
+        const randomSeedMgr = new RandomSeedMgr(seed);
+        const hit = doMining(hoeType, randomSeedMgr);
+        hits.push(hit);
+        seed = RandomSeedMgr.randNumber(seed);
+    }
+    const total = new Hits();
+    total.r = hits;
+    total.seed = seeds;
 
-    return mineseed;
+    return total;
 };
