@@ -14,6 +14,10 @@ export const BTC_ENUM_NUM = 3;
 export const ETH_ENUM_NUM = 4;
 export const ST_ENUM_NUM = 5;
 export const KT_ENUM_NUM = 6;
+export const TICKET_ENUM_NUM = 7;
+
+// 物品类型总数
+export const MAX_TYPE_NUM = 13;
 
 // 物品类型编号
 export const SMALL_MINE_TYPE = 1001;
@@ -26,6 +30,9 @@ export const BTC_TYPE = 3001;
 export const ETH_TYPE = 4001;
 export const ST_TYPE = 5001;
 export const KT_TYPE = 6001;
+export const SILVER_TICKET_TYPE = 7001;
+export const GOLD_TICKET_TYPE = 7002;
+export const RAINBOW_TICKET_TYPE = 7003;
 
 // 人类10秒最快手速
 export const MAX_HUMAN_HITS = 200;
@@ -39,6 +46,9 @@ export const AWARD_SRC_MINE = 'mine';
 export const SMALL_MINE_TYPE_AWARD = 100101;
 export const MIDDLE_MINE_TYPE_AWARD = 100201;
 export const HUGE_MINE_TYPE_AWARD = 100301;
+export const GET_RANDOM_MINE = 100401;
+export const COMPOSE_GOLD_TICKET = 100501; // 合成金券
+export const COMPOSE_RAINBOW_TICKET = 100601; // 合成彩券
 
 // 数据库名
 export const WARE_NAME = 'file';

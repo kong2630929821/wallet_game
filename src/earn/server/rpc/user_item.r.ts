@@ -1,11 +1,11 @@
 /**
- * 
+ * 用户物品接口
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { WARE_NAME } from '../data/constant';
 import { AwardList, BTC, ETH, Hoe, Item, Items, KT, Mine, Prizes, ST, TodayMineNum } from '../data/db/item.s';
-import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init } from '../util/item_util.r';
+import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, items_init1 } from '../util/item_util.r';
 import { ItemQuery } from './itemQuery.s';
 
 // 添加矿山
@@ -40,6 +40,7 @@ export const item_query = (uid: number): Items => {
 // 获取指定物品信息
 // #[rpc=rpcServer]
 export const get_item = (itemQuery: ItemQuery): Item => {
+    console.log('get_item in !!!!!!!!!!!!');
     const itemInfo = item_query(itemQuery.uid);
     if (!itemInfo) return;
     const items = itemInfo.item;

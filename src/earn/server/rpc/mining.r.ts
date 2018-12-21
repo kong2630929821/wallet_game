@@ -1,5 +1,5 @@
 /**
- * 
+ * 挖矿接口
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
@@ -16,7 +16,8 @@ import { get_item, get_todayMineNum } from './user_item.r';
 // 获取挖矿几率的随机种子
 // #[rpc=rpcServer]
 export const mining = (itemQuery:ItemQuery):Seed => {
-    reduce_itemCount(itemQuery, 1);
+    // 相应锄头数量减1
+    if (!reduce_itemCount(itemQuery, 1)) return;
     const seed = Math.floor(Math.random() * 233280 + 1);
     const uid = itemQuery.uid;
     const hoeType = itemQuery.itemType;

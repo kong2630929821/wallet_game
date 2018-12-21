@@ -4,7 +4,7 @@
 import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
-import { WeightMiningCfg } from '../../xlsx/miningCfg.s';
+import { WeightMiningCfg } from '../../xlsx/awardCfg.s';
 import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE } from '../data/constant';
 import { getWeightIndex } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
