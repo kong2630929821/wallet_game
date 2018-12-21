@@ -7,7 +7,7 @@ import { AWARD_SRC_MINE, INDEX_PRIZE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_
 import { AwardMap, Item, Mine, MineSeed, MiningResponse, Prizes, TodayMineNum } from '../data/db/item.s';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
-import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, reduce_itemCount, reduce_mine } from '../util/item_util.r';
+import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { ItemQuery, MiningResult, Seed } from './itemQuery.s';
@@ -85,28 +85,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         awarditemQuery.enumType = get_enumType(itemNum);
         awarditemQuery.itemType = itemNum;
         awarditemQuery.uid = uid;
-        const item = add_itemCount(awarditemQuery, itemCount);
-        const dbMgr = getEnv().getDbMgr();
-        const bucket = new Bucket(WARE_NAME, Prizes._$info.name, dbMgr);
-        const prizeid = get_index_id(INDEX_PRIZE);
-        // 奖励详情写入数据库
-        console.log('prizeid!!!!!!!!!!!!!!!!!:', prizeid);
-        const prize = new Prizes();
-        prize.id = prizeid;
-        prize.prize = item;
-        prize.src = AWARD_SRC_MINE;
-        prize.uid = uid;
-        prize.time = new Date().valueOf();
-        bucket.put(prizeid, prize);
-        console.log('detail!!!!!!!!!!!!!!!!!:', bucket.get(prizeid)[0]);
-        const awardMap = <AwardMap>get_award_ids(uid);
-        let awardList = [];
-        awardList = awardMap.awards;
-        awardList.push(prizeid);
-        console.log('awardList!!!!!!!!!!!!!!!!!:', awardList);
-        const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
-        awardMap.awards = awardList;
-        mapBucket.put(uid, awardMap);
+        const item = add_award(awarditemQuery, itemCount, AWARD_SRC_MINE);
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         console.log('miningresponse!!!!!!!!!!!!!!!!!:', todayMineNum.mineNum);
