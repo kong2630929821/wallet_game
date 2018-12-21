@@ -3,7 +3,7 @@
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { IDIndex  } from './db/user.s'; 
+import { IDIndex } from './db/user.s';
 
 // 获取唯一ID
 export const get_index_id = (index: string) => {
@@ -17,9 +17,13 @@ export const get_index_id = (index: string) => {
         } else {
             r.id = v[0].id + 1;
         }
-        
+
         return r;
     });
 
     return r.id;
+};
+
+export const getcdkey = (uid: number | string, code: string) => {
+    return `${uid}:${code}`;
 };
