@@ -52,7 +52,7 @@ export const login = (user: UserType): UserInfo => {
     const session = getEnv().getSession();
     write(dbMgr, (tr: Tr) => {
         session.set(tr, 'uid', loginReq.uid.toString());
-        session.set(tr, 'openid', openid.toString());
+        session.set(tr, 'openid', openid);
     });
 
     // 添加到在线表
@@ -123,5 +123,5 @@ export const getOpenid = () => {
         openid = session.get(tr, 'openid');
     });
 
-    return parseInt(openid, 10);
+    return openid;
 };

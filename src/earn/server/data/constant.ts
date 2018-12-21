@@ -45,7 +45,7 @@ export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
 
 // 钱包服务器地址
-export const WALLET_SERVER_URL = 'http://127.0.0.1';
+export const WALLET_SERVER_URL = 'http://127.0.0.1:8099';
 // appid
 export const WALLET_APPID = '101';
 // 私钥

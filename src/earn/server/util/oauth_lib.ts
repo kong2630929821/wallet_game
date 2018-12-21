@@ -3,6 +3,7 @@
  * 连接钱包服务器封装
  */
 import { WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
+import * as http from './http_client';
 
 // 签名
 export const sign = (msg: string, privateKey: string) => {
@@ -34,21 +35,16 @@ export const json_uri_sort = (json) => {
 };
 
 export const oauth_send = (uri: string, body) => {
+    console.log('oauth_send!!!!!!!', uri, body);
     // 增加时间戳
     body.timestamp = new Date().getTime();
     // 签名
     const signStr = sign(json_uri_sort(body), WALLET_SERVER_KEY);
     body.sign = signStr;
-    fetch(`WALLET_SERVER_URL${uri}`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        })
-    }).then(response => response.json())
-        .then(res => {
-            console.log('send success ', res);
-        }).catch(err => {
-            console.log('send fail ', err);
-        });
+    const url = `${WALLET_SERVER_URL}${uri}`;
+    console.log('!!!!!!!!!url:', url);
+    const client = http.createClient();
+    http.addHeader(client, 'content-type', 'application/json');
+
+    return http.post(client, url, body);
 };
