@@ -9,15 +9,15 @@
                 <widget w-class="title" w-tag="pi-ui-lang">{"zh_Hans":"奖券","zh_Hant":"獎券","en":""}</widget>
                 <div w-class="ticket-list">
                     <div w-class="flex-col img-item">
-                        <img src="../../res/image/ticket0.png" width="150px;" height="114px;" />
+                        <img src="../../res/image/ticket7001.png" width="150px;" height="114px;" />
                         <widget w-class="img-title" w-tag="pi-ui-lang">{"zh_Hans":"银券","zh_Hant":"銀券","en":""}</widget>
                     </div>
                     <div w-class="flex-col img-item">
-                        <img src="../../res/image/ticket1.png" width="150px;" height="114px;" />
+                        <img src="../../res/image/ticket7002.png" width="150px;" height="114px;" />
                         <widget w-class="img-title" w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>
                     </div>
                     <div w-class="flex-col img-item">
-                        <img src="../../res/image/ticket2.png" width="150px;" height="114px;" />
+                        <img src="../../res/image/ticket7003.png" width="150px;" height="114px;" />
                         <widget w-class="img-title" w-tag="pi-ui-lang">{"zh_Hans":"彩券","zh_Hant":"彩券","en":""}</widget>
                     </div>
                 </div>

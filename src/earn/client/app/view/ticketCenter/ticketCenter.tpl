@@ -55,12 +55,12 @@
 
             {{for i,item in it.ticketList}}
             <div w-class="getTicket-item mat" style="margin-top:20px;">
-                <img src="../../res/image/ticket0.png" height="70%" style="margin-left:30px;" />
+                <img src="../../res/image/ticket{{item.type}}.png" height="70%" style="margin-left:30px;" />
                 <div w-class="getTicket-dsc">
                     <widget w-class="ticket-name" w-tag="pi-ui-lang">{{item.name}}</widget>
-                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值{{item.price}}KT","zh_Hant":"價值{{item.price}}KT","en":""}</widget>
+                    <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值{{item.priceKT}}KT","zh_Hant":"價值{{item.priceKT}}KT","en":""}</widget>
                 </div>
-                <div w-class="getTicket-btn" style="background:{{it.KTbalance<item.price?'#cccccc':'#222222'}}">
+                <div w-class="getTicket-btn" style="background:{{it.KTbalance<item.priceKT?'#cccccc':'#222222'}}">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"领取","zh_Hant":"領取","en":""}</widget>
                 </div>
             </div>

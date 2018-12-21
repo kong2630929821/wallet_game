@@ -28,6 +28,23 @@ export class TicketCenter extends Widget {
                 component:'earn-client-app-view-exchange-entityList'
             }
         ],
+        ticketList: [
+            {
+                type: 7001,
+                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                balance: 0,
+            },
+            {
+                type: 7002,
+                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                balance: 0,
+            },
+            {
+                type: 7003,
+                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                balance: 0,
+            }
+        ]
 
     }
 

@@ -8,7 +8,7 @@
                     {{if it.compoundType===0}}
                     <div w-class="compounding-bg" style="width:{{it.compoundExtent/100*132}}px;"></div>
                     {{end}}
-                    <img src="../../res/image/ticket0.png" alt="" />
+                    <img src="../../res/image/ticket7001.png" alt="" />
                     <div w-class="ticket-num">3/50</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"银券","zh_Hant":"银券","en":""}</widget>
@@ -16,7 +16,7 @@
             <img src="../../res/image1/rightArrow-blue.png" style="margin-top:-35px;" width="48px;" height="48px;" />
             <div w-class="ticket-item">
                 <div w-class="ticket-img">
-                    <img src="../../res/image/ticket1.png" alt="" />
+                    <img src="../../res/image/ticket7002.png" alt="" />
                     <div w-class="ticket-num">3/50</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>
@@ -33,7 +33,7 @@
                     {{if it.compoundType===1}}
                     <div w-class="compounding-bg" style="width:{{it.compoundExtent/100*132}}px;"></div>
                     {{end}}
-                    <img src="../../res/image/ticket1.png" alt="" />
+                    <img src="../../res/image/ticket7002.png" alt="" />
                     <div w-class="ticket-num">3/50</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>
@@ -41,7 +41,7 @@
             <img src="../../res/image1/rightArrow-blue.png" style="margin-top:-35px;" width="48px;" height="48px;" />
             <div w-class="ticket-item">
                 <div w-class="ticket-img">
-                    <img src="../../res/image/ticket2.png" alt="" />
+                    <img src="../../res/image/ticket7003.png" alt="" />
                     <div w-class="ticket-num">3/50</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{"zh_Hans":"彩券","zh_Hant":"彩券","en":""}</widget>

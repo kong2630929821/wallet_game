@@ -33,7 +33,7 @@
             <div w-class="ticket">
                 {{for i,item in it.ticketList}}
                     <div on-tap="change({{i}})" w-class="ticket-item {{it.selectTicket.type===item.type ?'select':''}}">
-                        <img src="../../res/image/ticket{{i}}.png" width="100%;" style="margin-top:15px;"/>
+                        <img src="../../res/image/ticket{{item.type}}.png" width="100%;" style="margin-top:15px;"/>
                         <div w-class="ticket-num">{{item.balance}}</div>
                     </div>
                 {{end}}

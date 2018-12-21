@@ -12,11 +12,11 @@
             <widget w-class="product-name" w-tag="pi-ui-lang">{"zh_Hans":{{it.name}},"zh_Hant":{{it.name}},"en":""}</widget>
             <div w-class="product-money">
                 <div w-class="money-one">
-                    <img src="../../res/image/ticket1.png" width="50px" height="40px;" alt="" />
+                    <img src="../../res/image/ticket7002.png" width="50px" height="40px;" alt="" />
                     <span w-class="money-num">3</span>
                 </div>
                 <div w-class="money-one">
-                    <img src="../../res/image/ticket1.png" width="50px" height="40px;" alt="" />
+                    <img src="../../res/image/ticket7002.png" width="50px" height="40px;" alt="" />
                     <span w-class="money-num">3</span>
                 </div>
             </div>
