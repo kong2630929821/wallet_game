@@ -35,7 +35,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = 'test';
+    walletLoginReq.openid = '2';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
 

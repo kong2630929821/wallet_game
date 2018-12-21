@@ -12,26 +12,37 @@ import { getOpenid, getUid } from './user.r';
 // 兑换邀请码
 // #[rpc=rpcServer]
 export const cdkey = (code: string): Invite => {
-    console.log('######################################code:', code);
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
     // 获取openid
-    const openid = getOpenid();
+    const openid = Number(getOpenid());
     const cdkey = getcdkey(uid, code);
-    console.log('!!!!!!!!!!!cdkey:', cdkey);
     const InviteBucket = new Bucket('file', Invite._$info.name, dbMgr);
     const v = InviteBucket.get(cdkey)[0];
-    const r = new Invite();
+    const invite = new Invite();
     if (!v) {
-        console.log('1111111111111111');
         // 去钱包服务器兑换邀请码
-        oauth_send(WALLET_API_CDKEY, { openid: openid, code: code });
-        // TODO 解析返回值
+        const r = oauth_send(WALLET_API_CDKEY, { openid: openid, code: code });
+        if (r.ok) {
+            const json = JSON.parse(r.ok);
+            if (json.return_code === 1) {
+                // TODO 增加邀请奖励
+                invite.code = cdkey;
+                invite.items = []; // TODO 奖品列表
+                InviteBucket.put(cdkey, invite);
+
+                return invite;
+            }
+        } else {
+            invite.code = '-1';
+            invite.items = [];
+
+            return invite;
+        }
     } else {
-        console.log('22222222222222');
+        invite.code = '-1';
+        invite.items = [];
 
-        return r;
+        return invite;
     }
-
-    return r;
 };
