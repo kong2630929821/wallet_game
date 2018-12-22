@@ -12,7 +12,7 @@ import { ItemQuery, MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
-import { ticket_compose } from '../../../server/rpc/ticket.p';
+import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_item, get_todayMineNum, item_query } from '../../../server/rpc/user_item.p';
@@ -140,6 +140,28 @@ export const compose_ticket = () => {
     });
 };
 
+// 转盘
+export const ticket_rotary_test = () => {
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 9;
+    itemQuery.enumType = 7;
+    itemQuery.itemType = 7001;
+    clientRpcFunc(ticket_rotary, itemQuery, (r: Item) => {
+        console.log(r);
+    });
+};
+
+// 宝箱
+export const ticket_treasurebox_test = () => {
+    const itemQuery = new ItemQuery();
+    itemQuery.uid = 9;
+    itemQuery.enumType = 7;
+    itemQuery.itemType = 7001;
+    clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
@@ -193,6 +215,14 @@ const props = {
         {
             name: '合成奖券',
             func: () => { compose_ticket(); }
+        },
+        {
+            name: '转盘',
+            func: () => { ticket_rotary_test(); }
+        },
+        {
+            name: '宝箱',
+            func: () => { ticket_treasurebox_test(); }
         }
     ] // 按钮数组
 };

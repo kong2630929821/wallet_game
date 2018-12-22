@@ -37,18 +37,33 @@ export const RAINBOW_TICKET_TYPE = 7003;
 // 人类10秒最快手速
 export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
-export const MAX_ONEDAY_MINING = 9;
+export const MAX_ONEDAY_MINING = 8;
 
 // 奖品来源
 export const AWARD_SRC_MINE = 'mine';
+export const AWARD_SRC_ROTARY = 'rotary';
+export const AWARD_SRC_TREASUREBOX = 'treasurebox';
 
 // 抽奖配置id
-export const SMALL_MINE_TYPE_AWARD = 100101;
-export const MIDDLE_MINE_TYPE_AWARD = 100201;
-export const HUGE_MINE_TYPE_AWARD = 100301;
-export const GET_RANDOM_MINE = 100401;
+export const SMALL_MINE_TYPE_AWARD = 100101; // 小矿山挖矿
+export const MIDDLE_MINE_TYPE_AWARD = 100201; // 中矿山挖矿
+export const HUGE_MINE_TYPE_AWARD = 100301; // 大矿山挖矿
+export const GET_RANDOM_MINE = 100401; // 获取矿山
 export const COMPOSE_GOLD_TICKET = 100501; // 合成金券
 export const COMPOSE_RAINBOW_TICKET = 100601; // 合成彩券
+export const SILVER_TICKET_ROTARY = 100701; // 银券大转盘
+export const GOLD_TICKET_ROTARY = 100801; // 金券大转盘
+export const RAINBOW_TICKET_ROTARY = 100901; // 彩券大转盘
+export const SILVER_TICKET_TREASUREBOX = 101001; // 银券宝箱
+export const GOLD_TICKET_TREASUREBOX = 101101; // 金券宝箱
+export const RAINBOW_TICKET_TREASUREBOX = 101201; // 彩券宝箱
+
+// 合成消耗奖券
+export const TICKET_COMPOSE_COUNT = 3;
+// 大转盘消耗奖券
+export const TICKET_ROTARY_COUNT = 2;
+// 开宝箱消耗奖券
+export const TICKET_TREASUREBOX_COUNT = 2;
 
 // 数据库名
 export const WARE_NAME = 'file';
