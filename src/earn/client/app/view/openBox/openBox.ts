@@ -65,9 +65,12 @@ export class OpenBox extends Widget {
     * 获取用户各种余票
     */
     public getTicketNum() {
+        const data = getStore('goods');
+        
         const uid = getStore('uid');
         clientRpcFunc(item_query, uid, (r: Items) => {
             //todo
+            
         });
     }
 
