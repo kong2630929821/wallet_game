@@ -33,7 +33,7 @@ export class ProductDetail extends Widget {
      */
     public comfirmExchange(){
         popNew('earn-client-app-view-exchange-comfirmExchange',null,()=>{
-            popNew('earn-client-app-view-myProduct-productDetail',this.props);
+            popNew('earn-client-app-view-myProduct-productDetail',{...this.props,detailType:0});
         });
     }
 

@@ -1,7 +1,7 @@
 /**
  * rpc通信
  */
-import { Item_Enum, Items, MiningResponse } from '../../../server/data/db/item.s';
+import { Item_Enum, Items, MiningResponse, Item } from '../../../server/data/db/item.s';
 import { ItemQuery, MiningResult } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
 import { item_query } from '../../../server/rpc/user_item.p';
@@ -10,6 +10,7 @@ import { getStore, setStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
+import { ticket_treasurebox, ticket_rotary, ticket_compose } from '../../../server/rpc/ticket.p';
 
 /**
  * 获取所有物品
@@ -17,23 +18,23 @@ import { clientRpcFunc } from './init';
 export const getAllGoods = () => {
     const uid = getStore('uid');
     clientRpcFunc(item_query, uid, (r: Items) => {
-        console.log('getAllGoods ',r);
-        setStore('goods',r.item);
+        console.log('getAllGoods ', r);
+        setStore('goods', r.item);
     });
 };
 
 /**
  * 准备挖矿
  */
-export const readyMining = (hoeType:HoeType) => {
+export const readyMining = (hoeType: HoeType) => {
     return new Promise(resolve => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.HOE;
         itemQuery.itemType = hoeType;
-        console.log('beginMining itemQuery = ',itemQuery);
+        console.log('beginMining itemQuery = ', itemQuery);
         clientRpcFunc(mining, itemQuery, (r: RandomSeedMgr) => {
-            console.log('beginMining ',r);
+            console.log('beginMining ', r);
             resolve(r);
         });
     });
@@ -42,7 +43,7 @@ export const readyMining = (hoeType:HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
+export const startMining = (mineType: MineType, mineIndex: number, diggingCount: number) => {
     return new Promise(resolve => {
         const result = new MiningResult();
         const itemQuery = new ItemQuery();
@@ -52,10 +53,68 @@ export const startMining = (mineType:MineType,mineIndex:number,diggingCount:numb
         result.itemQuery = itemQuery;
         result.mineNum = mineIndex;
         result.hit = diggingCount;
-        console.log('startMining result = ',result);
+        console.log('startMining result = ', result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {
-            console.log('startMining MiningResponse = ',r);
+            console.log('startMining MiningResponse = ', r);
             resolve(r);
         });
     });
 };
+
+
+/**
+ * 开宝箱
+ */
+export const openChest = (ticketType) => {
+    return new Promise(resolve => {
+        const itemQuery = new ItemQuery();
+        itemQuery.uid = getStore('uid');
+        itemQuery.enumType = Item_Enum.TICKET;
+        itemQuery.itemType = ticketType;
+        console.log(itemQuery);
+
+        clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
+            console.log('openChest =', r);
+            resolve(r);
+        });
+    })
+}
+
+
+/**
+ * 转转盘
+ */
+export const openTurntable = (ticketType) => {
+    return new Promise(resolve => {
+        const itemQuery = new ItemQuery();
+        itemQuery.uid = getStore('uid');
+        itemQuery.enumType = Item_Enum.TICKET;
+        itemQuery.itemType = ticketType;
+        console.log(itemQuery);
+
+        clientRpcFunc(ticket_rotary, itemQuery, (r: Item) => {
+            console.log('openTurntable =', r);
+            resolve(r);
+        });
+    })
+}
+
+
+export const compoundTicket = (ticketType) => {
+    return new Promise(resolve => {
+        const itemQuery = new ItemQuery();
+        itemQuery.uid = getStore('uid');
+        itemQuery.enumType = Item_Enum.TICKET;
+        itemQuery.itemType = ticketType;
+        console.log(itemQuery);
+
+        clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
+            console.log('compoundTicket =', r);
+            resolve(r);
+        });
+    })
+}
+
+
+
+

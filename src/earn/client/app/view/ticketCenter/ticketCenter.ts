@@ -5,6 +5,16 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
+import { register } from '../../../../../app/store/memstore';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { Item } from '../../../../server/data/db/item.s';
+import { getTicketBalance } from '../../utils/util';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class TicketCenter extends Widget {
     public ok: () => void;
@@ -32,6 +42,25 @@ export class TicketCenter extends Widget {
         ]
     };
 
+
+    public create() {
+        super.create();
+        this.initData();
+    }
+
+    /**
+     * 更新props数据
+     */
+    public initData() {
+        for (let i = 0; i < this.props.ticketList.length; i++) {
+            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
+        }
+        this.paint();
+    }
+
+
+
+
     /**
      * 活动跳转
      * @param num 活动序号
@@ -47,6 +76,7 @@ export class TicketCenter extends Widget {
             case 2:
                 break;
             case 3:
+                popNew('earn-client-app-view-exchange-exchange');// 奖券兑换
                 break;
 
             default:
@@ -83,3 +113,11 @@ export class TicketCenter extends Widget {
         this.ok && this.ok();
     }
 }
+
+
+// ===================================================== 立即执行
+
+register('goods', (goods: Item[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

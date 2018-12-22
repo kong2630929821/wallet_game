@@ -5,12 +5,18 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { clientRpcFunc } from '../../net/init';
-import { item_query } from '../../../../server/rpc/user_item.p';
-import { Items } from '../../../../server/data/db/item.s';
-import { getStore } from '../../store/memstore';
+import { Item } from '../../../../server/data/db/item.s';
+import { register } from '../../store/memstore';
 import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { openChest } from '../../net/rpc';
+import { getTicketBalance } from '../../utils/util';
 
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 
 interface Props {
@@ -55,27 +61,18 @@ export class OpenBox extends Widget {
         this.initData();
     }
 
-
+    /**
+     * 初始数据
+     */
     public initData() {
-        this.getTicketNum();
-    }
-
-
-    /**
-    * 获取用户各种余票
-    */
-    public getTicketNum() {
-        const data = getStore('goods');
-        
-        const uid = getStore('uid');
-        clientRpcFunc(item_query, uid, (r: Items) => {
-            //todo
-            
-        });
+        for(let i=0;i<this.props.ticketList.length;i++){
+            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
+        }
+        this.paint();
     }
 
     /**
-     * 打开单个宝箱 
+     * 打开宝箱 
      * @param num 宝箱序数
      */
     public openBox(num: number) {
@@ -83,9 +80,11 @@ export class OpenBox extends Widget {
 
             return;
         }
-        popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
-        this.props.boxList[num] = 1;
-        this.paint();
+        openChest(this.props.selectTicket.type).then((res)=>{
+            popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
+            this.props.boxList[num] = 1;
+            this.paint();
+        })
     }
     /**
      * 重置所有宝箱
@@ -119,3 +118,11 @@ export class OpenBox extends Widget {
         this.ok && this.ok();
     }
 }
+
+
+// ===================================================== 立即执行
+
+register('goods',(goods:Item[]) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});
