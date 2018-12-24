@@ -41,7 +41,6 @@ export const add_award = (itemQuery:ItemQuery, count:number, src:string):Item =>
     prize.uid = uid;
     prize.time = new Date().valueOf();
     bucket.put(prizeid, prize);
-    console.log('detail!!!!!!!!!!!!!!!!!:', bucket.get(prizeid)[0]);
     const awardMap = <AwardMap>get_award_ids(uid);
     let awardList = [];
     awardList = awardMap.awards;
@@ -370,7 +369,6 @@ export const get_award_ids = (uid: number): AwardMap => {
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
     const awardMap = bucket.get<number, [AwardMap]>(uid)[0];
-    console.log('dawardMap:!!!!!!!!!!!!!', bucket.get(uid)[0]);
     if (!awardMap) {
         const blankAwardMap = new AwardMap();
         blankAwardMap.uid = uid;

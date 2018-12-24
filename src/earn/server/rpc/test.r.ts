@@ -37,7 +37,7 @@ export const db_test = (pid: number): Prizes => {
 export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 9;
+    itemQuery.uid = 7;
     itemQuery.enumType = 2;
     itemQuery.itemType = 2001;
     console.log('itemType:!!!!!!!!!', itemQuery.itemType);
@@ -49,7 +49,7 @@ export const item_add = (count: number): Item => {
 export const item_addticket = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
     const itemQuery = new ItemQuery();
-    itemQuery.uid = 9;
+    itemQuery.uid = 7;
     itemQuery.enumType = 7;
     itemQuery.itemType = 7001;
     console.log('itemType:!!!!!!!!!', itemQuery.itemType);

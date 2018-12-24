@@ -22,3 +22,9 @@ struct MiningResult {
     mineNum: u32, //具体类型矿山的数组下标
     hit: u32 //用户点击次数
 }
+
+//排行查询
+struct TopQuery {
+    uid: u32,
+    top: u32
+}
