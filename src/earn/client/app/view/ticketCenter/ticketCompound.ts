@@ -3,10 +3,12 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
-import { register } from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Item } from '../../../../server/data/db/item.s';
-import { TicketType } from '../../xls/dataEnum.s';
+import { TicketType, CompoundTicketNum } from '../../xls/dataEnum.s';
+import { getTicketBalance } from '../../utils/util';
+import { compoundTicket, getAllGoods } from '../../net/rpc';
+import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -15,25 +17,27 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    compoundType:number;// 合成种类
-    compoundExtent:number;// 合成进度
-    ticketList:any;// 奖券列表
+    compoundType: number;// 合成种类
+    compoundExtent: number;// 合成进度
+    ticketList: any;// 奖券列表
 }
 
 export class TicketCompound extends Widget {
     public ok: () => void;
-    public props:Props = {
-        compoundType:0, 
-        compoundExtent:0,
+    public props: Props = {
+        compoundType: 0,
+        compoundExtent: 0,
         ticketList: [
             {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                needTicketNum: CompoundTicketNum.SilverToGold,
                 balance: 0,
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                needTicketNum: CompoundTicketNum.GoldToDiamond,
                 balance: 0,
             },
             {
@@ -44,7 +48,20 @@ export class TicketCompound extends Widget {
         ]
     };
 
+    public create() {
+        super.create();
+        this.initData();
+    }
 
+    /**
+     * 初始数据
+     */
+    public initData() {
+        for (let i = 0; i < this.props.ticketList.length; i++) {
+            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
+        }
+        this.paint();
+    }
 
 
 
@@ -52,13 +69,22 @@ export class TicketCompound extends Widget {
      * 奖券合成
      * @param ind 
      */
-    public compound(ind:number) {
-        if (this.props.compoundExtent > 0) {
+    public compound(ind: number) {
+        this.props.compoundType = ind;
+        const selectData = this.props.ticketList[ind];
+
+        if (this.props.compoundExtent > 0) {                 //正在合成
+            //TODO
             return;
         }
-        this.props.compoundType = ind;
-        let resData;
-        // compoundTicket()
+        if (selectData.balance < selectData.needTicketNum) { //奖券不够合成
+            //TODO
+            return;
+        }
+
+        compoundTicket(selectData.type).then(() => {
+
+        });
         const animation = () => {
             if (this.props.compoundExtent < 100) {
                 this.props.compoundExtent += 1;
@@ -66,9 +92,10 @@ export class TicketCompound extends Widget {
                 timer = requestAnimationFrame(animation);
             } else {
                 cancelAnimationFrame(timer);
+                getAllGoods();
                 this.props.compoundExtent = 0;
                 this.paint();
-            } 
+            }
         };
         let timer = requestAnimationFrame(animation);
     }
@@ -84,7 +111,7 @@ export class TicketCompound extends Widget {
 
 // ===================================================== 立即执行
 
-register('goods',(goods:Item[]) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
+register('goods', (goods: Item[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

@@ -8,9 +8,9 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { register } from '../../store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
-import { openChest } from '../../net/rpc';
+import { openChest, getAllGoods } from '../../net/rpc';
 import { getTicketBalance } from '../../utils/util';
-import { TicketType } from '../../xls/dataEnum.s';
+import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,9 +20,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 
 interface Props {
-    selectTicket: any;
-    boxList: any;
-    ticketList: any;
+    isEmpty:boolean; //空宝箱
+    selectTicket: any; //选择的宝箱类型
+    boxList: any; //宝箱列表
+    ticketList: any; //奖券列表
 }
 
 
@@ -30,34 +31,35 @@ export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        selectTicket: {
-            type: TicketType.SilverTicket,
-            name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
-            balance: 0,
-        },
+        isEmpty:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], //0:未开 1:已开
         ticketList: [
             {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                needTicketNum:LotteryTicketNum.SilverChest,
                 balance: 0,
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                needTicketNum:LotteryTicketNum.GoldChest,
                 balance: 0,
             },
             {
                 type:   TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                needTicketNum:LotteryTicketNum.DiamondChest,
                 balance: 0,
             }
-        ]
+        ],
+        selectTicket: {},
 
     };
 
     public create() {
         super.create();
+        this.props.selectTicket = this.props.ticketList[0];
         this.initData();
     }
 
@@ -76,18 +78,40 @@ export class OpenBox extends Widget {
      * @param num 宝箱序数
      */
     public openBox(num: number) {
-        if (this.props.boxList[num] === 1) {
-
+        if (this.props.boxList[num] === 1) {  //宝箱已打开
+            //TODO
             return;
         }
-        openChest(this.props.selectTicket.type).then((res)=>{
-            popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
+        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {  //奖券不够
+            //TODO
+            return;
+        }
+        openChest(this.props.selectTicket.type).then((res:any)=>{
+            popNew('earn-client-app-view-component-lotteryModal', { data: res.value });
+            if(res.value.count===0){
+                this.emptyChest();
+            }
             this.props.boxList[num] = 1;
             this.paint();
         }).catch((err)=>{
             alert(err)
+            this.emptyChest();
         })
     }
+
+    /**
+     * 设置空宝箱提示
+     */
+    public emptyChest(){
+        this.props.isEmpty = true;
+        this.paint();
+        setTimeout(() => {
+            this.props.isEmpty =false;
+            this.paint();
+        }, 2000);
+
+    }
+
     /**
      * 重置所有宝箱
      */

@@ -37,9 +37,10 @@
             {{% 售价}}
             <div w-class="sale">
                 <div w-class="sale-money">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：2","zh_Hant":"售價：2","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
+                    <span>{{it.selectTicket.needTicketNum}}</span>
                     <widget w-tag="pi-ui-lang">{{it.selectTicket.name}}</widget>  
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"/1个","zh_Hant":"/1個","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"/1次","zh_Hant":"/1次","en":""}</widget>
                 </div>
             </div>
 

@@ -9,7 +9,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { register } from '../../../../../app/store/memstore';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
-import { TicketType } from '../../xls/dataEnum.s';
+import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -29,12 +29,7 @@ export class Turntable extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        selectTicket: {
-            type: TicketType.SilverTicket,
-            name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
-            balance: 0,
-            turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" }
-        },
+        selectTicket: {},
         turnNum: 30,
         isTurn: false,
         turntableList: [
@@ -52,18 +47,21 @@ export class Turntable extends Widget {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
+                needTicketNum:LotteryTicketNum.SilverTurntable,
                 turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" }
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
+                needTicketNum:LotteryTicketNum.GoldTurntable,
                 turntableName: { "zh_Hans": "中级大转盘", "zh_Hant": "中級大轉盤", "en": "" }
             },
             {
                 type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
+                needTicketNum:LotteryTicketNum.DiamondTurntable,
                 turntableName: { "zh_Hans": "高级大转盘", "zh_Hant": "高級大轉盤", "en": "" }
             }
         ]
@@ -71,6 +69,7 @@ export class Turntable extends Widget {
 
     public create() {
         super.create();
+        this.props.selectTicket = this.props.ticketList[0];
         this.initTurntable();
         this.initData();
     }

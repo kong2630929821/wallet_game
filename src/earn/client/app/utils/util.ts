@@ -10,6 +10,7 @@ import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { PrizeCfg } from '../xls/dataEnum.s';
 
 /**
  * 获取锄头对象
@@ -155,3 +156,23 @@ export const getTicketBalance = (ticketType) => {
 
     return 0;
 }
+
+
+
+
+/**
+ * 获取奖品信息
+ * @param prizeType 奖品编号
+ */
+export const getPrizeInfo = (prizeType:number):any => {
+    const cfgs = getMap(PrizeCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (cfg.pid === prizeType) {
+            return cfg;
+        }
+    }
+
+    return filterCfgs;
+    
+};

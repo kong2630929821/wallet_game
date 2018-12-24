@@ -12,6 +12,7 @@ import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
 import { ticket_treasurebox, ticket_rotary, ticket_compose } from '../../../server/rpc/ticket.p';
 import { TicketType } from '../xls/dataEnum.s';
+import { item_addticket } from '../../../server/rpc/test.p';
 
 /**
  * 获取所有物品
@@ -66,18 +67,20 @@ export const startMining = (mineType: MineType, mineIndex: number, diggingCount:
 /**
  * 开宝箱
  */
-export const openChest = (ticketType:TicketType) => {
-    return new Promise((resolve,reject) => {
+export const openChest = (ticketType: TicketType) => {
+    return new Promise((resolve, reject) => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.TICKET;
         itemQuery.itemType = ticketType;
 
         clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
+            console.log('rpc-openChest-resData-------------',r);
+            
             if (r) {
-                
+                getAllGoods();
                 resolve(r);
-            }else{
+            } else {
                 reject(r);
             }
         });
@@ -88,7 +91,7 @@ export const openChest = (ticketType:TicketType) => {
 /**
  * 转转盘
  */
-export const openTurntable = (ticketType:TicketType) => {
+export const openTurntable = (ticketType: TicketType) => {
     return new Promise(resolve => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
@@ -105,23 +108,26 @@ export const openTurntable = (ticketType:TicketType) => {
 /**
  * 合成奖券
  */
-export const compoundTicket = (ticketType:TicketType) => {
-    return new Promise((resolve,reject) => {
+export const compoundTicket = (ticketType: TicketType) => {
+    return new Promise((resolve, reject) => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.TICKET;
         itemQuery.itemType = ticketType;
         console.log(itemQuery);
-        setTimeout(() => {
-            resolve();
-        }, 2000);
-        // clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
-        //     console.log('compoundTicket =', r);
-        //     resolve(r);
-        // });
+
+        clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
+            console.log('compoundTicket =', r);
+            resolve(r);
+        });
     })
 }
 
+export const addTicket = (num: number) => {
+    clientRpcFunc(item_addticket, num, (r: Item) => {
+        getAllGoods();
+    });
+}
 
 
 

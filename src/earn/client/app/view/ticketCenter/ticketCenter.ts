@@ -4,11 +4,12 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { register } from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Item } from '../../../../server/data/db/item.s';
 import { getTicketBalance } from '../../utils/util';
 import { TicketType } from '../../xls/dataEnum.s';
+import { addTicket } from '../../net/rpc';
+import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -60,8 +61,7 @@ export class TicketCenter extends Widget {
 
 
     public getTicket(index:number){
-        console.log(this.props.ticketList[index]);
-        
+        addTicket(10);
     }
 
 

@@ -6,6 +6,17 @@
 import { Widget } from "../../../../../pi/widget/widget";
 import { popNew } from "../../../../../pi/ui/root";
 import { TicketType } from "../../xls/dataEnum.s";
+import { register } from "../../store/memstore";
+import { Item } from "../../../../server/data/db/item.s";
+import { Forelet } from "../../../../../pi/widget/forelet";
+import { getTicketBalance } from "../../utils/util";
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 
 export enum ExchangeType {
     'zeroExchange' = 0,
@@ -48,6 +59,22 @@ export class TicketCenter extends Widget {
         ]
 
     }
+
+    public create() {
+        super.create();
+        this.initData();
+    }
+
+    /**
+     * 初始数据
+     */
+    public initData() {
+        for(let i=0;i<this.props.ticketList.length;i++){
+            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
+        }
+        this.paint();
+    }
+
 
     /**
      * 屏幕滚动
@@ -93,3 +120,11 @@ export class TicketCenter extends Widget {
         this.ok && this.ok();
     }
 }
+
+
+// ===================================================== 立即执行
+
+register('goods',(goods:Item[]) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

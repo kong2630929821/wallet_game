@@ -19,7 +19,7 @@
             <div w-class="ticket-item">
                 <div w-class="ticket-img">
                     <img src="../../res/image/ticket7002.png" alt="" />
-                    <div w-class="ticket-num">{{it.ticketList[0].balance}}</div>
+                    <div w-class="ticket-num">{{it.ticketList[1].balance}}</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{{it.ticketList[1].name}}</widget>
             </div>
@@ -38,7 +38,7 @@
                         </div>
                     {{end}}
                     <img src="../../res/image/ticket7002.png" alt="" />
-                    <div w-class="ticket-num">3/{{it.ticketList[0].balance}}</div>
+                    <div w-class="ticket-num">3/{{it.ticketList[1].balance}}</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{{it.ticketList[1].name}}</widget>
             </div>
@@ -46,7 +46,7 @@
             <div w-class="ticket-item">
                 <div w-class="ticket-img">
                     <img src="../../res/image/ticket7003.png" alt="" />
-                    <div w-class="ticket-num">{{it.ticketList[0].balance}}</div>
+                    <div w-class="ticket-num">{{it.ticketList[2].balance}}</div>
                 </div>
                 <widget w-class="ticket-name" w-tag="pi-ui-lang">{{it.ticketList[2].name}}</widget>
             </div>
