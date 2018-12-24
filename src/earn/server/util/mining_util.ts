@@ -4,8 +4,11 @@
 import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
+import { Bucket } from '../../utils/db';
 import { WeightMiningCfg } from '../../xlsx/awardCfg.s';
-import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, GOLD_TICKET_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, RAINBOW_TICKET_TYPE, SILVER_TICKET_TYPE, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM } from '../data/constant';
+import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, GOLD_TICKET_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, RAINBOW_TICKET_TYPE, SILVER_TICKET_TYPE, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
+import { MiningMap, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
+import { get_totalminingNum } from '../rpc/mining.r';
 import { getWeightIndex } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
 
@@ -22,7 +25,6 @@ export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
         const pid = hoeType * 100 + 1;
         console.log('!!!!!!!!!!!!!!pid', pid);
         const iterCfg = iterDb(tr, MEMORY_NAME, WeightMiningCfg._$info.name, pid, false, null);
-        console.log('!!!!!!!!!!!!!!iterCfg:', iterCfg);
         do {
             const elCfg = iterCfg.nextElem();
             console.log('elCfg----------------read---------------', elCfg);
@@ -41,6 +43,33 @@ export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
     hits = cfg.hits;
     
     return hits;
+};
+
+// 添加用户挖矿山总数
+export const add_miningTotal = (uid: number) => {
+    const miningtotal = get_totalminingNum(uid);
+    miningtotal.total = miningtotal.total + 1;
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, TotalMiningNum._$info.name, dbMgr);
+    bucket.put(uid, miningtotal);
+    const mapBucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
+    const miningMap = new MiningMap();
+    miningMap.total = miningtotal.total;
+    miningMap.uid = uid;
+    const totalMiningMap = mapBucket.get<MiningMap, [TotalMiningMap]>(miningMap)[0];
+    if (!totalMiningMap) {
+        const blanktotalMiningMap = new TotalMiningMap();
+        const blankminingMap = new MiningMap();
+        blankminingMap.uid = uid;
+        blankminingMap.total = 1;
+        blanktotalMiningMap.miningMap = blankminingMap;
+        blanktotalMiningMap.uName = miningtotal.uName;
+        mapBucket.put(blankminingMap, blanktotalMiningMap);
+    } else {
+        miningMap.total = miningtotal.total;
+        totalMiningMap.miningMap =  miningMap;
+        mapBucket.put(miningMap, totalMiningMap);
+    }
 };
 
 // 获取物品枚举编号

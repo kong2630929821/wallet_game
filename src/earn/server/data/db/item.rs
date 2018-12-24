@@ -91,6 +91,14 @@ struct AwardMap {
 }
 
 /**
+*查询获奖信息
+*/
+struct AwardQuery {
+    uid: u32,
+    src: Option<String>
+}
+
+/**
 *获奖信息列表
 */
 struct AwardList {
@@ -115,4 +123,39 @@ struct MineSeed {
 struct TodayMineNum {
     id: String,
     mineNum: u32
+}
+
+/**
+*总挖矿数量表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct TotalMiningNum {
+    uid: u32,
+    uName: Option<String>,
+    total: u32
+}
+
+/**
+*总挖矿数量MAP
+*/
+struct MiningMap {
+    total: u32,
+    uid: u32
+}
+
+/**
+*总挖矿数量MAP表
+*/
+#[primary=miningMap,db=file,dbMonitor=true,hasmgr=false]
+struct TotalMiningMap {
+    miningMap: MiningMap,
+    uName: Option<String>
+}
+
+/**
+*总挖矿数量排行
+*/
+struct MineTop {
+    topList: &[TotalMiningMap],
+    myNum: u32
 }
