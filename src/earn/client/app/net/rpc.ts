@@ -11,6 +11,7 @@ import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
 import { ticket_treasurebox, ticket_rotary, ticket_compose } from '../../../server/rpc/ticket.p';
+import { TicketType } from '../xls/dataEnum.s';
 
 /**
  * 获取所有物品
@@ -65,17 +66,20 @@ export const startMining = (mineType: MineType, mineIndex: number, diggingCount:
 /**
  * 开宝箱
  */
-export const openChest = (ticketType) => {
-    return new Promise(resolve => {
+export const openChest = (ticketType:TicketType) => {
+    return new Promise((resolve,reject) => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.TICKET;
         itemQuery.itemType = ticketType;
-        console.log(itemQuery);
 
         clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
-            console.log('openChest =', r);
-            resolve(r);
+            if (r) {
+                
+                resolve(r);
+            }else{
+                reject(r);
+            }
         });
     })
 }
@@ -84,13 +88,12 @@ export const openChest = (ticketType) => {
 /**
  * 转转盘
  */
-export const openTurntable = (ticketType) => {
+export const openTurntable = (ticketType:TicketType) => {
     return new Promise(resolve => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.TICKET;
         itemQuery.itemType = ticketType;
-        console.log(itemQuery);
 
         clientRpcFunc(ticket_rotary, itemQuery, (r: Item) => {
             console.log('openTurntable =', r);
@@ -99,19 +102,23 @@ export const openTurntable = (ticketType) => {
     })
 }
 
-
-export const compoundTicket = (ticketType) => {
-    return new Promise(resolve => {
+/**
+ * 合成奖券
+ */
+export const compoundTicket = (ticketType:TicketType) => {
+    return new Promise((resolve,reject) => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.TICKET;
         itemQuery.itemType = ticketType;
         console.log(itemQuery);
-
-        clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
-            console.log('compoundTicket =', r);
-            resolve(r);
-        });
+        setTimeout(() => {
+            resolve();
+        }, 2000);
+        // clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
+        //     console.log('compoundTicket =', r);
+        //     resolve(r);
+        // });
     })
 }
 

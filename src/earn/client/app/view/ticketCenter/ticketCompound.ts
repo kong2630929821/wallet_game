@@ -6,8 +6,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { register } from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Item } from '../../../../server/data/db/item.s';
-import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
-import { compoundTicket } from '../../net/rpc';
+import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -28,17 +27,17 @@ export class TicketCompound extends Widget {
         compoundExtent:0,
         ticketList: [
             {
-                type: SILVER_TICKET_TYPE,
+                type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
             },
             {
-                type: GOLD_TICKET_TYPE,
+                type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
             },
             {
-                type: RAINBOW_TICKET_TYPE,
+                type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
             }

@@ -4,12 +4,12 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
 import { getTicketBalance } from '../../utils/util';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { register } from '../../../../../app/store/memstore';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
+import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,7 +30,7 @@ export class Turntable extends Widget {
 
     public props: Props = {
         selectTicket: {
-            type: SILVER_TICKET_TYPE,
+            type: TicketType.SilverTicket,
             name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
             balance: 0,
             turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" }
@@ -49,19 +49,19 @@ export class Turntable extends Widget {
         ],
         ticketList: [
             {
-                type: SILVER_TICKET_TYPE,
+                type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
                 turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" }
             },
             {
-                type: GOLD_TICKET_TYPE,
+                type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
                 turntableName: { "zh_Hans": "中级大转盘", "zh_Hant": "中級大轉盤", "en": "" }
             },
             {
-                type: RAINBOW_TICKET_TYPE,
+                type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
                 turntableName: { "zh_Hans": "高级大转盘", "zh_Hant": "高級大轉盤", "en": "" }
@@ -107,17 +107,21 @@ export class Turntable extends Widget {
         let resData;
         const $turn = document.querySelector('#turntable');
         $turn.style.transition = 'transform 6s ease';
-        $turn.style.transform = 'rotate(3600deg)';
+        $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
         this.paint();
 
         openTurntable(this.props.selectTicket.type).then((res) => {
-            resData = 1;
+            this.props.turnNum = 60;
+            $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
+        }).catch(()=>{
+            this.props.turnNum +=50;
+            $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
         })
 
         setTimeout(() => {
             this.props.isTurn = false;
             $turn.style.transition = 'none';
-            $turn.style.transform = 'none';
+            $turn.style.transform = `rotate(${this.props.turnNum}deg)`;
             if (resData) {
                 popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
 

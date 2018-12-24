@@ -7,10 +7,10 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { register } from '../../store/memstore';
-import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from '../../../../server/data/constant';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { openChest } from '../../net/rpc';
 import { getTicketBalance } from '../../utils/util';
+import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -31,24 +31,24 @@ export class OpenBox extends Widget {
 
     public props: Props = {
         selectTicket: {
-            type: SILVER_TICKET_TYPE,
+            type: TicketType.SilverTicket,
             name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
             balance: 0,
         },
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], //0:未开 1:已开
         ticketList: [
             {
-                type: SILVER_TICKET_TYPE,
+                type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
             },
             {
-                type: GOLD_TICKET_TYPE,
+                type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
             },
             {
-                type: RAINBOW_TICKET_TYPE,
+                type:   TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
             }
@@ -84,6 +84,8 @@ export class OpenBox extends Widget {
             popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
             this.props.boxList[num] = 1;
             this.paint();
+        }).catch((err)=>{
+            alert(err)
         })
     }
     /**

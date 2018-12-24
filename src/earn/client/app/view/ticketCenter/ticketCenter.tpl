@@ -60,7 +60,7 @@
                     <widget w-class="ticket-name" w-tag="pi-ui-lang">{{item.name}}</widget>
                     <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"价值{{item.priceKT}}KT","zh_Hant":"價值{{item.priceKT}}KT","en":""}</widget>
                 </div>
-                <div w-class="getTicket-btn" style="background:{{it.KTbalance<item.priceKT?'#cccccc':'#222222'}}">
+                <div on-tap="getTicket({{i}})" w-class="getTicket-btn" style="background:{{it.KTbalance<item.priceKT?'#cccccc':'#222222'}}">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"领取","zh_Hant":"領取","en":""}</widget>
                 </div>
             </div>

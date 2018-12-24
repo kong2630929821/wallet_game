@@ -5,7 +5,7 @@
 
 import { Widget } from "../../../../../pi/widget/widget";
 import { popNew } from "../../../../../pi/ui/root";
-import { SILVER_TICKET_TYPE, GOLD_TICKET_TYPE, RAINBOW_TICKET_TYPE } from "../../../../server/data/constant";
+import { TicketType } from "../../xls/dataEnum.s";
 
 export enum ExchangeType {
     'zeroExchange' = 0,
@@ -31,17 +31,17 @@ export class TicketCenter extends Widget {
         ],
         ticketList: [
             {
-                type: SILVER_TICKET_TYPE,
+                type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
             },
             {
-                type: GOLD_TICKET_TYPE,
+                type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
             },
             {
-                type: RAINBOW_TICKET_TYPE,
+                type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
             }
