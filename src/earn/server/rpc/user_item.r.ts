@@ -4,8 +4,8 @@
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { MAX_ONEDAY_MINING, WARE_NAME } from '../data/constant';
-import { AwardList, AwardQuery, BTC, ETH, Hoe, Item, Items, KT, Mine, Prizes, ST, TodayMineNum } from '../data/db/item.s';
-import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, items_init1 } from '../util/item_util.r';
+import { Award, AwardList, AwardQuery, BTC, ETH, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
+import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { getUid } from './user.r';
 
@@ -68,8 +68,8 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
         return awardList;
     } else {
         pidList = awardMap.awards;
-        const bucket = new Bucket(WARE_NAME, Prizes._$info.name, dbMgr);
-        const awards = bucket.get<number,[Prizes]>(pidList);
+        const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
+        const awards = bucket.get<number,[Award]>(pidList);
         if (!awardQuery.src) {
             console.log('awards:!!!!!!!!!!!!!!!!!!!', awards);
             awardList.awards = awards;

@@ -73,12 +73,15 @@ struct Items {
 *奖品表
 */
 #[primary=id,db=file,dbMonitor=true,hasmgr=false]
-struct Prizes {
-    id: u32,
-    prize: Item,
+struct Award {
+    id: String,
+    awardType: u32,
+    count: u32,
     uid: u32,
     src: String,
     time: u32,
+    desc: Option<String>,
+    convert: Option<String>
 }
 
 /**
@@ -87,7 +90,7 @@ struct Prizes {
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
 struct AwardMap {
     uid: u32,
-    awards: Option<&[u32]>
+    awards: Option<&[String]>
 }
 
 /**
@@ -102,7 +105,7 @@ struct AwardQuery {
 */
 struct AwardList {
     uid: u32,
-    awards: Option<&[Prizes]>
+    awards: Option<&[Award]>
 }
 
 /**
@@ -159,7 +162,21 @@ struct MineTop {
     myNum: u32
 }
 
-struct ConvertResponse {
-    convert: Option<String>,
-    resultNum: u32
+/**
+*虚拟奖品兑换码表
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+struct ConvertTab {
+    id: u32,
+    typeNum: u32,
+    convert: String,
+    state: bool
+}
+
+/**
+*奖品返回
+*/
+struct AwardResponse {
+    resultNum: u32,
+    award:Option<Award>
 }

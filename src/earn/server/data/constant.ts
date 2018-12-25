@@ -7,6 +7,9 @@
 export const INDEX_USER = 'uid';
 export const INDEX_PRIZE = 'prizeid';
 
+// 成功返回
+export const RESULT_SUCCESS = 1;
+
 // 物品枚举类型
 export const MINE_ENUM_NUM = 1;
 export const HOE_ENUM_NUM = 2;
@@ -43,6 +46,7 @@ export const MAX_ONEDAY_MINING = 8;
 export const AWARD_SRC_MINE = 'mine';
 export const AWARD_SRC_ROTARY = 'rotary';
 export const AWARD_SRC_TREASUREBOX = 'treasurebox';
+export const AWARD_SRC_CONVERT = 'convert';
 
 // 抽奖配置id
 export const SMALL_MINE_TYPE_AWARD = 100101; // 小矿山挖矿

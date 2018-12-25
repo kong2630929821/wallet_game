@@ -5,7 +5,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { AWARD_SRC_MINE, INDEX_PRIZE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, WARE_NAME } from '../data/constant';
-import { AwardMap, Item, Mine, MineSeed, MineTop, MiningMap, MiningResponse, Prizes, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
+import { AwardMap, Item, Mine, MineSeed, MineTop, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { UserInfo } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
@@ -83,7 +83,8 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         const itemNum = v[0][0];
         console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
         const itemCount = v[0][1];
-        const item = add_award(itemNum, itemCount, AWARD_SRC_MINE);
+        const item = add_itemCount(itemNum, itemCount);
+        add_award(itemNum, itemCount, AWARD_SRC_MINE);
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         console.log('miningresponse!!!!!!!!!!!!!!!!!:', todayMineNum.mineNum);
