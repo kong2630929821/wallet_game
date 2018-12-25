@@ -11,6 +11,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { openChest, getAllGoods } from '../../net/rpc';
 import { getTicketBalance } from '../../utils/util';
 import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
+import { getRealNode } from '../../../../../pi/widget/painter';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,6 +22,7 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     isEmpty:boolean; //空宝箱
+    isOpenBoxing:boolean;//正在开启宝箱中
     selectTicket: any; //选择的宝箱类型
     boxList: any; //宝箱列表
     ticketList: any; //奖券列表
@@ -32,6 +34,7 @@ export class OpenBox extends Widget {
 
     public props: Props = {
         isEmpty:false,
+        isOpenBoxing:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], //0:未开 1:已开
         ticketList: [
             {
@@ -77,7 +80,8 @@ export class OpenBox extends Widget {
      * 打开宝箱 
      * @param num 宝箱序数
      */
-    public openBox(num: number) {
+    public openBox(e:any,num: number) {
+        
         if (this.props.boxList[num] === 1) {  //宝箱已打开
             //TODO
             return;
@@ -86,8 +90,10 @@ export class OpenBox extends Widget {
             //TODO
             return;
         }
+        this.isOpenBoxing(e);
         openChest(this.props.selectTicket.type).then((res:any)=>{
             popNew('earn-client-app-view-component-lotteryModal', { data: res.value });
+            this.isOpenBoxing(e);
             if(res.value.count===0){
                 this.emptyChest();
             }
@@ -113,6 +119,20 @@ export class OpenBox extends Widget {
     }
 
     /**
+     * 设置是否正在开宝箱
+     */
+    public isOpenBoxing(e:any){
+        const $chest = getRealNode(e.node);
+        this.props.isOpenBoxing = !this.props.isOpenBoxing;
+        if(this.props.isOpenBoxing){
+            $chest.className = 'isOpenbox';
+        }else{
+            $chest.className = '';
+        }
+        this.paint();
+    }
+
+    /**
      * 重置所有宝箱
      */
     public resetBoxList() {
@@ -134,7 +154,7 @@ export class OpenBox extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-myProduct-myProduct', { type: 2 });
+        popNew('earn-client-app-view-myProduct-myProduct', { type: 3 });
     }
 
     /**

@@ -4,46 +4,57 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 import { popNew } from "../../../../../pi/ui/root";
+import { getAwardHistory } from '../../net/rpc';
+import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
-    type:number;
-    history:any;
+    type: number;
+    history: any;
 }
 
 export class MyProduct extends Widget {
     public ok: () => void;
-
     public props:Props = {
-        type :0,
-        history:[
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
-            },
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
-            },
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
-            }
-        ]
-    };
+        type: 0,
+        history:[]
+    }
 
-    public setProps(props:any) {
+    public setProps(props: any) {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            type:props.type
+            type: props.type
         }
+        this.initData();
     }
 
-    public goProductDetail(index:number){
-        popNew('earn-client-app-view-myProduct-productDetail',{name:this.props.history[index].name,detailType:1});
+
+    /**
+     * 初始化数据
+     */
+    public initData() {
+        
+        getAwardHistory(this.props.type).then((res:any) => {
+            if(this.props.type===0){
+                let dealData = [];
+                res.forEach(element => {
+                   if(element.pid<2000||element.pid>2100){//排除锄头系列
+                        dealData.push(element);
+                   } 
+                });
+                this.props.history = dealData;
+            }else{
+                this.props.history = res;
+            }
+            
+            this.paint();
+        });
+    }
+
+    public goProductDetail(index: number) {
+        if(this.props.history[index].pid<2000||this.props.history[index].pid>2100){//排除锄头系列
+            popNew('earn-client-app-view-myProduct-productDetail', { name: this.props.history[index].name, detailType: 1 });
+        }
     }
 
     /**

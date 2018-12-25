@@ -1,18 +1,20 @@
 /**
  * rpc通信
  */
-import { Item_Enum, Items, MiningResponse, Item } from '../../../server/data/db/item.s';
+import { Item_Enum, Items, MiningResponse, Item, AwardQuery } from '../../../server/data/db/item.s';
 import { ItemQuery, MiningResult } from '../../../server/rpc/itemQuery.s';
 import { mining, mining_result } from '../../../server/rpc/mining.p';
-import { item_query } from '../../../server/rpc/user_item.p';
+import { item_query, award_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
 import { ticket_treasurebox, ticket_rotary, ticket_compose } from '../../../server/rpc/ticket.p';
-import { TicketType } from '../xls/dataEnum.s';
+import { TicketType, AwardSrcNum } from '../xls/dataEnum.s';
 import { item_addticket } from '../../../server/rpc/test.p';
+import { getPrizeInfo } from '../utils/util';
+import { timestampFormat } from '../utils/tools';
 
 /**
  * 获取所有物品
@@ -75,8 +77,8 @@ export const openChest = (ticketType: TicketType) => {
         itemQuery.itemType = ticketType;
 
         clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
-            console.log('rpc-openChest-resData-------------',r);
-            
+            console.log('rpc-openChest-resData-------------', r);
+
             if (r) {
                 getAllGoods();
                 resolve(r);
@@ -123,11 +125,41 @@ export const compoundTicket = (ticketType: TicketType) => {
     })
 }
 
+/**
+ * 增加奖券
+ * @param num 增加数量
+ */
 export const addTicket = (num: number) => {
     clientRpcFunc(item_addticket, num, (r: Item) => {
         getAllGoods();
     });
 }
 
+/**
+ * 查询中奖、兑换记录
+ * @param type 记录种类
+ */
+export const getAwardHistory = (type?: number) => {
+    return new Promise((resolve, reject) => {
+        const awardQuery = new AwardQuery();
+        awardQuery.uid = getStore('uid');
+        if(type!==0){
+            awardQuery.src = AwardSrcNum[type];
+        }
+
+        clientRpcFunc(award_query, awardQuery, (r: any) => {
+            const resData = [];
+            r.awards.forEach(element => {
+                let data = {
+                    ...getPrizeInfo(element.prize.value.num),
+                    time:timestampFormat(element.time),
+                    count:element.prize.value.count
+                }
+                resData.push(data);
+            });
+            resolve(resData);
+        });
+    })
+}
 
 

@@ -6,11 +6,11 @@
             {{% 宝箱九宫格}}
             <div w-class="box-list">
                 {{for i,item in it.boxList}}
-                <div w-class="box" on-tap="openBox({{i}})">
+                <div w-class="box">
                     {{if item === 1}}
-                    <img src="../../res/image/boxOpen{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/boxOpen{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
                     {{else}}
-                    <img src="../../res/image/box{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/box{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
                     {{end}}
                 </div>
                 {{end}}

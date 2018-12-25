@@ -20,7 +20,7 @@
                 <div w-class="medals">
                     <div w-class="medal-tip">我的勋章</div>
                     {{for i of [0,0,0,0,0,0,0,0]}}
-                    <img src="../../res/image1/btn_yun_1.png" w-class="medal"/>
+                        <img src="../../res/image1/btn_yun_1.png" w-class="medal"/>
                     {{end}}
                 </div>
             </div>

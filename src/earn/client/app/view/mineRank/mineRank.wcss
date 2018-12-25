@@ -1,0 +1,9 @@
+
+
+.content{
+    height:100%;
+    overflow:hidden auto;
+    scroll-behavior: smooth;
+    padding-bottom:168px;
+    background:linear-gradient(135deg,rgba(48,131,255,1) 0%,rgba(21,102,223,1) 100%);
+}

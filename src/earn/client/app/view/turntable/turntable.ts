@@ -4,12 +4,12 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getTicketBalance } from '../../utils/util';
+import { getTicketBalance, getPrizeList } from '../../utils/util';
 import { Forelet } from '../../../../../pi/widget/forelet';
-import { register } from '../../../../../app/store/memstore';
 import { Item } from '../../../../server/data/db/item.s';
-import { openTurntable } from '../../net/rpc';
-import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
+import { openTurntable, getAllGoods } from '../../net/rpc';
+import { TicketType, LotteryTicketNum, ActivityNum } from '../../xls/dataEnum.s';
+import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -32,37 +32,31 @@ export class Turntable extends Widget {
         selectTicket: {},
         turnNum: 30,
         isTurn: false,
-        turntableList: [
-            { text: '耳机', name: 'icono-headphone' },
-            { text: 'iPhone', name: 'icono-iphone' },
-            { text: '相机', name: 'icono-camera' },
-            { text: '咖啡杯', name: 'icono-cup' },
-            { text: '日历', name: 'icono-calendar' },
-            { text: '键盘', name: '' },
-            { text: '键盘', name: '' },
-            { text: '键盘', name: '' }
-        ],
+        turntableList: [],
         ticketList: [
             {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
-                needTicketNum:LotteryTicketNum.SilverTurntable,
-                turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" }
+                needTicketNum: LotteryTicketNum.SilverTurntable,
+                turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" },
+                activityNum: ActivityNum.SilverTurntableNum
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
-                needTicketNum:LotteryTicketNum.GoldTurntable,
-                turntableName: { "zh_Hans": "中级大转盘", "zh_Hant": "中級大轉盤", "en": "" }
+                needTicketNum: LotteryTicketNum.GoldTurntable,
+                turntableName: { "zh_Hans": "中级大转盘", "zh_Hant": "中級大轉盤", "en": "" },
+                activityNum: ActivityNum.GoldTurntableNum
             },
             {
                 type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
-                needTicketNum:LotteryTicketNum.DiamondTurntable,
-                turntableName: { "zh_Hans": "高级大转盘", "zh_Hant": "高級大轉盤", "en": "" }
+                needTicketNum: LotteryTicketNum.DiamondTurntable,
+                turntableName: { "zh_Hans": "高级大转盘", "zh_Hant": "高級大轉盤", "en": "" },
+                activityNum: ActivityNum.DiamondTurntableNum
             }
         ]
     };
@@ -78,8 +72,17 @@ export class Turntable extends Widget {
      * 初始转盘
      */
     public initTurntable() {
-        // 奖品配置TODO     
+        // 奖品配置  
+        const prizeList = getPrizeList(this.props.selectTicket.activityNum);
+        this.props.turntableList = [];
 
+        for (let i = 0, length = prizeList.length; i < length; i++) {
+            const prizeItem = {
+                id: prizeList[i],
+                deg: (-360 / length) * i
+            };
+            this.props.turntableList.push(prizeItem);
+        }
         this.paint();
     }
 
@@ -98,34 +101,65 @@ export class Turntable extends Widget {
      * 开奖
      */
     public goLottery() {
-        if (this.props.isTurn) {
+        if (this.props.isTurn) {//正在转
+
+            return;
+        }
+        if(this.props.selectTicket.balance<this.props.selectTicket.needTicketNum){//余票不足
 
             return;
         }
         this.props.isTurn = true;
+        this.goLotteryAnimation();
         let resData;
-        const $turn = document.querySelector('#turntable');
-        $turn.style.transition = 'transform 6s ease';
-        $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
+
         this.paint();
 
         openTurntable(this.props.selectTicket.type).then((res) => {
-            this.props.turnNum = 60;
-            $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
-        }).catch(()=>{
-            this.props.turnNum +=50;
-            $turn.style.transform = `rotate(${this.props.turnNum+360}deg)`;
+            resData = res;
+            this.goLotteryAnimation(res);
         })
 
         setTimeout(() => {
             this.props.isTurn = false;
-            $turn.style.transition = 'none';
-            $turn.style.transform = `rotate(${this.props.turnNum}deg)`;
+            this.goLotteryAnimation();
             if (resData) {
-                popNew('earn-client-app-view-component-lotteryModal', { type: 2 });
+                getAllGoods();
+                popNew('earn-client-app-view-component-lotteryModal', { data: resData.value });
 
             }
         }, 6000);
+    }
+
+
+    /**
+     * 转盘开奖动画
+     */
+    public goLotteryAnimation(resData?: any) {
+        const $turnStyle = document.querySelector('#turntable').style;
+        if (!this.props.isTurn) {//停止转动
+            $turnStyle.transition = 'none';
+            $turnStyle.transform = `rotate(${this.props.turnNum}deg)`;
+
+            return;
+        }
+        if (!resData) {//开始转动
+            $turnStyle.transition = 'transform 6s ease';
+            $turnStyle.transform = `rotate(${this.props.turnNum + 3600}deg)`;
+        } else { //根据奖品修改旋转角度
+            
+            this.props.turntableList.forEach(element => {
+                if(element.id === resData.value.num){
+                    this.props.turnNum = element.deg;
+                    this.goLotteryAnimation();
+
+                    return;
+                }
+            });
+        }
+
+
+
     }
 
     /**
@@ -138,6 +172,7 @@ export class Turntable extends Widget {
             return;
         }
         this.props.selectTicket = this.props.ticketList[num];
+        this.initTurntable();
         this.paint();
     }
 
@@ -145,7 +180,7 @@ export class Turntable extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-myProduct-myProduct', { type: 1 });
+        popNew('earn-client-app-view-myProduct-myProduct', { type: 2 });
     }
 
     /**

@@ -74,11 +74,15 @@ export class PlayHome extends Widget {
                 img: 'btn_yun_11.png',
                 title: '我的物品',
                 desc: '兑换和中奖的物品'
+            }, {
+                img: 'btn_yun_11.png',
+                title: '挖矿排名',
+                desc: '全部和好友排名'
             }],
-            ironHoe:getHoeCount(HoeType.IronHoe),
-            goldHoe:getHoeCount(HoeType.GoldHoe),
-            diamondHoe:getHoeCount(HoeType.DiamondHoe),
-            hoeType:HoeType
+            ironHoe: getHoeCount(HoeType.IronHoe),
+            goldHoe: getHoeCount(HoeType.GoldHoe),
+            diamondHoe: getHoeCount(HoeType.DiamondHoe),
+            hoeType: HoeType
         };
 
         setTimeout(() => {
@@ -114,7 +118,10 @@ export class PlayHome extends Widget {
                 popNew('earn-client-app-view-exchange-exchange');// 奖券兑换
                 break;
             case 6:
-                popNew('earn-client-app-view-myProduct-myProduct');// 我的物品
+                popNew('earn-client-app-view-myProduct-myProduct', { type: 0 });// 我的物品
+                break;
+            case 7:
+                popNew('earn-client-app-view-mineRank-mineRank');// 挖矿排名
                 break;
             default:
         }
