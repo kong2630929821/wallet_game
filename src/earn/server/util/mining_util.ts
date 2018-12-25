@@ -47,17 +47,21 @@ export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
 
 // 添加用户挖矿山总数
 export const add_miningTotal = (uid: number) => {
+    console.log('add_miningTotal in!!!!!!!!!!!!!!!!!!!!!!!');
     const miningtotal = get_totalminingNum(uid);
+    const miningMap = new MiningMap();
+    miningMap.total = miningtotal.total;
+    miningMap.uid = uid;
+    console.log('miningMap !!!!!!!!!!!!!!!!!!!!!!!', miningMap);
     miningtotal.total = miningtotal.total + 1;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, TotalMiningNum._$info.name, dbMgr);
     bucket.put(uid, miningtotal);
     const mapBucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
-    const miningMap = new MiningMap();
-    miningMap.total = miningtotal.total;
-    miningMap.uid = uid;
+    console.log('miningtotal !!!!!!!!!!!!!!!!!!!!!!!', miningtotal);
     const totalMiningMap = mapBucket.get<MiningMap, [TotalMiningMap]>(miningMap)[0];
     if (!totalMiningMap) {
+        console.log('blanktotalMiningMap in!!!!!!!!!!!!!!!!!!!!!!!', totalMiningMap);
         const blanktotalMiningMap = new TotalMiningMap();
         const blankminingMap = new MiningMap();
         blankminingMap.uid = uid;
@@ -66,8 +70,10 @@ export const add_miningTotal = (uid: number) => {
         blanktotalMiningMap.uName = miningtotal.uName;
         mapBucket.put(blankminingMap, blanktotalMiningMap);
     } else {
+        mapBucket.delete(miningMap);
         miningMap.total = miningtotal.total;
         totalMiningMap.miningMap =  miningMap;
+        console.log('totalMiningMap write !!!!!!!!!!!!!!!!!!!!!!!', totalMiningMap);
         mapBucket.put(miningMap, totalMiningMap);
     }
 };

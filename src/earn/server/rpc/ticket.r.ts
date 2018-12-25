@@ -9,14 +9,13 @@ import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { ItemQuery } from './itemQuery.s';
 
 // 合成奖券
 // #[rpc=rpcServer]
-export const ticket_compose = (itemQuery:ItemQuery):Item => {
-    console.log('ticket_compose!!!!!!!!!!!!!!!!!!!!', itemQuery);
+export const ticket_compose = (itemType:number):Item => {
+    console.log('ticket_compose!!!!!!!!!!!!!!!!!!!!', itemType);
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const tickeType = itemQuery.itemType;
+    const tickeType = itemType;
     let pid;
     switch (tickeType) {
         case SILVER_TICKET_TYPE:
@@ -28,22 +27,22 @@ export const ticket_compose = (itemQuery:ItemQuery):Item => {
         default:
             return;
     }
-    if (!reduce_itemCount(itemQuery, TICKET_COMPOSE_COUNT)) return;
+    if (!reduce_itemCount(itemType, TICKET_COMPOSE_COUNT)) return;
     const v = [];
     doAward(pid, randomMgr, v);
     const count = v[0][1] - 1;
     console.log('count!!!!!!!!!!!!!!!!!!!!', count);
-    itemQuery.itemType = v[0][0];
+    const newitemType = v[0][0];
 
-    return add_itemCount(itemQuery, count);
+    return add_itemCount(newitemType, count);
 };
 
 // 大转盘
 // #[rpc=rpcServer]
-export const ticket_rotary = (itemQuery:ItemQuery):Item => {
-    console.log('ticket_rotary!!!!!!!!!!!!!!!!!!!!', itemQuery);
+export const ticket_rotary = (itemType:number):Item => {
+    console.log('ticket_rotary!!!!!!!!!!!!!!!!!!!!', itemType);
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const tickeType = itemQuery.itemType;
+    const tickeType = itemType;
     let pid;
     switch (tickeType) {
         case SILVER_TICKET_TYPE:
@@ -59,25 +58,21 @@ export const ticket_rotary = (itemQuery:ItemQuery):Item => {
             return;
     }
     console.log('pid!!!!!!!!!!!!!!!!!!!!', pid);
-    if (!reduce_itemCount(itemQuery, TICKET_ROTARY_COUNT)) return;
+    if (!reduce_itemCount(itemType, TICKET_ROTARY_COUNT)) return;
     const v = [];
     doAward(pid, randomMgr, v);
     const count = v[0][1];
-    const awardItemQuery = new ItemQuery();
-    awardItemQuery.uid = itemQuery.uid;
-    awardItemQuery.itemType = v[0][0];
-    awardItemQuery.enumType = get_enumType(awardItemQuery.itemType);
-    console.log('itemenumType!!!!!!!!!!!!!!!!!!!!', awardItemQuery.enumType);
+    const newitemType = v[0][0];
 
-    return add_award(awardItemQuery, count, AWARD_SRC_ROTARY);
+    return add_award(newitemType, count, AWARD_SRC_ROTARY);
 };
 
 // 奖券开宝箱
 // #[rpc=rpcServer]
-export const ticket_treasurebox = (itemQuery:ItemQuery):Item => {
-    console.log('ticket_treasurebox!!!!!!!!!!!!!!!!!!!!', itemQuery);
+export const ticket_treasurebox = (itemType:number):Item => {
+    console.log('ticket_treasurebox!!!!!!!!!!!!!!!!!!!!', itemType);
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const tickeType = itemQuery.itemType;
+    const tickeType = itemType;
     let pid;
     switch (tickeType) {
         case SILVER_TICKET_TYPE:
@@ -92,14 +87,11 @@ export const ticket_treasurebox = (itemQuery:ItemQuery):Item => {
         default:
             return;
     }
-    if (!reduce_itemCount(itemQuery, TICKET_TREASUREBOX_COUNT)) return;
+    if (!reduce_itemCount(itemType, TICKET_TREASUREBOX_COUNT)) return;
     const v = [];
     doAward(pid, randomMgr, v);
     const count = v[0][1];
-    const awardItemQuery = new ItemQuery();
-    awardItemQuery.uid = itemQuery.uid;
-    awardItemQuery.itemType = v[0][0];
-    awardItemQuery.enumType = get_enumType(awardItemQuery.itemType);
+    const newitemType = v[0][0];
 
-    return add_award(awardItemQuery, count, AWARD_SRC_TREASUREBOX);
+    return add_award(newitemType, count, AWARD_SRC_TREASUREBOX);
 };

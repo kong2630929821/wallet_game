@@ -5,25 +5,25 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { AWARD_SRC_MINE, INDEX_PRIZE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, WARE_NAME } from '../data/constant';
-import { AwardMap, Item, Mine, MineSeed, MineTop, MiningResponse, Prizes, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
+import { AwardMap, Item, Mine, MineSeed, MineTop, MiningMap, MiningResponse, Prizes, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { UserInfo } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { ItemQuery, MiningResult, Seed, TopQuery } from './itemQuery.s';
+import { MiningResult, Seed } from './itemQuery.s';
+import { getUid } from './user.r';
 import { get_item } from './user_item.r';
 
 // 获取挖矿几率的随机种子
 // #[rpc=rpcServer]
-export const mining = (itemQuery:ItemQuery):Seed => {
+export const mining = (itemType:number):Seed => {
     // 相应锄头数量减1
-    if (!reduce_itemCount(itemQuery, 1)) return;
+    if (!reduce_itemCount(itemType, 1)) return;
     const seed = Math.floor(Math.random() * 233280 + 1);
-    const uid = itemQuery.uid;
-    const hoeType = itemQuery.itemType;
-    console.log('mining = ',itemQuery);
+    const uid = getUid();
+    const hoeType = itemType;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     seedBucket.put(uid, [seed, hoeType]);
@@ -42,12 +42,12 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         // 这手速绝非常人
         return;
     }
-    const itemQuery = result.itemQuery;
-    if (get_item(itemQuery).value.count === 0) return;
+    const itemType = result.itemType;
+    if (get_item(itemType).value.count === 0) return;
     const mineNum = result.mineNum;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
-    const uid = itemQuery.uid;
+    const uid = getUid();
     const todayMineNum = get_todayMineNum(uid);
     // 当日已达最大挖矿数量
     // if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) return; 
@@ -65,7 +65,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         seed = RandomSeedMgr.randNumber(seed);
     }
     console.log('!!!!!!!!!!!!!!sumhits:', sumHits);
-    const leftHp = reduce_mine(itemQuery, mineNum, sumHits);
+    const leftHp = reduce_mine(itemType, mineNum, sumHits);
     console.log('!!!!!!!!!!!!!!leftHp:', leftHp);
     const miningresponse = new MiningResponse();
     if (leftHp > 0) {
@@ -76,18 +76,14 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         miningresponse.leftHp = 0;
         const v = [];
         const randomMgr = new RandomSeedMgr(seed);
-        const mineType = itemQuery.itemType;
+        const mineType = itemType;
         const pid = get_cfgAwardid(mineType); // 权重配置主键
         doAward(pid, randomMgr, v);
         console.log('award result!!!!!!!!!!!!!!!!!:', v);
         const itemNum = v[0][0];
         console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
         const itemCount = v[0][1];
-        const awarditemQuery = new ItemQuery();
-        awarditemQuery.enumType = get_enumType(itemNum);
-        awarditemQuery.itemType = itemNum;
-        awarditemQuery.uid = uid;
-        const item = add_award(awarditemQuery, itemCount, AWARD_SRC_MINE);
+        const item = add_award(itemNum, itemCount, AWARD_SRC_MINE);
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         console.log('miningresponse!!!!!!!!!!!!!!!!!:', todayMineNum.mineNum);
@@ -152,20 +148,21 @@ export const get_totalminingNum = (uid: number):TotalMiningNum => {
 
 // 挖矿总数排行
 // #[rpc=rpcServer]
-export const get_miningTop = (topQuery: TopQuery): MineTop => {
+export const get_miningTop = (topNum: number): MineTop => {
     console.log('get_miningTop in!!!!!!!!!!!!!!!!!');
+    const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
-    const iter = <DBIter>bucket.iter(topQuery.uid, true);
+    const mapbucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
+    const iter = <DBIter>mapbucket.iter(null, true);
     const mineTop = new MineTop();
     const mineTopList = [];
     // const num = topQuery.top > iter._$getSinfo.length ? iter._$getSinfo.length : topQuery.top;
-    for (let i = 0; i < topQuery.top; i ++) {
+    for (let i = 0; i < topNum; i ++) {
         const mineTotalMapEle = iter.nextElem();
         if (!mineTotalMapEle) break;
         const mineTotalMap:TotalMiningMap = mineTotalMapEle[1];
         console.log('elCfg----------------read---------------', mineTotalMap);
-        if (mineTotalMap.miningMap.uid === topQuery.uid) mineTop.myNum = i + 1;
+        if (mineTotalMap.miningMap.uid === uid) mineTop.myNum = i + 1;
         mineTopList.push(mineTotalMap);
         console.log('mineTopList!!!!!!!!!!!!!!!!!', mineTopList);
         continue;

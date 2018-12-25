@@ -10,7 +10,7 @@ import { doAward } from '../util/award.t';
 import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { ItemQuery, Seed } from './itemQuery.s';
+import { Seed } from './itemQuery.s';
 import { Hits, Test } from './test.s';
 import { item_query } from './user_item.r';
 
@@ -36,25 +36,17 @@ export const db_test = (pid: number): Prizes => {
 // #[rpc=rpcServer]
 export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 2;
-    itemQuery.itemType = 2001;
-    console.log('itemType:!!!!!!!!!', itemQuery.itemType);
+    const itemType = 2001;
 
-    return add_itemCount(itemQuery, count);
+    return add_itemCount(itemType, count);
 };
 
 // #[rpc=rpcServer]
 export const item_addticket = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 7;
-    itemQuery.itemType = 7001;
-    console.log('itemType:!!!!!!!!!', itemQuery.itemType);
+    const itemType = 7001;
 
-    return add_itemCount(itemQuery, count);
+    return add_itemCount(itemType, count);
 };
 
 // #[rpc=rpcServer]

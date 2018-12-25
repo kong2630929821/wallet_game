@@ -94,7 +94,6 @@ struct AwardMap {
 *查询获奖信息
 */
 struct AwardQuery {
-    uid: u32,
     src: Option<String>
 }
 
@@ -158,4 +157,9 @@ struct TotalMiningMap {
 struct MineTop {
     topList: &[TotalMiningMap],
     myNum: u32
+}
+
+struct ConvertResponse {
+    convert: Option<String>,
+    resultNum: u32
 }
