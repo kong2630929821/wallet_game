@@ -4,9 +4,7 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
-import { Item } from '../../../../server/data/db/item.s';
-import { getTicketBalance } from '../../utils/util';
-import { register } from '../../store/memstore';
+// import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,7 +15,19 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class MineRank extends Widget {
     public ok: () => void;
     public props = {
-        KTbalance: 500,
+        rankList: [
+            { rank: 1, userName: "啊实打实的", ktNum: 500 },
+            { rank: 2, userName: "啊实打实的", ktNum: 500 },
+            { rank: 3, userName: "啊实打实的", ktNum: 500 },
+            { rank: 4, userName: "啊实打实的", ktNum: 500 },
+            { rank: 5, userName: "啊实打实的", ktNum: 500 },
+            { rank: 6, userName: "啊实打实的", ktNum: 500 },
+            { rank: 7, userName: "啊实打实的", ktNum: 500 },
+            { rank: 8, userName: "啊实打实的", ktNum: 500 },
+            { rank: 9, userName: "啊实打实的", ktNum: 500 },
+            { rank: 10, userName: "啊实打实的", ktNum: 500 },
+            { rank: 11, userName: "啊实打实的", ktNum: 500 }
+        ]
     };
 
     public create() {
