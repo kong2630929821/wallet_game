@@ -42,6 +42,9 @@ export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
 export const MAX_ONEDAY_MINING = 8;
 
+// 首次挖开矿山奖励
+export const FIRST_MINING_AWARD = 600401;
+
 // 奖品来源
 export const AWARD_SRC_MINE = 'mine';
 export const AWARD_SRC_ROTARY = 'rotary';

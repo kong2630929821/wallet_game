@@ -54,10 +54,17 @@ enum Item {
     TICKET(Ticket), //奖券
 }
 
+//物品返回结果
+struct ItemResponse{
+    resultNum: u32,
+    item: Option<Item>
+}
+
 //挖矿返回结果
 struct MiningResponse{
-    leftHp: u32, //矿山剩余血量
-    award: Option<Item>, //奖励物品
+    resultNum: u32,
+    leftHp: Option<u32>, //矿山剩余血量
+    awards: Option<&[Item]>, //奖励物品
 }
 
 /**

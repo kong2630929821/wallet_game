@@ -6,6 +6,15 @@
 export const DB_ERROR = 600;
 // 物品数量错误
 export const ITEM_NUM_ERROR = 700;
+// 配置错误
+export const CONFIG_ERROR = 800;
+
+// 该类型矿山数量不足
+export const MINE_NOT_ENOUGH = 1101;
+// 挖矿数量已达限制
+export const MINENUM_OVER_LIMIT = 1102;
+// 获取随机种子失败
+export const GET_RANDSEED_FAIL = 1103;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
