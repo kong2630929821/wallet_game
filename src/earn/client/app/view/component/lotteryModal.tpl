@@ -1,5 +1,5 @@
 <div w-class="modal-mask" class="new-page">
-    <div w-class="body">
+    <div w-class="body" class="smallToBig">
         {{% 背景}}
         <div w-class="bg">
             <div w-class="bg-top"></div>
@@ -20,7 +20,7 @@
         </div>
 
     </div>
-    <div w-class="closeBtn" on-tap="close">
+    <div w-class="closeBtn" class="smallToBig" on-tap="close">
         <img src="../../res/image1/close-white.png" width="30px;" height="30px;" />
     </div>
 </div>

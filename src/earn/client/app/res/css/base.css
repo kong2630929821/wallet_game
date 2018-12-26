@@ -58,8 +58,8 @@
     }
 }
 
-/*开奖弹出动画--缩小变大*/
-@keyframes lotteryModal{
+/*由小变大出现*/
+@keyframes smallToBig{
   0%{
     -webkit-transform: scale(0.1);
     transform: scale(0.1);
@@ -69,6 +69,12 @@
     transform: scale(1);
   }
 }
+
+.smallToBig{
+  animation: smallToBig 0.3s ease;
+}
+
+
 .isOpenbox{
   animation: openBox 0.3s ease infinite;
 }
