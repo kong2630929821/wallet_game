@@ -27,7 +27,18 @@ export class MineRank extends Widget {
             { rank: 9, userName: "啊实打实的", ktNum: 500 },
             { rank: 10, userName: "啊实打实的", ktNum: 500 },
             { rank: 11, userName: "啊实打实的", ktNum: 500 }
-        ]
+        ],
+        topbarList:[
+            {
+                name: 'allRankList',
+                title: { "zh_Hans": "全部排名", "zh_Hant": "全部排名", "en": "" },
+            },
+            {
+                name: 'friendRankList',
+                title: { "zh_Hans": "好友排名", "zh_Hant": "好友排名", "en": "" },
+            }
+        ],
+        topbarSel:0
     };
 
     public create() {
@@ -43,6 +54,15 @@ export class MineRank extends Widget {
         this.paint();
     }
 
+    /**
+     * 导航栏切换
+     * @param index 选择导航栏
+     */
+    public topbarChange(index:number){
+        this.props.topbarSel = index;
+        document.getElementById('rankList').scrollTop = 0;
+        this.paint();
+    }
     /**
      * 返回上一页
      */

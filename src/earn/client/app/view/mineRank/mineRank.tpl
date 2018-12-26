@@ -7,13 +7,14 @@
                 一颗大蒜苗挖到了0.1ETH
         </div>
         <div w-class="topbar">
-            <div w-class="topbar-bg"></div>
+            <div w-class="topbar-bg" style="transform: translateX({{100*it.topbarSel}}%);"></div>
             <div w-class="topbar-text">
-                <widget w-class="topbar-item topbar-item-select" w-tag="pi-ui-lang">{"zh_Hans":"全部排名","zh_Hant":"全部排名","en":""}</widget>
-                <widget w-class="topbar-item" w-tag="pi-ui-lang">{"zh_Hans":"好友排名","zh_Hant":"好友排名","en":""}</widget>
+                {{for i,item of it.topbarList}}
+                    <widget on-tap="topbarChange({{i}})" w-class="topbar-item {{i===it.topbarSel?'topbar-item-select':''}}" w-tag="pi-ui-lang">{{item.title}}</widget>
+                {{end}}
             </div>
         </div>
-        <div w-class="rank-list">
+        <div w-class="rank-list" id="rankList">
             <div w-class="self-rank">
                 <widget w-tag="earn-client-app-view-mineRank-rankItem">{rank: 1,userName: "啊实打实的",ktNum: 500}</widget>
             </div>

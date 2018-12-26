@@ -57,9 +57,23 @@
       transform: rotate(0deg);
     }
 }
+
+/*开奖弹出动画--缩小变大*/
+@keyframes lotteryModal{
+  0%{
+    -webkit-transform: scale(0.1);
+    transform: scale(0.1);
+  }
+  100%{
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
 .isOpenbox{
   animation: openBox 0.3s ease infinite;
 }
+
+
 
 
 .rubberBand {

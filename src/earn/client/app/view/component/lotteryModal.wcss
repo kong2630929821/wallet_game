@@ -16,6 +16,8 @@
     height:650px;
     border-radius: 12px;
     position:relative;
+    animation: lotteryModal 0.3s ease;
+
 }
 
 
@@ -78,4 +80,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: lotteryModal 0.3s ease;
 }

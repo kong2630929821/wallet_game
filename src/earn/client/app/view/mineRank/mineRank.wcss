@@ -37,6 +37,7 @@
     position: absolute;
     background: white;
     border-radius: 40px;
+    transition: transform 0.5s ease;
 }
 .topbar-text{
     position: absolute; 
@@ -48,11 +49,10 @@
 }
 .topbar-item{
     width:50%;
-    height:100%;
     border-radius:40px;
-    line-height:80px;
     text-align: center;
     background: transparent;
+    transition: color 0.5s ease;
 }
 .topbar-item-select{
     color: #222222;

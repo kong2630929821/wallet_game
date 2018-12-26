@@ -36,11 +36,11 @@ export class PlayHome extends Widget {
         this.props = {
             ...this.props,
             page: [
-                'app-view-earn-client-view-mining-rankList', // 挖矿排名
-                'app-view-earn-client-view-mining-dividend', // 领分红
-                'app-view-earn-client-view-redEnvelope-writeRedEnv', // 发红包
-                'app-view-earn-client-view-exchange-exchange', // 兑换
-                'app-view-earn-client-view-mining-addMine'  // 任务
+                'app-view-earn-mining-dividend', // 领分红
+                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-exchange-exchange', // 兑换
+                'app-view-earn-mining-addMine'  // 任务
+                // 'app-view-earn-mining-rankList', // 挖矿排名
             ],
             scroll: false,
             scrollHeight: 0,
@@ -127,6 +127,10 @@ export class PlayHome extends Widget {
         }
     }
 
+
+    public goNextPage(index:number){
+        popNew(this.props.page[index]);
+    }
     public miningClick() {
         popNew('earn-client-app-view-activity-mining-home');
     }
