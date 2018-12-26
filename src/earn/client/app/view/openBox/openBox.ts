@@ -90,17 +90,17 @@ export class OpenBox extends Widget {
             //TODO
             return;
         }
-        this.isOpenBoxing(e);
+        this.openBoxAnimation(e);
         openChest(this.props.selectTicket.type).then((res:any)=>{
-            popNew('earn-client-app-view-component-lotteryModal', { data: res.value });
-            this.isOpenBoxing(e);
-            if(res.value.count===0){
+            this.openBoxAnimation(e);
+            popNew('earn-client-app-view-component-lotteryModal', res.award);
+            if(res.award.count===0){
                 this.emptyChest();
             }
             this.props.boxList[num] = 1;
             this.paint();
         }).catch((err)=>{
-            alert(err)
+            this.openBoxAnimation(e);
             this.emptyChest();
         })
     }
@@ -119,9 +119,9 @@ export class OpenBox extends Widget {
     }
 
     /**
-     * 设置是否正在开宝箱
+     * 设置是否正在开宝箱动画
      */
-    public isOpenBoxing(e:any){
+    public openBoxAnimation(e:any){
         const $chest = getRealNode(e.node);
         this.props.isOpenBoxing = !this.props.isOpenBoxing;
         if(this.props.isOpenBoxing){

@@ -8,7 +8,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getAllGoods } from '../../net/rpc';
+import { getAllGoods, loginActivity } from '../../net/rpc';
 import { register } from '../../store/memstore';
 import { getHoeCount } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -84,12 +84,13 @@ export class PlayHome extends Widget {
             diamondHoe: getHoeCount(HoeType.DiamondHoe),
             hoeType: HoeType
         };
-
         setTimeout(() => {
             this.scrollPage();
         }, 17);
         setTimeout(() => {
-            getAllGoods();
+            loginActivity().then(()=>{
+                getAllGoods();
+            })
         }, 2000);
         console.log(this.props.hoeType);
     }

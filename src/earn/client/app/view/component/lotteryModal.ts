@@ -4,6 +4,7 @@
 
 import { Widget } from "../../../../../pi/widget/widget";
 import { getPrizeInfo } from "../../utils/util";
+import { Award } from "../../../../server/data/db/item.s";
 
 
 interface Props{
@@ -16,15 +17,14 @@ interface Props{
 export class LotteryModal extends Widget {
     public ok: () => void;
     public props:Props;
-    public setProps(props:any){
+    public setProps(props:Award){
         super.setProps(this.props);
-        const prize = getPrizeInfo(props.data.num);
+        const prize = getPrizeInfo(props.awardType);
         
         this.props = {
-            ...this.props,
-            prizeType:props.data.num,
+            prizeType:props.awardType,
             prizeName:{"zh_Hans":`${prize.zh_hans}`,"zh_Hant":`${prize.zh_hant}`,"en":""},
-            prizeNum:props.data.count,
+            prizeNum:props.count,
             prizeUnit:{"zh_Hans":`${prize.unit}`,"zh_Hant":`${prize.unit}`,"en":""}
         }
         

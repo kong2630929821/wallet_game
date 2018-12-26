@@ -61,7 +61,7 @@ export class TicketCenter extends Widget {
 
 
     public getTicket(index:number){
-        addTicket(10);
+        addTicket(this.props.ticketList[index].type);
     }
 
 

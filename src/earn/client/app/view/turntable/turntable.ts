@@ -30,7 +30,7 @@ export class Turntable extends Widget {
 
     public props: Props = {
         selectTicket: {},
-        turnNum: 30,
+        turnNum: 0,
         isTurn: false,
         turntableList: [],
         ticketList: [
@@ -78,7 +78,7 @@ export class Turntable extends Widget {
 
         for (let i = 0, length = prizeList.length; i < length; i++) {
             const prizeItem = {
-                id: prizeList[i],
+                awardType: prizeList[i],
                 deg: (-360 / length) * i
             };
             this.props.turntableList.push(prizeItem);
@@ -105,28 +105,27 @@ export class Turntable extends Widget {
 
             return;
         }
-        if(this.props.selectTicket.balance<this.props.selectTicket.needTicketNum){//余票不足
+        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {//余票不足
 
             return;
         }
         this.props.isTurn = true;
-        this.goLotteryAnimation();
         let resData;
 
-        this.paint();
+        this.goLotteryAnimation();
 
         openTurntable(this.props.selectTicket.type).then((res) => {
             resData = res;
             this.goLotteryAnimation(res);
+        }).catch((err) => {
+            //TODO
         })
 
         setTimeout(() => {
             this.props.isTurn = false;
             this.goLotteryAnimation();
-            if (resData) {
-                getAllGoods();
-                popNew('earn-client-app-view-component-lotteryModal', { data: resData.value });
-
+            if (resData.resultNum === 1) {
+                popNew('earn-client-app-view-component-lotteryModal', resData.award);
             }
         }, 6000);
     }
@@ -146,20 +145,18 @@ export class Turntable extends Widget {
         if (!resData) {//开始转动
             $turnStyle.transition = 'transform 6s ease';
             $turnStyle.transform = `rotate(${this.props.turnNum + 3600}deg)`;
-        } else { //根据奖品修改旋转角度
-            
+        } else if (resData.resultNum === 1) { //抽奖接口成功，修改旋转角度
             this.props.turntableList.forEach(element => {
-                if(element.id === resData.value.num){
+                if (element.awardType === resData.award.awardType) {
                     this.props.turnNum = element.deg;
                     this.goLotteryAnimation();
 
                     return;
                 }
             });
+        } else if (resData.resultNum !== 1) { //抽奖接口失败
+            //TODO
         }
-
-
-
     }
 
     /**

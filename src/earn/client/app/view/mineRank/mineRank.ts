@@ -4,6 +4,7 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { getRankList } from '../../net/rpc';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -15,20 +16,14 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class MineRank extends Widget {
     public ok: () => void;
     public props = {
+        myRank: 0,
         rankList: [
-            { rank: 1, userName: "啊实打实的", ktNum: 500 },
-            { rank: 2, userName: "啊实打实的", ktNum: 500 },
-            { rank: 3, userName: "啊实打实的", ktNum: 500 },
-            { rank: 4, userName: "啊实打实的", ktNum: 500 },
-            { rank: 5, userName: "啊实打实的", ktNum: 500 },
-            { rank: 6, userName: "啊实打实的", ktNum: 500 },
-            { rank: 7, userName: "啊实打实的", ktNum: 500 },
-            { rank: 8, userName: "啊实打实的", ktNum: 500 },
-            { rank: 9, userName: "啊实打实的", ktNum: 500 },
-            { rank: 10, userName: "啊实打实的", ktNum: 500 },
-            { rank: 11, userName: "啊实打实的", ktNum: 500 }
+            // { rank: 1, userName: "啊实打实的", ktNum: 500 },
+            // { rank: 2, userName: "啊实打实的", ktNum: 500 },
+            // { rank: 3, userName: "啊实打实的", ktNum: 500 },
+            // { rank: 4, userName: "啊实打实的", ktNum: 500 }
         ],
-        topbarList:[
+        topbarList: [
             {
                 name: 'allRankList',
                 title: { "zh_Hans": "全部排名", "zh_Hant": "全部排名", "en": "" },
@@ -38,7 +33,7 @@ export class MineRank extends Widget {
                 title: { "zh_Hans": "好友排名", "zh_Hant": "好友排名", "en": "" },
             }
         ],
-        topbarSel:0
+        topbarSel: 0
     };
 
     public create() {
@@ -50,15 +45,17 @@ export class MineRank extends Widget {
      * 更新props数据
      */
     public initData() {
-        //TODO
-        this.paint();
+        getRankList().then((res: any) => {
+            this.props.rankList = res.topList;
+            this.paint();
+        });
     }
 
     /**
      * 导航栏切换
      * @param index 选择导航栏
      */
-    public topbarChange(index:number){
+    public topbarChange(index: number) {
         this.props.topbarSel = index;
         document.getElementById('rankList').scrollTop = 0;
         this.paint();

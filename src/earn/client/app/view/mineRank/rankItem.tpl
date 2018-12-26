@@ -1,6 +1,8 @@
 <div w-class="rank-item">
     <div w-class="rank-left">
-        {{if it.rank < 4 }}
+        {{if it.rank===0}}
+            <widget w-class="no-rank" w-tag="pi-ui-lang">{"zh_Hans":"暂无排名","zh_Hant":"暫無排名","en":""}</widget>
+        {{elseif (it.rank < 4) && (it.rank > 0) }}
             <img w-class="rank-img" src="../../res/image1/rank-NO{{it.rank}}.png" width="60px" height="70px;" />
         {{else}}
             <div w-class="rank-num">{{it.rank}}</div>

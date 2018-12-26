@@ -4,6 +4,7 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { popNew } from '../../../../../pi/ui/root';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -15,30 +16,51 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Medal extends Widget {
     public ok: () => void;
     public props = {
-        rankList: [
-            { rank: 1, userName: "啊实打实的", ktNum: 500 },
-            { rank: 2, userName: "啊实打实的", ktNum: 500 },
-            { rank: 3, userName: "啊实打实的", ktNum: 500 },
-            { rank: 4, userName: "啊实打实的", ktNum: 500 },
-            { rank: 5, userName: "啊实打实的", ktNum: 500 },
-            { rank: 6, userName: "啊实打实的", ktNum: 500 },
-            { rank: 7, userName: "啊实打实的", ktNum: 500 },
-            { rank: 8, userName: "啊实打实的", ktNum: 500 },
-            { rank: 9, userName: "啊实打实的", ktNum: 500 },
-            { rank: 10, userName: "啊实打实的", ktNum: 500 },
-            { rank: 11, userName: "啊实打实的", ktNum: 500 }
-        ],
-        topbarList:[
+        scrollHeight:0,
+        medalList:[
             {
-                name: 'allRankList',
-                title: { "zh_Hans": "全部排名", "zh_Hant": "全部排名", "en": "" },
+                name:'one',
+                title:{"zh_Hans":"穷人","zh_Hant":"窮人","en":""},
+                medal:[
+                    {title:{"zh_Hans":"孑然一身","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"家徒四壁","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"入不敷出","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"身无分文","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"囊中羞涩","zh_Hant":"窮人","en":""},img:'btn_yun_9'}
+                ]
             },
             {
-                name: 'friendRankList',
-                title: { "zh_Hans": "好友排名", "zh_Hant": "好友排名", "en": "" },
+                name:'two',
+                title:{"zh_Hans":"中产","zh_Hant":"中產","en":""},
+                medal:[
+                    {title:{"zh_Hans":"清贫乐道","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"饱食暖衣","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"安居乐业","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"丰衣足食","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"锦衣玉食","zh_Hant":"窮人","en":""},img:'btn_yun_9'}
+                ]
+            },
+            {
+                name:'three',
+                title:{"zh_Hans":"富人","zh_Hant":"富人","en":""},
+                medal:[
+                    {title:{"zh_Hans":"荣华富贵","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"金玉满堂","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"家财万贯","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"富甲一方","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"富甲天下","zh_Hant":"窮人","en":""},img:'btn_yun_9'}
+                ]
+            },
+            {
+                name:'four',
+                title:{"zh_Hans":"偶然成就","zh_Hant":"偶然成就","en":""},
+                medal:[
+                    {title:{"zh_Hans":"天选之子","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"活体锦鲤","zh_Hant":"窮人","en":""},img:'btn_yun_9'},
+                    {title:{"zh_Hans":"鸿运当头","zh_Hant":"窮人","en":""},img:'btn_yun_9'}
+                ]
             }
-        ],
-        topbarSel:0
+        ]
     };
 
     public create() {
@@ -54,6 +76,21 @@ export class Medal extends Widget {
         this.paint();
     }
 
+    /**
+     * 屏幕滑动
+     */
+    public scrollPage(e:any) {
+        
+        const scrollTop = e.target.scrollTop;
+        this.props.scrollHeight = scrollTop;
+        this.paint();
+    }
+    /**
+     * 跳转我的收藏
+     */
+    public goMyCollect(){
+        popNew('earn-client-app-view-medal-collect');
+    }
     /**
      * 返回上一页
      */

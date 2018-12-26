@@ -82,7 +82,7 @@ export class TicketCompound extends Widget {
             return;
         }
 
-        compoundTicket(selectData.type).then(() => {
+        compoundTicket(selectData.type).then((res) => {
 
         });
         const animation = () => {

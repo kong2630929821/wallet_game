@@ -164,9 +164,9 @@ export const getTicketBalance = (ticketType) => {
  * 获取单个奖品信息
  * @param prizeType 奖品编号
  */
-export const getPrizeInfo = (prizeType:number):any => {
+export const getPrizeInfo = (prizeType: number): any => {
     const cfgs = getMap(PrizeCfg._$info.name);
-    const filterCfgs = [];
+    const filterCfgs = '';
     for (const [k, cfg] of cfgs) {
         if (cfg.pid === prizeType) {
             return cfg;
@@ -174,20 +174,28 @@ export const getPrizeInfo = (prizeType:number):any => {
     }
 
     return filterCfgs;
-    
+
 };
 
 /**
  * 获取项目奖品列表
  */
-export const getPrizeList = (activityNum:ActivityNum):any =>{
+export const getPrizeList = (activityNum: ActivityNum): any => {
     const cfgs = getMap(WeightAwardCfg._$info.name);
     const filterCfgs = [];
-    for (const [k,cfg] of cfgs){
-        if((activityNum*100)<cfg.id && cfg.id<(activityNum*100+100)){
+    for (const [k, cfg] of cfgs) {
+        if ((activityNum * 100) < cfg.id && cfg.id < (activityNum * 100 + 100)) {
             filterCfgs.push(cfg.prop);
         }
     }
 
     return filterCfgs;
+}
+
+/**
+ * 展示错误信息
+ * @param errorNum 错误编号
+ */
+export const showActError = (errorNum:number) => {
+
 }

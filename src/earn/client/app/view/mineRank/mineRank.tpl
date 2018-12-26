@@ -16,11 +16,11 @@
         </div>
         <div w-class="rank-list" id="rankList">
             <div w-class="self-rank">
-                <widget w-tag="earn-client-app-view-mineRank-rankItem">{rank: 1,userName: "啊实打实的",ktNum: 500}</widget>
+                <widget w-tag="earn-client-app-view-mineRank-rankItem">{rank: 0,userName: "啊实打实的",ktNum: 500}</widget>
             </div>
             
             <div w-class="rank-otherlist">
-                {{for i,item in it.rankList}}
+                {{for i,item of it.rankList}}
                     <widget w-tag="earn-client-app-view-mineRank-rankItem">{{item}}</widget>
                 {{end}}
             </div>

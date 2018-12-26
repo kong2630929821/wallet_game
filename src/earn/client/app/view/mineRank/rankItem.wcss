@@ -42,3 +42,10 @@
     color:#222222;
     line-height:33px;
 }
+.no-rank{
+    width: 58px;
+    height: 67px;
+    font-size: 26px;
+    color: #222222;
+    text-align: center;
+}
