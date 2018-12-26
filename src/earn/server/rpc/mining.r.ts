@@ -4,10 +4,11 @@
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
-import { AWARD_SRC_MINE, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
+import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
+import { AWARD_SRC_MINE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
 import { AwardMap, Item, Mine, MineKTTop, MineSeed, MineTop, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { UserInfo } from '../data/db/user.s';
-import { TOP_DATA_FAIL } from '../data/errorNum';
+import { CONFIG_ERROR, GET_RANDSEED_FAIL, MINE_NOT_ENOUGH, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, reduce_itemCount, reduce_mine } from '../util/item_util.r';
@@ -38,22 +39,35 @@ export const mining = (itemType:number):Seed => {
 // #[rpc=rpcServer]
 export const mining_result = (result:MiningResult):MiningResponse => {
     console.log('!!!!!!!!!!!!!!mining_result in');
+    const miningResponse = new MiningResponse();
     const count = result.hit;
     if (count > MAX_HUMAN_HITS) {
         // 这手速绝非常人
         return;
     }
     const itemType = result.itemType;
-    if (get_item(itemType).value.count === 0) return;
+    if (get_item(itemType).value.count === 0) {
+        miningResponse.resultNum = MINE_NOT_ENOUGH;
+        
+        return miningResponse;
+    }
     const mineNum = result.mineNum;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     const uid = getUid();
     const todayMineNum = get_todayMineNum(uid);
     // 当日已达最大挖矿数量
-    // if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) return; 
+    if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
+        miningResponse.resultNum = MINENUM_OVER_LIMIT;
+
+        return miningResponse;
+    }
     const seedAndHoe = <MineSeed>seedBucket.get(uid)[0];
-    if (!seedAndHoe) return;
+    if (!seedAndHoe) {
+        miningResponse.resultNum = GET_RANDSEED_FAIL;
+
+        return miningResponse;
+    }
     let seed = seedAndHoe.seed;
     console.log('!!!!!!!!!!!!!!seed:', seed);
     const hoeType = seedAndHoe.hoeType;
@@ -68,13 +82,12 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     console.log('!!!!!!!!!!!!!!sumhits:', sumHits);
     const leftHp = reduce_mine(itemType, mineNum, sumHits);
     console.log('!!!!!!!!!!!!!!leftHp:', leftHp);
-    const miningresponse = new MiningResponse();
     if (leftHp > 0) {
-        miningresponse.leftHp = leftHp;
-        console.log('!!!!!!!!!!!!!!miningresponse:', miningresponse);
+        miningResponse.leftHp = leftHp;
+        console.log('!!!!!!!!!!!!!!miningresponse:', miningResponse);
     } else {
         // 当前矿山血量小于等于0时，添加奖励
-        miningresponse.leftHp = 0;
+        miningResponse.leftHp = 0;
         const v = [];
         const randomMgr = new RandomSeedMgr(seed);
         const mineType = itemType;
@@ -85,19 +98,35 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
         const itemCount = v[0][1];
         const item = add_itemCount(itemNum, itemCount);
+        const awards = [];
+        awards.push(item);
         add_award(itemNum, itemCount, AWARD_SRC_MINE);
         // 奖品为KT时添加挖矿获取KT总数
         if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount);
+        // 挖开第一个矿山额外奖励
+        const totalMiningNum = get_totalminingNum(uid);
+        if (totalMiningNum.total === 0) {
+            const regularBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
+            const firstAwardCfg = regularBucket.get<number, [RegularAwardCfg]>(FIRST_MINING_AWARD)[0];
+            if (!firstAwardCfg) {
+                miningResponse.resultNum = CONFIG_ERROR;
+
+                return miningResponse;
+            }
+            const firstAward = add_itemCount(firstAwardCfg.prop, firstAwardCfg.num);
+            add_award(firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
+            awards.push(firstAward);
+        }
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         console.log('miningresponse!!!!!!!!!!!!!!!!!:', todayMineNum.mineNum);
         const mineNumBucket =  new Bucket(WARE_NAME, TodayMineNum._$info.name, dbMgr);
         mineNumBucket.put(todayMineNum.id, todayMineNum);
         add_miningTotal(uid);
-        miningresponse.award = item;
+        miningResponse.awards = awards;
     }
 
-    return miningresponse;
+    return miningResponse;
 };
 
 // 查询用户当日挖矿山数量

@@ -19,13 +19,6 @@ import { doAward } from './award.t';
 import { get_enumType } from './mining_util';
 import { RandomSeedMgr } from './randomSeedMgr';
 
-// #[rpc=rpcServer]
-export const doTest = (uid: number): Items => {
-    console.log('item query in !!!!!!!!!!!!');
-
-    return;
-};
-
 // 添加兑换码
 // #[rpc=rpcServer]
 export const add_convert = ():IsOk => {
