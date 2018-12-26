@@ -9,7 +9,7 @@ import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, 
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
 import { MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
-import { get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
+import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
@@ -142,10 +142,10 @@ export const ticket_treasurebox_test = () => {
     });
 };
 
-// 挖矿排行
+// 挖矿排行(KT)
 export const mine_top_test = () => {
     const top = 10;
-    clientRpcFunc(get_miningTop, top, (r: MineTop) => {
+    clientRpcFunc(get_miningKTTop, top, (r: MineTop) => {
         console.log(r);
     });
 };

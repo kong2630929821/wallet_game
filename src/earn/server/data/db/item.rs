@@ -155,11 +155,48 @@ struct TotalMiningMap {
 }
 
 /**
+*挖矿得到KT数量表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct MiningKTNum {
+    uid: u32,
+    uName: Option<String>,
+    total: u32
+}
+
+/**
+*挖矿得到KT数MAP
+*/
+struct MiningKTMap {
+    ktNum: u32,
+    uid: u32
+}
+
+/**
+*挖矿得到KT数MAP表
+*/
+#[primary=miningKTMap,db=file,dbMonitor=true,hasmgr=false]
+struct MiningKTMapTab {
+    miningKTMap: MiningKTMap,
+    uName: Option<String>
+}
+
+/**
+*挖矿得到KT数量排行
+*/
+struct MineKTTop {
+    topList: Option<&[MiningKTMapTab]>,
+    myNum: Option<u32>,
+    resultNum: u32
+}
+
+/**
 *总挖矿数量排行
 */
 struct MineTop {
-    topList: &[TotalMiningMap],
-    myNum: u32
+    topList: Option<&[TotalMiningMap]>,
+    myNum: Option<u32>,
+    resultNum: u32
 }
 
 /**
