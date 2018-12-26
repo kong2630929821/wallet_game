@@ -5,17 +5,18 @@
 // ================================================ 导入
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
-import { AwardList, AwardQuery, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
-import { ItemQuery, MiningResult, Seed, TopQuery } from '../../../server/rpc/itemQuery.s';
-import { get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
+import { MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
+import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
-import { Hits, Test as Test2 } from '../../../server/rpc/test.s';
-import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
+import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
+import { ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_item, item_query } from '../../../server/rpc/user_item.p';
+import { add_convert } from '../../../server/util/item_util.p';
 import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
@@ -23,7 +24,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = 'test';
+    walletLoginReq.openid = 'test2';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
 
@@ -40,8 +41,7 @@ export const invite = () => {
 };
 
 export const get_items = () => {
-    const uid = 7;
-    clientRpcFunc(item_query, uid, (r: Items) => {
+    clientRpcFunc(item_query, null, (r: Items) => {
         console.log(r);
     });
 };
@@ -54,11 +54,8 @@ export const award = () => {
 
 // 获取指定用户指定类型物品
 export const item_test1 = () => {
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 1;
-    itemQuery.itemType = 1001;
-    clientRpcFunc(get_item, itemQuery, (r: Item) => {
+    const itemType = 1001;
+    clientRpcFunc(get_item, itemType, (r: Item) => {
         console.log(r);
     });
 };
@@ -73,11 +70,8 @@ export const item_test2 = () => {
 
 // 获取挖矿随机种子
 export const get_seed = () => {
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 2;
-    itemQuery.itemType = 2001;
-    clientRpcFunc(mining, itemQuery, (r: Seed) => {
+    const itemType = 2001;
+    clientRpcFunc(mining, itemType, (r: Seed) => {
         console.log(r);
     });
 };
@@ -86,11 +80,7 @@ export const get_seed = () => {
 export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 30;
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 1;
-    itemQuery.itemType = 1001;
-    miningResult.itemQuery = itemQuery;
+    miningResult.itemType = 1001;
     miningResult.mineNum = 0;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
@@ -99,8 +89,7 @@ export const mining_test = () => {
 
 // 添加矿山
 export const test_add_mine = () => {
-    const uid = 7;
-    clientRpcFunc(add_mine, uid, (r: Mine) => {
+    clientRpcFunc(add_mine, null, (r: Mine) => {
         console.log(r);
     });
 };
@@ -115,17 +104,15 @@ export const test_hits = () => {
 
 // 奖励查询
 export const award_query_test = () => {
-    const awardQuety = new AwardQuery();
-    awardQuety.uid = 7;
-    awardQuety.src = 'mine';
-    clientRpcFunc(award_query, awardQuety, (r:AwardList) => {
+    const src = 'mine';
+    clientRpcFunc(award_query, src, (r:AwardList) => {
         console.log(r);
     });
 };
 
 // 添加奖券
 export const add_ticket = () => {
-    const count = 6;
+    const count = 60;
     clientRpcFunc(item_addticket, count, (r: Item) => {
         console.log(r);
     });
@@ -133,43 +120,47 @@ export const add_ticket = () => {
 
 // 合成奖券
 export const compose_ticket = () => {
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 7;
-    itemQuery.itemType = 7001;
-    clientRpcFunc(ticket_compose, itemQuery, (r: Item) => {
+    const itemType = 7001;
+    clientRpcFunc(ticket_compose, itemType, (r: Item) => {
         console.log(r);
     });
 };
 
 // 转盘
 export const ticket_rotary_test = () => {
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 7;
-    itemQuery.itemType = 7001;
-    clientRpcFunc(ticket_rotary, itemQuery, (r: Item) => {
+    const itemType = 7001;
+    clientRpcFunc(ticket_rotary, itemType, (r: Item) => {
         console.log(r);
     });
 };
 
 // 宝箱
 export const ticket_treasurebox_test = () => {
-    const itemQuery = new ItemQuery();
-    itemQuery.uid = 7;
-    itemQuery.enumType = 7;
-    itemQuery.itemType = 7001;
-    clientRpcFunc(ticket_treasurebox, itemQuery, (r: Item) => {
+    const  itemType = 7001;
+    clientRpcFunc(ticket_treasurebox, itemType, (r: Item) => {
         console.log(r);
     });
 };
 
-// 挖矿排行
+// 挖矿排行(KT)
 export const mine_top_test = () => {
-    const topQuery = new TopQuery();
-    topQuery.uid = 7;
-    topQuery.top = 10;
-    clientRpcFunc(get_miningTop, topQuery, (r: MineTop) => {
+    const top = 10;
+    clientRpcFunc(get_miningKTTop, top, (r: MineTop) => {
+        console.log(r);
+    });
+};
+
+// 添加兑换码
+export const add_convert_test = () => {
+    clientRpcFunc(add_convert, null, (r:IsOk) => {
+        console.log(r);
+    });
+};
+
+// 兑换物品
+export const convert_test = () => {
+    const awardType = 500001;
+    clientRpcFunc(ticket_convert, awardType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -239,6 +230,14 @@ const props = {
         {
             name: '挖矿排行',
             func: () => { mine_top_test(); }
+        },
+        {
+            name: '添加兑换码',
+            func: () => { add_convert_test(); }
+        },
+        {
+            name: '兑换物品',
+            func: () => { convert_test(); }
         }
     ] // 按钮数组
 };
