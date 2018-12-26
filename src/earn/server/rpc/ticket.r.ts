@@ -75,6 +75,7 @@ export const ticket_rotary = (itemType:number):AwardResponse => {
     doAward(pid, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
+    add_itemCount(newitemType, count);
     const award =  add_award(newitemType, count, AWARD_SRC_ROTARY);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
@@ -120,6 +121,7 @@ export const ticket_treasurebox = (itemType:number):AwardResponse => {
     doAward(pid, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
+    add_itemCount(newitemType, count);
     const award = add_award(newitemType, count, AWARD_SRC_TREASUREBOX);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
