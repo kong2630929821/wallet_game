@@ -25,6 +25,14 @@
     justify-content: space-evenly;
     align-items: center;
 }
+.top-big-text{
+    font-size:48px;
+    color:#F7CE89;
+}
+.top-small-text{
+    font-size:24px;
+    color:#BFAA9A;
+}
 
 .share{
     display: flex;
@@ -37,6 +45,34 @@
     font-size: 24px;
     color: #ffffff;
 }
+
+
+
+.collect-cabinet{
+    width: 100%;
+    padding: 0px 50px;
+    margin-top: -5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background: url('../../earn/client/app/res/image/cabinet-bg.png');
+}
+.collect-item{
+    height: 242px;
+    justify-content: space-around;
+    padding-bottom: 15px;
+}
+.medal-top-text{
+    height:40px;
+    line-height: 40px;
+    padding: 0px 8px;
+    background:#2C201B;
+    border-radius:6px;
+    font-size:24px;
+    font-weight:300;
+    color:#FFFFFF;
+}
+
 
 
 

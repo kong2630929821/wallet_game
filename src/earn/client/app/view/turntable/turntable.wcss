@@ -28,7 +28,7 @@
     height:1000px;;
     width:100%;
     flex:0 0 auto;
-    background-image: url('../view/earn/client/res/image/turntable-bg.png');
+    background-image: url('../../earn/client/app/res/image/turntable-bg.png');
     background-repeat: no-repeat;
     background-position: top;
 }

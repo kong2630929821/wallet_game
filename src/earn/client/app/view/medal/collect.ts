@@ -17,6 +17,25 @@ export class Collect extends Widget {
     public ok: () => void;
     public props = {
         scrollHeight:0,
+        medalList:[
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal1'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+        ]
     };
 
     public create() {
