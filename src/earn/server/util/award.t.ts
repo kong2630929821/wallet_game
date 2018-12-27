@@ -5,7 +5,7 @@
 import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
-import { AverageAwardCfg, isAverageAward, isRateAward, isWeightAward, RateAwardCfg, WeightAwardCfg } from '../../xlsx/miningCfg.s';
+import { AverageAwardCfg, isAverageAward, isRateAward, isWeightAward, RateAwardCfg, WeightAwardCfg } from '../../xlsx/awardCfg.s';
 import { MEMORY_NAME } from '../data/constant';
 import { getWeightIndex, isSpecialAward } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
