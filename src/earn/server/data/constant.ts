@@ -41,16 +41,33 @@ export const RAINBOW_TICKET_TYPE = 7003;
 export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
 export const MAX_ONEDAY_MINING = 8;
+// 连续登陆奖励循环天数
+export const SERIES_LOGIN_CIRCLE = 15;
+// 邀请好友开始循环奖励人数
+export const INVITE_AWARD_CIRCLE = 15;
+// 邀请好友循环奖励长度
+export const INVITE_AWARD_CIRCLE_LENGTH = 3;
+// 邀请好友第二级循环奖励
+export const INVITE_AWARD_CIRCLE_LEVEL1 = 16;
+// 邀请好友第一级循环奖励
+export const INVITE_AWARD_CIRCLE_LEVEL2 = 17;
+// 邀请好友第三级循环奖励
+export const INVITE_AWARD_CIRCLE_LEVEL3 = 18;
 
+// ================ 固定奖励 ===================
+// 首次登陆奖励
+export const FIRST_LOGIN_AWARD = 600101;
 // 首次挖开矿山奖励
 export const FIRST_MINING_AWARD = 600401;
 
 // 奖品来源
+export const AWARD_SRC_LOGIN = 'login';
 export const AWARD_SRC_MINE = 'mine';
 export const AWARD_SRC_ROTARY = 'rotary';
 export const AWARD_SRC_TREASUREBOX = 'treasurebox';
 export const AWARD_SRC_CONVERT = 'convert';
 
+// ================ 概率奖励 ===================
 // 抽奖配置id
 export const SMALL_MINE_TYPE_AWARD = 100101; // 小矿山挖矿
 export const MIDDLE_MINE_TYPE_AWARD = 100201; // 中矿山挖矿
