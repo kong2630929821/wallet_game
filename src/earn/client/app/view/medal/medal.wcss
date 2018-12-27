@@ -12,7 +12,7 @@
     height: 550px;
     width: 100%;
     background: rgb(44, 127, 250);
-    padding: 128px 20px 20px;
+    padding: 148px 20px 20px;
 }
 
 .body{

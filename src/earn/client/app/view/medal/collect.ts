@@ -61,6 +61,13 @@ export class Collect extends Widget {
         this.paint();
     }
 
+    /**
+     * 勋章展示
+     */
+    public medalShow(index:number){
+        popNew('earn-client-app-view-medal-medalShow');
+    }
+
 
     /**
      * 返回上一页

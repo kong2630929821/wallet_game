@@ -3,8 +3,6 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
-import { Forelet } from '../../../../../pi/widget/forelet';
-import { popNew } from '../../../../../pi/ui/root';
 
 export class MedalShow extends Widget {
     public ok: () => void;
