@@ -1,6 +1,7 @@
 /**
  * 
  */
+import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
@@ -10,7 +11,6 @@ import { doAward } from '../util/award.t';
 import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { Seed } from './itemQuery.s';
 import { Hits, Test } from './test.s';
 import { item_query } from './user_item.r';
 
@@ -100,4 +100,15 @@ export const add_convert = () => {
     console.log('before db write:!!!!!!!!!!!!!!!!!!');
     const isOk = bucket.put([1, 2, 3, 4], [convertTab, convertTab1, convertTab2, convertTab3]);
     console.log('db write isOk:!!!!!!!!!!!!!!!!!!', isOk);
+};
+
+export const bigint_test = ():Test => {
+    const a:bigInt.BigInteger = bigInt('10');
+    const b:bigInt.BigInteger = bigInt('20');
+    const c = a.add(b);
+    const d = c.toString();
+    const test = new Test();
+    test.r = d;
+
+    return test;
 };

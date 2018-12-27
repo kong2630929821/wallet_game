@@ -7,6 +7,7 @@ import { WALLET_API_CDKEY } from '../data/constant';
 import { Invite } from '../data/db/invite.s';
 import { getcdkey } from '../data/util';
 import { oauth_send } from '../util/oauth_lib';
+import { invite_award } from '../util/regularAward';
 import { getOpenid, getUid } from './user.r';
 
 // 兑换邀请码
@@ -26,9 +27,11 @@ export const cdkey = (code: string): Invite => {
         if (r.ok) {
             const json = JSON.parse(r.ok);
             if (json.return_code === 1) {
-                // TODO 增加邀请奖励
+                // 增加邀请奖励
                 invite.code = cdkey;
-                invite.items = []; // TODO 奖品列表
+                invite.items = []; // 奖品列表
+                const item = invite_award(uid);
+                invite.items.push(item);
                 InviteBucket.put(cdkey, invite);
 
                 return invite;

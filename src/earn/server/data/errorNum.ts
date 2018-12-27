@@ -15,6 +15,10 @@ export const MINE_NOT_ENOUGH = 1101;
 export const MINENUM_OVER_LIMIT = 1102;
 // 获取随机种子失败
 export const GET_RANDSEED_FAIL = 1103;
+// 该类型锄头数量不足
+export const HOE_NOT_ENOUGH = 1104;
+// 10秒内点击次数异常
+export const ARE_YOU_SUPERMAN = 1105;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;

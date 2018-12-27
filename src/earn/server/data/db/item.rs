@@ -65,6 +65,7 @@ struct MiningResponse{
     resultNum: u32,
     leftHp: Option<u32>, //矿山剩余血量
     awards: Option<&[Item]>, //奖励物品
+    mine:Option<Mine> //赠送矿山
 }
 
 /**
@@ -74,6 +75,13 @@ struct MiningResponse{
 struct Items {
     uid: u32,
     item: &[Item],
+}
+
+
+//物品列表返回结果
+struct ItemsResponse{
+    resultNum: u32,
+    item: Option<Items>
 }
 
 /**
@@ -86,7 +94,7 @@ struct Award {
     count: u32,
     uid: u32,
     src: String,
-    time: u32,
+    time: String,
     desc: Option<String>,
     convert: Option<String>
 }
