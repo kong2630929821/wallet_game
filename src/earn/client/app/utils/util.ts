@@ -3,20 +3,19 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
+import { WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { PrizeCfg, ActivityNum } from '../xls/dataEnum.s';
 
 /**
  * 获取锄头对象
  */
-export const getHoeCount = (hoeType: HoeType) => {
-    const goods = getStore('goods');
+export const getHoeCount = (hoeType:HoeType) => {
+    const goods = getStore('mine/goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
@@ -28,21 +27,46 @@ export const getHoeCount = (hoeType: HoeType) => {
 };
 
 /**
- * 获取随机显示的矿山列表
+ * 获取所有矿山
  */
-export const randomMines = () => {
-    const goods = getStore('goods');
+export const getAllMines = () => {
+    const goods = getStore('mine/goods');
     const mines = [];
-    const miningedMines = [];
-    for (let i = 0; i < goods.length; i++) {
+    for (let i = 0;i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            for (let j = 0; j < good.value.hps.length; j++) {
+            for (let j = 0;j < good.value.hps.length;j++) {
+                if (good.value.count <= 0) break;
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
                 const mine = {
-                    type: itype,
-                    index: j,
+                    type:itype,
+                    index:j,
+                    hp
+                };
+                mines.push(mine);
+            }
+        }
+    }
+    
+    return mines;
+};
+/**
+ * 获取随机显示的矿山列表
+ */
+export const randomMines = () => {
+    const goods = getStore('mine/goods');
+    const mines = [];
+    const miningedMines = [];
+    for (let i = 0;i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.MINE) {
+            for (let j = 0;j < good.value.hps.length;j++) {
+                const hp = good.value.hps[j];
+                const itype = good.value.num;
+                const mine = {
+                    type:itype,
+                    index:j,
                     hp
                 };
                 if (itype === MineType.SmallMine && hp < getMiningMaxHp(MineType.SmallMine)) {
@@ -58,7 +82,7 @@ export const randomMines = () => {
         }
     }
 
-    return [...shuffle(miningedMines), ...shuffle(mines)];
+    return [...shuffle(miningedMines),...shuffle(mines)];
 };
 
 // 数组乱序
@@ -77,12 +101,12 @@ export const shuffle = (arr: any[]): any[] => {
 };
 
 // 处理挖矿单次事件(一次点击)
-const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
+const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
     const cfgs = getMap(WeightMiningCfg._$info.name);
     const weights = [];
     const filterCfgs = [];
     let maxWeight = 0;
-    for (const [k, cfg] of cfgs) {
+    for (const [k,cfg] of cfgs) {
         if (cfg.id === hoeType) {
             filterCfgs.push(cfg);
             maxWeight += cfg.weight;
@@ -110,10 +134,10 @@ const getWeightIndex = (weights: number[], seed: number) => {
 /**
  * 计算挖矿数组
  */
-export const calcMiningArray = (hoeType: HoeType, seed: number) => {
+export const calcMiningArray = (hoeType:HoeType,seed: number) => {
     const hits = [];
     let cSeed = seed;
-    for (let i = 0; i < miningMaxHits; i++) {
+    for (let i = 0;i < miningMaxHits;i++) {
         const randomMgr = new RandomSeedMgr(cSeed);
         const hit = doMining(hoeType, randomMgr);
         cSeed = RandomSeedMgr.randNumber(cSeed);
@@ -128,9 +152,9 @@ export const calcMiningArray = (hoeType: HoeType, seed: number) => {
  * 获取矿山最大血量
  * @param mineType 矿山类型
  */
-export const getMiningMaxHp = (mineType: MineType) => {
+export const getMiningMaxHp = (mineType:MineType) => {
     const cfgs = getMap(MineHpCfg._$info.name);
-    for (const [k, v] of cfgs) {
+    for (const [k,v] of cfgs) {
         if (v.id === mineType) {
             return v.hp;
         }

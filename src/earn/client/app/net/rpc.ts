@@ -3,7 +3,7 @@
  */
 import { Item_Enum, Items, MiningResponse, Item, AwardQuery, AwardResponse } from '../../../server/data/db/item.s';
 import { ItemQuery, MiningResult } from '../../../server/rpc/itemQuery.s';
-import { mining, mining_result, get_miningKTTop } from '../../../server/rpc/mining.p';
+import { mining, mining_result } from '../../../server/rpc/mining.p';
 import { item_query, award_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
@@ -54,15 +54,16 @@ export const getAllGoods = () => {
 /**
  * 准备挖矿
  */
-export const readyMining = (hoeType: HoeType) => {
+export const readyMining = (hoeType:HoeType) => {
     return new Promise(resolve => {
         const itemQuery = new ItemQuery();
         itemQuery.uid = getStore('uid');
         itemQuery.enumType = Item_Enum.HOE;
         itemQuery.itemType = hoeType;
-        console.log('beginMining itemQuery = ', itemQuery);
+        console.log('beginMining itemQuery = ',itemQuery);
         clientRpcFunc(mining, itemQuery, (r: RandomSeedMgr) => {
-            console.log('beginMining ', r);
+            console.log('beginMining ',r);
+            getAllGoods();
             resolve(r);
         });
     });
@@ -71,7 +72,7 @@ export const readyMining = (hoeType: HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (mineType: MineType, mineIndex: number, diggingCount: number) => {
+export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
     return new Promise(resolve => {
         const result = new MiningResult();
         const itemQuery = new ItemQuery();
@@ -81,9 +82,9 @@ export const startMining = (mineType: MineType, mineIndex: number, diggingCount:
         result.itemQuery = itemQuery;
         result.mineNum = mineIndex;
         result.hit = diggingCount;
-        console.log('startMining result = ', result);
+        console.log('startMining result = ',result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {
-            console.log('startMining MiningResponse = ', r);
+            console.log('startMining MiningResponse = ',r);
             resolve(r);
         });
     });

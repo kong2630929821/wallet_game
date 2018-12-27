@@ -12,7 +12,7 @@
                 <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
         </div>
-        <div w-class="digging-num">今日已挖矿山 0/9 座</div>
+        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/9 座</div>
         <div w-class="digging-tips">{{it.miningTips}}</div>
         <div w-class="award-container">
             <div w-class="award-item">
@@ -41,8 +41,8 @@
             </div>
         </div>
         <div w-class="mine-area">
-            {{for index,item of it.curMines}}
-            <div on-down="mineClick(e,{{item.type}},{{item.index}})" w-class="mine-item" style="{{ it.mineStyle[index] }}">
+            {{for index,item of it.havMines}}
+            <div on-down="mineClick(e,{{item.type}},{{item.index}})" w-class="mine-item" style="{{ item.location }}">
                 <earn-client-app-view-activity-components-mine>{ 
                     mineType:{{item.type}},
                     hp:{{item.hp}},
@@ -68,7 +68,7 @@
                     </div>
                     <div w-class="action-tips">签到豪礼</div>
                 </div>
-                <div w-class="ad-item">
+                <div w-class="ad-item" on-tap="welfareClick">
                     <div w-class="gift-box">
                         <img src="../../../res/image1/gift.png"/>
                     </div>
