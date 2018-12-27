@@ -5,67 +5,138 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { Item } from '../../../../server/data/db/item.s';
+import { register } from '../../store/memstore';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { openChest, getAllGoods } from '../../net/rpc';
+import { getTicketBalance } from '../../utils/util';
+import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
+import { getRealNode } from '../../../../../pi/widget/painter';
+
+// ================================ 导出
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
 
 interface Props {
-    selectTicket: number;
-    boxList: any;
+    isEmpty:boolean; //空宝箱
+    isOpenBoxing:boolean;//正在开启宝箱中
+    selectTicket: any; //选择的宝箱类型
+    boxList: any; //宝箱列表
+    ticketList: any; //奖券列表
 }
+
+
 export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        selectTicket: 0,
-        boxList: [
+        isEmpty:false,
+        isOpenBoxing:false,
+        boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], //0:未开 1:已开
+        ticketList: [
             {
-                isOpen: false
+                type: TicketType.SilverTicket,
+                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                needTicketNum:LotteryTicketNum.SilverChest,
+                balance: 0,
             },
             {
-                isOpen: false
+                type: TicketType.GoldTicket,
+                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                needTicketNum:LotteryTicketNum.GoldChest,
+                balance: 0,
             },
             {
-                isOpen: false
-            },
-            {
-                isOpen: false
-            },
-            {
-                isOpen: false
-            },
-            {
-                isOpen: false
-            },
-            {
-                isOpen: false
-            },
-            {
-                isOpen: false
-            },
-            {
-                isOpen: false
+                type:   TicketType.DiamondTicket,
+                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                needTicketNum:LotteryTicketNum.DiamondChest,
+                balance: 0,
             }
-        ]
+        ],
+        selectTicket: {},
+
     };
 
-    /**
-     * 打开单个宝箱 
-     * @param num 宝箱序数
-     */
-    public openBox(num:number) {
-        if (this.props.boxList[num].isOpen) {
+    public create() {
+        super.create();
+        this.props.selectTicket = this.props.ticketList[0];
+        this.initData();
+    }
 
-            return;
+    /**
+     * 初始数据
+     */
+    public initData() {
+        for(let i=0;i<this.props.ticketList.length;i++){
+            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
         }
-        popNew('earn-client-app-view-component-lotteryModal',{ type:2 });
-        this.props.boxList[num].isOpen = true;
         this.paint();
     }
+
+    /**
+     * 打开宝箱 
+     * @param num 宝箱序数
+     */
+    public openBox(e:any,num: number) {
+        
+        if (this.props.boxList[num] === 1) {  //宝箱已打开
+            //TODO
+            return;
+        }
+        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {  //奖券不够
+            //TODO
+            return;
+        }
+        this.openBoxAnimation(e);
+        openChest(this.props.selectTicket.type).then((res:any)=>{
+            this.openBoxAnimation(e);
+            popNew('earn-client-app-view-component-lotteryModal', res.award);
+            if(res.award.count===0){
+                this.emptyChest();
+            }
+            this.props.boxList[num] = 1;
+            this.paint();
+        }).catch((err)=>{
+            this.openBoxAnimation(e);
+            this.emptyChest();
+        })
+    }
+
+    /**
+     * 设置空宝箱提示
+     */
+    public emptyChest(){
+        this.props.isEmpty = true;
+        this.paint();
+        setTimeout(() => {
+            this.props.isEmpty =false;
+            this.paint();
+        }, 2000);
+
+    }
+
+    /**
+     * 设置是否正在开宝箱动画
+     */
+    public openBoxAnimation(e:any){
+        const $chest = getRealNode(e.node);
+        this.props.isOpenBoxing = !this.props.isOpenBoxing;
+        if(this.props.isOpenBoxing){
+            $chest.className = 'isOpenbox';
+        }else{
+            $chest.className = '';
+        }
+        this.paint();
+    }
+
     /**
      * 重置所有宝箱
      */
     public resetBoxList() {
-        this.props.boxList.forEach(element => {
-            element.isOpen = false;
-        });
+        this.props.boxList.fill(0);
         this.paint();
     }
 
@@ -75,7 +146,7 @@ export class OpenBox extends Widget {
      */
     public change(num: number) {
         this.resetBoxList();
-        this.props.selectTicket = num;
+        this.props.selectTicket = this.props.ticketList[num];
         this.paint();
     }
 
@@ -83,7 +154,7 @@ export class OpenBox extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-myProduct-myProduct',{ type:2 });
+        popNew('earn-client-app-view-myProduct-myProduct', { type: 3 });
     }
 
     /**
@@ -93,3 +164,11 @@ export class OpenBox extends Widget {
         this.ok && this.ok();
     }
 }
+
+
+// ===================================================== 立即执行
+
+register('goods',(goods:Item[]) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

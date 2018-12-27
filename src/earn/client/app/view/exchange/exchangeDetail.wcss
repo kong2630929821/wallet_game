@@ -1,0 +1,111 @@
+.content{
+    height:100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding-bottom:128px;
+}
+.mat{
+    background:white;
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:12px;
+}
+.flex-col{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+}
+
+
+
+
+.top-img{
+    height: 350px;
+    background-color: #EEEEEE;
+}
+
+
+
+
+
+
+.center{
+    height:241px;
+    background:#FFFFFF;
+    padding: 30px;
+}
+.product-name{
+    height:50px;
+    font-size:36px;
+    font-weight:500;
+    color:#222222;
+    line-height:50px;
+}
+.product-money{
+    height: 60px;
+    padding: 0px 20px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+.money-one{
+    margin-right: 20px;
+    display: flex;
+}
+.money-num{
+    margin-left: 5px;
+    height:40px;
+    font-size:28px;
+    color:#222222;
+    line-height:40px;
+}
+.validity-time{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #DBDBE5;
+    font-size:28px;
+    color:#222222;
+}
+
+
+
+
+.bottom{
+    margin-top: 15px;
+    padding: 30px;
+    background: #FFFFFF;
+    align-items: center;
+}
+.desc-box{
+    margin-bottom: 30px;
+}
+.box-title{
+    height:50px;
+    font-size:32px;
+    font-weight:500;
+    color:#222222;
+    line-height:50px;
+    margin-bottom: 15px;
+}
+.box-text{
+    font-size:28px;
+    color:#888888;
+    line-height:40px;
+}
+.exchange-btn{
+    width:630px;
+    height:100px;
+    margin: 25px 0px;
+    background:linear-gradient(270deg,#44CEED 0%,#3EB3F1 100%);
+    box-shadow:0px 5px 10px 0px rgba(13,131,246,0.1);
+    border-radius:50px;
+    font-size:32px;
+    font-weight:500;
+    color:white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

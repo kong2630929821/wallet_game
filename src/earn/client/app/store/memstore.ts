@@ -48,8 +48,9 @@ export const getStore = (path: string, defaultValue = undefined) => {
             throw new Error('getStore Failed, path = ' + path);
         }
     }
+    const deepRet = deepCopy(ret);
 
-    return typeof deepCopy(ret) === 'boolean' ? deepCopy(ret) : (deepCopy(ret) || defaultValue);
+    return (typeof deepRet === 'boolean' || typeof deepRet === 'number') ? deepRet : (deepRet || defaultValue);
 };
 
 /**
@@ -113,13 +114,23 @@ const handlerMap: HandlerMap = new HandlerMap();
 // 全局内存数据库
 const store:Store = {
     uid:9,
+    mine:{
+        goods:[],
+        miningedNumber:0
+    },
     goods:[]
+    
 };
 
+export interface Mine {
+    goods:Item[];   // all goods
+    miningedNumber:0;  // 今天已挖矿山数量
+}
 /**
  * Store的声明
  */
 export interface Store {
     uid:number;     // user uid
-    goods:Item[];   // all goods
+    mine:Mine;      // 矿山相关
+    goods:Item[];
 }

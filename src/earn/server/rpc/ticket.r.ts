@@ -26,7 +26,7 @@ export const ticket_compose = (itemType:number):Item => {
         case SILVER_TICKET_TYPE:
             pid = COMPOSE_GOLD_TICKET;
             break;
-        case GOLD_TICKET_TYPE:
+        case GOLD_HOE_TYPE:
             pid = COMPOSE_RAINBOW_TICKET;
             break;
         default:

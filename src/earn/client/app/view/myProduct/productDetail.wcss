@@ -1,0 +1,122 @@
+.content{
+    height:100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding-bottom:128px;
+}
+.mat{
+    background:white;
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:12px;
+}
+.flex-col{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+}
+
+.top-tips{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    height: 100px;
+    background: white;
+    font-size: 36px;
+    font-weight: 500;
+    color: rgba(34,34,34,1);
+}
+
+
+
+
+.top{
+    margin: 30px 20px;
+    padding: 10px;
+    height:180px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:12px;
+    display: flex;
+    align-items: center;
+}
+.top-img{
+
+}
+.top-text{
+    margin-left: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    font-size:24px;
+    color:#222222;
+}
+
+
+
+
+
+
+
+.center{
+    background:#FFFFFF;
+    padding: 30px;
+}
+.conversionCode{
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+    height: 100px;
+    background: rgba(249,249,249,1);
+    border-radius: 12px;
+    border: 1px solid #CCCCCC;
+    font-size: 28px;
+}
+.center-text{
+    margin: 8px 0px;
+    height:40px;
+    font-size:28px;
+    color:#888888;
+    line-height:40px;
+}
+.btn-copy{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:150px;
+    height:60px;
+    color: white;
+    background:linear-gradient(27deg,rgba(243,148,57,1) 0%,rgba(248,188,69,1) 100%);
+    box-shadow:0px 10px 5px 0px rgba(248,141,60,0.1);
+    border-radius:30px;
+}
+
+
+
+
+.bottom{
+    margin-top: 15px;
+    padding: 30px;
+    background: #FFFFFF;
+    align-items: center;
+}
+.desc-box{
+    margin-bottom: 30px;
+}
+.box-title{
+    height:50px;
+    font-size:32px;
+    font-weight:500;
+    color:#222222;
+    line-height:50px;
+    margin-bottom: 15px;
+}
+.box-text{
+    font-size:28px;
+    color:#888888;
+    line-height:40px;
+}

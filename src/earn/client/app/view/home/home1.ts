@@ -8,7 +8,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getAllGoods } from '../../net/rpc';
+import { getAllGoods, loginActivity } from '../../net/rpc';
 import { register } from '../../store/memstore';
 import { getHoeCount } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -36,11 +36,11 @@ export class PlayHome extends Widget {
         this.props = {
             ...this.props,
             page: [
-                'app-view-earn-client-view-mining-rankList', // 挖矿排名
-                'app-view-earn-client-view-mining-dividend', // 领分红
-                'app-view-earn-client-view-redEnvelope-writeRedEnv', // 发红包
-                'app-view-earn-client-view-exchange-exchange', // 兑换
-                'app-view-earn-client-view-mining-addMine'  // 任务
+                'app-view-earn-mining-dividend', // 领分红
+                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
+                'app-view-earn-exchange-exchange', // 兑换
+                'app-view-earn-mining-addMine'  // 任务
+                // 'app-view-earn-mining-rankList', // 挖矿排名
             ],
             scroll: false,
             scrollHeight: 0,
@@ -74,18 +74,23 @@ export class PlayHome extends Widget {
                 img: 'btn_yun_11.png',
                 title: '我的物品',
                 desc: '兑换和中奖的物品'
+            }, {
+                img: 'btn_yun_11.png',
+                title: '挖矿排名',
+                desc: '全部和好友排名'
             }],
-            ironHoe:getHoeCount(HoeType.IronHoe),
-            goldHoe:getHoeCount(HoeType.GoldHoe),
-            diamondHoe:getHoeCount(HoeType.DiamondHoe),
-            hoeType:HoeType
+            ironHoe: getHoeCount(HoeType.IronHoe),
+            goldHoe: getHoeCount(HoeType.GoldHoe),
+            diamondHoe: getHoeCount(HoeType.DiamondHoe),
+            hoeType: HoeType
         };
-
         setTimeout(() => {
             this.scrollPage();
         }, 17);
         setTimeout(() => {
-            getAllGoods();
+            loginActivity().then(()=>{
+                getAllGoods();
+            })
         }, 2000);
         console.log(this.props.hoeType);
     }
@@ -114,12 +119,19 @@ export class PlayHome extends Widget {
                 popNew('earn-client-app-view-exchange-exchange');// 奖券兑换
                 break;
             case 6:
-                popNew('earn-client-app-view-myProduct-myProduct');// 我的物品
+                popNew('earn-client-app-view-myProduct-myProduct', { type: 0 });// 我的物品
+                break;
+            case 7:
+                popNew('earn-client-app-view-mineRank-mineRank');// 挖矿排名
                 break;
             default:
         }
     }
 
+
+    public goNextPage(index:number){
+        popNew(this.props.page[index]);
+    }
     public miningClick() {
         popNew('earn-client-app-view-activity-mining-home');
     }
@@ -187,7 +199,7 @@ export class PlayHome extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('goods', (goods: Item[]) => {
+register('mine/goods', (goods: Item[]) => {
     console.log('goods change ', goods);
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();

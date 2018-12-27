@@ -42,11 +42,11 @@ export const item_add = (count: number): Item => {
 };
 
 // #[rpc=rpcServer]
-export const item_addticket = (count: number): Item => {
+export const item_addticket = (ticketType: number): Item => {
     console.log('add test in!!!!!!!!!!');
-    const itemType = 7003;
+    const itemType = ticketType;
 
-    return add_itemCount(itemType, count);
+    return add_itemCount(itemType, 10);
 };
 
 // #[rpc=rpcServer]

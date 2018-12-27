@@ -28,7 +28,7 @@
     height:1000px;;
     width:100%;
     flex:0 0 auto;
-    background-image: url('../view/earn/client/res/image/turntable-bg.png');
+    background-image: url('../../earn/client/app/res/image/turntable-bg.png');
     background-repeat: no-repeat;
     background-position: top;
 }
@@ -118,7 +118,7 @@
     color: white;
     text-align: right;
     padding-right: 5px;
-    margin-top: -25px;
+    margin-top: -30px;
 }
 
 .select{
@@ -165,8 +165,8 @@
     color: #e4370e;
     font-weight: bold;
     text-shadow: 0 1px 1px rgba(255,255,255,0.6);
-　　　　
 }
+
 .turntable-item-bg{
     width:0px;
     height:0px;
@@ -195,5 +195,7 @@
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
 }
-
-
+.turntable-iicon{
+    border: 2px solid #CCCCCC;
+    border-radius: 50%;
+}
