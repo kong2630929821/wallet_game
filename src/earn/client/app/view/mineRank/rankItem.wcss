@@ -1,0 +1,51 @@
+.rank-item{
+    height: 140px;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rank-left{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+}
+
+.rank-num{
+    width:58px;
+    height:67px;
+    font-size:48px;
+    font-weight: 300;
+    color:#222222;
+    line-height:67px;
+    text-align: center;
+}
+.rank-headImg{
+    margin: 0px 20px;
+    height: 100px;
+    width: 100px;
+}
+
+.rank-name{
+    height:40px;
+    font-size:28px;
+    font-weight:500;
+    color:#222222;
+    line-height:40px;
+}
+.rank-kt{
+    height:33px;
+    font-size:24px;
+    color:#222222;
+    line-height:33px;
+}
+.no-rank{
+    width: 58px;
+    height: 67px;
+    font-size: 26px;
+    color: #222222;
+    text-align: center;
+}

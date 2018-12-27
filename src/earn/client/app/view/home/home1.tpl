@@ -25,19 +25,19 @@
             </div>
         </div>
         <div w-class="menuCard">
-            <div w-class="oneBtn" on-tap="goNextPage(1)">
+            <div w-class="oneBtn" on-tap="goNextPage(0)">
                 <img src="../../res/image1/btn_yun_1.png" w-class="btnImg"/>
                 <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"领分红","zh_Hant":"領分紅","en":""}</pi-ui-lang></div>
             </div>
-            <div w-class="oneBtn" on-tap="goNextPage(2)">
+            <div w-class="oneBtn" on-tap="goNextPage(1)">
                 <img src="../../res/image1/btn_yun_2.png" w-class="btnImg"/>
                 <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"发红包","zh_Hant":"發紅包","en":""}</pi-ui-lang></div>
             </div>
-            <div w-class="oneBtn" on-tap="goNextPage(3)">
+            <div w-class="oneBtn" on-tap="goNextPage(2)">
                 <img src="../../res/image1/btn_yun_3.png" w-class="btnImg"/>
                 <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"兑换码","zh_Hant":"兌換碼","en":""}</pi-ui-lang></div>
             </div>
-            <div w-class="oneBtn" on-tap="goNextPage(4)">
+            <div w-class="oneBtn" on-tap="goNextPage(3)">
                 <img src="../../res/image1/btn_yun_4.png" w-class="btnImg"/>
                 <div w-class="btnMess"><pi-ui-lang>{"zh_Hans":"做任务","zh_Hant":"做任務","en":""}</pi-ui-lang></div>
             </div>

@@ -11,18 +11,12 @@
         </div>
         {{% 拥有券数}}
         <div w-class="top-title">
+            {{for i,item in it.ticketList}}
             <div>
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"银券","zh_Hant":"银券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
+                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{{item.name}}</widget>
+                <div w-class="ticket-num">{{item.balance}}</div>
             </div>
-            <div>
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"金券","zh_Hant":"金券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
-            </div>
-            <div>
-                <widget w-class="ticket-KT" w-tag="pi-ui-lang">{"zh_Hans":"彩券","zh_Hant":"彩券","en":""}</widget>
-                <div w-class="ticket-num">0</div>
-            </div>
+            {{end}}
         </div>
         <div w-class="body">
             {{% 导航栏}}

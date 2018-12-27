@@ -36,10 +36,17 @@
     align-items: center;
 }
 .compounding-bg{
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    height: 135px;
-    background: #222222;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    background: rgba(34, 34, 34, 0.8);
     border-radius: 10px;
+    color: white;
+    font-size: 26px;
+    overflow: hidden;
 }
 .ticket-img{
     position:relative;

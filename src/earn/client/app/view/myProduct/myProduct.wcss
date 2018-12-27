@@ -30,6 +30,7 @@
     margin:5px 0px;
     padding:12px;
     display:flex;
+    flex: 0 0 auto;
 }
 
 .item-text{

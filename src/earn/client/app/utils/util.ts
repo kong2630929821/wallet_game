@@ -3,13 +3,15 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { ActivityNum } from '../xls/dataEnum.s';
+import { PrizeCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象
@@ -162,3 +164,64 @@ export const getMiningMaxHp = (mineType:MineType) => {
 
     return 0;
 };
+
+
+/**
+ * 获取对应奖券TYPE的余票
+ * @param ticketType 奖券TYPE
+ */
+export const getTicketBalance = (ticketType) => {
+    const goods = getStore('goods');
+    for (let i = 0; i < goods.length; i++) {
+        let good = goods[i];
+        if (good.enum_type === Item_Enum.TICKET && good.value.num === ticketType) {
+
+            return good.value.count;
+        }
+    }
+
+    return 0;
+}
+
+
+
+
+/**
+ * 获取单个奖品信息
+ * @param prizeType 奖品编号
+ */
+export const getPrizeInfo = (prizeType: number): any => {
+    const cfgs = getMap(PrizeCfg._$info.name);
+    const filterCfgs = '';
+    for (const [k, cfg] of cfgs) {
+        if (cfg.pid === prizeType) {
+            return cfg;
+        }
+    }
+
+    return filterCfgs;
+
+};
+
+/**
+ * 获取项目奖品列表
+ */
+export const getPrizeList = (activityNum: ActivityNum): any => {
+    const cfgs = getMap(WeightAwardCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if ((activityNum * 100) < cfg.id && cfg.id < (activityNum * 100 + 100)) {
+            filterCfgs.push(cfg.prop);
+        }
+    }
+
+    return filterCfgs;
+}
+
+/**
+ * 展示错误信息
+ * @param errorNum 错误编号
+ */
+export const showActError = (errorNum:number) => {
+
+}

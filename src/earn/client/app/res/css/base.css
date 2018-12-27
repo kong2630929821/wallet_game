@@ -33,7 +33,54 @@
       -webkit-transform: scale3d(1, 1, 1);
       transform: scale3d(1, 1, 1);
     }
+  }
+  
+@keyframes openBox{
+    0%{
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    25%{
+      -webkit-transform: rotate(5deg);
+      transform: rotate(5deg);
+    }
+    50%{
+      -webkit-transform: rotate(-5deg);
+      transform: rotate(-5deg);
+    }
+    75%{
+      -webkit-transform: rotate(5deg);
+      transform: rotate(5deg);
+    }
+    100%{
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
 }
+
+/*由小变大出现*/
+@keyframes smallToBig{
+  0%{
+    -webkit-transform: scale(0.1);
+    transform: scale(0.1);
+  }
+  100%{
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+
+.smallToBig{
+  animation: smallToBig 0.3s ease;
+}
+
+
+.isOpenbox{
+  animation: openBox 0.3s ease infinite;
+}
+
+
+
 
 .rubberBand {
     -webkit-animation-name: rubberBand;

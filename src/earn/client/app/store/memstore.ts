@@ -117,7 +117,8 @@ const store:Store = {
     mine:{
         goods:[],
         miningedNumber:0
-    }
+    },
+    goods:[]
     
 };
 
@@ -131,5 +132,5 @@ export interface Mine {
 export interface Store {
     uid:number;     // user uid
     mine:Mine;      // 矿山相关
-    
+    goods:Item[];
 }
