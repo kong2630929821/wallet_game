@@ -3,13 +3,15 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { ActivityNum } from '../xls/dataEnum.s';
+import { PrizeCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象

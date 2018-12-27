@@ -2,8 +2,8 @@
  * rpc通信
  */
 import { Item_Enum, Items, MiningResponse, Item, AwardQuery, AwardResponse } from '../../../server/data/db/item.s';
-import { ItemQuery, MiningResult } from '../../../server/rpc/itemQuery.s';
-import { mining, mining_result } from '../../../server/rpc/mining.p';
+import { MiningResult } from '../../../server/rpc/itemQuery.s';
+import { mining, mining_result, get_miningKTTop } from '../../../server/rpc/mining.p';
 import { item_query, award_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
