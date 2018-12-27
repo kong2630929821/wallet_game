@@ -88,9 +88,9 @@ export class PlayHome extends Widget {
             this.scrollPage();
         }, 17);
         setTimeout(() => {
-            loginActivity().then(()=>{
+            loginActivity().then(() => {
                 getAllGoods();
-            })
+            });
         }, 2000);
         console.log(this.props.hoeType);
     }
@@ -128,8 +128,7 @@ export class PlayHome extends Widget {
         }
     }
 
-
-    public goNextPage(index:number){
+    public goNextPage(index:number) {
         popNew(this.props.page[index]);
     }
     public miningClick() {
@@ -199,7 +198,7 @@ export class PlayHome extends Widget {
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('mine/goods', (goods: Item[]) => {
+register('goods', (goods: Item[]) => {
     console.log('goods change ', goods);
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();

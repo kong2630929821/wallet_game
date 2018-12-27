@@ -198,7 +198,7 @@ export class MiningHome extends Widget {
 
 // ===================================================== 立即执行
 
-register('mine',(goods:Item[]) => {
+register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
 });

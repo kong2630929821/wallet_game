@@ -3,21 +3,21 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
+import { WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
+import { PrizeCfg } from '../xls/dataCfg.s';
+import { ActivityNum } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { ActivityNum } from '../xls/dataEnum.s';
-import { PrizeCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象
  */
 export const getHoeCount = (hoeType:HoeType) => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
@@ -32,7 +32,7 @@ export const getHoeCount = (hoeType:HoeType) => {
  * 获取所有矿山
  */
 export const getAllMines = () => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     const mines = [];
     for (let i = 0;i < goods.length; i++) {
         const good = goods[i];
@@ -57,7 +57,7 @@ export const getAllMines = () => {
  * 获取随机显示的矿山列表
  */
 export const randomMines = () => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     const mines = [];
     const miningedMines = [];
     for (let i = 0;i < goods.length; i++) {
@@ -165,7 +165,6 @@ export const getMiningMaxHp = (mineType:MineType) => {
     return 0;
 };
 
-
 /**
  * 获取对应奖券TYPE的余票
  * @param ticketType 奖券TYPE
@@ -173,7 +172,7 @@ export const getMiningMaxHp = (mineType:MineType) => {
 export const getTicketBalance = (ticketType) => {
     const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
-        let good = goods[i];
+        const good = goods[i];
         if (good.enum_type === Item_Enum.TICKET && good.value.num === ticketType) {
 
             return good.value.count;
@@ -181,10 +180,7 @@ export const getTicketBalance = (ticketType) => {
     }
 
     return 0;
-}
-
-
-
+};
 
 /**
  * 获取单个奖品信息
@@ -216,7 +212,7 @@ export const getPrizeList = (activityNum: ActivityNum): any => {
     }
 
     return filterCfgs;
-}
+};
 
 /**
  * 展示错误信息
@@ -224,4 +220,4 @@ export const getPrizeList = (activityNum: ActivityNum): any => {
  */
 export const showActError = (errorNum:number) => {
 
-}
+};
