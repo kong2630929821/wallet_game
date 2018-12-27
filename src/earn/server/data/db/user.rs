@@ -47,3 +47,38 @@ struct OnlineMap {
     session_id: u32,
     uid: u32,
 }
+
+/**
+*用户每日登陆表主键结构
+*/
+struct DayliLoginKey {
+    date: u32,
+    uid: u32,
+}
+
+/**
+*用户每日登陆表
+*/
+#[primary=index,db=file,dbMonitor=true,hasmgr=false]
+struct DayliLogin {
+    index: DayliLoginKey,
+    state: bool,
+}
+
+/**
+*用户连续登陆天数表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct SeriesLogin {
+    uid: u32,
+    days: u32,
+}
+
+/**
+*用户总登陆天数表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct TotalLogin {
+    uid: u32,
+    days: u32,
+}

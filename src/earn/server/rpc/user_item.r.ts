@@ -69,11 +69,10 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
     } else {
         pidList = awardMap.awards;
         const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
-        const awards = bucket.get<number,[Award]>(pidList);
+        const awards = bucket.get<[string],[Award]>(pidList);
         if (!awardQuery.src) {
             console.log('awards:!!!!!!!!!!!!!!!!!!!', awards);
             awardList.awards = awards;
-            console.log('awards:!!!!!!!!!!!!!!!!!!!', awards);
         } else {
             const srcAwards = [];
             for (const award of awards) {
@@ -91,3 +90,5 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
     }
     
 };
+
+// 获取用户持有KT数量

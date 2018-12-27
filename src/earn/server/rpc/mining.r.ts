@@ -6,33 +6,40 @@ import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_MINE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
-import { AwardMap, Item, Mine, MineKTTop, MineSeed, MineTop, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
-import { UserInfo } from '../data/db/user.s';
-import { CONFIG_ERROR, GET_RANDSEED_FAIL, MINE_NOT_ENOUGH, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
-import { get_index_id } from '../data/util';
+import { AwardMap, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
+import { SeriesLogin, UserInfo } from '../data/db/user.s';
+import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { MiningResult, Seed } from './itemQuery.s';
-import { getUid } from './user.r';
-import { get_item } from './user_item.r';
+import { seriesLogin_award } from '../util/regularAward';
+import { MiningResult, SeedResponse } from './itemQuery.s';
+import { get_loginDays, getUid } from './user.r';
+import { add_mine, get_item } from './user_item.r';
 
 // 获取挖矿几率的随机种子
 // #[rpc=rpcServer]
-export const mining = (itemType:number):Seed => {
+export const mining = (itemType:number):SeedResponse => {
+    const seedResponse = new SeedResponse();
     // 相应锄头数量减1
-    if (!reduce_itemCount(itemType, 1)) return;
+    if (!reduce_itemCount(itemType, 1)) {
+        seedResponse.resultNum = HOE_NOT_ENOUGH;
+
+        return seedResponse;
+    }
+    // 获取随机种子并写入内存表
     const seed = Math.floor(Math.random() * 233280 + 1);
     const uid = getUid();
     const hoeType = itemType;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     seedBucket.put(uid, [seed, hoeType]);
-    const seedStruct = new Seed();
-    seedStruct.seed = seed;
 
-    return seedStruct;
+    seedResponse.seed = seed;
+    seedResponse.resultNum = RESULT_SUCCESS;
+
+    return seedResponse;
 };
 
 // 返回挖矿结果
@@ -41,9 +48,11 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     console.log('!!!!!!!!!!!!!!mining_result in');
     const miningResponse = new MiningResponse();
     const count = result.hit;
+    // 10s内点击次数超过设定上限
     if (count > MAX_HUMAN_HITS) {
-        // 这手速绝非常人
-        return;
+        miningResponse.resultNum = ARE_YOU_SUPERMAN;
+
+        return miningResponse;
     }
     const itemType = result.itemType;
     if (get_item(itemType).value.count === 0) {
@@ -55,13 +64,13 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
     const uid = getUid();
-    const todayMineNum = get_todayMineNum(uid);
+    const todayMineNum = get_todayMineNum();
     // 当日已达最大挖矿数量
-    if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
-        miningResponse.resultNum = MINENUM_OVER_LIMIT;
+    // if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
+    //     miningResponse.resultNum = MINENUM_OVER_LIMIT;
 
-        return miningResponse;
-    }
+    //     return miningResponse;
+    // }
     const seedAndHoe = <MineSeed>seedBucket.get(uid)[0];
     if (!seedAndHoe) {
         miningResponse.resultNum = GET_RANDSEED_FAIL;
@@ -117,21 +126,56 @@ export const mining_result = (result:MiningResult):MiningResponse => {
             add_award(firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
             awards.push(firstAward);
         }
+        miningResponse.awards = awards;
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
-        console.log('miningresponse!!!!!!!!!!!!!!!!!:', todayMineNum.mineNum);
         const mineNumBucket =  new Bucket(WARE_NAME, TodayMineNum._$info.name, dbMgr);
         mineNumBucket.put(todayMineNum.id, todayMineNum);
         add_miningTotal(uid);
-        miningResponse.awards = awards;
+        // 矿山数量为0时，添加矿山
+        if (get_mine_total() === 0) {
+            const mine = add_mine();
+            miningResponse.mine = mine;
+            console.log('add_mine!!!!!!!!!!!!!!!!!:', mine);
+        }
     }
+    miningResponse.resultNum = RESULT_SUCCESS;
 
     return miningResponse;
 };
 
+// 签到奖励(连续登陆)
+// #[rpc=rpcServer]
+export const get_loginAward = ():ItemResponse => {
+    const itemResponse = new ItemResponse();
+    const uid = getUid();
+    // 获取连续登陆天数
+    const daysRes = get_loginDays();
+    if (!daysRes) {
+        itemResponse.resultNum = DB_ERROR;
+
+        return itemResponse;
+    }
+    const days = daysRes.days;
+    const awardItem = seriesLogin_award(days);
+    if (!awardItem) {
+        itemResponse.resultNum = CONFIG_ERROR;
+
+        return itemResponse;
+    }
+    itemResponse.item = awardItem;
+    itemResponse.resultNum = RESULT_SUCCESS;
+
+    return itemResponse;
+};
+
+// 邀请好友奖励
+// #[rpc=rpcServer]
+
 // 查询用户当日挖矿山数量
 // #[rpc=rpcServer]
-export const get_todayMineNum = (uid: number):TodayMineNum => {
+export const get_todayMineNum = ():TodayMineNum => {
+    const uid = getUid();
     console.log('get_todayMineNum in!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, TodayMineNum._$info.name, dbMgr);

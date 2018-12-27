@@ -3,12 +3,13 @@
  */
 
 // ================================================ 导入
+import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
-import { MiningResult, Seed } from '../../../server/rpc/itemQuery.s';
+import { MiningResult, SeedResponse } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
@@ -71,7 +72,7 @@ export const item_test2 = () => {
 // 获取挖矿随机种子
 export const get_seed = () => {
     const itemType = 2001;
-    clientRpcFunc(mining, itemType, (r: Seed) => {
+    clientRpcFunc(mining, itemType, (r: SeedResponse) => {
         console.log(r);
     });
 };
@@ -79,8 +80,8 @@ export const get_seed = () => {
 // 挖矿测试
 export const mining_test = () => {
     const miningResult = new MiningResult();
-    miningResult.hit = 30;
-    miningResult.itemType = 1001;
+    miningResult.hit = 60;
+    miningResult.itemType = 1002;
     miningResult.mineNum = 0;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
