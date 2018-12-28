@@ -36,7 +36,7 @@ export const db_test = (pid: number): Award => {
 // #[rpc=rpcServer]
 export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
-    const itemType = 2001;
+    const itemType = 2003;
 
     return add_itemCount(itemType, count);
 };

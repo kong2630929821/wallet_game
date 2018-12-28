@@ -8,7 +8,7 @@ import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/i
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
 import { getAllGoods, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
-import { hoeUseDuration } from '../../../utils/constants';
+import { hoeUseDuration, MineMax } from '../../../utils/constants';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
 import { HoeType } from '../../../xls/hoeType.s';
 
@@ -38,6 +38,7 @@ export class MiningHome extends Widget {
 
     public init() {
         this.props = {
+            mineMax:MineMax,                     // 每天最多挖的矿山数
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
             diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
@@ -86,10 +87,21 @@ export class MiningHome extends Widget {
         this.paint();
     }
 
+    public hoeSelectedLeft() {
+        if (this.props.hoeSelected === HoeType.IronHoe) {
+            return this.props.ironHoe;
+        } else if (this.props.hoeSelected === HoeType.GoldHoe) {
+            return this.props.goldHoe;
+        } else if (this.props.hoeSelected === HoeType.DiamondHoe) {
+            return this.props.diamondHoe;
+        } else {
+            return 0;
+        }
+    }
     public mineClick(e:any,itype:number,index:number) {
         // console.log(index,itype);
         // 没有选中锄头
-        if (this.props.hoeSelected < 0) return;
+        if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
 
         // 没有选矿山
         if ((this.props.mineIndex !== index || this.props.mineType !== itype) && !this.props.countDownStart) {
@@ -106,13 +118,6 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                // if (this.props.hoeSelected === HoeType.IronHoe) {
-                //     this.props.ironHoe--;
-                // } else if (this.props.hoeSelected === HoeType.GoldHoe) {
-                //     this.props.goldHoe--;
-                // } else {
-                //     this.props.diamondHoe--;
-                // }
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
                 this.paint();
@@ -140,7 +145,6 @@ export class MiningHome extends Widget {
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
                     this.deleteBoomMine();
-                    this.initMiningState();
                 }
                 break;
             }
@@ -152,6 +156,7 @@ export class MiningHome extends Widget {
         this.props.havMines = this.props.havMines.filter(item => {
             return item.type !== this.props.mineType || item.index !== this.props.mineIndex;
         });
+        this.initMiningState();
         this.paint();
     }
     public countDown() {
@@ -170,8 +175,9 @@ export class MiningHome extends Widget {
         startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
             if (r.leftHp <= 0) {
                 getAllGoods();
-                this.props.awardType = r.award.enum_type;
-                this.props.awardNumber = r.award.value.count;
+                getTodayMineNum();
+                this.props.awardType = r.awards[0].enum_type;
+                this.props.awardNumber = r.awards[0].value.count;
                 this.paint();
             }
         });
@@ -194,11 +200,20 @@ export class MiningHome extends Widget {
         this.props.miningedNumber = getStore('mine/miningedNumber');
         this.paint();
     }
+    public updateMiningedNumber(miningedNumber:number) {
+        this.props.miningedNumber = miningedNumber;
+        this.paint();
+    }
 }
 
 // ===================================================== 立即执行
 
-register('mine',(goods:Item[]) => {
+register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
+});
+
+register('mine/miningedNumber',(miningedNumber:number) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateMiningedNumber(miningedNumber);
 });

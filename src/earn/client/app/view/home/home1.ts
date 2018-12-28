@@ -10,7 +10,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getAllGoods, loginActivity } from '../../net/rpc';
 import { register } from '../../store/memstore';
-import { getHoeCount } from '../../utils/util';
+import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -82,16 +82,19 @@ export class PlayHome extends Widget {
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
             diamondHoe: getHoeCount(HoeType.DiamondHoe),
-            hoeType: HoeType
+            hoeType: HoeType,
+            hoeSelected:-1,
+            maxMineType:getMaxMineType()
         };
         setTimeout(() => {
             this.scrollPage();
         }, 17);
         setTimeout(() => {
-            loginActivity().then(()=>{
+            loginActivity().then(() => {
                 getAllGoods();
-            })
+            });
         }, 2000);
+        // getAllGoods();
         console.log(this.props.hoeType);
     }
     /**
@@ -128,8 +131,7 @@ export class PlayHome extends Widget {
         }
     }
 
-
-    public goNextPage(index:number){
+    public goNextPage(index:number) {
         popNew(this.props.page[index]);
     }
     public miningClick() {
@@ -192,15 +194,26 @@ export class PlayHome extends Widget {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
+        this.props.maxMineType = getMaxMineType();
         this.paint();
+    }
+
+    public selectHoeClick(e:any,hopeType:HoeType) {
+        console.log('select index',hopeType);
+        this.props.hoeSelected = hopeType;
+        this.paint();
+    }
+    // 阻止点击穿透
+    public mineClick() {
+    
+        // console.log('mineClick');
     }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('mine/goods', (goods: Item[]) => {
-    console.log('goods change ', goods);
+register('goods', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();
 });

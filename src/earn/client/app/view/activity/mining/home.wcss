@@ -6,7 +6,6 @@
 }
 .body{
     position: relative;
-    margin:67px 20px;
     background-color: #fff;
     flex: 1 0 0;
     background-image: url(../../../res/image/mining_bg.png);

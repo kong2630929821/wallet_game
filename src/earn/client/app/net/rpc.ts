@@ -1,25 +1,23 @@
 /**
  * rpc通信
  */
-import { Item_Enum, Items, MiningResponse, Item, AwardQuery, AwardResponse } from '../../../server/data/db/item.s';
+import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { UserInfo } from '../../../server/data/db/user.s';
 import { MiningResult } from '../../../server/rpc/itemQuery.s';
-import { mining, mining_result, get_miningKTTop } from '../../../server/rpc/mining.p';
-import { item_query, award_query } from '../../../server/rpc/user_item.p';
+import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
+import { item_addticket } from '../../../server/rpc/test.p';
+import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
+import { login } from '../../../server/rpc/user.p';
+import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
+import { award_query, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
+import { timestampFormat } from '../utils/tools';
+import { getMaxMineType, getPrizeInfo } from '../utils/util';
+import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
-import { ticket_treasurebox, ticket_rotary, ticket_compose } from '../../../server/rpc/ticket.p';
-import { TicketType, AwardSrcNum } from '../xls/dataEnum.s';
-import { item_addticket } from '../../../server/rpc/test.p';
-import { getPrizeInfo } from '../utils/util';
-import { timestampFormat } from '../utils/tools';
-import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { login } from '../../../server/rpc/user.p';
-import { UserInfo } from '../../../server/data/db/user.s';
-import { showError } from '../../../../app/utils/toolMessages';
-
 
 /**
  * 钱包用户登录活动
@@ -35,11 +33,11 @@ export const loginActivity = () => {
 
         clientRpcFunc(login, userType, (r: UserInfo) => {
             console.log('活动登录成功！！--------------', r);
+            setStore('userInfo',r);
             resolve(r);
         });
-    })
-}
-
+    });
+};
 
 /**
  * 获取所有物品
@@ -56,12 +54,8 @@ export const getAllGoods = () => {
  */
 export const readyMining = (hoeType:HoeType) => {
     return new Promise(resolve => {
-        const itemQuery = new ItemQuery();
-        itemQuery.uid = getStore('uid');
-        itemQuery.enumType = Item_Enum.HOE;
-        itemQuery.itemType = hoeType;
-        console.log('beginMining itemQuery = ',itemQuery);
-        clientRpcFunc(mining, itemQuery, (r: RandomSeedMgr) => {
+        console.log('beginMining hoeType = ',hoeType);
+        clientRpcFunc(mining, hoeType, (r: RandomSeedMgr) => {
             console.log('beginMining ',r);
             getAllGoods();
             resolve(r);
@@ -75,11 +69,7 @@ export const readyMining = (hoeType:HoeType) => {
 export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
     return new Promise(resolve => {
         const result = new MiningResult();
-        const itemQuery = new ItemQuery();
-        itemQuery.uid = getStore('uid');
-        itemQuery.enumType = Item_Enum.MINE;
-        itemQuery.itemType = mineType;
-        result.itemQuery = itemQuery;
+        result.itemType = mineType;
         result.mineNum = mineIndex;
         result.hit = diggingCount;
         console.log('startMining result = ',result);
@@ -90,7 +80,16 @@ export const startMining = (mineType:MineType,mineIndex:number,diggingCount:numb
     });
 };
 
-
+/**
+ * 
+ */
+export const getTodayMineNum = () => {
+    const uid = getStore('userInfo/uid');
+    clientRpcFunc(get_todayMineNum, uid, (r: TodayMineNum) => {
+        console.log('getTodayMineNum TodayMineNum = ',r);
+        setStore('mine/miningedNumber',r.mineNum);
+    });
+};
 /**
  * 开宝箱
  */
@@ -107,9 +106,8 @@ export const openChest = (ticketType: TicketType) => {
                 reject(r);
             }
         });
-    })
-}
-
+    });
+};
 
 /**
  * 转转盘
@@ -128,8 +126,8 @@ export const openTurntable = (ticketType: TicketType) => {
                 reject(r);
             }
         });
-    })
-}
+    });
+};
 
 /**
  * 合成奖券
@@ -147,8 +145,8 @@ export const compoundTicket = (ticketType: TicketType) => {
                 reject(r);
             }
         });
-    })
-}
+    });
+};
 
 /**
  * 增加奖券
@@ -158,34 +156,34 @@ export const addTicket = (num: number) => {
     clientRpcFunc(item_addticket, num, (r: Item) => {
         getAllGoods();
     });
-}
+};
 
 /**
  * 查询中奖、兑换记录
- * @param type 记录种类
+ * @param itype 记录种类
  */
-export const getAwardHistory = (type?: number) => {
+export const getAwardHistory = (itype?: number) => {
     return new Promise((resolve, reject) => {
         const awardQuery = new AwardQuery();
-        if (type !== 0) {
-            awardQuery.src = AwardSrcNum[type];
+        if (itype !== 0) {
+            awardQuery.src = AwardSrcNum[itype];
         }
 
         clientRpcFunc(award_query, awardQuery, (r: any) => {
             console.log('rpc-getAwardHistory-resData---------------', r);
             const resData = [];
             r.awards.forEach(element => {
-                let data = {
+                const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
                     count: element.count
-                }
+                };
                 resData.push(data);
             });
             resolve(resData);
         });
-    })
-}
+    });
+};
 
 /**
  * 获取挖矿排名
@@ -202,9 +200,5 @@ export const getRankList = () => {
                 reject(r);
             }
         });
-    })
-}
-
-
-
-
+    });
+};
