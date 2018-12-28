@@ -3,7 +3,7 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
+import { WeightMiningCfg, WeightAwardCfg, TicketConvertCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
@@ -225,6 +225,19 @@ export const getPrizeList = (activityType: ActivityType): any => {
         if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
             filterCfgs.push(cfg.prop);
         }
+    }
+
+    return filterCfgs;
+}
+
+/**
+ * 获取虚拟物品兑换列表
+ */
+export const getVirtualExchangeList = (): any => {
+    const cfgs = getMap(TicketConvertCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        filterCfgs.push(cfg);
     }
 
     return filterCfgs;

@@ -6,19 +6,20 @@ import { Widget } from '../../../../../pi/widget/widget';
 
 export class MedalShow extends Widget {
     public ok: () => void;
-    public props = {
-    };
 
-    public create() {
-        super.create();
-        this.initData();
+    public setProps(props:any){
+        super.setProps(props);
+        setTimeout(() => {
+            this.initData();
+        }, 1000);
     }
 
     /**
      * 更新props数据
      */
     public initData() {
-        //TODO
+        this.props.top = `0px`;
+        this.props.left = `0px`;
         this.paint();
     }
     /**

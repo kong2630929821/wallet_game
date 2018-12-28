@@ -28,9 +28,9 @@
         <img src="../../res/image/cabinetTop-bg.png" width="100%" />
         <div w-class="collect-cabinet">
             {{for i,item of it.medalList}}
-            <div w-class="collect-item flex-col" on-tap="medalShow({{i}})">
+            <div w-class="collect-item flex-col">
                 <widget w-class="medal-top-text" w-tag="pi-ui-lang">{{item.title}}</widget>
-                <img src="../../res/image/medals/{{item.img}}.png" />
+                <img on-tap="medalShow(e,{{i}})" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
             </div>
             {{end}}
 
