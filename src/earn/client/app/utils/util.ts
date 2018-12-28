@@ -3,17 +3,15 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg, TicketConvertCfg } from '../../../xlsx/awardCfg.s';
+import { TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
-import { PrizeCfg } from '../xls/dataCfg.s';
-import { ActivityNum } from '../xls/dataEnum.s';
+import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
+import { ActivityType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { ActivityType } from '../xls/dataEnum.s';
-import { PrizeCfg, ActTicketNumCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象
@@ -204,10 +202,9 @@ export const getTicketBalance = (ticketType) => {
     return 0;
 };
 
-
 /**
  * 获取活动所需对应票数
- * @param  奖品编号
+ *  奖品编号
  */
 export const getTicketNum = (activityType: ActivityType): any => {
     const cfgs = getMap(ActTicketNumCfg._$info.name);
@@ -262,12 +259,12 @@ export const getVirtualExchangeList = (): any => {
     }
 
     return filterCfgs;
-}
+};
 
 /**
  * 展示错误信息
  * @param errorNum 错误编号
  */
 export const showActError = (errorNum:number) => {
-
+    // TODO
 };
