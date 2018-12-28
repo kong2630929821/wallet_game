@@ -19,6 +19,7 @@ export class Mine extends Widget {
     public props:any;
     public $parent:any;
     public $imgContainer:any;
+    public $hoe:any;
     public setProps(props:Props,oldProps:Props) {
         let mineImgUrl = '../../../res/image/';
         let hpMax = 0;
@@ -53,12 +54,20 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
+    
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
-        this.$imgContainer.className = `animated rubberBand`;
-        setTimeout(() => {
-            this.$imgContainer.className = '';
-        },1000);
-        if (!this.props.selected) return;
+        this.$imgContainer.className = '';
+        requestAnimationFrame(() => {
+            this.$imgContainer.className = `mine-animated`;
+        });
+        
+        if (!this.props.selected || this.props.hp === 0) return;
+        this.$hoe = getRealNode(event.node.children[2]);
+        this.$hoe.className = '';
+        requestAnimationFrame(() => {
+            this.$hoe.className = `animated-hoeMining`;
+        });
+        
         this.$parent = this.$parent || getRealNode(event.node);
         const $rock = document.createElement('div');
         $rock.setAttribute('class', 'rock');

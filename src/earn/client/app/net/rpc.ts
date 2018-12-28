@@ -13,7 +13,7 @@ import { award_query, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
-import { getPrizeInfo } from '../utils/util';
+import { getMaxMineType, getPrizeInfo } from '../utils/util';
 import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';

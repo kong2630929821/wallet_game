@@ -38,7 +38,6 @@ export const getAllMines = () => {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
             for (let j = 0;j < good.value.hps.length;j++) {
-                if (good.value.count <= 0) break;
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
                 const mine = {
@@ -50,8 +49,29 @@ export const getAllMines = () => {
             }
         }
     }
-    
+    // console.log('getAllMines',mines);
+
     return mines;
+};
+
+/**
+ * 获取拥有的品质最高的矿山类型
+ */
+export const getMaxMineType = () => {
+    const goods = getStore('goods');
+    let mineType = MineType.SmallMine;
+    for (let i = 0;i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.MINE) {
+            if (good.value.count > 0 &&  good.value.num > mineType) {
+                mineType = good.value.num;
+            }
+        }
+    }
+
+    // console.log('getMaxMineType',mineType);
+
+    return mineType;
 };
 /**
  * 获取随机显示的矿山列表

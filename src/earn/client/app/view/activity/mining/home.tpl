@@ -12,7 +12,7 @@
                 <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
         </div>
-        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/9 座</div>
+        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座</div>
         <div w-class="digging-tips">{{it.miningTips}}</div>
         <div w-class="award-container">
             <div w-class="award-item">
@@ -79,5 +79,5 @@
         </div>
         
     </div>
-
+    <app-components1-blankDiv-bottomDiv></app-components1-blankDiv-bottomDiv>
 </div>
