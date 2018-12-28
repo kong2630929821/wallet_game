@@ -1,6 +1,7 @@
 .content{
     height:100%;
-    padding-top:140px;
+    margin-top: -88px;
+    padding-top:120px;
     background:linear-gradient(135deg,rgba(48,131,255,1) 0%,rgba(21,102,223,1) 100%);
 }
 

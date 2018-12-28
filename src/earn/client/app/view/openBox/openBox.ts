@@ -9,8 +9,8 @@ import { Item } from '../../../../server/data/db/item.s';
 import { register } from '../../store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { openChest, getAllGoods } from '../../net/rpc';
-import { getTicketBalance } from '../../utils/util';
-import { TicketType, LotteryTicketNum } from '../../xls/dataEnum.s';
+import { getTicketBalance, getTicketNum } from '../../utils/util';
+import { TicketType, ActivityType } from '../../xls/dataEnum.s';
 import { getRealNode } from '../../../../../pi/widget/painter';
 
 // ================================ 导出
@@ -40,19 +40,19 @@ export class OpenBox extends Widget {
             {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
-                needTicketNum:LotteryTicketNum.SilverChest,
+                needTicketNum:getTicketNum(ActivityType.SilverChest),
                 balance: 0,
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
-                needTicketNum:LotteryTicketNum.GoldChest,
+                needTicketNum:getTicketNum(ActivityType.GoldChest),
                 balance: 0,
             },
             {
                 type:   TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
-                needTicketNum:LotteryTicketNum.DiamondChest,
+                needTicketNum:getTicketNum(ActivityType.DiamondChest),
                 balance: 0,
             }
         ],

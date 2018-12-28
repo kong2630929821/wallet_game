@@ -4,11 +4,11 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getTicketBalance, getPrizeList } from '../../utils/util';
+import { getTicketBalance, getPrizeList, getTicketNum } from '../../utils/util';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable, getAllGoods } from '../../net/rpc';
-import { TicketType, LotteryTicketNum, ActivityNum } from '../../xls/dataEnum.s';
+import { TicketType, ActivityType } from '../../xls/dataEnum.s';
 import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -38,25 +38,25 @@ export class Turntable extends Widget {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 balance: 0,
-                needTicketNum: LotteryTicketNum.SilverTurntable,
+                needTicketNum: getTicketNum(ActivityType.SilverTurntable),
                 turntableName: { "zh_Hans": "初级大转盘", "zh_Hant": "初級大轉盤", "en": "" },
-                activityNum: ActivityNum.SilverTurntableNum
+                activityType: ActivityType.SilverTurntable
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 balance: 0,
-                needTicketNum: LotteryTicketNum.GoldTurntable,
+                needTicketNum: getTicketNum(ActivityType.GoldTurntable),
                 turntableName: { "zh_Hans": "中级大转盘", "zh_Hant": "中級大轉盤", "en": "" },
-                activityNum: ActivityNum.GoldTurntableNum
+                activityType: ActivityType.GoldTurntable
             },
             {
                 type: TicketType.DiamondTicket,
                 name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
                 balance: 0,
-                needTicketNum: LotteryTicketNum.DiamondTurntable,
+                needTicketNum: getTicketNum(ActivityType.DiamondTurntable),
                 turntableName: { "zh_Hans": "高级大转盘", "zh_Hant": "高級大轉盤", "en": "" },
-                activityNum: ActivityNum.DiamondTurntableNum
+                activityType: ActivityType.DiamondTurntable
             }
         ]
     };
@@ -73,7 +73,7 @@ export class Turntable extends Widget {
      */
     public initTurntable() {
         // 奖品配置  
-        const prizeList = getPrizeList(this.props.selectTicket.activityNum);
+        const prizeList = getPrizeList(this.props.selectTicket.activityType);
         this.props.turntableList = [];
 
         for (let i = 0, length = prizeList.length; i < length; i++) {

@@ -3,15 +3,15 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
+import { WeightMiningCfg, WeightAwardCfg, TicketConvertCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { ActivityNum } from '../xls/dataEnum.s';
-import { PrizeCfg } from '../xls/dataCfg.s';
+import { ActivityType } from '../xls/dataEnum.s';
+import { PrizeCfg, ActTicketNumCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象
@@ -184,7 +184,20 @@ export const getTicketBalance = (ticketType) => {
 }
 
 
+/**
+ * 获取活动所需对应票数
+ * @param  奖品编号
+ */
+export const getTicketNum = (activityType: ActivityType): any => {
+    const cfgs = getMap(ActTicketNumCfg._$info.name);
+    for (const [k, cfg] of cfgs) {
+        if (cfg.actType === activityType) {
+            return cfg.ticketNum;
+        }
+    }
 
+    return 0;
+};
 
 /**
  * 获取单个奖品信息
@@ -200,19 +213,31 @@ export const getPrizeInfo = (prizeType: number): any => {
     }
 
     return filterCfgs;
-
 };
 
 /**
  * 获取项目奖品列表
  */
-export const getPrizeList = (activityNum: ActivityNum): any => {
+export const getPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(WeightAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityNum * 100) < cfg.id && cfg.id < (activityNum * 100 + 100)) {
+        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
             filterCfgs.push(cfg.prop);
         }
+    }
+
+    return filterCfgs;
+}
+
+/**
+ * 获取虚拟物品兑换列表
+ */
+export const getVirtualExchangeList = (): any => {
+    const cfgs = getMap(TicketConvertCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        filterCfgs.push(cfg);
     }
 
     return filterCfgs;
