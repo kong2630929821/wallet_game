@@ -9,11 +9,11 @@ import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { cdkey } from '../../../server/rpc/invite.p';
-import { MiningResult, SeedResponse } from '../../../server/rpc/itemQuery.s';
+import { KTQueryRes, MiningResult, SeedResponse } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
-import { award as awardR, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
+import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
-import { ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
+import { get_ticket_KTNum, ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_item, item_query } from '../../../server/rpc/user_item.p';
@@ -25,7 +25,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = 'test2';
+    walletLoginReq.openid = '2001';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
 
@@ -166,6 +166,20 @@ export const convert_test = () => {
     });
 };
 
+// 大整数测试
+export const bigInt_test = () => {
+    clientRpcFunc(bigint_test, null, (r: Test) => {
+        console.log(r);
+    });
+};
+
+// 获取钱包KT
+export const get_walletkt_test = () => {
+    clientRpcFunc(get_ticket_KTNum, null, (r: KTQueryRes) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
@@ -239,6 +253,10 @@ const props = {
         {
             name: '兑换物品',
             func: () => { convert_test(); }
+        },
+        {
+            name: '获取KT',
+            func: () => { get_walletkt_test(); }
         }
     ] // 按钮数组
 };

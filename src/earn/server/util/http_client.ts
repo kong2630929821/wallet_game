@@ -38,6 +38,7 @@ export const post = (client: HttpClient, url: string, param: JSON) => {
             return result;
         }
     } catch (e) {
+        console.log('http request error:!!!!!!!!!!!!!!!!!!!', e);
         result.err = e;
 
         return result;
