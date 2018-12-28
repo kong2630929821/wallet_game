@@ -206,6 +206,15 @@ struct MineKTTop {
 }
 
 /**
+*已兑换奖券的KT数量表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct UsedKT {
+    uid: u32,
+    KTNum: u32
+}
+
+/**
 *总挖矿数量排行
 */
 struct MineTop {

@@ -37,6 +37,16 @@ export const SILVER_TICKET_TYPE = 7001;
 export const GOLD_TICKET_TYPE = 7002;
 export const RAINBOW_TICKET_TYPE = 7003;
 
+// 标准单位转换为数据库储存单位的比例
+// BTC单位 10^4 精度为小数点后4位
+export const BTC_UNIT_NUM = 10 ^ (-4);
+// ETH 单位:10^15 精度为小数点后3位
+export const ETH_UNIT_NUM = 10 ^ (-15);
+// ST 单位:10^4 精度为小数点后2位
+export const ST_UNIT_NUM = 10 ^ (-4);
+// KT 单位:10^8 即KT为整数
+export const KT_UNIT_NUM = 10 ^ (-8);
+
 // 人类10秒最快手速
 export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
@@ -101,3 +111,11 @@ export const WALLET_APPID = '101';
 export const WALLET_SERVER_KEY = 'xxxxxxxxx';
 // 兑换邀请码
 export const WALLET_API_CDKEY = '/oAuth/cdkey';
+// 查询余额
+export const WALLET_API_QUERY = '/oAuth/balancequery';
+
+// 货币类型
+export const KT_WALLET_TYPE = 100;
+export const ETH_WALLET_TYPE = 101;
+export const BTC_WALLET_TYPE = 102;
+export const ST_WALLET_TYPE = 103;

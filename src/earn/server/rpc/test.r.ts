@@ -102,6 +102,7 @@ export const add_convert = () => {
     console.log('db write isOk:!!!!!!!!!!!!!!!!!!', isOk);
 };
 
+// #[rpc=rpcServer]
 export const bigint_test = ():Test => {
     const a:bigInt.BigInteger = bigInt('10');
     const b:bigInt.BigInteger = bigInt('20');
