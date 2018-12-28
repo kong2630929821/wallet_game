@@ -51,15 +51,15 @@ export class MiningHome extends Widget {
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
             miningTips:'请选择锄头',   // 挖矿提示
-            havMines:getAllMines(),          // 拥有的矿山
+            haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
-            awardType:0,   // 矿山爆掉的奖励类型
-            awardNumber:0,          // 奖励数目
+            awardTypes:{},    // 矿山爆掉的奖励类型
             miningedNumber:getStore('mine/miningedNumber')  // 已挖矿山数目
         };
         this.mineLocationInit();   // 矿山位置初始化
         getTodayMineNum();
+        console.log('haveMines =',this.props.haveMines);
     }
 
     public signInClick() {
@@ -76,8 +76,8 @@ export class MiningHome extends Widget {
 
     public mineLocationInit() {
         const mineStyle = shuffle(this.mineStyle);
-        for (let i = 0;i < this.props.havMines.length;i++) {
-            this.props.havMines[i].location = mineStyle[i];
+        for (let i = 0;i < this.props.haveMines.length;i++) {
+            this.props.haveMines[i].location = mineStyle[i];
         }
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
@@ -98,8 +98,10 @@ export class MiningHome extends Widget {
             return 0;
         }
     }
-    public mineClick(e:any,itype:number,index:number) {
-        // console.log(index,itype);
+    public mineClick(e:any) {
+        const itype = e.itype;
+        const index = e.index;
+        console.log(index,itype);
         // 没有选中锄头
         if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
 
@@ -138,13 +140,15 @@ export class MiningHome extends Widget {
 
     // 矿山掉血
     public bloodLoss() {
-        for (let i = 0; i < this.props.havMines.length; i++) {
-            const mine = this.props.havMines[i];
+        for (let i = 0; i < this.props.haveMines.length; i++) {
+            const mine = this.props.haveMines[i];
             if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1];
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
                     this.deleteBoomMine();
+                    // this.initMiningState();
+                    // this.paint();
                 }
                 break;
             }
@@ -153,8 +157,12 @@ export class MiningHome extends Widget {
 
     // 爆炸矿山消失
     public deleteBoomMine() {
-        this.props.havMines = this.props.havMines.filter(item => {
-            return item.type !== this.props.mineType || item.index !== this.props.mineIndex;
+        const mineType = this.props.mineType;
+        const mineIndex = this.props.mineIndex;
+        requestAnimationFrame(() => {
+            this.props.haveMines = this.props.haveMines.filter(item => {
+                return item.type !== mineType || item.index !== mineIndex;
+            });
         });
         this.initMiningState();
         this.paint();
@@ -173,11 +181,10 @@ export class MiningHome extends Widget {
 
     public initMiningState() {
         startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
+            getAllGoods();
             if (r.leftHp <= 0) {
-                getAllGoods();
                 getTodayMineNum();
-                this.props.awardType = r.awards[0].enum_type;
-                this.props.awardNumber = r.awards[0].value.count;
+                this.props.awardTypes[r.awards[0].enum_type] = r.awards[0].value.count;
                 this.paint();
             }
         });
@@ -196,8 +203,8 @@ export class MiningHome extends Widget {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
-        // this.props.havMines = getAllMines();
-        this.props.miningedNumber = getStore('mine/miningedNumber');
+        this.props.haveMines = getAllMines();
+        this.mineLocationInit();
         this.paint();
     }
     public updateMiningedNumber(miningedNumber:number) {

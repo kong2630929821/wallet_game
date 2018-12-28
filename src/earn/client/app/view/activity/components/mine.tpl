@@ -1,4 +1,4 @@
-<div w-class="mine" on-down="mineClick" style="{{it.selected ? 'z-index: 1;' : ''}}">
+<div w-class="mine" on-down="mineClick" style="{{it.selected ? 'z-index: 1;' : ''}}>
     <div><img src="{{it.mineImgUrl}}" class="{{it.beginMining && !it.selected ? 'grayscale' : ''}}"/></div>
     {{if it.selected}}
     <div w-class="hp-bg">
