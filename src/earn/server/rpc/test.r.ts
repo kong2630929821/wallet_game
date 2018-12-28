@@ -12,6 +12,7 @@ import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { Hits, Test } from './test.s';
+import { getUid } from './user.r';
 import { item_query } from './user_item.r';
 
 // #[rpc=rpcServer]
@@ -36,17 +37,19 @@ export const db_test = (pid: number): Award => {
 // #[rpc=rpcServer]
 export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
-    const itemType = 2001;
+    const uid = getUid();
+    const itemType = 2003;
 
-    return add_itemCount(itemType, count);
+    return add_itemCount(uid, itemType, count);
 };
 
 // #[rpc=rpcServer]
 export const item_addticket = (ticketType: number): Item => {
     console.log('add test in!!!!!!!!!!');
+    const uid = getUid();
     const itemType = ticketType;
 
-    return add_itemCount(itemType, 10);
+    return add_itemCount(uid, itemType, 10);
 };
 
 // #[rpc=rpcServer]
