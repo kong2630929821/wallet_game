@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"收集","zh_Hant":"收集","en":""} }}
-    <widget style="z-index: 1;" w-tag="app-components1-topBar-topBar2">{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}}
+    <widget style="position: fixed;width: 100%;" w-tag="app-components1-topBar-topBar2">{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}}
         }</widget>
 
     <div w-class="content" on-scroll="scrollPage">
@@ -30,7 +30,7 @@
             {{for i,item of it.medalList}}
             <div w-class="collect-item flex-col">
                 <widget w-class="medal-top-text" w-tag="pi-ui-lang">{{item.title}}</widget>
-                <img src="../../res/image/medals/{{item.img}}.png" />
+                <img on-tap="medalShow(e,{{i}})" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
             </div>
             {{end}}
 

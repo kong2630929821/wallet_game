@@ -9,7 +9,7 @@ import { TicketType } from "../../xls/dataEnum.s";
 import { register } from "../../store/memstore";
 import { Item } from "../../../../server/data/db/item.s";
 import { Forelet } from "../../../../../pi/widget/forelet";
-import { getTicketBalance } from "../../utils/util";
+import { getTicketBalance, getVirtualExchangeList } from "../../utils/util";
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -63,6 +63,7 @@ export class TicketCenter extends Widget {
     public create() {
         super.create();
         this.initData();
+
     }
 
     /**
@@ -71,6 +72,11 @@ export class TicketCenter extends Widget {
     public initData() {
         for(let i=0;i<this.props.ticketList.length;i++){
             this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
+        }
+        if(this.props.navbarSelected === this.props.navbarList[0].name){
+            let list = getVirtualExchangeList();
+            console.log('list--------------',list);
+            
         }
         this.paint();
     }

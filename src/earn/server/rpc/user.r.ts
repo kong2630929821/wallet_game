@@ -67,11 +67,13 @@ export const login = (user: UserType): UserInfo => {
         // 添加首次登陆奖励
         firstLogin_award();
     }
-    // 登陆赠送矿山
-    login_add_mine();
 
-    // 添加到每日登陆表
-    set_user_login(loginReq.uid);
+    // 当日首次登陆赠送矿山
+    if (isToday_firstLogin()) {
+        login_add_mine();
+        // 添加到每日登陆表
+        set_user_login(loginReq.uid);
+    }
 
     userInfo.uid = loginReq.uid;
     userInfo.sex = 0;
@@ -101,12 +103,16 @@ export const set_user_online = (uid: number, sessionId: number) => {
 // 本地方法
 // 获取用户登陆总天数
 export const get_totalLoginDays = ():number => {
+    console.log('get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     const totalLogin = new TotalLogin();
+    totalLogin.uid = uid;
     const dbMgr = getEnv().getDbMgr();
     const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
     const seriesLogin = seriesLoginBucket.get<number, [TotalLogin]>(uid)[0];
     if (!seriesLogin) {
+        console.log('blank get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
+
         return 0;
     }
 
@@ -156,6 +162,28 @@ export const set_user_login = (uid: number) => {
     }
 };
 
+// 本地方法
+// 验证是否当日首次登陆
+export const isToday_firstLogin = ():boolean => {
+    console.log('isToday_firstLogin in!!!!!!!!!!!!!!!!!!!!');
+    const uid = getUid();
+    const today = get_today();
+    const dayliLoginKey = new DayliLoginKey();
+    dayliLoginKey.uid = uid;
+    dayliLoginKey.date = today;
+
+    const dayliLogin = new DayliLogin();
+    dayliLogin.index = dayliLoginKey;
+    dayliLogin.state = true;
+    const dbMgr = getEnv().getDbMgr();
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
+    if (!dayliLoginBucket.get(dayliLoginKey)) {
+        return true;
+    }
+
+    return false;
+};
+
 // 离线设置
 // #[event=net_connect_close]
 export const close_connect = (e: NetEvent) => {
@@ -191,6 +219,15 @@ export const get_loginDays = ():SeriesDaysRes => {
     seriesDaysRes.days = seriesLogin.days;
 
     return seriesDaysRes;
+};
+
+// 获取用户信息
+export const get_userInfo = (uid:number):UserInfo => {
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name, dbMgr);
+    console.log('before get_uname!!!!!!!!!!!!!!!!!');
+    
+    return bucket.get<number, [UserInfo]>(uid)[0];
 };
 
 // 获取uid
