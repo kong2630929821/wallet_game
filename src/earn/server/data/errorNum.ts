@@ -29,3 +29,5 @@ export const AWARD_NOT_ENOUGH = 7103;
 
 // 获取排行数据失败
 export const TOP_DATA_FAIL = 8101;
+// 向钱包服务器请求数据失败
+export const REQUEST_WALLET_FAIL = 8102;

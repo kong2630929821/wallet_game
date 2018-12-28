@@ -22,3 +22,9 @@ struct SeriesDaysRes {
     resultNum: u32,
     days: Option<u32>
 }
+
+//KT数量钱包服务器查询结果
+struct KTQueryRes {
+    resultNum: u32,
+    KTNum: Option<u32>
+}
