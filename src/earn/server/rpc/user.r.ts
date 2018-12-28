@@ -9,8 +9,12 @@ import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import * as CONSTANT from '../data/constant';
-import { Online, OnlineMap, UserAcc, UserInfo } from '../data/db/user.s';
+import { DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserInfo } from '../data/db/user.s';
+import { DB_ERROR } from '../data/errorNum';
 import { get_index_id } from '../data/util';
+import { get_today } from '../util/item_util.r';
+import { firstLogin_award, login_add_mine } from '../util/regularAward';
+import { SeriesDaysRes } from './itemQuery.s';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 
 // #[rpc=rpcServer]
@@ -58,6 +62,17 @@ export const login = (user: UserType): UserInfo => {
     // 添加到在线表
     set_user_online(loginReq.uid, session.getId());
 
+    // 判断是否首次登陆
+    if (get_totalLoginDays() === 0) {
+        // 添加首次登陆奖励
+        firstLogin_award();
+    }
+    // 登陆赠送矿山
+    login_add_mine();
+
+    // 添加到每日登陆表
+    set_user_login(loginReq.uid);
+
     userInfo.uid = loginReq.uid;
     userInfo.sex = 0;
     console.log('userInfo!!!!!!!!!!!!!!!!!!!!!!!!', userInfo);
@@ -83,6 +98,64 @@ export const set_user_online = (uid: number, sessionId: number) => {
     onlineUsersMapBucket.put(onlineMap.session_id, onlineMap);
 };
 
+// 本地方法
+// 获取用户登陆总天数
+export const get_totalLoginDays = ():number => {
+    const uid = getUid();
+    const totalLogin = new TotalLogin();
+    const dbMgr = getEnv().getDbMgr();
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
+    const seriesLogin = seriesLoginBucket.get<number, [TotalLogin]>(uid)[0];
+    if (!seriesLogin) {
+        return 0;
+    }
+
+    return totalLogin.days;
+};
+
+// 本地方法
+// 设置每日登陆信息
+export const set_user_login = (uid: number) => {
+    console.log('set_user_login in !!!!!!!!!!!!!!!!!!!');
+    const dbMgr = getEnv().getDbMgr();
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
+    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
+
+    const today = get_today();
+    const dayliLoginKey = new DayliLoginKey();
+    dayliLoginKey.uid = uid;
+    dayliLoginKey.date = today;
+    
+    const dayliLogin = new DayliLogin();
+    dayliLogin.index = dayliLoginKey;
+    dayliLogin.state = true;
+    dayliLoginBucket.put(dayliLoginKey, dayliLogin);
+
+    const totalLogin = new TotalLogin();
+    totalLogin.uid = uid;
+    totalLogin.days = get_totalLoginDays();
+    totalLoginBucket.put(uid, totalLogin);
+
+    // 增加连续登陆天数，验证昨天是否登陆，未登录重置为1
+    const seriesLogin = seriesLoginBucket.get<number, [SeriesLogin]>(uid)[0];
+    if (!seriesLogin) {
+        console.log('blankSeriesLogin in !!!!!!!!!!!!!!!!!!!');
+        const blankSeriesLogin = new SeriesLogin();
+        blankSeriesLogin.uid = uid;
+        blankSeriesLogin.days = 1;
+        seriesLoginBucket.put(uid, blankSeriesLogin);
+    } else {
+        dayliLoginKey.date = today - 1;
+        if (!dayliLoginBucket.get(dayliLoginKey)) {
+            seriesLogin.days = 1;
+        } else {
+            seriesLogin.days += 1;
+        }
+        seriesLoginBucket.put(uid, seriesLogin);
+    }
+};
+
 // 离线设置
 // #[event=net_connect_close]
 export const close_connect = (e: NetEvent) => {
@@ -100,6 +173,24 @@ export const close_connect = (e: NetEvent) => {
         }
 
     }
+};
+
+// 获取连续登陆天数
+// #[rpc=rpcServer]
+export const get_loginDays = ():SeriesDaysRes => {
+    const uid = getUid();
+    const seriesDaysRes = new SeriesDaysRes();
+    const dbMgr = getEnv().getDbMgr();
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
+    const seriesLogin = seriesLoginBucket.get<number, [SeriesLogin]>(uid)[0];
+    if (!seriesLogin) {
+        seriesDaysRes.resultNum = DB_ERROR;
+
+        return seriesDaysRes;
+    }
+    seriesDaysRes.days = seriesLogin.days;
+
+    return seriesDaysRes;
 };
 
 // 获取uid

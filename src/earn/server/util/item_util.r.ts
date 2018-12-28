@@ -54,17 +54,18 @@ export const add_award = (itemType:number, count:number, src:string, convert?:st
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
     // 奖励详情写入数据库
-    console.log('prizeid!!!!!!!!!!!!!!!!!:', awardid);
     const award = new Award();
     award.id = awardid;
     award.awardType = itemType;
     award.count = count;
     award.src = src;
     award.uid = uid;
-    award.time = time;
+    award.time = time.toString();
+    console.log('award.time!!!!!!!!!!!!!!!!!:', award.time);
     if (convert) award.convert = convert;
     if (desc) award.desc = desc;
     bucket.put(awardid, award);
+    console.log('award DB!!!!!!!!!!!!!!!!!:', bucket.get(awardid)[0]);
     const awardMap = <AwardMap>get_award_ids(uid);
     let awardList = [];
     awardList = awardMap.awards;
@@ -77,7 +78,7 @@ export const add_award = (itemType:number, count:number, src:string, convert?:st
     return award;
 };
 
-// 添加指定数量物品(包含Mine类,todo:mine类count参数大于1异常处理)
+// 添加指定数量物品(包含Mine类)
 export const add_itemCount = (itemType:number, count: number): Item => {
     console.log('add_itemCount in!!!!!!!!!!!!!!', itemType);
     if (count < 0) return;
@@ -279,15 +280,17 @@ export const items_init = (uid: number) => {
 };
 
 // 获取矿山总数
-export const get_mine_total = (uid:number):number => {
+export const get_mine_total = ():number => {
+    console.log('!!!!!!!!!!!!!!get_mine_total:');
     const items = item_query().item;
     let mineTotal = 0;
-    for (let i = 0; i < item_query.length; i ++) {
+    for (let i = 0; i < items.length; i ++) {
         if (items[i].enum_type === 1) {
             mineTotal = mineTotal + items[i].value.count;
             continue;
         }
     }
+    console.log('!!!!!!!!!!!!!!mineTotal:', mineTotal);
 
     return mineTotal;
 };
