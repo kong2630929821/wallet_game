@@ -94,6 +94,7 @@ export class PlayHome extends Widget {
                 getAllGoods();
             });
         }, 2000);
+        // getAllGoods();
         console.log(this.props.hoeType);
     }
     /**

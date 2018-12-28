@@ -87,10 +87,21 @@ export class MiningHome extends Widget {
         this.paint();
     }
 
+    public hoeSelectedLeft() {
+        if (this.props.hoeSelected === HoeType.IronHoe) {
+            return this.props.ironHoe;
+        } else if (this.props.hoeSelected === HoeType.GoldHoe) {
+            return this.props.goldHoe;
+        } else if (this.props.hoeSelected === HoeType.DiamondHoe) {
+            return this.props.diamondHoe;
+        } else {
+            return 0;
+        }
+    }
     public mineClick(e:any,itype:number,index:number) {
         // console.log(index,itype);
         // 没有选中锄头
-        if (this.props.hoeSelected < 0) return;
+        if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
 
         // 没有选矿山
         if ((this.props.mineIndex !== index || this.props.mineType !== itype) && !this.props.countDownStart) {
