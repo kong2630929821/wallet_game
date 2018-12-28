@@ -11,18 +11,17 @@
 }
 .medal{
     margin-top: 200px;
-    width: 750px;
-    height: 750px;
     position: relative;
+    
 }
 .medal-bgimg{
 
 }
 .medal-img{
     position: absolute;
-    left: 50%;
+    left: 0px;
     top: 50%;
-    transform: translate(-50%)  translateY(-50%);
+    transform: translateY(-50%);
 }
 .medal-title{
     font-size:48px;

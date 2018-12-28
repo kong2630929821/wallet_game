@@ -83,24 +83,24 @@
 /*光芒闪耀*/
 @keyframes sunShine{
   0%{
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg) scale(1.2);
+    transform: rotate(0deg) scale(1.2);
   }
   25%{
-    -webkit-transform: rotate(90deg) scale(0.8);
-    transform: rotate(90deg) scale(0.8);
+    -webkit-transform: rotate(90deg) scale(1.2);
+    transform: rotate(90deg) scale(1.2);
   }
   50%{
-    -webkit-transform: rotate(180deg) scale(1);
-    transform: rotate(180deg) scale(1);
+    -webkit-transform: rotate(180deg) scale(1.2);
+    transform: rotate(180deg) scale(1.2);
   }
   75%{
     -webkit-transform: rotate(270deg) scale(1.3);
     transform: rotate(270deg) scale(1.3);
   }
   100%{
-    -webkit-transform: rotate(360deg) scale(1);
-    transform: rotate(360deg) scale(1);
+    -webkit-transform: rotate(360deg) scale(1.2);
+    transform: rotate(360deg) scale(1.2);
   }
 }
 

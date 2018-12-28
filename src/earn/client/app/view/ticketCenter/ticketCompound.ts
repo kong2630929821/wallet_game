@@ -5,10 +5,11 @@
 import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Item } from '../../../../server/data/db/item.s';
-import { TicketType, CompoundTicketNum } from '../../xls/dataEnum.s';
-import { getTicketBalance } from '../../utils/util';
+import { TicketType, ActivityType } from '../../xls/dataEnum.s';
+import { getTicketBalance, getTicketNum } from '../../utils/util';
 import { compoundTicket, getAllGoods } from '../../net/rpc';
 import { register } from '../../store/memstore';
+import { ActTicketNumCfg } from '../../xls/dataCfg.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -31,13 +32,13 @@ export class TicketCompound extends Widget {
             {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
-                needTicketNum: CompoundTicketNum.SilverToGold,
+                needTicketNum: getTicketNum(ActivityType.ComposeGold),
                 balance: 0,
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
-                needTicketNum: CompoundTicketNum.GoldToDiamond,
+                needTicketNum: getTicketNum(ActivityType.ComposeDiamond),
                 balance: 0,
             },
             {
