@@ -40,7 +40,7 @@ export const item_add = (count: number): Item => {
     const uid = getUid();
     const itemType = 2003;
 
-    return add_itemCount(itemType, count);
+    return add_itemCount(uid, itemType, count);
 };
 
 // #[rpc=rpcServer]
