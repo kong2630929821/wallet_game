@@ -1,9 +1,14 @@
+//矿山血量
+struct MineHp {
+    num: u32,
+    hp: u32
+}
 
 //矿山
 struct Mine {
     num: u32, //编号
     count: u32, //数量
-    hps: &[u32], //血量数组
+    hps: &[Option<MineHp>] //血量数组
 }
 
 //锄头
@@ -106,6 +111,19 @@ struct Award {
 struct AwardMap {
     uid: u32,
     awards: Option<&[String]>
+}
+
+/**
+*值钱的奖品表(BTC,ETH,ST)
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+struct SpecialAward {
+    id: String,
+    awardType: u32,
+    count: u32,
+    uid: u32,
+    src: String,
+    time: String,
 }
 
 /**
