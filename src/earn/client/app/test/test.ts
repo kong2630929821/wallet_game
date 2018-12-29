@@ -7,18 +7,18 @@ import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
-import { UserInfo } from '../../../server/data/db/user.s';
-import { cdkey } from '../../../server/rpc/invite.p';
-import { KTQueryRes, MiningResult, SeedResponse } from '../../../server/rpc/itemQuery.s';
+import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_inviteNum } from '../../../server/rpc/invite.p';
+import { KTQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_ticket_KTNum, ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
-import { login as loginUser } from '../../../server/rpc/user.p';
+import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_item, item_query } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
-import { clientRpcFunc } from '../net/init';
+import { clientRpcFunc, subscribe } from '../net/init';
 
 export const login = () => {
     // 钱包登录
@@ -28,18 +28,17 @@ export const login = () => {
     walletLoginReq.openid = '2001';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
-
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
         console.log(r);
     });
 };
 
-export const invite = () => {
-    const code = 'QOTJZB';
-    clientRpcFunc(cdkey, code, (r: Invite) => {
-        console.log(r);
-    });
-};
+// export const invite = () => {
+//     const code = 'QOTJZB';
+//     clientRpcFunc(cdkey, code, (r: Invite) => {
+//         console.log(r);
+//     });
+// };
 
 export const get_items = () => {
     clientRpcFunc(item_query, null, (r: Items) => {
@@ -114,7 +113,7 @@ export const award_query_test = () => {
 
 // 添加奖券
 export const add_ticket = () => {
-    const count = 60;
+    const count = 7001;
     clientRpcFunc(item_addticket, count, (r: Item) => {
         console.log(r);
     });
@@ -181,15 +180,25 @@ export const get_walletkt_test = () => {
     });
 };
 
+// 连续登陆天数
+export const get_series_days = () => {
+    clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
+        console.log(r);
+    });
+};
+
+// 获取邀请人数
+export const get_inviteNum_test = () => {
+    clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
             name: '登录',
             func: () => { login(); }
-        },
-        {
-            name: '兑换奖励',
-            func: () => { invite(); }
         },
         {
             name: '奖励方法',
@@ -258,6 +267,10 @@ const props = {
         {
             name: '获取KT',
             func: () => { get_walletkt_test(); }
+        },
+        {
+            name: '获取邀请人数',
+            func: () => { get_inviteNum_test(); }
         }
     ] // 按钮数组
 };

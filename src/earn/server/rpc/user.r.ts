@@ -63,7 +63,8 @@ export const login = (user: UserType): UserInfo => {
     set_user_online(loginReq.uid, session.getId());
 
     // 判断是否首次登陆
-    if (get_totalLoginDays() === 0) {
+    userInfo.loginCount = get_totalLoginDays();
+    if (userInfo.loginCount === 0) {
         // 添加首次登陆奖励
         firstLogin_award();
     }
