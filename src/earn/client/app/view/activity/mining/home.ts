@@ -28,7 +28,7 @@ export class MiningHome extends Widget {
         'left:108px;top:578px;',
         'right:177px;top:710px;',
         'left:56px;top:786px;',
-        'right:0px;top:854px;',
+        'right:10px;top:854px;',
         'left:239px;top:870px;'
     ];
     public create() {

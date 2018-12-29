@@ -16,6 +16,7 @@ interface Props {
     selected:boolean;
     lossHp:number;
     beginMining:boolean;
+    scale:number; // 等比放大倍数
 }
 export class Mine extends Widget {
     public props:any;

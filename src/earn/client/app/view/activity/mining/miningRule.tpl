@@ -32,15 +32,15 @@
             
             <div w-class="title">锄头的获得</div>
             <div w-class="get-type">
-                {{for item of it.getMethod}}
-                <div w-class="get-item">
+                {{for index,item of it.getMethod}}
+                <div w-class="get-item" >
                     <div w-class="get-item-title">{{item.title}}</div>
                     {{if typeof(item.desc) === 'string'}}
-                        <div w-class="get-item-desc">{{item.desc}}{{if item.action}}<span w-class="action">{{item.action}}</span>{{end}}</div>
+                        <div w-class="get-item-desc">{{item.desc}}{{if item.action}}<span w-class="action" on-tap="actionClick(e,{{index}})">{{item.action}}</span>{{end}}</div>
                     {{else}}
                         <div w-class="get-item-desc">{{item.desc[0]}}</div>
                         <div w-class="get-item-desc">{{item.desc[1]}}</div>
-                        <div w-class="get-item-desc">{{item.desc[2]}}{{if item.action}}<span w-class="action">{{item.action}}</span>{{end}}</div>
+                        <div w-class="get-item-desc">{{item.desc[2]}}{{if item.action}}<span w-class="action" on-tap="actionClick(e,{{index}})">{{item.action}}</span>{{end}}</div>
                     {{end}}
                 </div>
                 {{end}}
