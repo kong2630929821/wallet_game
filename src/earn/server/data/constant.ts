@@ -39,13 +39,13 @@ export const RAINBOW_TICKET_TYPE = 7003;
 
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位
-export const BTC_UNIT_NUM = 10 ^ (-4);
+export const BTC_UNIT_NUM:number = 10 ^ (-4);
 // ETH 单位:10^15 精度为小数点后3位
-export const ETH_UNIT_NUM = 10 ^ (-15);
+export const ETH_UNIT_NUM:number = 10 ^ (-15);
 // ST 单位:10^4 精度为小数点后2位
-export const ST_UNIT_NUM = 10 ^ (-4);
+export const ST_UNIT_NUM:number = 10 ^ (-4);
 // KT 单位:10^8 即KT为整数
-export const KT_UNIT_NUM = 10 ^ (-8);
+export const KT_UNIT_NUM:number = 10 ^ (-8);
 
 // 人类10秒最快手速
 export const MAX_HUMAN_HITS = 200;
@@ -69,9 +69,12 @@ export const INVITE_AWARD_CIRCLE_LEVEL3 = 18;
 export const FIRST_LOGIN_AWARD = 600101;
 // 首次挖开矿山奖励
 export const FIRST_MINING_AWARD = 600401;
+// 特殊奖励id
+export const THE_ELDER_SCROLLS = 'skyRim';
 
 // 奖品来源
 export const AWARD_SRC_LOGIN = 'login';
+export const AWARD_SRC_INVITE = 'invite';
 export const AWARD_SRC_MINE = 'mine';
 export const AWARD_SRC_ROTARY = 'rotary';
 export const AWARD_SRC_TREASUREBOX = 'treasurebox';

@@ -8,7 +8,7 @@ import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_MINE, BTC_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
 import { AwardMap, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { SeriesLogin, UserInfo } from '../data/db/user.s';
-import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
+import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
@@ -78,9 +78,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         return miningResponse;
     }
     let seed = seedAndHoe.seed;
-    console.log('!!!!!!!!!!!!!!seed:', seed);
     const hoeType = seedAndHoe.hoeType;
-    console.log('!!!!!!!!!!!!!!hoeType:', hoeType);
     let sumHits = 0;
     for (let i = 0; i < count; i ++) {
         const randomMgr = new RandomSeedMgr(seed);
@@ -88,12 +86,15 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         sumHits = sumHits + hit;
         seed = RandomSeedMgr.randNumber(seed);
     }
-    console.log('!!!!!!!!!!!!!!sumhits:', sumHits);
     const leftHp = reduce_mine(itemType, mineNum, sumHits);
-    console.log('!!!!!!!!!!!!!!leftHp:', leftHp);
+    if (!leftHp && leftHp !== 0) {
+        console.log('!!!!!!!!!!!!!!leftHp:', leftHp);
+        miningResponse.resultNum = MINE_NOT_EXIST;
+
+        return miningResponse;
+    }
     if (leftHp > 0) {
         miningResponse.leftHp = leftHp;
-        console.log('!!!!!!!!!!!!!!miningresponse:', miningResponse);
     } else {
         // 当前矿山血量小于等于0时，添加奖励
         miningResponse.leftHp = 0;
@@ -106,10 +107,10 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         const itemNum = v[0][0];
         console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
         const itemCount = v[0][1];
-        const item = add_itemCount(itemNum, itemCount);
+        const item = add_itemCount(uid, itemNum, itemCount);
         const awards = [];
         awards.push(item);
-        add_award(itemNum, itemCount, AWARD_SRC_MINE);
+        add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
         // 奖品为KT时添加挖矿获取KT总数
         if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount);
         // 挖开第一个矿山额外奖励
@@ -122,8 +123,8 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 
                 return miningResponse;
             }
-            const firstAward = add_itemCount(firstAwardCfg.prop, firstAwardCfg.num);
-            add_award(firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
+            const firstAward = add_itemCount(uid, firstAwardCfg.prop, firstAwardCfg.num);
+            add_award(uid, firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
             awards.push(firstAward);
         }
         miningResponse.awards = awards;
@@ -136,7 +137,6 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         if (get_mine_total() === 0) {
             const mine = add_mine();
             miningResponse.mine = mine;
-            console.log('add_mine!!!!!!!!!!!!!!!!!:', mine);
         }
     }
     miningResponse.resultNum = RESULT_SUCCESS;
@@ -145,29 +145,28 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 };
 
 // 签到奖励(连续登陆)
-// #[rpc=rpcServer]
-export const get_loginAward = ():ItemResponse => {
-    const itemResponse = new ItemResponse();
-    const uid = getUid();
-    // 获取连续登陆天数
-    const daysRes = get_loginDays();
-    if (!daysRes) {
-        itemResponse.resultNum = DB_ERROR;
+// export const get_loginAward = ():ItemResponse => {
+//     const itemResponse = new ItemResponse();
+//     const uid = getUid();
+//     // 获取连续登陆天数
+//     const daysRes = get_loginDays();
+//     if (!daysRes) {
+//         itemResponse.resultNum = DB_ERROR;
 
-        return itemResponse;
-    }
-    const days = daysRes.days;
-    const awardItem = seriesLogin_award(days);
-    if (!awardItem) {
-        itemResponse.resultNum = CONFIG_ERROR;
+//         return itemResponse;
+//     }
+//     const days = daysRes.days;
+//     const awardItem = seriesLogin_award(days);
+//     if (!awardItem) {
+//         itemResponse.resultNum = CONFIG_ERROR;
 
-        return itemResponse;
-    }
-    itemResponse.item = awardItem;
-    itemResponse.resultNum = RESULT_SUCCESS;
+//         return itemResponse;
+//     }
+//     itemResponse.item = awardItem;
+//     itemResponse.resultNum = RESULT_SUCCESS;
 
-    return itemResponse;
-};
+//     return itemResponse;
+// };
 
 // 邀请好友奖励
 // #[rpc=rpcServer]

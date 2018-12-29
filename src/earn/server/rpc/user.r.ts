@@ -13,7 +13,7 @@ import { DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, 
 import { DB_ERROR } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today } from '../util/item_util.r';
-import { firstLogin_award, login_add_mine } from '../util/regularAward';
+import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { SeriesDaysRes } from './itemQuery.s';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 
@@ -70,9 +70,13 @@ export const login = (user: UserType): UserInfo => {
 
     // 当日首次登陆赠送矿山
     if (isToday_firstLogin()) {
+        console.log('is today first login!!!!!!!!!!!!!!!!!!!!!!!!');
         login_add_mine();
         // 添加到每日登陆表
         set_user_login(loginReq.uid);
+        // 添加连续登陆奖励
+        const days = get_loginDays().days;
+        seriesLogin_award(days);
     }
 
     userInfo.uid = loginReq.uid;
@@ -105,15 +109,15 @@ export const set_user_online = (uid: number, sessionId: number) => {
 export const get_totalLoginDays = ():number => {
     console.log('get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
-    const totalLogin = new TotalLogin();
-    totalLogin.uid = uid;
     const dbMgr = getEnv().getDbMgr();
-    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
-    const seriesLogin = seriesLoginBucket.get<number, [TotalLogin]>(uid)[0];
-    if (!seriesLogin) {
+    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
+    let totalLogin = totalLoginBucket.get<number, [TotalLogin]>(uid)[0];
+    if (!totalLogin) {
         console.log('blank get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
-
-        return 0;
+        totalLogin = new TotalLogin();
+        totalLogin.uid = uid;
+        totalLogin.days = 0;
+        totalLoginBucket.put(uid, totalLogin);
     }
 
     return totalLogin.days;
@@ -132,15 +136,11 @@ export const set_user_login = (uid: number) => {
     const dayliLoginKey = new DayliLoginKey();
     dayliLoginKey.uid = uid;
     dayliLoginKey.date = today;
-    
-    const dayliLogin = new DayliLogin();
-    dayliLogin.index = dayliLoginKey;
-    dayliLogin.state = true;
-    dayliLoginBucket.put(dayliLoginKey, dayliLogin);
 
     const totalLogin = new TotalLogin();
     totalLogin.uid = uid;
-    totalLogin.days = get_totalLoginDays();
+    totalLogin.days = get_totalLoginDays() + 1;
+    console.log('totalLogin.days !!!!!!!!!!!!!!!!!!!', totalLogin.days);
     totalLoginBucket.put(uid, totalLogin);
 
     // 增加连续登陆天数，验证昨天是否登陆，未登录重置为1
@@ -172,12 +172,15 @@ export const isToday_firstLogin = ():boolean => {
     dayliLoginKey.uid = uid;
     dayliLoginKey.date = today;
 
-    const dayliLogin = new DayliLogin();
-    dayliLogin.index = dayliLoginKey;
-    dayliLogin.state = true;
     const dbMgr = getEnv().getDbMgr();
     const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
-    if (!dayliLoginBucket.get(dayliLoginKey)) {
+    let dayliLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
+    if (!dayliLogin) {
+        dayliLogin = new DayliLogin();
+        dayliLogin.index = dayliLoginKey;
+        dayliLogin.state = true;
+        dayliLoginBucket.put(dayliLoginKey, dayliLogin);
+
         return true;
     }
 
@@ -217,6 +220,7 @@ export const get_loginDays = ():SeriesDaysRes => {
         return seriesDaysRes;
     }
     seriesDaysRes.days = seriesLogin.days;
+    seriesDaysRes.resultNum = CONSTANT.RESULT_SUCCESS;
 
     return seriesDaysRes;
 };

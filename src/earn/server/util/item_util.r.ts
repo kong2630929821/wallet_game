@@ -1,7 +1,7 @@
 /**
  * 
  */
-import { Award, AwardMap, BTC, ConvertTab, ETH, Hoe, Item, Items, KT, Mine, ST, Ticket } from '../data/db/item.s';
+import { Award, AwardMap, BTC, ConvertTab, ETH, Hoe, Item, Items, KT, Mine, MineHp, SpecialAward, ST, Ticket } from '../data/db/item.s';
 
 import { Bucket } from '../../utils/db';
 
@@ -10,7 +10,7 @@ import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { AwardConvertCfg, ItemInitCfg, MineHpCfg } from '../../xlsx/item.s';
-import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MAX_TYPE_NUM, MEMORY_NAME, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
+import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MAX_TYPE_NUM, MEMORY_NAME, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
 import { get_index_id } from '../data/util';
 import { IsOk } from '../rpc/test.s';
 import { getUid } from '../rpc/user.r';
@@ -46,14 +46,11 @@ export const add_convert = ():IsOk => {
 };
 
 // 添加奖品
-export const add_award = (itemType:number, count:number, src:string, convert?:string, desc?:string):Award => {
-    const uid = getUid();
+export const add_award = (uid:number, itemType:number, count:number, src:string, convert?:string, desc?:string):Award => {
     const time = (new Date()).valueOf();
     console.log('time!!!!!!!!!!!!!!!!!:', time);
     const awardid = `${time}${uid}${randomInt(10000, 99999)}`;
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
-    // 奖励详情写入数据库
     const award = new Award();
     award.id = awardid;
     award.awardType = itemType;
@@ -64,8 +61,11 @@ export const add_award = (itemType:number, count:number, src:string, convert?:st
     console.log('award.time!!!!!!!!!!!!!!!!!:', award.time);
     if (convert) award.convert = convert;
     if (desc) award.desc = desc;
+    
+    // 写入奖励表
+    const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
     bucket.put(awardid, award);
-    console.log('award DB!!!!!!!!!!!!!!!!!:', bucket.get(awardid)[0]);
+    // 写入奖励MAP表
     const awardMap = <AwardMap>get_award_ids(uid);
     let awardList = [];
     awardList = awardMap.awards;
@@ -74,15 +74,27 @@ export const add_award = (itemType:number, count:number, src:string, convert?:st
     const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
     awardMap.awards = awardList;
     mapBucket.put(uid, awardMap);
+
+    // 写入特别奖励表
+    if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE) {
+        const specialAward = new SpecialAward();
+        specialAward.id = awardid;
+        specialAward.awardType = itemType;
+        specialAward.count = count;
+        specialAward.src = src;
+        specialAward.uid = uid;
+        specialAward.time = time.toString();
+        const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
+        specialAwardbucket.put(awardid, specialAward);
+    }
     
     return award;
 };
 
 // 添加指定数量物品(包含Mine类)
-export const add_itemCount = (itemType:number, count: number): Item => {
+export const add_itemCount = (uid:number, itemType:number, count: number): Item => {
     console.log('add_itemCount in!!!!!!!!!!!!!!', itemType);
     if (count < 0) return;
-    const uid = getUid();
     const enumNum = get_enumType(itemType);
     const typeNum = itemType;
     const itemInfo = item_query();
@@ -104,12 +116,15 @@ export const add_itemCount = (itemType:number, count: number): Item => {
     const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
     if (enumNum === 1) {
         if (count > 1) return;
-        const hp = get_mine_hp(typeNum);
-        console.log('hp:!!!!!!!!!!!!!!', hp);
+        const mineHp = new MineHp();
+        mineHp.hp = get_mine_hp(typeNum);
+        const index = `${uid}:${mineHp.hp}`;
+        mineHp.num = get_index_id(index);
+        console.log('hp:!!!!!!!!!!!!!!', mineHp);
         let hpList = [];
         const mine = <Mine>item.value;
         hpList = mine.hps;
-        hpList.push(hp);
+        hpList.push(mineHp);
         mine.count = afterCount;
         mine.hps = hpList;
     } else {
@@ -158,43 +173,56 @@ export const reduce_itemCount = (itemType: number, count: number): Item => {
 
 // 矿山扣血
 export const reduce_mine = (itemType: number, mineNum:number, hits:number): number => {
-    console.log('reduce_mine in!!!!!!!!!!!!!!');
+    console.log('reduce_mine in!!!!!!!!!!!!!!', mineNum);
     const uid = getUid();
     const typeNum = itemType;
     const itemInfo = item_query();
     const item = get_item(itemType);
     const mine = <Mine>item.value;
-    const leftHp = mine.hps[mineNum] - hits;
-    // 获取Item对象在数组中的下标
-    const items = itemInfo.item;
-    const dbMgr = getEnv().getDbMgr();
-    const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
-    let itemIndex;
-    for (const item1 of items) {
-        if (item1.value.num === typeNum) {
-            itemIndex = items.indexOf(item1);
-            break;
+    const hps = mine.hps;
+    let leftHp;
+    console.log('mine.hps.length!!!!!!!!!!!!!!', mine.hps.length);
+    for (let i = 0; i < hps.length; i ++) {
+        console.log('mine index!!!!!!!!!!!!!!', i);
+        if (hps[i].num === mineNum) {
+            console.log('mine HP!!!!!!!!!!!!!!', hps[i]);
+            leftHp = mine.hps[i].hp;
+            leftHp -= hits;
+            hps[i].hp = leftHp;
+            console.log('mineHp!!!!!!!!!!!!!!', hps[i]);
+            // 获取Item对象在数组中的下标
+            const items = itemInfo.item;
+            const dbMgr = getEnv().getDbMgr();
+            const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+            let itemIndex;
+            for (const item1 of items) {
+                if (item1.value.num === typeNum) {
+                    itemIndex = items.indexOf(item1);
+                    break;
+                }
+            }
+            if (leftHp > 0) {
+                item.value = mine;
+                items[itemIndex] = item;
+                itemInfo.item = items;
+                itemBucket.update(uid, itemInfo);
+        
+                return leftHp;
+            } else {
+                console.log('mine HP zero!!!!!!!!!!!!!!');
+                mine.count = mine.count - 1;
+                mine.hps.splice(i, 1);
+                item.value = mine;
+                items[itemIndex] = item;
+                itemInfo.item = items;
+                itemBucket.update(uid, itemInfo);
+        
+                return 0;
+            }
         }
     }
-    if (leftHp > 0) {
-        mine.hps[mineNum] = leftHp;
-        item.value = mine;
-        items[itemIndex] = item;
-        itemInfo.item = items;
-        itemBucket.update(uid, itemInfo);
 
-        return leftHp;
-    } else {
-        mine.count = mine.count - 1;
-        mine.hps.splice(mineNum, 1);
-        item.value = mine;
-        items[itemIndex] = item;
-        itemInfo.item = items;
-        itemBucket.update(uid, itemInfo);
-
-        return 0;
-    }
-
+    return;
 };
 
 // 用户物品数据库根据配置初始化

@@ -71,7 +71,7 @@ export const item_test2 = () => {
 
 // 获取挖矿随机种子
 export const get_seed = () => {
-    const itemType = 2001;
+    const itemType = 2003;
     clientRpcFunc(mining, itemType, (r: SeedResponse) => {
         console.log(r);
     });
@@ -81,8 +81,8 @@ export const get_seed = () => {
 export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 60;
-    miningResult.itemType = 1002;
-    miningResult.mineNum = 0;
+    miningResult.itemType = 1001;
+    miningResult.mineNum = 7;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -105,8 +105,9 @@ export const test_hits = () => {
 
 // 奖励查询
 export const award_query_test = () => {
-    const src = 'mine';
-    clientRpcFunc(award_query, src, (r:AwardList) => {
+    const query = new AwardQuery();
+    query.src = '';
+    clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
 };
