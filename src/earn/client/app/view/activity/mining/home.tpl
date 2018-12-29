@@ -45,10 +45,10 @@
             <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                 <earn-client-app-view-activity-components-mine>{ 
                     mineType:{{ item.type }},
-                    mineIndex:{{ item.index }}
+                    mineId:{{ item.id }}
                     hp:{{item.hp}},
                     selectedHoe:{{ it.hoeSelected }},
-                    selected:{{ item.type === it.mineType && item.index === it.mineIndex}},
+                    selected:{{ item.type === it.mineType && item.id === it.mineId}},
                     lossHp:{{ it.lossHp }},
                     beginMining:{{ it.countDownStart }}
                 }</earn-client-app-view-activity-components-mine>

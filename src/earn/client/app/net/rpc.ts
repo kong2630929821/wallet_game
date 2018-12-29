@@ -65,11 +65,11 @@ export const readyMining = (hoeType:HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
+export const startMining = (mineType:MineType,mineId:number,diggingCount:number) => {
     return new Promise((resolve,reject) => {
         const result = new MiningResult();
         result.itemType = mineType;
-        result.mineNum = mineIndex;
+        result.mineNum = mineId;
         result.hit = diggingCount;
         console.log('startMining result = ',result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {

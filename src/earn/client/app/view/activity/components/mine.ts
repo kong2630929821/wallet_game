@@ -10,6 +10,7 @@ import { MineType } from '../../../xls/mineType.s';
 
 interface Props {
     mineType:MineType;
+    mineId:number;
     hp:number;
     selectedHoe:HoeType;
     selected:boolean;
@@ -64,7 +65,7 @@ export class Mine extends Widget {
         });
         
         if (!this.props.selected) {
-            notify(event.node,'ev-mine-click',{ itype:this.props.mineType,index:this.props.mineIndex });
+            notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
 
             return;
         }
@@ -90,7 +91,7 @@ export class Mine extends Widget {
         const g = Math.random() * 500 + 500;   // 重力加速度  500 --- 1000
         const duration = Math.floor(Math.random() * 500 + 1500); // 动画持续时间  1500 --- 2000 ms
         this.domMove($rock,v0,rad,g,duration,new Date().getTime());
-        notify(event.node,'ev-mine-click',{ itype:this.props.mineType,index:this.props.mineIndex });
+        notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
     }
 
     /**

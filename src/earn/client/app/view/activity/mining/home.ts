@@ -45,7 +45,7 @@ export class MiningHome extends Widget {
             hoeType:HoeType,   // 锄头类型
             hoeSelected:-1,    // 选中的锄头
             mineType:-1,       // 选中的矿山类型 
-            mineIndex:-1,     // 选中的矿山index
+            mineId:-1,     // 选中的矿山index
             countDownStart:false,  // 是否开始倒计时
             miningCount:0,             // 挖矿次数
             countDown:hoeUseDuration,  // 倒计时时间
@@ -82,7 +82,6 @@ export class MiningHome extends Widget {
         }
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
-        console.log('select index',hopeType);
         this.props.hoeSelected = hopeType;
         this.props.miningTips = '请选择矿山';
         this.paint();
@@ -101,14 +100,16 @@ export class MiningHome extends Widget {
     }
     public mineClick(e:any) {
         const itype = e.itype;
-        const index = e.index;
-        console.log(index,itype);
+        const mineId = e.mineId;
+        console.log(mineId,itype);
         // 没有选中锄头
         if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
 
+        if (this.props.miningedNumber >= MineMax) return;
+
         // 没有选矿山
-        if ((this.props.mineIndex !== index || this.props.mineType !== itype) && !this.props.countDownStart) {
-            this.props.mineIndex = index;
+        if ((this.props.mineId !== mineId || this.props.mineType !== itype) && !this.props.countDownStart) {
+            this.props.mineId = mineId;
             this.props.mineType = itype;
             this.props.miningTips = '准备开始挖矿';
             this.paint();
@@ -117,12 +118,13 @@ export class MiningHome extends Widget {
         }
 
         // 中途挖其他矿去了
-        if (this.props.mineIndex !== index || this.props.mineType !== itype) return;
+        if (this.props.mineId !== mineId || this.props.mineType !== itype) return;
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
+                // console.log('hits ===',hits);
                 this.paint();
             });
             this.props.countDownStart = true;
@@ -143,8 +145,9 @@ export class MiningHome extends Widget {
     public bloodLoss() {
         for (let i = 0; i < this.props.haveMines.length; i++) {
             const mine = this.props.haveMines[i];
-            if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
+            if (mine.type === this.props.mineType && mine.id === this.props.mineId) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1];
+                // console.log('lossHp  ==',this.props.lossHp);
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
                     this.deleteBoomMine();
@@ -157,10 +160,10 @@ export class MiningHome extends Widget {
     // 爆炸矿山消失
     public deleteBoomMine() {
         const mineType = this.props.mineType;
-        const mineIndex = this.props.mineIndex;
+        const mineId = this.props.mineId;
         requestAnimationFrame(() => {
             this.props.haveMines = this.props.haveMines.filter(item => {
-                return item.type !== mineType || item.index !== mineIndex;
+                return item.type !== mineType || item.id !== mineId;
             });
         });
         this.initMiningState();
@@ -179,14 +182,14 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
-        startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
+        startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
             if (r.leftHp <= 0) {
                 getTodayMineNum();
                 this.props.awardTypes[r.awards[0].enum_type] = r.awards[0].value.count;
                 this.paint();
             }
         });
-        this.props.mineIndex = -1;
+        this.props.mineId = -1;
         this.props.mineType = -1;
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;

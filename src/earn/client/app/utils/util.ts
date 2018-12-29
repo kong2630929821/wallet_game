@@ -38,11 +38,11 @@ export const getAllMines = () => {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
             for (let j = 0;j < good.value.count;j++) {
-                const hp = good.value.hps[j];
+                const hp = good.value.hps[j].hp;
                 const itype = good.value.num;
                 const mine = {
                     type:itype,
-                    index:j,
+                    id:good.value.hps[j].num,
                     hp
                 };
                 mines.push(mine);
