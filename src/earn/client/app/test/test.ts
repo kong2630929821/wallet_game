@@ -6,9 +6,9 @@
 import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
-import { AwardList, AwardQuery, AwardResponse, Hoe, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardList, AwardQuery, AwardResponse, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_inviteNum } from '../../../server/rpc/invite.p';
+import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { KTQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
@@ -194,6 +194,13 @@ export const get_inviteNum_test = () => {
     });
 };
 
+// 获取邀请奖励
+export const get_inviteAward_test = () => {
+    clientRpcFunc(get_invite_awards, null, (r: InviteAwardRes) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
@@ -271,6 +278,10 @@ const props = {
         {
             name: '获取邀请人数',
             func: () => { get_inviteNum_test(); }
+        },
+        {
+            name: '获取邀请奖励',
+            func: () => { get_inviteAward_test(); }
         }
     ] // 按钮数组
 };

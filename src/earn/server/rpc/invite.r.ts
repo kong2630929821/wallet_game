@@ -3,7 +3,7 @@
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { MIN_INVITE_NUM, RESULT_SUCCESS, WALLET_API_CDKEY, WARE_NAME } from '../data/constant';
+import { MIN_INVITE_NUM, RESULT_SUCCESS, WALLET_API_CDKEY, WALLET_API_INVITENUM, WARE_NAME } from '../data/constant';
 import { Invite } from '../data/db/invite.s';
 import { InviteAwardRes } from '../data/db/item.s';
 import { InviteNumTab, InviteTab, UserAcc } from '../data/db/user.s';
@@ -23,7 +23,7 @@ export const get_inviteNum = (): InviteNumTab => {
     const openid = Number(getOpenid());
     // 去钱包服务器获取已邀请人数
     let inviteNum = 0;
-    const r = oauth_send(WALLET_API_CDKEY, { openid: openid });
+    const r = oauth_send(WALLET_API_INVITENUM, { openid: openid });
     if (r.ok) {
         const json = JSON.parse(r.ok);
         if (json.return_code === 1) {
@@ -55,25 +55,29 @@ export const get_invite_awards = ():InviteAwardRes  => {
     const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
     const inviteNumTab = get_inviteNum();
     const awardResponse = new InviteAwardRes();
+    awardResponse.award = [];
     const usefulNum = inviteNumTab.inviteNum - inviteNumTab.usedNum;
+    console.log('usefulNum !!!!!!!!!!!!!!!!!!!!!!!!', usefulNum);
     if (usefulNum < MIN_INVITE_NUM) {
         awardResponse.resultNum = INVITE_NOT_ENOUGH;
 
         return awardResponse;
     }
-    // 添加已领取记录
-    inviteNumTab.usedNum += MIN_INVITE_NUM;
-    bucket.put(uid, inviteNumTab);
-
-    for (let i = inviteNumTab.inviteNum; i < MIN_INVITE_NUM - 1; i ++) {
+    
+    for (let i = inviteNumTab.usedNum + 1; i < MIN_INVITE_NUM + inviteNumTab.usedNum + 1; i ++) {
+        console.log('i !!!!!!!!!!!!!!!!!!!!!!!!', i);
         const award = invite_award(uid, i);
         awardResponse.award.push(award);
     }
     if (!awardResponse.award) {
         awardResponse.resultNum = DB_ERROR;
-
+        
         return awardResponse;
     }
+    // 添加已领取记录
+    inviteNumTab.usedNum += MIN_INVITE_NUM;
+    console.log('inviteNumTab.usedNum !!!!!!!!!!!!!!!!!!!!!!!!', inviteNumTab.usedNum);
+    bucket.put(uid, inviteNumTab);
     awardResponse.resultNum = RESULT_SUCCESS;
 
     return awardResponse;
