@@ -259,3 +259,11 @@ struct AwardResponse {
     resultNum: u32,
     award:Option<Award>
 }
+
+/**
+*邀请奖励领取返回
+*/
+struct InviteAwardRes {
+    resultNum: u32,
+    award:Option<&[Award]>
+}

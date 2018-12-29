@@ -101,6 +101,8 @@ export const TICKET_COMPOSE_COUNT = 3;
 export const TICKET_ROTARY_COUNT = 2;
 // 开宝箱消耗奖券
 export const TICKET_TREASUREBOX_COUNT = 2;
+// 获取邀请奖励最小人数
+export const MIN_INVITE_NUM = 3;
 
 // 数据库名
 export const WARE_NAME = 'file';
@@ -116,6 +118,8 @@ export const WALLET_SERVER_KEY = 'xxxxxxxxx';
 export const WALLET_API_CDKEY = '/oAuth/cdkey';
 // 查询余额
 export const WALLET_API_QUERY = '/oAuth/balancequery';
+// 邀请人数
+export const WALLET_API_INVITENUM = '/oAuth/invite';
 
 // 货币类型
 export const KT_WALLET_TYPE = 100;

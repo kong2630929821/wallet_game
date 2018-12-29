@@ -38,9 +38,9 @@ export const db_test = (pid: number): Award => {
 export const item_add = (count: number): Item => {
     console.log('add test in!!!!!!!!!!');
     const uid = getUid();
-    const itemType = 2002;
+    const itemType = 2003;
 
-    return add_itemCount(uid,itemType, count);
+    return add_itemCount(uid, itemType, count);
 };
 
 // #[rpc=rpcServer]

@@ -4,12 +4,14 @@
 import { BonBuffer } from '../../../pi/util/bon';
 import { ab2hex } from '../../../pi/util/util';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
+import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
+import { mqttPublish, QoS, setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { Logger } from '../../utils/logger';
 import { WARE_NAME } from '../data/constant';
 import { Items, MiningKTNum, SpecialAward } from '../data/db/item.s';
 import { UserInfo } from '../data/db/user.s';
+import { SendMessage } from './user.s';
 
 // ================================================================= 导入
 
@@ -18,7 +20,6 @@ declare var module;
 const WIDGET_NAME = module.id.replace(/\//g, '-');
 const logger = new Logger(WIDGET_NAME);
 
-     
 /** 
  * 物品信息 
  * @param gid group id
@@ -39,7 +40,7 @@ export const watchMiningKTNum = (uid: number): MiningKTNum => {
 
 /**
  * 用户挖矿得到的特别奖品
- * @param uid user id
+ * @param id string
  */
 // #[rpc=rpcServer]
 export const watchSpecialAward = (id: string): SpecialAward => {
@@ -80,4 +81,14 @@ export const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefa
     info[keyName] = info[keyName] || keyDefaultValue;
 
     return info;
+};
+
+export const mqtt_send = (uid:number, msg:string) => {
+    const mqttServer = <ServerNode>getMqttServer();
+    const message = new SendMessage();
+    message.uid = uid;
+    message.msg = msg;
+    const buf = new BonBuffer();
+    message.bonEncode(buf);
+    mqttPublish(mqttServer, true, QoS.ExactlyOnce, uid.toString(), buf.getBuffer());
 };
