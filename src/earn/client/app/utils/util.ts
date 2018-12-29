@@ -37,7 +37,7 @@ export const getAllMines = () => {
     for (let i = 0;i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            for (let j = 0;j < good.value.hps.length;j++) {
+            for (let j = 0;j < good.value.count;j++) {
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
                 const mine = {

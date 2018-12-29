@@ -6,7 +6,7 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { getAllGoods, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
+import { getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../../utils/constants';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
@@ -77,6 +77,7 @@ export class MiningHome extends Widget {
     public mineLocationInit() {
         const mineStyle = shuffle(this.mineStyle);
         for (let i = 0;i < this.props.haveMines.length;i++) {
+            if (this.props.haveMines[i].location) continue;
             this.props.haveMines[i].location = mineStyle[i];
         }
     }
@@ -147,8 +148,6 @@ export class MiningHome extends Widget {
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
                     this.deleteBoomMine();
-                    // this.initMiningState();
-                    // this.paint();
                 }
                 break;
             }
@@ -181,7 +180,6 @@ export class MiningHome extends Widget {
 
     public initMiningState() {
         startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
-            getAllGoods();
             if (r.leftHp <= 0) {
                 getTodayMineNum();
                 this.props.awardTypes[r.awards[0].enum_type] = r.awards[0].value.count;
@@ -203,8 +201,11 @@ export class MiningHome extends Widget {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
-        this.props.haveMines = getAllMines();
-        this.mineLocationInit();
+        if (this.props.haveMines.length === 0) {
+            this.props.haveMines = getAllMines();
+            this.mineLocationInit();
+        }
+        
         this.paint();
     }
     public updateMiningedNumber(miningedNumber:number) {

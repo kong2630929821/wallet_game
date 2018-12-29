@@ -3,17 +3,17 @@
  */
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { MiningResult } from '../../../server/rpc/itemQuery.s';
+import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { item_addticket } from '../../../server/rpc/test.p';
 import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
-import { login } from '../../../server/rpc/user.p';
+import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
-import { getMaxMineType, getPrizeInfo } from '../utils/util';
+import { getPrizeInfo } from '../utils/util';
 import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -57,7 +57,6 @@ export const readyMining = (hoeType:HoeType) => {
         console.log('beginMining hoeType = ',hoeType);
         clientRpcFunc(mining, hoeType, (r: RandomSeedMgr) => {
             console.log('beginMining ',r);
-            getAllGoods();
             resolve(r);
         });
     });
@@ -67,7 +66,7 @@ export const readyMining = (hoeType:HoeType) => {
  * 开始挖矿
  */
 export const startMining = (mineType:MineType,mineIndex:number,diggingCount:number) => {
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
         const result = new MiningResult();
         result.itemType = mineType;
         result.mineNum = mineIndex;
@@ -76,12 +75,18 @@ export const startMining = (mineType:MineType,mineIndex:number,diggingCount:numb
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {
             console.log('startMining MiningResponse = ',r);
             resolve(r);
+            if (r.resultNum === 1) {
+                resolve(r);
+            } else {
+                // showActError(r.resultNum);TODO
+                reject(r);
+            }
         });
     });
 };
 
 /**
- * 
+ * 获取今天已挖矿山数
  */
 export const getTodayMineNum = () => {
     const uid = getStore('userInfo/uid');
@@ -190,9 +195,25 @@ export const getAwardHistory = (itype?: number) => {
  */
 export const getRankList = () => {
     return new Promise((resolve, reject) => {
-
         clientRpcFunc(get_miningKTTop, 50, (r: MineTop) => {
             console.log('rpc-getRankList-resData---------------', r);
+            if (r.resultNum === 1) {
+                resolve(r);
+            } else {
+                // showActError(r.resultNum);TODO
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取连续登录天数
+ */
+export const getLoginDays = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
+            console.log('rpc-getLoginDays---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {

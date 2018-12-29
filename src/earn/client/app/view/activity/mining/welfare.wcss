@@ -32,7 +32,7 @@
     display: flex;
     justify-content: space-between;
 }
-.sign-btn{
+.invite-btn{
     font-size:32px;
     color:rgba(34,34,34,1);
     width:330px;

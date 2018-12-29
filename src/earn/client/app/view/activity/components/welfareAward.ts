@@ -12,9 +12,9 @@ export class WelfareAward extends Widget {
     public setProps(props:Props,oldProps:Props) {
         let imgUrl = '../../../res/image/';
         if (props.received) {
-            imgUrl = `${imgUrl}boxOpen1.png`;
+            imgUrl = `${imgUrl}boxOpen7002.png`;
         } else {
-            imgUrl = `${imgUrl}box1.png`;
+            imgUrl = `${imgUrl}box7002.png`;
         }
         // console.log(props);
         this.props = {
@@ -22,5 +22,9 @@ export class WelfareAward extends Widget {
             imgUrl
         };
         super.setProps(this.props,oldProps);
+    }
+
+    public openClick() {
+        if (!this.props.canReceive) return;
     }
 }

@@ -7,7 +7,7 @@
                 <div style="margin:5px;"><earn-client-app-view-activity-components-welfareAward>{ received:{{ item.received }},canReceive:{{ item.canReceive }},conditionText:{{ item.conditionText }} }</earn-client-app-view-activity-components-welfareAward></div>
             {{end}}
         </div>
-        <div w-class="sign-btn">立即邀请</div>
+        <div w-class="invite-btn" on-tap="inviteClick">立即邀请</div>
         <div w-class="close" on-tap="closeClick"><img src="../../../res/image/pop_close.png"/></div>
     </div>
     
