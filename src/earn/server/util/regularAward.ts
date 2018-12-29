@@ -72,6 +72,7 @@ export const seriesLogin_award = (days:number):Item => {
  * @param num 被邀请的人数
  */
 export const invite_award = (uid:number, num:number):Award => {
+    console.log('invite_award in !!!!!!!!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name, dbMgr);
     let id;
