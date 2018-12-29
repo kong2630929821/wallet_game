@@ -3,7 +3,7 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { SeriesLoginAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
@@ -267,4 +267,27 @@ export const getVirtualExchangeList = (): any => {
  */
 export const showActError = (errorNum:number) => {
     // TODO
+};
+
+/**
+ * 获取连续登录奖励
+ */
+export const getSeriesLoginAwards = (serielLoginDays:number) => {
+    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
+    const showAwardsDays = 7; // 同时展示几天的奖励
+    // tslint:disable-next-line:prefer-array-literal
+    const awards = new Array(showAwardsDays);
+    if (serielLoginDays <= showAwardsDays) {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days > showAwardsDays) continue;
+            awards[cfg.days - 1] = cfg;
+        }
+    } else {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days <= showAwardsDays) continue;
+            awards[cfg.days - 1 - showAwardsDays] = cfg;
+        }
+    }
+
+    return awards;
 };
