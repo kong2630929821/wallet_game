@@ -1,7 +1,6 @@
 
 .new-page{
     background-color:#19355A;
-    padding-top:128px;
     background-image: url('../view/earn/client/res/image/balloon.png');
     background-repeat: no-repeat;
     background-position: left 128px;

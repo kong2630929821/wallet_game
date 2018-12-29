@@ -6,9 +6,9 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { getAllGoods, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
+import { getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
-import { hoeUseDuration } from '../../../utils/constants';
+import { hoeUseDuration, MineMax } from '../../../utils/constants';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
 import { HoeType } from '../../../xls/hoeType.s';
 
@@ -38,6 +38,7 @@ export class MiningHome extends Widget {
 
     public init() {
         this.props = {
+            mineMax:MineMax,                     // 每天最多挖的矿山数
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
             diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
@@ -50,15 +51,15 @@ export class MiningHome extends Widget {
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
             miningTips:'请选择锄头',   // 挖矿提示
-            havMines:getAllMines(),          // 拥有的矿山
+            haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
-            awardType:0,   // 矿山爆掉的奖励类型
-            awardNumber:0,          // 奖励数目
+            awardTypes:{},    // 矿山爆掉的奖励类型
             miningedNumber:getStore('mine/miningedNumber')  // 已挖矿山数目
         };
         this.mineLocationInit();   // 矿山位置初始化
         getTodayMineNum();
+        console.log('haveMines =',this.props.haveMines);
     }
 
     public signInClick() {
@@ -75,8 +76,9 @@ export class MiningHome extends Widget {
 
     public mineLocationInit() {
         const mineStyle = shuffle(this.mineStyle);
-        for (let i = 0;i < this.props.havMines.length;i++) {
-            this.props.havMines[i].location = mineStyle[i];
+        for (let i = 0;i < this.props.haveMines.length;i++) {
+            if (this.props.haveMines[i].location) continue;
+            this.props.haveMines[i].location = mineStyle[i];
         }
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
@@ -86,10 +88,23 @@ export class MiningHome extends Widget {
         this.paint();
     }
 
-    public mineClick(e:any,itype:number,index:number) {
-        // console.log(index,itype);
+    public hoeSelectedLeft() {
+        if (this.props.hoeSelected === HoeType.IronHoe) {
+            return this.props.ironHoe;
+        } else if (this.props.hoeSelected === HoeType.GoldHoe) {
+            return this.props.goldHoe;
+        } else if (this.props.hoeSelected === HoeType.DiamondHoe) {
+            return this.props.diamondHoe;
+        } else {
+            return 0;
+        }
+    }
+    public mineClick(e:any) {
+        const itype = e.itype;
+        const index = e.index;
+        console.log(index,itype);
         // 没有选中锄头
-        if (this.props.hoeSelected < 0) return;
+        if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
 
         // 没有选矿山
         if ((this.props.mineIndex !== index || this.props.mineType !== itype) && !this.props.countDownStart) {
@@ -106,13 +121,6 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                // if (this.props.hoeSelected === HoeType.IronHoe) {
-                //     this.props.ironHoe--;
-                // } else if (this.props.hoeSelected === HoeType.GoldHoe) {
-                //     this.props.goldHoe--;
-                // } else {
-                //     this.props.diamondHoe--;
-                // }
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
                 this.paint();
@@ -133,14 +141,13 @@ export class MiningHome extends Widget {
 
     // 矿山掉血
     public bloodLoss() {
-        for (let i = 0; i < this.props.havMines.length; i++) {
-            const mine = this.props.havMines[i];
+        for (let i = 0; i < this.props.haveMines.length; i++) {
+            const mine = this.props.haveMines[i];
             if (mine.type === this.props.mineType && mine.index === this.props.mineIndex) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1];
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
                     this.deleteBoomMine();
-                    this.initMiningState();
                 }
                 break;
             }
@@ -149,9 +156,14 @@ export class MiningHome extends Widget {
 
     // 爆炸矿山消失
     public deleteBoomMine() {
-        this.props.havMines = this.props.havMines.filter(item => {
-            return item.type !== this.props.mineType || item.index !== this.props.mineIndex;
+        const mineType = this.props.mineType;
+        const mineIndex = this.props.mineIndex;
+        requestAnimationFrame(() => {
+            this.props.haveMines = this.props.haveMines.filter(item => {
+                return item.type !== mineType || item.index !== mineIndex;
+            });
         });
+        this.initMiningState();
         this.paint();
     }
     public countDown() {
@@ -169,9 +181,8 @@ export class MiningHome extends Widget {
     public initMiningState() {
         startMining(this.props.mineType,this.props.mineIndex,this.props.miningCount).then((r:MiningResponse) => {
             if (r.leftHp <= 0) {
-                getAllGoods();
-                this.props.awardType = r.award.enum_type;
-                this.props.awardNumber = r.award.value.count;
+                getTodayMineNum();
+                this.props.awardTypes[r.awards[0].enum_type] = r.awards[0].value.count;
                 this.paint();
             }
         });
@@ -190,15 +201,27 @@ export class MiningHome extends Widget {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
-        // this.props.havMines = getAllMines();
-        this.props.miningedNumber = getStore('mine/miningedNumber');
+        if (this.props.haveMines.length === 0) {
+            this.props.haveMines = getAllMines();
+            this.mineLocationInit();
+        }
+        
+        this.paint();
+    }
+    public updateMiningedNumber(miningedNumber:number) {
+        this.props.miningedNumber = miningedNumber;
         this.paint();
     }
 }
 
 // ===================================================== 立即执行
 
-register('mine',(goods:Item[]) => {
+register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
+});
+
+register('mine/miningedNumber',(miningedNumber:number) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateMiningedNumber(miningedNumber);
 });

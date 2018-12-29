@@ -1,6 +1,7 @@
 /**
  * sign in
  */
+import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 
 export class Welfare extends Widget {
@@ -30,5 +31,9 @@ export class Welfare extends Widget {
     }
     public closeClick() {
         this.ok && this.ok();
+    }
+
+    public inviteClick() {
+        popNew('earn-client-app-view-activity-inviteFriend');
     }
 }

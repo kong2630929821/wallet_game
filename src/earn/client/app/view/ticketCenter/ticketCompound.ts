@@ -2,13 +2,13 @@
  * 奖券合成
  */
 
-import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { TicketType, CompoundTicketNum } from '../../xls/dataEnum.s';
-import { getTicketBalance } from '../../utils/util';
 import { compoundTicket, getAllGoods } from '../../net/rpc';
 import { register } from '../../store/memstore';
+import { getTicketBalance } from '../../utils/util';
+import { CompoundTicketNum, TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,20 +30,20 @@ export class TicketCompound extends Widget {
         ticketList: [
             {
                 type: TicketType.SilverTicket,
-                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 needTicketNum: CompoundTicketNum.SilverToGold,
-                balance: 0,
+                balance: 0
             },
             {
                 type: TicketType.GoldTicket,
-                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 needTicketNum: CompoundTicketNum.GoldToDiamond,
-                balance: 0,
+                balance: 0
             },
             {
                 type: TicketType.DiamondTicket,
-                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
-                balance: 0,
+                name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
+                balance: 0
             }
         ]
     };
@@ -63,8 +63,6 @@ export class TicketCompound extends Widget {
         this.paint();
     }
 
-
-
     /**
      * 奖券合成
      * @param ind 
@@ -73,12 +71,12 @@ export class TicketCompound extends Widget {
         this.props.compoundType = ind;
         const selectData = this.props.ticketList[ind];
 
-        if (this.props.compoundExtent > 0) {                 //正在合成
-            //TODO
+        if (this.props.compoundExtent > 0) {                 // 正在合成
+            // TODO
             return;
         }
-        if (selectData.balance < selectData.needTicketNum) { //奖券不够合成
-            //TODO
+        if (selectData.balance < selectData.needTicketNum) { // 奖券不够合成
+            // TODO
             return;
         }
 
@@ -99,7 +97,6 @@ export class TicketCompound extends Widget {
         };
         let timer = requestAnimationFrame(animation);
     }
-
 
     /**
      * 关闭

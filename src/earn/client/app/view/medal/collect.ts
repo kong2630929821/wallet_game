@@ -5,6 +5,8 @@
 import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { popNew } from '../../../../../pi/ui/root';
+import { getRealNode } from '../../../../../pi/widget/painter';
+import { set } from '../../../../../pi/util/task_mgr';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -19,22 +21,22 @@ export class Collect extends Widget {
         scrollHeight:0,
         medalList:[
             {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal1'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
-            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal2'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
+            {title:{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""},img:'medal'},
         ]
     };
 
@@ -59,6 +61,27 @@ export class Collect extends Widget {
         const scrollTop = e.target.scrollTop;
         this.props.scrollHeight = scrollTop;
         this.paint();
+    }
+
+    /**
+     * 勋章展示
+     */
+    public medalShow(e:any,index:number){
+        let place = {
+            top:Math.floor(getRealNode(e.node).getBoundingClientRect().top),
+            left:Math.floor(getRealNode(e.node).getBoundingClientRect().left),
+        }
+        let $style = getRealNode(e.node).style;
+        $style.position = `relative`;
+        $style.transform = `translateY(${355-place.top}px) translateX(${100-place.left}px) scale(2)`;
+        $style.transition = `transform 0.5s ease`;
+        console.log('place----------------',place);
+        setTimeout(() => {
+            popNew('earn-client-app-view-medal-medalShow',{...place});
+            $style.position = ``;
+            $style.transform = ``;
+            $style.transition = `transform 0.5s ease`;
+        }, 400);
     }
 
 

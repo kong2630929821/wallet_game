@@ -3,21 +3,21 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { WeightMiningCfg, WeightAwardCfg } from '../../../xlsx/awardCfg.s';
+import { TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
+import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
+import { ActivityType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { ActivityNum } from '../xls/dataEnum.s';
-import { PrizeCfg } from '../xls/dataCfg.s';
 
 /**
  * 获取锄头对象
  */
 export const getHoeCount = (hoeType:HoeType) => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
@@ -32,13 +32,12 @@ export const getHoeCount = (hoeType:HoeType) => {
  * 获取所有矿山
  */
 export const getAllMines = () => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     const mines = [];
     for (let i = 0;i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            for (let j = 0;j < good.value.hps.length;j++) {
-                if (good.value.count <= 0) break;
+            for (let j = 0;j < good.value.count;j++) {
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
                 const mine = {
@@ -50,14 +49,35 @@ export const getAllMines = () => {
             }
         }
     }
-    
+    // console.log('getAllMines',mines);
+
     return mines;
+};
+
+/**
+ * 获取拥有的品质最高的矿山类型
+ */
+export const getMaxMineType = () => {
+    const goods = getStore('goods');
+    let mineType = MineType.SmallMine;
+    for (let i = 0;i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.MINE) {
+            if (good.value.count > 0 &&  good.value.num > mineType) {
+                mineType = good.value.num;
+            }
+        }
+    }
+
+    // console.log('getMaxMineType',mineType);
+
+    return mineType;
 };
 /**
  * 获取随机显示的矿山列表
  */
 export const randomMines = () => {
-    const goods = getStore('mine/goods');
+    const goods = getStore('goods');
     const mines = [];
     const miningedMines = [];
     for (let i = 0;i < goods.length; i++) {
@@ -165,7 +185,6 @@ export const getMiningMaxHp = (mineType:MineType) => {
     return 0;
 };
 
-
 /**
  * 获取对应奖券TYPE的余票
  * @param ticketType 奖券TYPE
@@ -173,7 +192,7 @@ export const getMiningMaxHp = (mineType:MineType) => {
 export const getTicketBalance = (ticketType) => {
     const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
-        let good = goods[i];
+        const good = goods[i];
         if (good.enum_type === Item_Enum.TICKET && good.value.num === ticketType) {
 
             return good.value.count;
@@ -181,10 +200,22 @@ export const getTicketBalance = (ticketType) => {
     }
 
     return 0;
-}
+};
 
+/**
+ * 获取活动所需对应票数
+ *  奖品编号
+ */
+export const getTicketNum = (activityType: ActivityType): any => {
+    const cfgs = getMap(ActTicketNumCfg._$info.name);
+    for (const [k, cfg] of cfgs) {
+        if (cfg.actType === activityType) {
+            return cfg.ticketNum;
+        }
+    }
 
-
+    return 0;
+};
 
 /**
  * 获取单个奖品信息
@@ -200,28 +231,40 @@ export const getPrizeInfo = (prizeType: number): any => {
     }
 
     return filterCfgs;
-
 };
 
 /**
  * 获取项目奖品列表
  */
-export const getPrizeList = (activityNum: ActivityNum): any => {
+export const getPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(WeightAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityNum * 100) < cfg.id && cfg.id < (activityNum * 100 + 100)) {
+        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
             filterCfgs.push(cfg.prop);
         }
     }
 
     return filterCfgs;
-}
+};
+
+/**
+ * 获取虚拟物品兑换列表
+ */
+export const getVirtualExchangeList = (): any => {
+    const cfgs = getMap(TicketConvertCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        filterCfgs.push(cfg);
+    }
+
+    return filterCfgs;
+};
 
 /**
  * 展示错误信息
  * @param errorNum 错误编号
  */
 export const showActError = (errorNum:number) => {
-
-}
+    // TODO
+};

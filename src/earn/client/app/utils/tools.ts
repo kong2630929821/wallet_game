@@ -2,7 +2,6 @@
  * 工具类函数
  */
 
-
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp) => {
     const date = new Date(timestamp);

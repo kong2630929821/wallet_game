@@ -12,39 +12,40 @@
                 <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
         </div>
-        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/9 座</div>
+        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座</div>
         <div w-class="digging-tips">{{it.miningTips}}</div>
         <div w-class="award-container">
             <div w-class="award-item">
                 <img src="../../../res/image/KT.png" w-class="award-icon"/>
-                {{if it.awardType === it.allAwardType.KT}}
-                <div w-class="award-num">+<span>{{ it.awardNumber }}</span></div>
+                {{if it.awardTypes[it.allAwardType.KT] }}
+                <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.KT] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
                 <img src="../../../res/image/GT.png" w-class="award-icon" />
-                {{if it.awardType === it.allAwardType.ST}}
-                <div w-class="award-num">+<span>{{ it.awardNumber }}</span></div>
+                {{if it.awardTypes[it.allAwardType.ST] }}
+                <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ST] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
                 <img src="../../../res/image/ETH.png" w-class="award-icon"/>
-                {{if it.awardType === it.allAwardType.ETH}}
-                <div w-class="award-num">+<span>{{ it.awardNumber }}</span></div>
+                {{if it.awardTypes[it.allAwardType.ETH] }}
+                <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ETH] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
                 <img src="../../../res/image/BTC.png" w-class="award-icon"/>
-                {{if it.awardType === it.allAwardType.BTC}}
-                <div w-class="award-num">+<span>{{ it.awardNumber }}</span></div>
+                {{if it.awardTypes[it.allAwardType.BTC] }}
+                <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.BTC] }}</span></div>
                 {{end}}
             </div>
         </div>
         <div w-class="mine-area">
-            {{for index,item of it.havMines}}
-            <div on-down="mineClick(e,{{item.type}},{{item.index}})" w-class="mine-item" style="{{ item.location }}">
+            {{for index,item of it.haveMines}}
+            <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                 <earn-client-app-view-activity-components-mine>{ 
-                    mineType:{{item.type}},
+                    mineType:{{ item.type }},
+                    mineIndex:{{ item.index }}
                     hp:{{item.hp}},
                     selectedHoe:{{ it.hoeSelected }},
                     selected:{{ item.type === it.mineType && item.index === it.mineIndex}},
@@ -79,5 +80,5 @@
         </div>
         
     </div>
-
+    <app-components1-blankDiv-bottomDiv></app-components1-blankDiv-bottomDiv>
 </div>
