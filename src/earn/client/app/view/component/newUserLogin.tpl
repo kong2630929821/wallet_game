@@ -4,10 +4,13 @@
             <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"新用户登录成功","zh_Hant":"新用戶登錄成功","en":""}</widget>
         </div>
         <div w-class="two">
+            {{for i,item of it.prizeList}}
             <div w-class="two-img">
-                <img src="../../res/image/gold_hoe.png" width="200px" height="200px"/>
+                <img src="../../res/image/virtualGoods/{{item.info.pid}}.jpg" style="border-radius: 50%;" width="200px" height="200px"/>
             </div>
-            <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"铁锄头一把","zh_Hant":"鐵鋤頭一把","en":""}</widget>
+            <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"{{item.info.zh_hans+item.count+item.info.unit }}","zh_Hant":"{{item.info.zh_hant+item.count+item.info.unit }}","en":""}</widget>
+
+            {{end}}
         </div>
     </div>
     <div w-class="closeBtn" class="smallToBig" on-tap="close">

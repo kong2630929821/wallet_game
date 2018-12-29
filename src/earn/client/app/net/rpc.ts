@@ -28,13 +28,14 @@ export const loginActivity = () => {
         const userType = new UserType();
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
-        walletLoginReq.openid = 'zx';
+        walletLoginReq.openid = '2001';
         walletLoginReq.sign = '';
         userType.value = walletLoginReq;
-        popNew('earn-client-app-view-component-newUserLogin');
         clientRpcFunc(login, userType, (r: UserInfo) => {
             console.log('活动登录成功！！--------------', r);
-            // popNew('earn-client-app-view-component-newUserLogin');
+            if (r.loginCount === 0) {
+                popNew('earn-client-app-view-component-newUserLogin');
+            }
             setStore('userInfo',r);
             resolve(r);
         });
