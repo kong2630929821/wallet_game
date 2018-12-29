@@ -49,7 +49,7 @@ export class MedalShow extends Widget {
             this.props.moveX = 0;
             this.props.moveY = 0;
             this.paint();
-        }, 100);
+        }, 200);
 
         console.log('$medal--------------', $medal);
     }

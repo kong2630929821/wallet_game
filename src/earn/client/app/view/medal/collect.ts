@@ -20,6 +20,7 @@ export class Collect extends Widget {
         scrollHeight: 0,
         medalList: [
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal1' },
+            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal2' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
@@ -32,8 +33,7 @@ export class Collect extends Widget {
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
+            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal2' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
             { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
         ]

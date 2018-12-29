@@ -2,8 +2,8 @@
  * 挖矿排名
  */
 
-import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
 // import { register } from '../../store/memstore';
 
@@ -26,11 +26,11 @@ export class MineRank extends Widget {
         topbarList: [
             {
                 name: 'allRankList',
-                title: { "zh_Hans": "全部排名", "zh_Hant": "全部排名", "en": "" },
+                title: { zh_Hans: '全部排名', zh_Hant: '全部排名', en: '' }
             },
             {
                 name: 'friendRankList',
-                title: { "zh_Hans": "好友排名", "zh_Hant": "好友排名", "en": "" },
+                title: { zh_Hans: '好友排名', zh_Hant: '好友排名', en: '' }
             }
         ],
         topbarSel: 0
@@ -47,6 +47,7 @@ export class MineRank extends Widget {
     public initData() {
         getRankList().then((res: any) => {
             this.props.rankList = res.topList;
+            this.props.myRank = res.myNum;
             this.paint();
         });
     }
@@ -67,7 +68,6 @@ export class MineRank extends Widget {
         this.ok && this.ok();
     }
 }
-
 
 // ===================================================== 立即执行
 

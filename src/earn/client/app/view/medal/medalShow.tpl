@@ -4,7 +4,7 @@
 
     <div w-class="content flex-col" class="fadein">
         <div w-class="medal" style="transform:translate( {{it.moveX}}px , {{it.moveY}}px ) scale({{it.imgScale}});transition:{{it.imgScale !== 1?'none':'transform 0.5s ease'}};" id="medalShow">
-            <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px"/>
+            <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px" height="480px"/>
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
         </div>
         <div w-class="flex-col" style="margin-top: -100px;">

@@ -16,7 +16,7 @@
         </div>
         <div w-class="rank-list" id="rankList">
             <div w-class="self-rank">
-                <widget w-tag="earn-client-app-view-mineRank-rankItem">{rank: 0,userName: "啊实打实的",ktNum: 500}</widget>
+                <widget w-tag="earn-client-app-view-mineRank-rankItem">{rank: {{it.myRank}},userName: "啊实打实的",ktNum: 500}</widget>
             </div>
             
             <div w-class="rank-otherlist">
