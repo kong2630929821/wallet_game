@@ -22,6 +22,9 @@ export const ARE_YOU_SUPERMAN = 1105;
 // 这座矿山不存在
 export const MINE_NOT_EXIST = 1106;
 
+// 邀请人数不足兑换奖励
+export const INVITE_NOT_ENOUGH = 2101;
+
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
 // 奖券类型错误

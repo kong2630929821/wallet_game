@@ -19,6 +19,7 @@ struct UserInfo {
     sex: u32,//性别
     tel: String,//电话
     note: String,//用户自己的备注信息
+    loginCount: u32 //登录次数
 }
 
 /**
@@ -81,6 +82,16 @@ struct SeriesLogin {
 struct TotalLogin {
     uid: u32,
     days: u32,
+}
+
+/**
+*用户邀请人数表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct InviteNumTab {
+    uid: u32,
+    inviteNum: u32,
+    usedNum: u32
 }
 
 /**
