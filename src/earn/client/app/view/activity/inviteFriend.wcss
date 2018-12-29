@@ -7,7 +7,8 @@
     height:100%;
     background:#2C6EEA;
     box-sizing: border-box;
-    padding:148px 20px 20px;
+    padding: 88px 20px 60px;
+    margin-top: -88px;
 }
 
 
@@ -175,6 +176,7 @@
     width:90%;
     height:90px;
     margin-top:35px;
+    margin-bottom: 30px;
     display:flex;
     justify-content:space-around;
     align-items:center;

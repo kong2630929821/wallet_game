@@ -7,7 +7,8 @@
     height:100%;
     background:rgb(44, 110, 234);
     box-sizing: border-box;
-    padding:148px 20px 0px;
+    padding:148px 20px 40px;
+    margin-top: -88px;
 }
 
 .main{

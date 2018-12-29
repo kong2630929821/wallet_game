@@ -1,4 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
+    {{: topBarTitle = {"zh_Hans":"验证手机号","zh_Hant":"驗證手機號","en":""} }}	
+    <app-components1-topBar-topBar2>{text:{{topBarTitle}} }</app-components1-topBar-topBar2>
     <div w-class="content" on-scroll="getMoreList">
         <div w-class="main">
             {{: rule = [
@@ -23,6 +25,4 @@
             </div>
         </div>
     </div>
-    {{: topBarTitle = {"zh_Hans":"验证手机号","zh_Hant":"驗證手機號","en":""} }}	
-    <app-components1-topBar-topBar2>{text:{{topBarTitle}} }</app-components1-topBar-topBar2>
 </div>
