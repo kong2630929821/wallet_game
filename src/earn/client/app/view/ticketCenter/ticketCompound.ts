@@ -33,13 +33,13 @@ export class TicketCompound extends Widget {
                 type: TicketType.SilverTicket,
                 name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
                 needTicketNum: getTicketNum(ActivityType.ComposeGold),
-                balance: 0,
+                balance: 0
             },
             {
                 type: TicketType.GoldTicket,
                 name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
                 needTicketNum: getTicketNum(ActivityType.ComposeDiamond),
-                balance: 0,
+                balance: 0
             },
             {
                 type: TicketType.DiamondTicket,
@@ -63,8 +63,6 @@ export class TicketCompound extends Widget {
         }
         this.paint();
     }
-
-
 
     /**
      * 奖券合成

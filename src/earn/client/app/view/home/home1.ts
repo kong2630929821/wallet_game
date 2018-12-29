@@ -8,7 +8,8 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getAllGoods, loginActivity } from '../../net/rpc';
+import { loginActivity } from '../../net/rpc';
+import { initSubscribeInfo } from '../../net/subscribedb';
 import { register } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -91,10 +92,9 @@ export class PlayHome extends Widget {
         }, 17);
         setTimeout(() => {
             loginActivity().then(() => {
-                getAllGoods();
+                initSubscribeInfo();
             });
         }, 2000);
-        // getAllGoods();
         console.log(this.props.hoeType);
     }
     /**

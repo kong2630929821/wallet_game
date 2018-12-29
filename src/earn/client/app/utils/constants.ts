@@ -1,6 +1,10 @@
 /**
  * 一些常量
  */
+// 数据库名
+export const WARE_NAME = 'file';
+export const MEMORY_NAME = 'memory';
+
 // 锄头的使用持续时间
 export const hoeUseDuration = 10;
 
