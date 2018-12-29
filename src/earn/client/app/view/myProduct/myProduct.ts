@@ -2,10 +2,9 @@
  * 我的物品、中奖记录
  */
 
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { popNew } from "../../../../../pi/ui/root";
 import { getAwardHistory } from '../../net/rpc';
-import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
     type: number;
@@ -17,17 +16,16 @@ export class MyProduct extends Widget {
     public props:Props = {
         type: 0,
         history:[]
-    }
+    };
 
     public setProps(props: any) {
         super.setProps(this.props);
         this.props = {
             ...this.props,
             type: props.type
-        }
+        };
         this.initData();
     }
-
 
     /**
      * 初始化数据
@@ -35,15 +33,15 @@ export class MyProduct extends Widget {
     public initData() {
         
         getAwardHistory(this.props.type).then((res:any) => {
-            if(this.props.type===0){
-                let dealData = [];
+            if (this.props.type === 0) {
+                const dealData = [];
                 res.forEach(element => {
-                   if(element.pid<2000||element.pid>2100){//排除锄头系列
+                    if (element.pid < 2000 || element.pid > 2100) {// 排除锄头系列
                         dealData.push(element);
-                   } 
+                    } 
                 });
                 this.props.history = dealData;
-            }else{
+            } else {
                 this.props.history = res;
             }
             
@@ -52,7 +50,7 @@ export class MyProduct extends Widget {
     }
 
     public goProductDetail(index: number) {
-        if(this.props.history[index].pid<2000||this.props.history[index].pid>2100){//排除锄头系列
+        if (this.props.history[index].pid < 2000 || this.props.history[index].pid > 2100) {// 排除锄头系列
             popNew('earn-client-app-view-myProduct-productDetail', { name: this.props.history[index].name, detailType: 1 });
         }
     }

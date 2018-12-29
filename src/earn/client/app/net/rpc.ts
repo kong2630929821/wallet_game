@@ -104,7 +104,6 @@ export const openChest = (ticketType: TicketType) => {
         clientRpcFunc(ticket_treasurebox, itemType, (r: AwardResponse) => {
             console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
-                getAllGoods();
                 resolve(r);
             } else {
                 // showActError(r.resultNum);TODO
@@ -124,7 +123,6 @@ export const openTurntable = (ticketType: TicketType) => {
         clientRpcFunc(ticket_rotary, itemType, (r: AwardResponse) => {
             console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
-                getAllGoods();
                 resolve(r);
             } else {
                 // showActError(r.resultNum);TODO
@@ -159,7 +157,8 @@ export const compoundTicket = (ticketType: TicketType) => {
  */
 export const addTicket = (num: number) => {
     clientRpcFunc(item_addticket, num, (r: Item) => {
-        getAllGoods();
+        console.log('addTicket',r);
+        
     });
 };
 

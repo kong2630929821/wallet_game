@@ -6,7 +6,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getAllGoods, openTurntable } from '../../net/rpc';
+import { openTurntable } from '../../net/rpc';
 import { register } from '../../store/memstore';
 import { getPrizeList, getTicketBalance, getTicketNum } from '../../utils/util';
 import { ActivityType, TicketType } from '../../xls/dataEnum.s';
@@ -132,7 +132,7 @@ export class Turntable extends Widget {
      * 转盘开奖动画
      */
     public goLotteryAnimation(resData?: any) {
-        const $turnStyle = document.querySelector('#turntable').style;
+        const $turnStyle = document.getElementById('turntable').style;
         if (!this.props.isTurn) {// 停止转动
             $turnStyle.transition = 'none';
             $turnStyle.transform = `rotate(${this.props.turnNum}deg)`;

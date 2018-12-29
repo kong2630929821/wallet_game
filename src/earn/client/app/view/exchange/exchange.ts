@@ -2,21 +2,19 @@
  * 奖券兑换-首页
  */
 
-
-import { Widget } from "../../../../../pi/widget/widget";
-import { popNew } from "../../../../../pi/ui/root";
-import { TicketType } from "../../xls/dataEnum.s";
-import { register } from "../../store/memstore";
-import { Item } from "../../../../server/data/db/item.s";
-import { Forelet } from "../../../../../pi/widget/forelet";
-import { getTicketBalance, getVirtualExchangeList } from "../../utils/util";
+import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
+import { Item } from '../../../../server/data/db/item.s';
+import { register } from '../../store/memstore';
+import { getTicketBalance, getVirtualExchangeList } from '../../utils/util';
+import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-
 
 export enum ExchangeType {
     'zeroExchange' = 0,
@@ -25,40 +23,40 @@ export enum ExchangeType {
 
 export class TicketCenter extends Widget {
     public ok: () => void;
-    public props = {
+    public props:any = {
         isFixed: false,
         navbarSelected: 'zeroExchange',
         navbarList: [
             {
                 name: 'zeroExchange',
-                title: { "zh_Hans": "0元兑换", "zh_Hant": "0元兌換", "en": "" },
+                title: { zh_Hans: '0元兑换', zh_Hant: '0元兌換', en: '' },
                 component:'earn-client-app-view-exchange-virtualList'
             },
             {
                 name: 'saleExchange',
-                title: { "zh_Hans": "特价换购", "zh_Hant": "特價換購", "en": "" },
+                title: { zh_Hans: '特价换购', zh_Hant: '特價換購', en: '' },
                 component:'earn-client-app-view-exchange-entityList'
             }
         ],
         ticketList: [
             {
                 type: TicketType.SilverTicket,
-                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
-                balance: 0,
+                name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
+                balance: 0
             },
             {
                 type: TicketType.GoldTicket,
-                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
-                balance: 0,
+                name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
+                balance: 0
             },
             {
                 type: TicketType.DiamondTicket,
-                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
-                balance: 0,
+                name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
+                balance: 0
             }
         ]
 
-    }
+    };
 
     public create() {
         super.create();
@@ -70,17 +68,16 @@ export class TicketCenter extends Widget {
      * 初始数据
      */
     public initData() {
-        for(let i=0;i<this.props.ticketList.length;i++){
+        for (let i = 0;i < this.props.ticketList.length;i++) {
             this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
         }
-        if(this.props.navbarSelected === this.props.navbarList[0].name){
-            let list = getVirtualExchangeList();
+        if (this.props.navbarSelected === this.props.navbarList[0].name) {
+            const list = getVirtualExchangeList();
             console.log('list--------------',list);
             
         }
         this.paint();
     }
-
 
     /**
      * 屏幕滚动
@@ -126,7 +123,6 @@ export class TicketCenter extends Widget {
         this.ok && this.ok();
     }
 }
-
 
 // ===================================================== 立即执行
 
