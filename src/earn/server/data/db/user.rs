@@ -82,3 +82,12 @@ struct TotalLogin {
     uid: u32,
     days: u32,
 }
+
+/**
+*用户邀请表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct InviteTab {
+    uid: u32,
+    fuid: Option<&[u32]>,
+}

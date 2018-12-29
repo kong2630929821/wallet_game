@@ -32,9 +32,9 @@ export const get_ticket_KTNum = ():KTQueryRes => {
     if (r.ok) {
         const json = JSON.parse(r.ok);
         if (json.return_code === 1) {
-            console.log('http success!!!!!!!!!!!!!!!!!!!!');
             // 根据平台数据库存储的单位进行转换
             walletKT = json.balance * KT_UNIT_NUM;
+            console.log('http success walletKT!!!!!!!!!!!!!!!!!!!!', json.balance);
             const dbMgr = getEnv().getDbMgr();
             const bucket = new Bucket(WARE_NAME, UsedKT._$info.name, dbMgr);
             let usedKT = bucket.get<number, [UsedKT]>(uid)[0];
@@ -47,12 +47,14 @@ export const get_ticket_KTNum = ():KTQueryRes => {
             }
             const usefulKT = walletKT - usedKT.KTNum;
             kTQueryRes.KTNum = usefulKT;  
+            console.log('kTQueryRes.KTNum!!!!!!!!!!!!!!!!!!!!', kTQueryRes.KTNum);
         } else {
             kTQueryRes.resultNum = REQUEST_WALLET_FAIL;
         }
     } else {
         kTQueryRes.resultNum = REQUEST_WALLET_FAIL;
     }
+    kTQueryRes.resultNum = RESULT_SUCCESS;
 
     return kTQueryRes;
 };
@@ -60,6 +62,7 @@ export const get_ticket_KTNum = ():KTQueryRes => {
 // 合成奖券
 // #[rpc=rpcServer]
 export const ticket_compose = (itemType:number):Item => {
+    const uid = getUid();
     console.log('ticket_compose!!!!!!!!!!!!!!!!!!!!', itemType);
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const tickeType = itemType;
@@ -81,13 +84,14 @@ export const ticket_compose = (itemType:number):Item => {
     console.log('count!!!!!!!!!!!!!!!!!!!!', count);
     const newitemType = v[0][0];
 
-    return add_itemCount(newitemType, count);
+    return add_itemCount(uid, newitemType, count);
 };
 
 // 大转盘
 // #[rpc=rpcServer]
 export const ticket_rotary = (itemType:number):AwardResponse => {
     console.log('ticket_rotary!!!!!!!!!!!!!!!!!!!!', itemType);
+    const uid = getUid();
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const tickeType = itemType;
     const awardResponse = new AwardResponse();
@@ -117,8 +121,8 @@ export const ticket_rotary = (itemType:number):AwardResponse => {
     doAward(pid, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    add_itemCount(newitemType, count);
-    const award =  add_award(newitemType, count, AWARD_SRC_ROTARY);
+    add_itemCount(uid, newitemType, count);
+    const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
 
@@ -134,6 +138,7 @@ export const ticket_rotary = (itemType:number):AwardResponse => {
 // #[rpc=rpcServer]
 export const ticket_treasurebox = (itemType:number):AwardResponse => {
     console.log('ticket_treasurebox!!!!!!!!!!!!!!!!!!!!', itemType);
+    const uid = getUid();
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const tickeType = itemType;
     const awardResponse = new AwardResponse();
@@ -163,8 +168,8 @@ export const ticket_treasurebox = (itemType:number):AwardResponse => {
     doAward(pid, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    add_itemCount(newitemType, count);
-    const award = add_award(newitemType, count, AWARD_SRC_TREASUREBOX);
+    add_itemCount(uid, newitemType, count);
+    const award = add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
 
@@ -179,6 +184,7 @@ export const ticket_treasurebox = (itemType:number):AwardResponse => {
 // 奖券兑换
 // #[rpc=rpcServer]
 export const ticket_convert = (awardType:number):AwardResponse => {
+    const uid = getUid();
     const awardResponse = new AwardResponse();
     const dbMgr = getEnv().getDbMgr(); 
     const bucket = new Bucket(MEMORY_NAME, TicketConvertCfg._$info.name, dbMgr);
@@ -232,7 +238,7 @@ export const ticket_convert = (awardType:number):AwardResponse => {
             break;
         }
     } while (iter);
-    const award = add_award(awardType, convertCfg.num, AWARD_SRC_CONVERT, convertAward.convert, desc);
+    const award = add_award(uid, awardType, convertCfg.num, AWARD_SRC_CONVERT, convertAward.convert, desc);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
 

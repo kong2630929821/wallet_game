@@ -8,7 +8,8 @@ import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { Logger } from '../../utils/logger';
 import { WARE_NAME } from '../data/constant';
-import { Items } from '../data/db/item.s';
+import { Items, MiningKTNum, SpecialAward } from '../data/db/item.s';
+import { UserInfo } from '../data/db/user.s';
 
 // ================================================================= 导入
 
@@ -17,7 +18,6 @@ declare var module;
 const WIDGET_NAME = module.id.replace(/\//g, '-');
 const logger = new Logger(WIDGET_NAME);
 
-// ================================================================= 导出
      
 /** 
  * 物品信息 
@@ -26,6 +26,24 @@ const logger = new Logger(WIDGET_NAME);
 // #[rpc=rpcServer]
 export const watchItemsInfo = (uid:number): Items => {
     return watchInfo('uid', uid, Items, {});
+};
+
+/**
+ * 用户挖矿得到的KT数
+ * @param uid user id
+ */
+// #[rpc=rpcServer]
+export const watchMiningKTNum = (uid: number): MiningKTNum => {
+    return watchInfo('uid', uid, MiningKTNum, -1);
+};
+
+/**
+ * 用户挖矿得到的特别奖品
+ * @param uid user id
+ */
+// #[rpc=rpcServer]
+export const watchSpecialAward = (id: string): SpecialAward => {
+    return watchInfo('id', id, SpecialAward, -1);
 };
 
 // ================================================================= 本地

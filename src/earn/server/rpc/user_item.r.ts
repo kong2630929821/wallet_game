@@ -13,8 +13,9 @@ import { getUid } from './user.r';
 // #[rpc=rpcServer]
 export const add_mine = (): Mine => {
     // if (get_mine_total(uid) >= MAX_ONEDAY_MINING) return;
+    const uid = getUid();
     const itemType = get_mine_type();
-    const item = add_itemCount(itemType, 1);
+    const item = add_itemCount(uid, itemType, 1);
 
     return <Mine>item.value;
 };

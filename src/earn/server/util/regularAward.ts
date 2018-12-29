@@ -6,7 +6,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, SERIES_LOGIN_CIRCLE } from '../data/constant';
+import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, SERIES_LOGIN_CIRCLE } from '../data/constant';
 import { Item, Items, Mine } from '../data/db/item.s';
 import { getUid } from '../rpc/user.r';
 import { add_mine } from '../rpc/user_item.r';
@@ -32,8 +32,8 @@ export const firstLogin_award = ():Items => {
         maxCount --;
     } while (maxCount > 0);
     for (const cfg of cfgs) {
-        const item = add_itemCount(cfg.prop, cfg.num);
-        add_award(cfg.prop, cfg.num, AWARD_SRC_LOGIN, null, cfg.desc);
+        const item = add_itemCount(uid, cfg.prop, cfg.num);
+        add_award(uid, cfg.prop, cfg.num, AWARD_SRC_LOGIN, null, cfg.desc);
         items.push(item);
     }
     const awards = new Items();
@@ -45,6 +45,7 @@ export const firstLogin_award = ():Items => {
 
 // 连续登陆奖励
 export const seriesLogin_award = (days:number):Item => {
+    const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     const cfgBucket = new Bucket(MEMORY_NAME, SeriesLoginAwardCfg._$info.name, dbMgr);
     let id;
@@ -56,14 +57,19 @@ export const seriesLogin_award = (days:number):Item => {
     const awardCfg = cfgBucket.get<number, [SeriesLoginAwardCfg]>(id)[0];
     if (!awardCfg) return;
 
-    const item = add_itemCount(awardCfg.prop, awardCfg.num);
-    add_award(awardCfg.prop, awardCfg.num, AWARD_SRC_LOGIN, null, awardCfg.desc);
+    const item = add_itemCount(uid, awardCfg.prop, awardCfg.num);
+    add_award(uid, awardCfg.prop, awardCfg.num, AWARD_SRC_LOGIN, null, awardCfg.desc);
 
     return item;
 };
 
-// 邀请奖励
-export const invite_award = (num:number):Item => {
+/**
+ * 添加邀请奖励
+ * @param iuid 邀请人uid
+ * @param num 被邀请的人数
+ */
+export const invite_award = (iuid:number, num:number):Item => {
+    const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name, dbMgr);
     let id;
@@ -87,9 +93,13 @@ export const invite_award = (num:number):Item => {
     }
     const awardCfg = cfgBucket.get<number, [InviteAwardCfg]>(id)[0];
     if (!awardCfg) return;
-
-    const item = add_itemCount(awardCfg.prop, awardCfg.num);
-    add_award(awardCfg.prop, awardCfg.num, AWARD_SRC_LOGIN, null, awardCfg.desc);
+    // 发放奖励给被邀请人
+    const item = add_itemCount(uid, awardCfg.prop, awardCfg.num);
+    add_award(uid, awardCfg.prop, awardCfg.num, AWARD_SRC_INVITE, null, awardCfg.desc);
+    // 邀请人未登陆过平台 则不予发放平台奖励给邀请人
+    if (iuid === -1) return item;
+    add_itemCount(iuid, awardCfg.prop, awardCfg.num);
+    add_award(iuid, awardCfg.prop, awardCfg.num, AWARD_SRC_INVITE, null, awardCfg.desc);
 
     return item;
 };

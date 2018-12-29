@@ -19,6 +19,8 @@ export const GET_RANDSEED_FAIL = 1103;
 export const HOE_NOT_ENOUGH = 1104;
 // 10秒内点击次数异常
 export const ARE_YOU_SUPERMAN = 1105;
+// 这座矿山不存在
+export const MINE_NOT_EXIST = 1106;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
@@ -31,3 +33,6 @@ export const AWARD_NOT_ENOUGH = 7103;
 export const TOP_DATA_FAIL = 8101;
 // 向钱包服务器请求数据失败
 export const REQUEST_WALLET_FAIL = 8102;
+
+// 默认错误代码
+export const DEFAULT_ERROR_NUMBER = -1;
