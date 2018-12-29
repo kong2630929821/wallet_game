@@ -3,13 +3,13 @@
  */
 
 import { popNew } from '../../../../../pi/ui/root';
-import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getTicketBalance } from '../../utils/util';
-import { TicketType } from '../../xls/dataEnum.s';
 import { addTicket } from '../../net/rpc';
 import { register } from '../../store/memstore';
+import { getTicketBalance } from '../../utils/util';
+import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -19,30 +19,29 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class TicketCenter extends Widget {
     public ok: () => void;
-    public props = {
+    public props:any = {
         KTbalance: 500,
         ticketList: [
             {
                 type: TicketType.SilverTicket,
-                name: { "zh_Hans": "银券", "zh_Hant": "銀券", "en": "" },
+                name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 balance: 0,
                 priceKT: 500
             },
             {
                 type: TicketType.GoldTicket,
-                name: { "zh_Hans": "金券", "zh_Hant": "金券", "en": "" },
+                name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 balance: 0,
                 priceKT: 1500
             },
             {
                 type: TicketType.DiamondTicket,
-                name: { "zh_Hans": "彩券", "zh_Hant": "彩券", "en": "" },
+                name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
                 balance: 0,
                 priceKT: 2000
             }
         ]
     };
-
 
     public create() {
         super.create();
@@ -59,13 +58,9 @@ export class TicketCenter extends Widget {
         this.paint();
     }
 
-
-    public getTicket(index:number){
+    public getTicket(index:number) {
         addTicket(this.props.ticketList[index].type);
     }
-
-
-
 
     /**
      * 活动跳转
@@ -117,7 +112,6 @@ export class TicketCenter extends Widget {
         this.ok && this.ok();
     }
 }
-
 
 // ===================================================== 立即执行
 

@@ -2,9 +2,10 @@
  * 挖矿排名
  */
 
-import { Widget } from '../../../../../pi/widget/widget';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
+import { getStore } from '../../store/memstore';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -15,8 +16,8 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class MineRank extends Widget {
     public ok: () => void;
-    public props = {
-        myRank: 0,
+    public props:any = {
+        myRank: { rank: 1, userName: '啊实打实的', ktNum: 500 },
         rankList: [
             // { rank: 1, userName: "啊实打实的", ktNum: 500 },
             // { rank: 2, userName: "啊实打实的", ktNum: 500 },
@@ -26,11 +27,11 @@ export class MineRank extends Widget {
         topbarList: [
             {
                 name: 'allRankList',
-                title: { "zh_Hans": "全部排名", "zh_Hant": "全部排名", "en": "" },
+                title: { zh_Hans: '全部排名', zh_Hant: '全部排名', en: '' }
             },
             {
                 name: 'friendRankList',
-                title: { "zh_Hans": "好友排名", "zh_Hant": "好友排名", "en": "" },
+                title: { zh_Hans: '好友排名', zh_Hant: '好友排名', en: '' }
             }
         ],
         topbarSel: 0
@@ -46,9 +47,28 @@ export class MineRank extends Widget {
      */
     public initData() {
         getRankList().then((res: any) => {
-            this.props.rankList = res.topList;
+            this.props.rankList = this.processData(res.topList);
+            console.log('rankList------------------------',this.props.rankList);
+            
+            this.props.myRank.rank = res.myNum;
+            this.props.myRank.ktNum = 500;
             this.paint();
         });
+    }
+    // 处理排行榜
+    public processData(data:any) {
+        const resData = [];
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            const res = {
+                rank:i + 1,
+                ktNum:element.miningKTMap.ktNum,
+                userName:element.uName
+            };
+            resData.push(res);
+        }
+
+        return resData;
     }
 
     /**
@@ -67,7 +87,6 @@ export class MineRank extends Widget {
         this.ok && this.ok();
     }
 }
-
 
 // ===================================================== 立即执行
 

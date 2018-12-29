@@ -1,6 +1,7 @@
 /**
  * rpc通信
  */
+import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -27,12 +28,14 @@ export const loginActivity = () => {
         const userType = new UserType();
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
-        walletLoginReq.openid = 'zx';
+        walletLoginReq.openid = '2001';
         walletLoginReq.sign = '';
         userType.value = walletLoginReq;
-
         clientRpcFunc(login, userType, (r: UserInfo) => {
             console.log('活动登录成功！！--------------', r);
+            if (r.loginCount === 0) {
+                popNew('earn-client-app-view-component-newUserLogin');
+            }
             setStore('userInfo',r);
             resolve(r);
         });
@@ -104,7 +107,6 @@ export const openChest = (ticketType: TicketType) => {
         clientRpcFunc(ticket_treasurebox, itemType, (r: AwardResponse) => {
             console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
-                getAllGoods();
                 resolve(r);
             } else {
                 // showActError(r.resultNum);TODO
@@ -124,7 +126,6 @@ export const openTurntable = (ticketType: TicketType) => {
         clientRpcFunc(ticket_rotary, itemType, (r: AwardResponse) => {
             console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
-                getAllGoods();
                 resolve(r);
             } else {
                 // showActError(r.resultNum);TODO
@@ -159,7 +160,8 @@ export const compoundTicket = (ticketType: TicketType) => {
  */
 export const addTicket = (num: number) => {
     clientRpcFunc(item_addticket, num, (r: Item) => {
-        getAllGoods();
+        console.log('addTicket',r);
+        
     });
 };
 

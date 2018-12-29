@@ -75,7 +75,7 @@
 
 .bottom{
     margin-top: 15px;
-    padding: 30px;
+    padding: 30px 30px 140px;
     background: #FFFFFF;
     align-items: center;
 }
@@ -96,16 +96,11 @@
     line-height:40px;
 }
 .exchange-btn{
-    width:630px;
-    height:100px;
-    margin: 25px 0px;
-    background:linear-gradient(270deg,#44CEED 0%,#3EB3F1 100%);
-    box-shadow:0px 5px 10px 0px rgba(13,131,246,0.1);
-    border-radius:50px;
-    font-size:32px;
-    font-weight:500;
-    color:white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 140px;
+    padding: 10px 50px;
+    background: white;
+    position: absolute;
+    bottom: 0px;
+    box-shadow: rgba(136, 136, 136, 0.1) 0px -3px 5px;
 }
