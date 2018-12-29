@@ -29,13 +29,6 @@ export const subscribeItemsInfo = (uid: number,cb?:Function) => {
     subscribeTable(watchItemsInfo,uid,Items,cb);
 };
 
-/**
- * 物品信息监听
- */
-export const subscribeItemsInfo = (uid: number,cb?:Function) => {
-    subscribeTable(watchItemsInfo,uid,Items,cb);
-};
-
 // ================================================================= 本地
 
 /**

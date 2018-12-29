@@ -1,6 +1,7 @@
 /**
  * rpc通信
  */
+import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -30,9 +31,10 @@ export const loginActivity = () => {
         walletLoginReq.openid = 'zx';
         walletLoginReq.sign = '';
         userType.value = walletLoginReq;
-
+        popNew('earn-client-app-view-component-newUserLogin');
         clientRpcFunc(login, userType, (r: UserInfo) => {
             console.log('活动登录成功！！--------------', r);
+            // popNew('earn-client-app-view-component-newUserLogin');
             setStore('userInfo',r);
             resolve(r);
         });

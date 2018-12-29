@@ -47,9 +47,7 @@
                         {{else}}
                         <div w-class="rule">
                             <widget w-class="rule_title" w-tag="pi-ui-lang">{"zh_Hans":"活动说明","zh_Hant":"活動說明","en":""}</widget>
-                            <widget w-class="rule_context" w-tag="pi-ui-lang">{"zh_Hans":"成功邀请好友下载KuPlay，在赚-兑换中输入邀请码，你就可以获得奖励哦。
-                                注意~成功邀请的标准是好友达到1000KT。快去邀请小伙伴一起挖矿吧~","zh_Hant":"成功邀請好友下載KuPlay，在賺 -
-                                兌換中輸入邀請碼，你就可以獲得獎勵哦。注意〜成功邀請的標準是好友達到1000KT。快去邀請小伙伴一起挖礦吧〜","en":""}</widget>
+                            <widget w-class="rule_context" w-tag="pi-ui-lang">{"zh_Hans":"成功邀请好友下载KuPlay，在赚-兑换中输入邀请码，你就可以获得奖励哦。注意~成功邀请的标准是好友达到1000KT。快去邀请小伙伴一起挖矿吧~","zh_Hant":"成功邀請好友下載KuPlay，在賺-兌換中輸入邀請碼，你就可以獲得獎勵哦。注意〜成功邀請的標準是好友達到1000KT。快去邀請小伙伴一起挖礦吧〜","en":""}</widget>
                         </div>
                         <div w-class="ticket_bottom-text">
                             <img on-tap="change('first')" src="app/res/image/change-blue.png" height="48px" w-class="change_icon" />
