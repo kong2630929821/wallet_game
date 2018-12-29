@@ -45,6 +45,9 @@ export const cdkey = (code: string): Invite => {
                     const invites = get_invite_friends(iuid);
                     invites.fuid.push(uid);
                     friendsNum = invites.fuid.length;
+                    // 添加邀请人邀请记录
+                    const inviteBucket = new Bucket(WARE_NAME, InviteTab._$info.name, dbMgr);
+                    inviteBucket.put(iuid, invites);
                 }
                 invite.code = cdkey;
                 invite.items = []; // 奖品列表

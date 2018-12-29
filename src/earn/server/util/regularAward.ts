@@ -93,9 +93,13 @@ export const invite_award = (iuid:number, num:number):Item => {
     }
     const awardCfg = cfgBucket.get<number, [InviteAwardCfg]>(id)[0];
     if (!awardCfg) return;
-
+    // 发放奖励给被邀请人
     const item = add_itemCount(uid, awardCfg.prop, awardCfg.num);
     add_award(uid, awardCfg.prop, awardCfg.num, AWARD_SRC_INVITE, null, awardCfg.desc);
+    // 邀请人未登陆过平台 则不予发放平台奖励给邀请人
+    if (iuid === -1) return item;
+    add_itemCount(iuid, awardCfg.prop, awardCfg.num);
+    add_award(iuid, awardCfg.prop, awardCfg.num, AWARD_SRC_INVITE, null, awardCfg.desc);
 
     return item;
 };
