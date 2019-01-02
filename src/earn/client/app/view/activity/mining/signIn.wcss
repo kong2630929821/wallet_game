@@ -54,6 +54,7 @@
     align-items: center;
     margin-left: auto;
     margin-right: auto;
+    display: none;
 }
 .close{
     position: absolute;

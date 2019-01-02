@@ -3,7 +3,7 @@
  */
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { RegularAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
@@ -38,11 +38,11 @@ export const getAllMines = () => {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
             for (let j = 0;j < good.value.count;j++) {
-                const hp = good.value.hps[j];
+                const hp = good.value.hps[j].hp;
                 const itype = good.value.num;
                 const mine = {
                     type:itype,
-                    index:j,
+                    id:good.value.hps[j].num,
                     hp
                 };
                 mines.push(mine);
@@ -249,6 +249,21 @@ export const getPrizeList = (activityType: ActivityType): any => {
 };
 
 /**
+ * 获取固定项目奖品列表
+ */
+export const getRegularPrizeList = (activityType: ActivityType): any => {
+    const cfgs = getMap(RegularAwardCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+/**
  * 获取虚拟物品兑换列表
  */
 export const getVirtualExchangeList = (): any => {
@@ -267,4 +282,27 @@ export const getVirtualExchangeList = (): any => {
  */
 export const showActError = (errorNum:number) => {
     // TODO
+};
+
+/**
+ * 获取连续登录奖励
+ */
+export const getSeriesLoginAwards = (serielLoginDays:number) => {
+    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
+    const showAwardsDays = 7; // 同时展示几天的奖励
+    // tslint:disable-next-line:prefer-array-literal
+    const awards = new Array(showAwardsDays);
+    if (serielLoginDays <= showAwardsDays) {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days > showAwardsDays) continue;
+            awards[cfg.days - 1] = cfg;
+        }
+    } else {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days <= showAwardsDays) continue;
+            awards[cfg.days - 1 - showAwardsDays] = cfg;
+        }
+    }
+
+    return awards;
 };

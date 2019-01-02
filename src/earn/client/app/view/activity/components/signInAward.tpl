@@ -1,5 +1,5 @@
 <div w-class="box {{it.received ? 'received_bg' : ''}}">
-    <img src="../../../res/image/iron_hoe.png" w-class="gift"/>
+    <img src="{{ it.imgUrl }}" w-class="gift"/>
     {{if it.received}}
     <div w-class="received"><img src="../../../res/image/award_received.png"/></div>
     {{else}}

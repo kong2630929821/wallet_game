@@ -68,11 +68,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
+    padding: 0 35px;
 }
-.medal-tip{
+.box1{
+    display: flex;
+    align-items: center;
+}
+.box1-img{
+    width: 70px;
+    height: 70px;
+
+}
+.tip{
     font-size:28px;
     color:rgba(34,34,34,1);
+    font-weight:500;
+    margin-left: 10px;
 }
 .medal{
     width: 60px;

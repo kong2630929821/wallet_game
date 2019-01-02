@@ -45,10 +45,10 @@
             <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                 <earn-client-app-view-activity-components-mine>{ 
                     mineType:{{ item.type }},
-                    mineIndex:{{ item.index }}
+                    mineId:{{ item.id }}
                     hp:{{item.hp}},
                     selectedHoe:{{ it.hoeSelected }},
-                    selected:{{ item.type === it.mineType && item.index === it.mineIndex}},
+                    selected:{{ item.type === it.mineType && item.id === it.mineId}},
                     lossHp:{{ it.lossHp }},
                     beginMining:{{ it.countDownStart }}
                 }</earn-client-app-view-activity-components-mine>
@@ -63,7 +63,7 @@
                     </div>
                     <div w-class="action-tips">看广告得锄头</div>
                 </div>
-                <div w-class="ad-item" style="margin:0 35px" on-tap="signInClick">
+                <div w-class="ad-item" style="margin:0 35px 0 20px"  on-tap="signInClick">
                     <div w-class="gift-box">
                         <img src="../../../res/image1/gift.png"/>
                     </div>
@@ -80,5 +80,4 @@
         </div>
         
     </div>
-    <app-components1-blankDiv-bottomDiv></app-components1-blankDiv-bottomDiv>
 </div>
