@@ -6,7 +6,7 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
+import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../../utils/constants';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
@@ -34,6 +34,7 @@ export class MiningHome extends Widget {
     public create() {
         super.create();
         this.init();
+        getInvitedNumberOfPerson();
     }
 
     public init() {

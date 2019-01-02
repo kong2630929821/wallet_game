@@ -2,9 +2,9 @@
  * rpc通信
  */
 import { popNew } from '../../../../pi/ui/root';
-import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardQuery, AwardResponse, InviteAwardRes, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_inviteNum } from '../../../server/rpc/invite.p';
+import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { item_addticket } from '../../../server/rpc/test.p';
@@ -13,7 +13,7 @@ import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { getStore, setStore } from '../store/memstore';
+import { getStore, Invited, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
 import { getPrizeInfo } from '../utils/util';
 import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
@@ -231,10 +231,25 @@ export const getLoginDays = () => {
  * 获取已经邀请的人数
  */
 export const getInvitedNumberOfPerson = () => {
+    clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
+        console.log('rpc-getInvitedNumberOfPerson---------------', r);
+        const invite:Invited = {
+            invitedNumberOfPerson:r.inviteNum,
+            convertedInvitedAward:r.usedNum
+        };
+        setStore('invited',invite);
+    });
+};
+
+/**
+ * 兑换邀请奖励
+ */
+export const converInviteAwards = (index:number) => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
-            console.log('rpc-getInvitedNumberOfPerson---------------', r);
+        clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
+            console.log('rpc-converInviteAwards---------------', r);
             resolve(r);
+            getInvitedNumberOfPerson();
         });
     });
 };

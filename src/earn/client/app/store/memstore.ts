@@ -124,6 +124,10 @@ const store:Store = {
     mine:{
         miningedNumber:0
     },
+    invited:{
+        invitedNumberOfPerson:0,
+        convertedInvitedAward:[]
+    },
     goods:[]
     
 };
@@ -131,12 +135,18 @@ const store:Store = {
 export interface Mine {
     miningedNumber:0;  // 今天已挖矿山数量
 }
+
+export interface Invited {
+    invitedNumberOfPerson:number;   // 已邀请人数
+    convertedInvitedAward:number[];  // 已兑换的邀请奖励
+}
 /**
  * Store的声明
  */
 export interface Store {
     userInfo:UserInfo; // 用户信息相关
     mine:Mine;      // 矿山相关
+    invited:Invited;  // 邀请相关
     goods:Item[];   // 拥有的物品
 }
 
