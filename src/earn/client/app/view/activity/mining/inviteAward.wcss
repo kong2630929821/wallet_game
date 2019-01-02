@@ -28,9 +28,11 @@
     line-height:40px;
 }
 .main{
-    padding: 70px 20px 30px;
+    margin: 70px 20px 30px;
     display: flex;
     justify-content: space-between;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 .invite-btn{
     font-size:32px;

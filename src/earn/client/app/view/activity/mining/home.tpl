@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page">
     <div w-class="body">
-        <div w-class="choose-tip">选择锄头</div>
+        <div w-class="choose-tip"><widget w-tag="pi-ui-lang">{"zh_Hans":"选择锄头","zh_Hant":"選擇鋤頭","en":""}</widget></div>
         <div w-class="holded-hoes" >
             <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                 <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
@@ -12,8 +12,8 @@
                 <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
             </div>
         </div>
-        <div w-class="digging-num">今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座</div>
-        <div w-class="digging-tips">{{it.miningTips}}</div>
+        <div w-class="digging-num"><widget w-tag="pi-ui-lang">{"zh_Hans":"今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","zh_Hant":"今日已挖礦山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","en":""}</widget></div>
+        <div w-class="digging-tips"><widget w-tag="pi-ui-lang">{{it.miningTips}}</widget></div>
         <div w-class="award-container">
             <div w-class="award-item">
                 <img src="../../../res/image/KT.png" w-class="award-icon"/>
@@ -61,19 +61,19 @@
                     <div w-class="gift-box">
                         <img src="../../../res/image/advertisement.png"/>
                     </div>
-                    <div w-class="action-tips">看广告得锄头</div>
+                    <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"看广告得锄头","zh_Hant":"看廣告得鋤頭","en":""}</widget></div>
                 </div>
                 <div w-class="ad-item" style="margin:0 35px 0 20px"  on-tap="signInClick">
                     <div w-class="gift-box">
                         <img src="../../../res/image1/gift.png"/>
                     </div>
-                    <div w-class="action-tips">签到豪礼</div>
+                    <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"签到豪礼","zh_Hant":"簽到豪禮","en":""}</widget></div>
                 </div>
                 <div w-class="ad-item" on-tap="welfareClick">
                     <div w-class="gift-box">
                         <img src="../../../res/image1/gift.png"/>
                     </div>
-                    <div w-class="action-tips">福利活动</div>
+                    <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"福利活动","zh_Hant":"福利活動","en":""}</widget></div>
                 </div>
             </div>
             <img src="../../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>

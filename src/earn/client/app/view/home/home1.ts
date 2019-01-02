@@ -8,7 +8,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { loginActivity } from '../../net/rpc';
+import { getInvitedNumberOfPerson, loginActivity } from '../../net/rpc';
 import { initSubscribeInfo } from '../../net/subscribedb';
 import { register } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';

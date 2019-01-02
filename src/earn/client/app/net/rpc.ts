@@ -3,7 +3,8 @@
  */
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
-import { UserInfo } from '../../../server/data/db/user.s';
+import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_inviteNum } from '../../../server/rpc/invite.p';
 import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { item_addticket } from '../../../server/rpc/test.p';
@@ -222,6 +223,18 @@ export const getLoginDays = () => {
                 // showActError(r.resultNum);TODO
                 reject(r);
             }
+        });
+    });
+};
+
+/**
+ * 获取已经邀请的人数
+ */
+export const getInvitedNumberOfPerson = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
+            console.log('rpc-getInvitedNumberOfPerson---------------', r);
+            resolve(r);
         });
     });
 };
