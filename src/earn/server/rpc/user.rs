@@ -1,5 +1,3 @@
-#[path=../data/db/]
-use user.s::{UserInfo};
 
 struct WalletLoginReq {
     openid: String,
@@ -24,5 +22,5 @@ enum UserType {
 */
 struct SendMessage {
     uid: u32,
-    msg: Option<String>
+    msg: Option<u32>
 }
