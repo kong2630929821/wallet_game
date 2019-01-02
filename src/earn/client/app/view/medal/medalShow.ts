@@ -3,14 +3,16 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
-import { cfg } from '../../../../../pi/ui/root';
+import { getMedalList } from '../../utils/util';
 
 interface Props {
-    medalImg: string;
-    medalsite: any;
-    imgScale: number;
-    moveX: number;
-    moveY: number;
+    medalImg: string; // 勋章图片
+    medalsite: any; // 勋章坐标位置
+    imgScale: number; // 勋章图片缩放倍数
+    moveX: number; // 勋章X轴位移
+    moveY: number; // 勋章Y轴位移
+    KTnum: number; // 勋章需要kt数
+    medalTitle:any; // 勋章称号
 }
 
 export class MedalShow extends Widget {
@@ -18,15 +20,16 @@ export class MedalShow extends Widget {
     public props: Props;
 
     public setProps(props: any) {
-        console.log(props);
-
         super.setProps(this.props);
+        const medalInfo = getMedalList(props.medalId,'id');
+        
         this.props = {
             ...this.props,
-            medalImg: props.img,
-            medalsite: props.medalSite
-        }
-
+            medalImg: `medal${props.medalId}`,
+            medalsite: props.medalSite,
+            KTnum:medalInfo[0].coinNum,
+            medalTitle:{ zh_Hans:medalInfo[0].desc,zh_Hant:medalInfo[0].descHant,en:'' }
+        };
     }
 
     public attach() {
@@ -39,7 +42,7 @@ export class MedalShow extends Widget {
     public computeSite() {
         const $medal = document.getElementById('medalShow').getBoundingClientRect();
         const clientWidth = document.documentElement.clientWidth;
-        const scaling = clientWidth / 750;//页面缩放比例
+        const scaling = clientWidth / 750;// 页面缩放比例
         this.props.imgScale = this.props.medalsite.width / $medal.width;
         this.props.moveX = Math.round((this.props.medalsite.left - $medal.left) - ($medal.width - this.props.medalsite.width) / 2) / scaling;
         this.props.moveY = Math.round((this.props.medalsite.top - $medal.top) - ($medal.height - this.props.medalsite.height) / 2) / scaling;
@@ -51,7 +54,6 @@ export class MedalShow extends Widget {
             this.paint();
         }, 200);
 
-        console.log('$medal--------------', $medal);
     }
     /**
      * 返回上一页
@@ -60,4 +62,3 @@ export class MedalShow extends Widget {
         this.ok && this.ok();
     }
 }
-

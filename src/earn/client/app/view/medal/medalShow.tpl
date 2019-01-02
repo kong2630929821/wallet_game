@@ -8,8 +8,8 @@
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
         </div>
         <div w-class="flex-col" style="margin-top: -100px;">
-            <widget w-class="medal-title" w-tag="pi-ui-lang">{"zh_Hans":"孑然一身","zh_Hant":"孑然一​​身","en":""}</widget>
-            <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到2500KT","zh_Hant":"挖礦達到2500KT","en":""}</widget>
+            <widget w-class="medal-title" w-tag="pi-ui-lang">{{it.medalTitle}}</widget>
+            <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.KTnum}}KT","zh_Hant":"挖礦達到{{it.KTnum}}KT","en":""}</widget>
         </div>
         <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"挂出去","zh_Hant":"掛出去","en":""}</widget>
     </div>

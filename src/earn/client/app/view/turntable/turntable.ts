@@ -37,25 +37,25 @@ export class Turntable extends Widget {
                 type: TicketType.SilverTicket,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 balance: 0,
-                needTicketNum: getTicketNum(ActivityType.SilverTurntable),
+                needTicketNum: getTicketNum(ActivityType.PrimaryTurntable),
                 turntableName: { zh_Hans: '初级大转盘', zh_Hant: '初級大轉盤', en: '' },
-                activityType: ActivityType.SilverTurntable
+                activityType: ActivityType.PrimaryTurntable
             },
             {
                 type: TicketType.GoldTicket,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 balance: 0,
-                needTicketNum: getTicketNum(ActivityType.GoldTurntable),
+                needTicketNum: getTicketNum(ActivityType.MiddleTurntable),
                 turntableName: { zh_Hans: '中级大转盘', zh_Hant: '中級大轉盤', en: '' },
-                activityType: ActivityType.GoldTurntable
+                activityType: ActivityType.MiddleTurntable
             },
             {
                 type: TicketType.DiamondTicket,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
                 balance: 0,
-                needTicketNum: getTicketNum(ActivityType.DiamondTurntable),
+                needTicketNum: getTicketNum(ActivityType.AdvancedTurntable),
                 turntableName: { zh_Hans: '高级大转盘', zh_Hant: '高級大轉盤', en: '' },
-                activityType: ActivityType.DiamondTurntable
+                activityType: ActivityType.AdvancedTurntable
             }
         ]
     };
@@ -103,8 +103,9 @@ export class Turntable extends Widget {
 
             return;
         }
-        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {// 余票不足
-
+        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) { // 余票不足
+            popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+            
             return;
         }
         this.props.isTurn = true;
@@ -141,7 +142,7 @@ export class Turntable extends Widget {
         }
         if (!resData) {// 开始转动
             $turnStyle.transition = 'transform 6s ease';
-            $turnStyle.transform = `rotate(${this.props.turnNum + 3600}deg)`;
+            $turnStyle.transform = `rotate(${this.props.turnNum + 1800}deg)`;
         } else if (resData.resultNum === 1) { // 抽奖接口成功，修改旋转角度
             this.props.turntableList.forEach(element => {
                 if (element.awardType === resData.award.awardType) {

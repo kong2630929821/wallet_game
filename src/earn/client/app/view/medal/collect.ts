@@ -2,10 +2,12 @@
  * 我的收藏 --主页
  */
 
-import { Widget } from '../../../../../pi/widget/widget';
-import { Forelet } from '../../../../../pi/widget/forelet';
+import { makeScreenShot } from '../../../../../app/logic/native';
+import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
+import { Widget } from '../../../../../pi/widget/widget';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -16,26 +18,19 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Collect extends Widget {
     public ok: () => void;
-    public props = {
+    public props:any = {
         scrollHeight: 0,
         medalList: [
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal1' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal2' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal2' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
-            { title: { "zh_Hans": "我的收集", "zh_Hant": "我的收集", "en": "" }, img: 'medal' },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
+            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 }
         ]
     };
 
@@ -48,7 +43,7 @@ export class Collect extends Widget {
      * 更新props数据
      */
     public initData() {
-        //TODO
+        // TODO
         this.paint();
     }
 
@@ -63,46 +58,39 @@ export class Collect extends Widget {
     }
 
     /**
+     * 分享
+     */
+    public shareClick() {
+        makeScreenShot(() => {
+            popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+        },() => {
+            popNew('app-components1-message-message',{ content:this.config.value.tips });
+        });
+    }
+
+    /**
      * 勋章展示
      */
-    public medalShow(e: any, index: number) {
+    public medalShow(e: any, medalId: number) {
 
-            // this.props.medalIsShow = true;
-            const $realDom = getRealNode(e.node);
-            let medalSite = {
-                top: Math.floor($realDom.getBoundingClientRect().top),
-                left: Math.floor($realDom.getBoundingClientRect().left),
-                width: $realDom.getBoundingClientRect().width,
-                height: $realDom.getBoundingClientRect().height
-            }
-            // console.log('medalSite----------------', medalSite);
-            // const imgScale = Math.round((imgWidth / medalSite.width) * 100) / 100; //图片缩放比例
-            // const moveY = ((440-medalSite.height*imgScale)  - (medalSite.top - 0.5 * (medalSite.height*(imgScale-1))))/scaling;
-            // const moveX = ((clientWidth - imgWidth) / 2 - (medalSite.left - 0.5 * (imgWidth - medalSite.width))) / scaling;
-            // console.log('moveX--------------', moveX);
-            // console.log('moveY--------------', moveY);
+        const $realDom = getRealNode(e.node);
+        const medalSite = {
+            top: Math.floor($realDom.getBoundingClientRect().top),
+            left: Math.floor($realDom.getBoundingClientRect().left),
+            width: $realDom.getBoundingClientRect().width,
+            height: $realDom.getBoundingClientRect().height
+        };
 
+        const $realDomStyle = $realDom.style;
+        $realDomStyle.visibility  = `hidden`;
 
-            let $realDomStyle = $realDom.style;
-            $realDomStyle.visibility  = `hidden`;
-            // $realDomStyle.position = `relative`;
-            // $realDomStyle.zIndex = `1`;
-            // $realDomStyle.transform = `translateY(${moveY}px) translateX(${moveX}px) scale(${imgScale})`;
-            // $realDomStyle.transition = `all 0.5s ease`;
-
-
-            popNew('earn-client-app-view-medal-medalShow', { img: this.props.medalList[index].img, medalSite, }, () => {
-                $realDomStyle.visibility = `visible`;
-                // $realDomStyle.position = ``;
-                // $realDomStyle.transform = ``;
-                // $realDomStyle.transition = `transform 0.5s ease`;
-                // $realDomStyle.zIndex = `auto`;
-                this.paint();
-            });
+        popNew('earn-client-app-view-medal-medalShow', { medalId, medalSite }, () => {
+            $realDomStyle.visibility = `visible`;
+            this.paint();
+        });
 
         this.paint();
     }
-
 
     /**
      * 返回上一页
@@ -111,7 +99,6 @@ export class Collect extends Widget {
         this.ok && this.ok();
     }
 }
-
 
 // ===================================================== 立即执行
 

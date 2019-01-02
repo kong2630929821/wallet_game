@@ -5,8 +5,9 @@
 // ================================================================= 导入
 import { BonBuffer } from '../../../../pi/util/bon';
 import { ab2hex } from '../../../../pi/util/util';
-import { Items } from '../../../server/data/db/item.s';
-import { watchItemsInfo } from '../../../server/rpc/dbWatcher.p';
+import { THE_ELDER_SCROLLS } from '../../../server/data/constant';
+import { Items, SpecialAward } from '../../../server/data/db/item.s';
+import { watchItemsInfo, watchSpecialAward } from '../../../server/rpc/dbWatcher.p';
 import { getStore, setStore } from '../store/memstore';
 import { WARE_NAME } from '../utils/constants';
 import { clientRpcFunc, subscribe } from './init';
@@ -27,6 +28,13 @@ export const initSubscribeInfo = () => {
  */
 export const subscribeItemsInfo = (uid: number,cb?:Function) => {
     subscribeTable(watchItemsInfo,uid,Items,cb);
+};
+
+/**
+ * 挖矿特殊奖励公告监听
+ */
+export const subscribeSpecialAward = (cb?:Function) => {
+    subscribeTable(watchSpecialAward,THE_ELDER_SCROLLS,SpecialAward,cb);
 };
 
 // ================================================================= 本地

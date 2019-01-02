@@ -1,17 +1,34 @@
 /**
  * common util
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { RegularAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
-import { MineHpCfg } from '../../../xlsx/item.s';
+import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
+import { MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
-import { ActivityType } from '../xls/dataEnum.s';
+import { ActivityType, ItemType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+
+/**
+ * 获取单个物品数量
+ */
+export const getCoinCount = (coinType:ItemType) => {
+    const goods = getStore('goods');
+    for (let i = 0; i < goods.length; i++) {
+        const good = goods[i];
+        if (good.value.num === coinType) {
+            return good.value.count;
+        }
+    }
+
+    return 0;
+};
 
 /**
  * 获取锄头对象
@@ -275,11 +292,31 @@ export const getVirtualExchangeList = (): any => {
 
     return filterCfgs;
 };
+/**
+ * 获取勋章列表
+ */
+export const getMedalList = (typeNum:string|number,typeStr:string):any => {
+    const cfgs = getMap(MedalCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (typeNum === cfg[typeStr]) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
 
 /**
  * 展示错误信息
  * @param errorNum 错误编号
  */
 export const showActError = (errorNum:number) => {
-    // TODO
+    const cfgs = getMap(ErrorNumCfg._$info.name);
+    for (const [k, cfg] of cfgs) {
+        if (errorNum === cfg.id) {
+            popNew('app-components1-message-message',{ content:{ zh_Hans:cfg.desc,zh_Hant:cfg.descHant,en:'' } });
+        }
+    }
+
 };

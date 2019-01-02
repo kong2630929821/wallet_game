@@ -4,7 +4,9 @@
     
     <div w-class="content flex-col">
         <div w-class="top-annunciate">
-                一颗大蒜苗挖到了0.1ETH
+            <div w-class="notice">
+                <p w-class="notice-show" class="down-to-top">{{it.notice[it.noticeShow]}}</p>
+            </div>
         </div>
         <div w-class="topbar">
             <div w-class="topbar-bg" style="transform: translateX({{100*it.topbarSel}}%);"></div>

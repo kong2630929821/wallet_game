@@ -4,6 +4,10 @@
 
 // 时间戳格式化 毫秒为单位
 export const timestampFormat = (timestamp) => {
+    if (typeof(timestamp) === 'string') {
+        // tslint:disable-next-line:radix
+        timestamp = parseInt(timestamp);
+    }
     const date = new Date(timestamp);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : `0${date.getMonth() + 1}`;

@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div style="display: flex;flex-direction: row-reverse;">
-                <div w-class="share">
+                <div w-class="share" w-tap="shareClick">
                     <img src="../../res/image1/share-white.png" height="48px" />
                     <widget w-class="myCollect-text" w-tag="pi-ui-lang">{"zh_Hans":"分享勋章画报","zh_Hant":"分享勋章画报","en":""}</widget>
                 </div>
@@ -29,7 +29,7 @@
             {{for i,item of it.medalList}}
             <div w-class="collect-item flex-col">
                 <widget w-class="medal-top-text" w-tag="pi-ui-lang">{{item.title}}</widget>
-                <img on-tap="medalShow(e,{{i}})" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
+                <img on-tap="medalShow(e,{{item.id}})" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
             </div>
             {{end}}
 

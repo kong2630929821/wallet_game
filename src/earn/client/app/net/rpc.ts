@@ -14,7 +14,7 @@ import { award_query, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
-import { getPrizeInfo } from '../utils/util';
+import { getPrizeInfo, showActError } from '../utils/util';
 import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -109,7 +109,7 @@ export const openChest = (ticketType: TicketType) => {
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -128,7 +128,7 @@ export const openTurntable = (ticketType: TicketType) => {
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -202,7 +202,7 @@ export const getRankList = () => {
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });

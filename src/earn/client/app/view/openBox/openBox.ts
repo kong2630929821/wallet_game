@@ -38,19 +38,19 @@ export class OpenBox extends Widget {
             {
                 type: TicketType.SilverTicket,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.SilverChest),
+                needTicketNum:getTicketNum(ActivityType.PrimaryChest),
                 balance: 0
             },
             {
                 type: TicketType.GoldTicket,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.GoldChest),
+                needTicketNum:getTicketNum(ActivityType.MiddleChest),
                 balance: 0
             },
             {
                 type:   TicketType.DiamondTicket,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.DiamondChest),
+                needTicketNum:getTicketNum(ActivityType.AdvancedChest),
                 balance: 0
             }
         ],
@@ -81,11 +81,13 @@ export class OpenBox extends Widget {
     public openBox(e:any,num: number) {
         
         if (this.props.boxList[num] === 1) {  // 宝箱已打开
-            // TODO
+            popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+
             return;
         }
         if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {  // 奖券不够
-            // TODO
+            popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+
             return;
         }
         this.openBoxAnimation(e);
