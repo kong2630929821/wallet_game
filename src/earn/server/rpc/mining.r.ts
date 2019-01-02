@@ -10,7 +10,7 @@ import { AwardMap, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, Minin
 import { SeriesLogin, UserInfo } from '../data/db/user.s';
 import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
-import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, reduce_itemCount, reduce_mine } from '../util/item_util.r';
+import { add_award, add_itemCount, add_medal, get_award_ids, get_mine_total, get_mine_type, get_today, mining_add_medal, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { seriesLogin_award } from '../util/regularAward';
@@ -96,8 +96,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     if (leftHp > 0) {
         miningResponse.leftHp = leftHp;
     } else {
-        // 当前矿山血量小于等于0时，添加奖励
-        miningResponse.leftHp = 0;
+        miningResponse.leftHp = 0; // 当前矿山血量小于等于0时，添加奖励
         const v = [];
         const randomMgr = new RandomSeedMgr(seed);
         const mineType = itemType;
@@ -111,8 +110,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         const awards = [];
         awards.push(item);
         add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
-        // 奖品为KT时添加挖矿获取KT总数
-        if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount);
+        if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount); // 奖品为KT时添加挖矿获取KT总数
         // 挖开第一个矿山额外奖励
         const totalMiningNum = get_totalminingNum(uid);
         if (totalMiningNum.total === 0) {
@@ -128,6 +126,8 @@ export const mining_result = (result:MiningResult):MiningResponse => {
             awards.push(firstAward);
         }
         miningResponse.awards = awards;
+        // 添加奖章
+        mining_add_medal(uid, itemNum);
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         const mineNumBucket =  new Bucket(WARE_NAME, TodayMineNum._$info.name, dbMgr);
