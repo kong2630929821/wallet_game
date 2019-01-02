@@ -7,7 +7,7 @@ import { MIN_INVITE_NUM, RESULT_SUCCESS, WALLET_API_CDKEY, WALLET_API_INVITENUM,
 import { Invite } from '../data/db/invite.s';
 import { InviteAwardRes } from '../data/db/item.s';
 import { InviteNumTab, InviteTab, UserAcc } from '../data/db/user.s';
-import { DB_ERROR, INVITE_NOT_ENOUGH } from '../data/errorNum';
+import { DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_NOT_ENOUGH } from '../data/errorNum';
 import { getcdkey } from '../data/util';
 import { oauth_send } from '../util/oauth_lib';
 import { invite_award } from '../util/regularAward';
@@ -37,9 +37,18 @@ export const get_inviteNum = (): InviteNumTab => {
         inviteNumTab = new InviteNumTab();
         inviteNumTab.uid = uid;
         inviteNumTab.inviteNum = 0;
-        inviteNumTab.usedNum = 0;
+        inviteNumTab.usedNum = [];
     }
     // 更新数据库中的邀请人数
+    const length = inviteNumTab.usedNum.length; // 可领取邀请奖励宝箱的个数
+    const awardCount = Math.floor(inviteNum / MIN_INVITE_NUM);  // 每三个邀请人数添加一个可领取宝箱
+    console.log('awardCount!!!!!!!!!!!!!!!!!!!!!!!!', awardCount);
+    if (length < awardCount) {
+        for (let i = 0; i < awardCount - length; i ++) {
+            inviteNumTab.usedNum.push(1);
+            continue;
+        }
+    }
     inviteNumTab.inviteNum = inviteNum;
     bucket.put(uid, inviteNumTab);
     
@@ -48,23 +57,27 @@ export const get_inviteNum = (): InviteNumTab => {
 
 // 获取邀请奖励
 // #[rpc=rpcServer]
-export const get_invite_awards = ():InviteAwardRes  => {
+export const get_invite_awards = (index:number):InviteAwardRes  => {
     console.log('get_invite_awards in !!!!!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
     const inviteNumTab = get_inviteNum();
     const awardResponse = new InviteAwardRes();
+    const inviteNumStart = index * MIN_INVITE_NUM + 1;
+    const inviteNumEnd = inviteNumStart + MIN_INVITE_NUM;
     awardResponse.award = [];
-    const usefulNum = inviteNumTab.inviteNum - inviteNumTab.usedNum;
-    console.log('usefulNum !!!!!!!!!!!!!!!!!!!!!!!!', usefulNum);
-    if (usefulNum < MIN_INVITE_NUM) {
+    if (!inviteNumTab.usedNum[index]) {
         awardResponse.resultNum = INVITE_NOT_ENOUGH;
 
         return awardResponse;
     }
-    
-    for (let i = inviteNumTab.usedNum + 1; i < MIN_INVITE_NUM + inviteNumTab.usedNum + 1; i ++) {
+    if (inviteNumTab.usedNum[index] === 0) {
+        awardResponse.resultNum = INVITE_AWARD_ALREADY_TAKEN;
+
+        return awardResponse;
+    }
+    for (let i = inviteNumStart; i < inviteNumEnd; i ++) {
         console.log('i !!!!!!!!!!!!!!!!!!!!!!!!', i);
         const award = invite_award(uid, i);
         awardResponse.award.push(award);
@@ -75,7 +88,7 @@ export const get_invite_awards = ():InviteAwardRes  => {
         return awardResponse;
     }
     // 添加已领取记录
-    inviteNumTab.usedNum += MIN_INVITE_NUM;
+    inviteNumTab.usedNum[index] = 0;
     console.log('inviteNumTab.usedNum !!!!!!!!!!!!!!!!!!!!!!!!', inviteNumTab.usedNum);
     bucket.put(uid, inviteNumTab);
     awardResponse.resultNum = RESULT_SUCCESS;

@@ -5,6 +5,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { MAX_ONEDAY_MINING, WARE_NAME } from '../data/constant';
 import { Award, AwardList, AwardQuery, BTC, ETH, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
+import { Achievements, Medals } from '../data/db/medal.s';
 import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { getUid } from './user.r';
@@ -92,4 +93,34 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
     
 };
 
-// 获取用户持有KT数量
+// 查询指定用户所有奖章
+// #[rpc=rpcServer]
+export const get_medals = ():Medals => {
+    const uid = getUid();
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);
+    let medals = bucket.get<number, [Medals]>(uid)[0];
+    if (!medals) {
+        medals = new Medals();
+        medals.uid = uid;
+        medals.medals = [];
+    }
+    
+    return medals;
+};
+
+// 查询指定用户所有成就
+// #[rpc=rpcServer]
+export const get_achievements = ():Achievements => {
+    const uid = getUid();
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
+    let achievements = bucket.get<number, [Achievements]>(uid)[0];
+    if (!achievements) {
+        achievements = new Achievements();
+        achievements.uid = uid;
+        achievements.achievements = [];
+    }
+    
+    return achievements;
+};

@@ -24,6 +24,8 @@ export const MINE_NOT_EXIST = 1106;
 
 // 邀请人数不足兑换奖励
 export const INVITE_NOT_ENOUGH = 2101;
+// 邀请奖励已经领取
+export const INVITE_AWARD_ALREADY_TAKEN = 2102; 
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
