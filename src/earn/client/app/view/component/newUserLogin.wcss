@@ -1,0 +1,69 @@
+.modal-mask{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px;
+    background-color: rgba(50, 50, 50, 0.5);
+}
+
+.body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 600px;
+    border-radius: 12px;
+    position:relative;
+    background: url('../../earn/client/app/res/image/newUserLogin.png');
+    background-position: top;
+    background-repeat: no-repeat;
+}
+.one{
+    width: 100%;
+    height: 350px;
+    padding: 300px 20px 0px;
+    font-size:48px;
+    color:rgba(34,34,34,1);
+    line-height:67px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+.two{
+    width: 100%;
+    height: 250px;
+    margin-top: 80px;
+    background: #F3E0AD;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    font-size:32px;
+    color:rgba(34,34,34,1);
+    line-height:45px;
+    padding-bottom: 20px;
+}
+.two-img{
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 8px solid #FEE952;
+    margin-top: -70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.closeBtn{
+    margin-top:60px;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
