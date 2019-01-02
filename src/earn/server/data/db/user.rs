@@ -91,7 +91,7 @@ struct TotalLogin {
 struct InviteNumTab {
     uid: u32,
     inviteNum: u32,
-    usedNum: u32
+    usedNum: Option<&[u32]>
 }
 
 /**

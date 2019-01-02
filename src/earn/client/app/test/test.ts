@@ -197,7 +197,8 @@ export const get_inviteNum_test = () => {
 
 // 获取邀请奖励
 export const get_inviteAward_test = () => {
-    clientRpcFunc(get_invite_awards, null, (r: InviteAwardRes) => {
+    const index = 5;
+    clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
         console.log(r);
     });
 };
