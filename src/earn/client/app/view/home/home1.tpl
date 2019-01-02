@@ -21,14 +21,19 @@
                 <div w-class="action">看广告得锄头</div>
             </div>
             <div w-class="mine" style="left:165px;bottom:150px;" on-tap="mineClick">
-                <earn-client-app-view-activity-components-mine>{ mineType:{{ it.maxMineType }} }</earn-client-app-view-activity-components-mine>
+                <earn-client-app-view-activity-components-mine>{ mineType:{{ it.maxMineType }},scale:2 }</earn-client-app-view-activity-components-mine>
             </div>
             <div w-class="holded-mine">我的矿山</div>
             <div w-class="medals">
-                <div w-class="medal-tip">我的勋章</div>
-                {{for i of [0,0,0,0,0,0,0,0]}}
-                <img src="../../res/image1/btn_yun_1.png" w-class="medal"/>
-                {{end}}
+                <div w-class="box1">
+                    <img src="../../res/image1/medal.png" w-class="box1-img"/>
+                    <div w-class="tip">勋章成就</div>
+                </div>
+                <div w-class="box1">
+                    <img src="../../res/image1/crown.png" w-class="box1-img"/>
+                    <div w-class="tip">挖矿排名</div>
+                </div>
+               
             </div>
         </div>
         <div w-class="menuCard">

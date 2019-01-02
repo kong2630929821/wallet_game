@@ -7,6 +7,7 @@ import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { Achievements, Medals } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { KTQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -16,7 +17,7 @@ import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_ticket_KTNum, ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, award_query, get_item, item_query } from '../../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_item, get_medals, item_query } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
 import { clientRpcFunc, subscribe } from '../net/init';
 
@@ -81,7 +82,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 60;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 7;
+    miningResult.mineNum = 8;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -196,7 +197,22 @@ export const get_inviteNum_test = () => {
 
 // 获取邀请奖励
 export const get_inviteAward_test = () => {
-    clientRpcFunc(get_invite_awards, null, (r: InviteAwardRes) => {
+    const index = 5;
+    clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
+        console.log(r);
+    });
+};
+
+// 获取所有奖章
+export const get_medals_test = () => {
+    clientRpcFunc(get_medals, null, (r: Medals) => {
+        console.log(r);
+    });
+};
+
+// 获取所有成就
+export const get_achievements_test = () => {
+    clientRpcFunc(get_achievements, null, (r: Achievements) => {
         console.log(r);
     });
 };
@@ -282,6 +298,14 @@ const props = {
         {
             name: '获取邀请奖励',
             func: () => { get_inviteAward_test(); }
+        },
+        {
+            name: '获取奖章',
+            func: () => { get_medals_test(); }
+        },
+        {
+            name: '获取成就',
+            func: () => { get_achievements_test(); }
         }
     ] // 按钮数组
 };

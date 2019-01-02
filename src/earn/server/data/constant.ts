@@ -37,6 +37,26 @@ export const SILVER_TICKET_TYPE = 7001;
 export const GOLD_TICKET_TYPE = 7002;
 export const RAINBOW_TICKET_TYPE = 7003;
 
+// 勋章类型编号
+export const MEDAL_KT0 = 8001;
+export const MEDAL_KT20 = 8002;
+export const MEDAL_KT50 = 8003;
+export const MEDAL_KT100 = 8004;
+export const MEDAL_KT200 = 8005;
+export const MEDAL_KT500 = 8006;
+export const MEDAL_KT1000 = 8007;
+export const MEDAL_KT2000 = 8008;
+export const MEDAL_KT5000 = 8009;
+export const MEDAL_KT10000 = 8010;
+export const MEDAL_KT20000 = 8011;
+export const MEDAL_KT50000 = 8012;
+export const MEDAL_KT100000 = 8013;
+export const MEDAL_KT500000 = 8014;
+export const MEDAL_KT1000000 = 8015;
+export const MEDAL_ST = 8016;
+export const MEDAL_ETH = 8017;
+export const MEDAL_BTC = 8018;
+
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位
 export const BTC_UNIT_NUM:number = 10 ^ (-4);

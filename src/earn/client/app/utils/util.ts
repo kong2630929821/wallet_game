@@ -55,11 +55,11 @@ export const getAllMines = () => {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
             for (let j = 0;j < good.value.count;j++) {
-                const hp = good.value.hps[j];
+                const hp = good.value.hps[j].hp;
                 const itype = good.value.num;
                 const mine = {
                     type:itype,
-                    index:j,
+                    id:good.value.hps[j].num,
                     hp
                 };
                 mines.push(mine);
@@ -292,6 +292,7 @@ export const getVirtualExchangeList = (): any => {
 
     return filterCfgs;
 };
+
 /**
  * 获取勋章列表
  */
@@ -307,6 +308,8 @@ export const getMedalList = (typeNum:string|number,typeStr:string):any => {
     return filterCfgs;
 };
 
+
+
 /**
  * 展示错误信息
  * @param errorNum 错误编号
@@ -319,4 +322,27 @@ export const showActError = (errorNum:number) => {
         }
     }
 
+};
+
+/**
+ * 获取连续登录奖励
+ */
+export const getSeriesLoginAwards = (serielLoginDays:number) => {
+    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
+    const showAwardsDays = 7; // 同时展示几天的奖励
+    // tslint:disable-next-line:prefer-array-literal
+    const awards = new Array(showAwardsDays);
+    if (serielLoginDays <= showAwardsDays) {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days > showAwardsDays) continue;
+            awards[cfg.days - 1] = cfg;
+        }
+    } else {
+        for (const [k, cfg] of cfgs) {
+            if (cfg.days <= showAwardsDays) continue;
+            awards[cfg.days - 1 - showAwardsDays] = cfg;
+        }
+    }
+
+    return awards;
 };
