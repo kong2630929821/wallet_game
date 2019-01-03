@@ -1,6 +1,7 @@
 /**
  * rpc通信
  */
+import { getOpenId } from '../../../../app/api/JSAPI';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { UserInfo } from '../../../server/data/db/user.s';
@@ -28,16 +29,20 @@ export const loginActivity = () => {
         const userType = new UserType();
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
-        walletLoginReq.openid = '2001';
-        walletLoginReq.sign = '';
-        userType.value = walletLoginReq;
-        clientRpcFunc(login, userType, (r: UserInfo) => {
-            console.log('活动登录成功！！--------------', r);
-            if (r.loginCount === 0) {
-                popNew('earn-client-app-view-component-newUserLogin');
-            }
-            setStore('userInfo',r);
-            resolve(r);
+        getOpenId('1001',(r) => {
+            walletLoginReq.openid = r.openid;
+            walletLoginReq.sign = '';
+            userType.value = walletLoginReq;
+            clientRpcFunc(login, userType, (r: UserInfo) => {
+                console.log('活动登录成功！！--------------', r);
+                if (r.loginCount === 0) {
+                    popNew('earn-client-app-view-component-newUserLogin');
+                }
+                setStore('userInfo',r);
+                resolve(r);
+            });
+        },(err) => {
+            console.log('活动登录失败！！--------------', err);
         });
     });
 };

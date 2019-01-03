@@ -4,7 +4,7 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { RegularAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { RegularAwardCfg, SeriesLoginAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
@@ -16,13 +16,13 @@ import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
 
 /**
- * 获取单个物品数量
+ * 获取用户单个物品数量  kt/st等
  */
-export const getCoinCount = (coinType:ItemType) => {
+export const getGoodCount = (itemType:ItemType) => {
     const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
-        if (good.value.num === coinType) {
+        if (good.value.num === itemType) {
             return good.value.count;
         }
     }
@@ -307,8 +307,6 @@ export const getMedalList = (typeNum:string|number,typeStr:string):any => {
 
     return filterCfgs;
 };
-
-
 
 /**
  * 展示错误信息

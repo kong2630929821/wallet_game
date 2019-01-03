@@ -9,7 +9,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getStore } from '../../store/memstore';
-import { getCoinCount, getMedalList } from '../../utils/util';
+import { getGoodCount, getMedalList } from '../../utils/util';
 import { ItemType } from '../../xls/dataEnum.s';
 // import { register } from '../../store/memstore';
 
@@ -21,34 +21,35 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Medal extends Widget {
     public ok: () => void;
-    public props: any = {
-        scrollHeight: 0,
-        medalList: [
-            {
-                name: '穷人',
-                title: { zh_Hans: '穷人', zh_Hant: '窮人', en: '' },
-                medal: []
-            },
-            {
-                name: '中产',
-                title: { zh_Hans: '中产', zh_Hant: '中產', en: '' },
-                medal: []
-            },
-            {
-                name: '富人',
-                title: { zh_Hans: '富人', zh_Hant: '富人', en: '' },
-                medal: []
-            }
-        ],
-        mineMedal: {
-            name: '穷人',
-            desc: { zh_Hans: '穷人', zh_Hant: '窮人', en: '' },
-            medal: ''
-        }
-    };
+    public props: any;
 
     public create() {
         super.create();
+        this.props = {
+            scrollHeight: 0,
+            medalList: [
+                {
+                    name: '穷人',
+                    title: this.config.value.rankName[0],
+                    medal: []
+                },
+                {
+                    name: '中产',
+                    title: this.config.value.rankName[1],
+                    medal: []
+                },
+                {
+                    name: '富人',
+                    title: this.config.value.rankName[2],
+                    medal: []
+                }
+            ],
+            mineMedal: {
+                name: '穷人',
+                desc: this.config.value.rankName[0],
+                medal: ''
+            }
+        };
         this.initData();
     }
 
@@ -57,22 +58,22 @@ export class Medal extends Widget {
      */
     public initData() {
         const medalList = getMedalList(ItemType.KT, 'coinType');
-        const mineKT = getCoinCount(ItemType.KT); 
+        const mineKT = getGoodCount(ItemType.KT); 
         
         medalList.forEach(element => {
             const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
             
             this.props.medalList.forEach(element1 => {
-                if (mineKT >= element.coinNum) {  // 判断用户勋章等级
-                    this.props.mineMedal = {
-                        rank:element1.title,
-                        desc:{ zh_Hans: element.desc, zh_Hant: element.descHant, en: '' },
-                        medal:`medal${element.id}`
-                    };
-                }
 
-                if (element1.name === element.typeNum) { // 添加勋章列表
+                if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
+                    if (mineKT >= element.coinNum) {  // 判断用户勋章等级
+                        this.props.mineMedal = {
+                            rank:element1.title,
+                            desc:medal.title,
+                            medal:`medal${element.id}`
+                        };
+                    }
                 }
             });
         });
