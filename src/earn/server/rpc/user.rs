@@ -22,5 +22,6 @@ enum UserType {
 */
 struct SendMessage {
     uid: u32,
+    msgType: u32,
     msg: Option<u32>
 }
