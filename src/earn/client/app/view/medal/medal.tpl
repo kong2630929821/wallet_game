@@ -7,14 +7,9 @@
             {{% 我的勋章等级}}
             <div w-class="myMedal mat">
                 <div w-class="myMedal-top">
-                    <img src="../../res/image/medals/{{it.mineMedal.medal}}.png" height="100%" style="margin-right:20px;" />
+                    <img src="../../res/image/medals/medal{{it.mineMedal.rankMedal}}.png" height="100%" style="margin-right:20px;" />
                     <div style="display: flex;flex-direction: column;align-items: left;">
                         <widget w-class="myMedal-text" w-tag="pi-ui-lang">{{it.mineMedal.desc}}</widget>
-                        <div>
-                            <widget w-class="myMedal-rank" w-tag="pi-ui-lang">{"zh_Hans":"等级：","zh_Hant":"等級：","en":""}</widget>
-                            <widget w-class="myMedal-rank" w-tag="pi-ui-lang">{{it.mineMedal.rank}}</widget>
-
-                        </div>
                     </div>
                 </div>
                 <div w-class="myCollect">

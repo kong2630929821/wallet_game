@@ -7,6 +7,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore } from '../../store/memstore';
+import { getGoodCount } from '../../utils/util';
+import { ItemType } from '../../xls/dataEnum.s';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -27,7 +29,7 @@ export class MineRank extends Widget {
             '五颗大蒜苗挖到了0.5ETH'
         ],
         noticeShow:0,
-        myRank: { rank: 1, userName: '啊实打实的', ktNum: 500 },
+        myRank: { rank: 0, userName: 'XXXX', ktNum: 0 },
         rankList: [
             // { rank: 1, userName: "啊实打实的", ktNum: 500 },
             // { rank: 2, userName: "啊实打实的", ktNum: 500 },
@@ -50,7 +52,8 @@ export class MineRank extends Widget {
     public create() {
         super.create();
         this.initData();
-        subscribeSpecialAward((r) => {
+       
+        subscribeSpecialAward((r) => {  // 监听新挖矿通告
             console.log('挖矿特殊奖励公告----------------',r);
             // setTimeout(() => {
             //     this.props.notice.push(new Date());
@@ -62,6 +65,9 @@ export class MineRank extends Widget {
         this.noticeChange();
     }
 
+    /**
+     * 通告改变
+     */
     public noticeChange() {
         setTimeout(() => {
             this.props.noticeShow ++;
@@ -78,13 +84,15 @@ export class MineRank extends Widget {
     public initData() {
         getRankList().then((res: any) => {
             this.props.rankList = this.processData(res.topList);
-            console.log('rankList------------------------',this.props.rankList);
+            // console.log('rankList------------------------',this.props.rankList);
             
+            this.props.myRank.userName = getStore('userInfo/name');
             this.props.myRank.rank = res.myNum;
-            this.props.myRank.ktNum = 500;
+            this.props.myRank.ktNum = getGoodCount(ItemType.KT);
             this.paint();
         });
     }
+
     // 处理排行榜
     public processData(data:any) {
         const resData = [];

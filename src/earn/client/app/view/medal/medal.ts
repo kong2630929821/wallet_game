@@ -8,10 +8,10 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getStore } from '../../store/memstore';
-import { getGoodCount, getMedalList } from '../../utils/util';
+import { Item } from '../../../../server/data/db/item.s';
+// import { getStore, register } from '../../store/memstore';
+import { computeRankMedal, getGoodCount, getMedalList } from '../../utils/util';
 import { ItemType } from '../../xls/dataEnum.s';
-// import { register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -45,9 +45,9 @@ export class Medal extends Widget {
                 }
             ],
             mineMedal: {
-                name: '穷人',
-                desc: this.config.value.rankName[0],
-                medal: ''
+                rankMedal:8001,
+                desc: '',
+                nextNeedKt:0
             }
         };
         this.initData();
@@ -58,25 +58,16 @@ export class Medal extends Widget {
      */
     public initData() {
         const medalList = getMedalList(ItemType.KT, 'coinType');
-        const mineKT = getGoodCount(ItemType.KT); 
+        this.props.mineMedal = computeRankMedal();
         
-        medalList.forEach(element => {
+        for (const element of medalList) {
             const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
-            
-            this.props.medalList.forEach(element1 => {
-
+            for (const element1 of this.props.medalList) {
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
-                    if (mineKT >= element.coinNum) {  // 判断用户勋章等级
-                        this.props.mineMedal = {
-                            rank:element1.title,
-                            desc:medal.title,
-                            medal:`medal${element.id}`
-                        };
-                    }
                 }
-            });
-        });
+            }
+        }
         this.paint();
     }
 

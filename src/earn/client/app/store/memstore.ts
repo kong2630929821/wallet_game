@@ -124,7 +124,8 @@ const store:Store = {
     mine:{
         miningedNumber:0
     },
-    goods:[]
+    goods:[],
+    ACHVmedals:[]
     
 };
 
@@ -138,6 +139,7 @@ export interface Store {
     userInfo:UserInfo; // 用户信息相关
     mine:Mine;      // 矿山相关
     goods:Item[];   // 拥有的物品
+    ACHVmedals:any;   // 拥有成就勋章
 }
 
 /**
