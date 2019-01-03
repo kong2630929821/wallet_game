@@ -4,9 +4,9 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { RegularAwardCfg, SeriesLoginAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
-import { MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
+import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore, setStore } from '../store/memstore';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
@@ -284,7 +284,7 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
  * 获取虚拟物品兑换列表
  */
 export const getVirtualExchangeList = (): any => {
-    const cfgs = getMap(TicketConvertCfg._$info.name);
+    const cfgs = getMap(STConvertCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         filterCfgs.push(cfg);
@@ -311,18 +311,33 @@ export const getMedalList = (typeNum: string | number, typeStr: string): any => 
 };
 
 /**
+ * 获取成就勋章列表
+ */
+export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
+    const cfgs = getMap(AchievementMedalCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (typeNum === cfg[typeStr]) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+/**
  * 计算用户等级勋章
  */
 export const computeRankMedal = () => {
-    
+
     const ktNum = getGoodCount(ItemType.KT);
     const medalList = getMedalList(ItemType.KT, 'coinType');
     const mineMedal = {
-        rankMedal:8000,
-        desc:{},
-        nextNeedKt:0
+        rankMedal: 8000,
+        desc: {},
+        nextNeedKt: 0
     };
-    for (let i = 0;i < medalList.length;i++) {
+    for (let i = 0; i < medalList.length; i++) {
         const element = medalList[i];
         if (ktNum >= element.coinNum) {
             mineMedal.rankMedal = element.id;
@@ -335,7 +350,7 @@ export const computeRankMedal = () => {
         }
     }
 
-    return mineMedal;     
+    return mineMedal;
 };
 
 /**

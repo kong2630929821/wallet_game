@@ -7,13 +7,13 @@
         <div w-class="myCollect">
             <div w-class="myMedal-top">
                 <div w-class="flex-col">
-                    <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"4枚","zh_Hant":"4枚","en":""}</widget>
+                    <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"{{it.myCollect.length}}枚","zh_Hant":"{{it.myCollect.length}}枚","en":""}</widget>
                     <widget w-class="top-small-text" w-tag="pi-ui-lang">{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""}</widget>
                 </div>
                 <img src="../../res/image1/default_head.png" height="120px" />
                 <div w-class="flex-col">
-                    <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"7%","zh_Hant":"7%","en":""}</widget>
-                    <widget w-class="top-small-text" w-tag="pi-ui-lang">{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""}</widget>
+                    <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"{{it.percentage}}%","zh_Hant":"{{it.percentage}}%","en":""}</widget>
+                    <widget w-class="top-small-text" w-tag="pi-ui-lang">{"zh_Hans":"完成度","zh_Hant":"完成度","en":""}</widget>
                 </div>
             </div>
             <div style="display: flex;flex-direction: row-reverse;">
@@ -29,7 +29,7 @@
             {{for i,item of it.medalList}}
             <div w-class="collect-item flex-col">
                 <widget w-class="medal-top-text" w-tag="pi-ui-lang">{{item.title}}</widget>
-                <img on-tap="medalShow(e,{{item.id}})" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
+                <img on-tap="medalShow(e,{{i}})" class="{{item.isHave?'':'grayscale'}}" src="../../res/image/medals/{{item.img}}.png" height="180px"/>
             </div>
             {{end}}
 

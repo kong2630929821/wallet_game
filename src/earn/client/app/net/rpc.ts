@@ -4,6 +4,7 @@
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { Achievements } from '../../../server/data/db/medal.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -11,7 +12,7 @@ import { item_addticket } from '../../../server/rpc/test.p';
 import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, item_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
@@ -227,6 +228,24 @@ export const getLoginDays = () => {
                 // showActError(r.resultNum);TODO
                 reject(r);
             }
+        });
+    });
+};
+
+/**
+ * 获取拥有的成就勋章
+ */
+export const getACHVmedal = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_achievements, null, (r: Achievements) => {
+            console.log('rpc-getACHVmedal--成就勋章---------------', r);
+            // if (r.resultNum === 1) {
+            setStore('ACHVmedals',r.achievements);
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
         });
     });
 };

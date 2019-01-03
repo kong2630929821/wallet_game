@@ -9,9 +9,11 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
+import { getACHVmedal } from '../../net/rpc';
 // import { getStore, register } from '../../store/memstore';
-import { computeRankMedal, getGoodCount, getMedalList } from '../../utils/util';
+import { computeRankMedal, getACHVmedalList, getGoodCount, getMedalList } from '../../utils/util';
 import { ItemType } from '../../xls/dataEnum.s';
+import { MedalType } from './medalShow';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -45,10 +47,13 @@ export class Medal extends Widget {
                 }
             ],
             mineMedal: {
-                rankMedal:8001,
+                rankMedal: 8001,
                 desc: '',
-                nextNeedKt:0
-            }
+                nextNeedKt: 0
+            },
+            totalMedal:0,
+            collectMedal:0
+            
         };
         this.initData();
     }
@@ -59,7 +64,7 @@ export class Medal extends Widget {
     public initData() {
         const medalList = getMedalList(ItemType.KT, 'coinType');
         this.props.mineMedal = computeRankMedal();
-        
+
         for (const element of medalList) {
             const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
             for (const element1 of this.props.medalList) {
@@ -68,6 +73,11 @@ export class Medal extends Widget {
                 }
             }
         }
+        this.props.totalMedal = getACHVmedalList('偶然成就','typeNum').length;
+        getACHVmedal().then((res:any) => {
+            this.props.collectMedal = res.achievements.length;
+            this.paint();
+        });
         this.paint();
     }
 
@@ -87,7 +97,12 @@ export class Medal extends Widget {
         const $realDomStyle = $realDom.style;
         $realDomStyle.visibility = `hidden`;
 
-        popNew('earn-client-app-view-medal-medalShow', { medalId, medalSite }, () => {
+        popNew('earn-client-app-view-medal-medalShow', {
+            medalId,
+            medalSite,
+            isHave: true,
+            medalType:MedalType.rankMedal
+        }, () => {
             $realDomStyle.visibility = `visible`;
             this.paint();
         });
@@ -100,9 +115,9 @@ export class Medal extends Widget {
      */
     public shareClick() {
         makeScreenShot(() => {
-            popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
-        },() => {
-            popNew('app-components1-message-message',{ content:this.config.value.tips });
+            popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_SCREEN });
+        }, () => {
+            popNew('app-components1-message-message', { content: this.config.value.tips });
         });
     }
 

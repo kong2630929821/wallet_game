@@ -15,7 +15,7 @@
                 <div w-class="myCollect">
                     <div w-class="myCollect-box" on-tap="goMyCollect">
                         <widget w-class="myCollect-text" w-tag="pi-ui-lang">{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""}</widget>
-                        <span>4/24</span>
+                        <span>{{it.collectMedal}}/{{it.totalMedal}}</span>
                         <img src="../../res/image1/rightArrow-white.png" height="48px" />
                     </div>
                     <div w-class="share" w-tap="shareClick">

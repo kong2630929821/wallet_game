@@ -8,7 +8,9 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-// import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
+import { getACHVmedalList } from '../../utils/util';
+import { MedalType } from './medalShow';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -20,22 +22,18 @@ export class Collect extends Widget {
     public ok: () => void;
     public props:any = {
         scrollHeight: 0,
-        medalList: [
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 },
-            { title: { zh_Hans: '我的收集', zh_Hant: '我的收集', en: '' }, img: 'medal8001',id:8001 }
-        ]
+        medalList: [],
+        myCollect:[],
+        percentage:0
     };
 
     public create() {
         super.create();
+        const list = getACHVmedalList('偶然成就','typeNum');
+        list.forEach(element => {
+            const data = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
+            this.props.medalList.push(data);
+        });
         this.initData();
     }
 
@@ -43,7 +41,13 @@ export class Collect extends Widget {
      * 更新props数据
      */
     public initData() {
-        // TODO
+
+        this.props.myCollect = getStore('ACHVmedals');
+        this.props.medalList.forEach(element => {
+            element.isHave = this.props.myCollect.includes(element.id);
+        });
+        this.props.percentage = Math.floor(this.props.myCollect.length / this.props.medalList.length * 100) ;
+
         this.paint();
     }
 
@@ -71,7 +75,7 @@ export class Collect extends Widget {
     /**
      * 勋章展示
      */
-    public medalShow(e: any, medalId: number) {
+    public medalShow(e: any, index: number) {
 
         const $realDom = getRealNode(e.node);
         const medalSite = {
@@ -84,7 +88,12 @@ export class Collect extends Widget {
         const $realDomStyle = $realDom.style;
         $realDomStyle.visibility  = `hidden`;
 
-        popNew('earn-client-app-view-medal-medalShow', { medalId, medalSite }, () => {
+        popNew('earn-client-app-view-medal-medalShow', { 
+            medalId:this.props.medalList[index].id, 
+            medalSite ,
+            isHave:this.props.medalList[index].isHave,
+            medalType:MedalType.ACHVmedal 
+        }, () => {
             $realDomStyle.visibility = `visible`;
             this.paint();
         });
@@ -102,7 +111,7 @@ export class Collect extends Widget {
 
 // ===================================================== 立即执行
 
-// register('goods', (goods: Item[]) => {
-//     const w: any = forelet.getWidget(WIDGET_NAME);
-//     w && w.initData();
-// });
+register('ACHVmedals', (r) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});
