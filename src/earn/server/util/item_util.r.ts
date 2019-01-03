@@ -5,23 +5,24 @@ import { Award, AwardMap, BTC, ConvertTab, ETH, Hoe, Item, Items, KT, Mine, Mine
 
 import { Bucket } from '../../utils/db';
 
-import { BigU128 } from '../../../pi/bigint/util';
 import { randomInt } from '../../../pi/util/math';
 import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { AwardConvertCfg, ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
-import { BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
+import { BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
 import { get_miningKTNum } from '../rpc/mining.r';
+import { send } from '../rpc/sendMessage.r';
 import { IsOk } from '../rpc/test.s';
-import { getUid } from '../rpc/user.r';
+import { getOpenid, getUid } from '../rpc/user.r';
 import { get_item, item_query } from '../rpc/user_item.r';
 import { doAward } from './award.t';
 import { get_enumType } from './mining_util';
+import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 
 // 添加兑换码
@@ -80,24 +81,9 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     awardMap.awards = awardList;
     mapBucket.put(uid, awardMap);
     // 向钱包添加奖励相应的货币
-    // if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE || itemType === KT_TYPE) {
-    //     let coinType;
-    //     let coinNum;
-    //     switch (itemType) {
-    //         case BTC_TYPE:
-    //             coinType = BTC_WALLET_TYPE;
-    //             coinNum = (count / BTC_UNIT_NUM).toString();
-    //         case ETH_TYPE:
-    //             coinType = ETH_WALLET_TYPE;
-    //         case ST_TYPE:
-    //             coinType = ST_WALLET_TYPE;
-    //             coinNum = (count / ST_UNIT_NUM).toString();
-    //         case KT_TYPE:
-    //             coinType = KT_WALLET_TYPE;
-    //             coinNum = (count / KT_UNIT_NUM).toString();
-    //         default:
-    //     }
-    // }
+    if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE || itemType === KT_TYPE) {
+        oauth_alter_balance(itemType, awardid, count);
+    }
     // 写入特别奖励表
     if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE) {
         const specialAward = new SpecialAward();
@@ -168,6 +154,16 @@ export const reduce_itemCount = (itemType: number, count: number): Item => {
     const enumNum = get_enumType(itemType);
     const itemInfo = item_query();
     const item = get_item(itemType);
+    // 向钱包扣除相应的货币
+    if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE || itemType === KT_TYPE) {
+        const time = (new Date()).valueOf();
+        const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+        if (!oauth_alter_balance(itemType, oid, -count)) {
+            return;
+        }
+
+        return item;
+    }
     const beforeCount = item.value.count;
     const afterCount = beforeCount - count;
     console.log('afterCount !!!!!!!!!!!!!!', afterCount);
@@ -301,7 +297,7 @@ export const add_medal = (uid:number, medalType: number): boolean => {
     medals.medals.push(medalType);
     bucket.put(uid, medals);
     // 推送获得奖章的信息
-    mqtt_send(uid, MESSAGE_TYPE_ADDMEDAL, medalType);
+    send(uid, MESSAGE_TYPE_ADDMEDAL, medalType.toString());
 };
 
 // 添加成就
