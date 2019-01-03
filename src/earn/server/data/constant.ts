@@ -57,6 +57,9 @@ export const MEDAL_ST = 8016;
 export const MEDAL_ETH = 8017;
 export const MEDAL_BTC = 8018;
 
+// 消息推送类型编号
+export const MESSAGE_TYPE_ADDMEDAL = 8000; // 添加奖章
+
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位
 export const BTC_UNIT_NUM:number = 10 ^ (-4);
@@ -108,12 +111,12 @@ export const HUGE_MINE_TYPE_AWARD = 100301; // 大矿山挖矿
 export const GET_RANDOM_MINE = 100401; // 获取矿山
 export const COMPOSE_GOLD_TICKET = 100501; // 合成金券
 export const COMPOSE_RAINBOW_TICKET = 100601; // 合成彩券
-export const SILVER_TICKET_ROTARY = 100701; // 银券大转盘
-export const GOLD_TICKET_ROTARY = 100801; // 金券大转盘
-export const RAINBOW_TICKET_ROTARY = 100901; // 彩券大转盘
-export const SILVER_TICKET_TREASUREBOX = 101001; // 银券宝箱
-export const GOLD_TICKET_TREASUREBOX = 101101; // 金券宝箱
-export const RAINBOW_TICKET_TREASUREBOX = 101201; // 彩券宝箱
+export const SILVER_TICKET_ROTARY = 100701; // 初级大转盘
+export const GOLD_TICKET_ROTARY = 100801; // 中级大转盘
+export const RAINBOW_TICKET_ROTARY = 100901; // 高级大转盘
+export const SILVER_TICKET_TREASUREBOX = 101001; // 初级宝箱
+export const GOLD_TICKET_TREASUREBOX = 101101; // 中级宝箱
+export const RAINBOW_TICKET_TREASUREBOX = 101201; // 高级宝箱
 
 // 合成消耗奖券
 export const TICKET_COMPOSE_COUNT = 3;
@@ -123,6 +126,17 @@ export const TICKET_ROTARY_COUNT = 2;
 export const TICKET_TREASUREBOX_COUNT = 2;
 // 获取邀请奖励最小人数
 export const MIN_INVITE_NUM = 3;
+
+// 转盘等级编号
+export const LEVEL1_ROTARY = 1;
+export const LEVEL2_ROTARY = 2;
+export const LEVEL3_ROTARY = 3;
+// 初级转盘消耗ST数
+export const LEVEL1_ROTARY_STCOST = 10;
+// 中级转盘消耗ST数
+export const LEVEL2_ROTARY_STCOST = 100;
+// 高级转盘消耗ST数
+export const LEVEL3_ROTARY_STCOST = 1000;
 
 // 数据库名
 export const WARE_NAME = 'file';
@@ -138,6 +152,8 @@ export const WALLET_SERVER_KEY = 'xxxxxxxxx';
 export const WALLET_API_CDKEY = '/oAuth/cdkey';
 // 查询余额
 export const WALLET_API_QUERY = '/oAuth/balancequery';
+// 修改余额
+export const WALLET_API_ALTER = '/oAuth/alterbalance';
 // 邀请人数
 export const WALLET_API_INVITENUM = '/oAuth/invite';
 

@@ -84,12 +84,13 @@ export const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefa
 };
 
 // 指定用户消息推送
-export const mqtt_send = (uid:number, msg:number) => {
+export const mqtt_send = (uid:number, msgType:number, msg:number) => {
     console.log('mqtt_send in !!!!!!!!!!!!!!!!!!!!');
     const mqttServer = <ServerNode>getMqttServer();
     const message = new SendMessage();
     message.uid = uid;
     message.msg = msg;
+    message.msgType = msgType;
     const buf = new BonBuffer();
     message.bonEncode(buf);
     console.log('QoS.AtMostOnce !!!!!!!!!!!!!!!!!!!!', QoS.AtMostOnce);
