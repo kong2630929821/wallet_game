@@ -215,6 +215,15 @@ struct MiningKTMapTab {
 }
 
 /**
+*当天免费初级转盘表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct FreeRotary {
+    uid: u32,
+    free: bool
+}
+
+/**
 *挖矿得到KT数量排行
 */
 struct MineKTTop {

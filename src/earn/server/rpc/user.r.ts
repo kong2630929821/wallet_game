@@ -15,6 +15,7 @@ import { get_index_id } from '../data/util';
 import { get_today } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { SeriesDaysRes } from './itemQuery.s';
+import { add_free_rotary } from './stParties.r';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 
 // #[rpc=rpcServer]
@@ -69,17 +70,19 @@ export const login = (user: UserType): UserInfo => {
         firstLogin_award();
     }
 
-    // 当日首次登陆赠送矿山
+    // 判断是否当日首次登陆
     if (isToday_firstLogin()) {
         console.log('is today first login!!!!!!!!!!!!!!!!!!!!!!!!');
+        // 当日首次登陆赠送矿山
         login_add_mine();
+        // 当日首次登陆赠送一次免费初级转盘
+        add_free_rotary();
         // 添加到每日登陆表
         set_user_login(loginReq.uid);
         // 添加连续登陆奖励
         const days = get_loginDays().days;
         seriesLogin_award(days);
     }
-
     userInfo.uid = loginReq.uid;
     userInfo.sex = 0;
     console.log('userInfo!!!!!!!!!!!!!!!!!!!!!!!!', userInfo);

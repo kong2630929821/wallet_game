@@ -2,7 +2,8 @@
 /**
  * 连接钱包服务器封装
  */
-import { WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
+import { WALLET_API_ALTER, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
+import { getOpenid } from '../rpc/user.r';
 import * as http from './http_client';
 
 // 签名
@@ -48,3 +49,8 @@ export const oauth_send = (uri: string, body) => {
 
     return http.post(client, url, body);
 };
+
+// export const oauth_alter_balance = (coinType:number, num:number) => {
+//     const openid = Number(getOpenid());
+//     const r =  oauth_send(WALLET_API_ALTER, { openid: openid, coinType: coinType, num: num });
+// };
