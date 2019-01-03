@@ -27,6 +27,11 @@ export const INVITE_NOT_ENOUGH = 2101;
 // 邀请奖励已经领取
 export const INVITE_AWARD_ALREADY_TAKEN = 2102; 
 
+// ST数量不足
+export const ST_NOT_ENOUGH = 3101;
+// 转盘类型错误
+export const ROTARY_TYPE_ERROR = 3102;
+
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
 // 奖券类型错误
