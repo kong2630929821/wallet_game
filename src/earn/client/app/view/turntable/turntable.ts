@@ -7,7 +7,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { getGoodCount, getPrizeList, getTicketNum } from '../../utils/util';
 import { ActivityType, ItemType } from '../../xls/dataEnum.s';
 
@@ -32,7 +32,7 @@ export class Turntable extends Widget {
         selectTurntable: {},
         turnNum: 0,
         isTurn: false,
-        STbalance:getGoodCount(ItemType.ST),
+        STbalance:0,
         prizeList: [],
         turntableList: [
             {
@@ -85,6 +85,7 @@ export class Turntable extends Widget {
      * 初始数据
      */
     public initData() {
+        this.props.STbalance = getStore('balance/ST');
         this.paint();
     }
 
@@ -198,5 +199,10 @@ export class Turntable extends Widget {
 
 register('goods', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});
+
+register('balance/ST',(r:any) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

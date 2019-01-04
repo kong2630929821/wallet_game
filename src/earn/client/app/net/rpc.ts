@@ -16,7 +16,7 @@ import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/use
 import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
-import { timestampFormat } from '../utils/tools';
+import { st2ST, timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
@@ -67,7 +67,7 @@ export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', r.item);
+            setStore('balance/ST', st2ST(0));
         } else {
             showActError(r.resultNum);
         }
@@ -129,6 +129,7 @@ export const openChest = (activityType: ActivityType) => {
         clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
             console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
+                getSTbalance();
                 resolve(r);
             } else {
                 showActError(r.resultNum);
@@ -148,6 +149,7 @@ export const openTurntable = (activityType: ActivityType) => {
         clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
             console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
+                getSTbalance();
                 resolve(r);
             } else {
                 showActError(r.resultNum);

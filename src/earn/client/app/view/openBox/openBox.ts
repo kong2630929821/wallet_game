@@ -9,7 +9,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openChest } from '../../net/rpc';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { getGoodCount, getTicketBalance, getTicketNum } from '../../utils/util';
 import { ActivityType, ItemType, TicketType } from '../../xls/dataEnum.s';
 
@@ -35,7 +35,7 @@ export class OpenBox extends Widget {
         isEmpty:false,
         isOpening:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
-        STbalance:getGoodCount(ItemType.ST),
+        STbalance:0,
         chestList: [
             {
                 type: ActivityType.PrimaryChest,
@@ -67,6 +67,7 @@ export class OpenBox extends Widget {
      * 初始数据
      */
     public initData() {
+        this.props.STbalance = getStore('balance/ST');
         this.paint();
     }
 
@@ -166,6 +167,11 @@ export class OpenBox extends Widget {
 // ===================================================== 立即执行
 
 register('goods',(goods:Item[]) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});
+
+register('balance/ST',(r) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });
