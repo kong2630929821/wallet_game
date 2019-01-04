@@ -6,10 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
+import { get_STNum, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { item_addticket } from '../../../server/rpc/test.p';
-import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
+import { ticket_compose, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
@@ -17,10 +18,11 @@ import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, setStore } from '../store/memstore';
 import { timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
-import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
+import { ActivityType, AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
+import { initReceive } from './receive';
 
 /**
  * 钱包用户登录活动
@@ -30,7 +32,7 @@ export const loginActivity = () => {
         const userType = new UserType();
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
-        getOpenId('1001',(r) => {
+        getOpenId('101',(r) => {
             walletLoginReq.openid = r.openid;
             walletLoginReq.sign = '';
             userType.value = walletLoginReq;
@@ -40,6 +42,8 @@ export const loginActivity = () => {
                     popNew('earn-client-app-view-component-newUserLogin');
                 }
                 setStore('userInfo',r);
+                initReceive(r.uid);
+                getSTbalance();
                 resolve(r);
             });
         },(err) => {
@@ -55,6 +59,18 @@ export const getAllGoods = () => {
     clientRpcFunc(item_query, null, (r: Items) => {
         console.log('getAllGoods ', r);
         setStore('goods', r.item);
+    });
+};
+
+// 获取ST数量
+export const getSTbalance = () => {
+    clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
+        console.log('rpc-getSTbalance--ST余额---------------', r);
+        if (r.resultNum === 1) {
+            setStore('balance/ST', r.item);
+        } else {
+            showActError(r.resultNum);
+        }
     });
 };
 
@@ -107,10 +123,10 @@ export const getTodayMineNum = () => {
 /**
  * 开宝箱
  */
-export const openChest = (ticketType: TicketType) => {
+export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
-        const itemType = ticketType;
-        clientRpcFunc(ticket_treasurebox, itemType, (r: AwardResponse) => {
+        const itemType = activityType;
+        clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
             console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
@@ -125,11 +141,11 @@ export const openChest = (ticketType: TicketType) => {
 /**
  * 转转盘
  */
-export const openTurntable = (ticketType: TicketType) => {
+export const openTurntable = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
-        const itemType = ticketType;
+        const itemType = activityType;
 
-        clientRpcFunc(ticket_rotary, itemType, (r: AwardResponse) => {
+        clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
             console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
@@ -157,17 +173,6 @@ export const compoundTicket = (ticketType: TicketType) => {
                 reject(r);
             }
         });
-    });
-};
-
-/**
- * 增加奖券
- * @param num 增加数量
- */
-export const addTicket = (num: number) => {
-    clientRpcFunc(item_addticket, num, (r: Item) => {
-        console.log('addTicket',r);
-        
     });
 };
 

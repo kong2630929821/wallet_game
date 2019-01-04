@@ -51,7 +51,7 @@ export const login = (user: UserType): UserInfo => {
         return userInfo;
     }
     const mqttServer = getEnv().getNativeObject<ServerNode>('mqttServer');
-    setMqttTopic(mqttServer, loginReq.uid.toString(), true, true);
+    setMqttTopic(mqttServer, `send/${loginReq.uid}`, true, true);
 
     // save session
     const session = getEnv().getSession();

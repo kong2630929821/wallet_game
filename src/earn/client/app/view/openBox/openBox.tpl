@@ -8,9 +8,9 @@
                 {{for i,item in it.boxList}}
                 <div w-class="box">
                     {{if item === 1}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/boxOpen{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}boxOpen.png" height="100%;" style="margin:0px auto;" />
                     {{else}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/box{{it.selectTicket.type}}.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}box.png" height="100%;" style="margin:0px auto;" />
                     {{end}}
                 </div>
                 {{end}}
@@ -20,8 +20,7 @@
                 {{if !it.isEmpty}}
                 <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
-                    <span>{{it.selectTicket.needTicketNum}}</span>
-                    <widget w-tag="pi-ui-lang">{{it.selectTicket.name}}</widget>
+                    <span>{{it.selectChest.needTicketNum}}ST</span>
 
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"/1个","zh_Hant":"/1個","en":""}</widget>
                 </div>
@@ -37,10 +36,10 @@
 
             {{% 余票}}
             <div w-class="ticket">
-                {{for i,item in it.ticketList}}
-                <div on-tap="change({{i}})" w-class="ticket-item {{it.selectTicket.type===item.type ?'select':''}}">
+                {{for i,item in it.chestList}}
+                <div on-tap="change({{i}})" w-class="ticket-item {{it.selectChest.type===item.type ?'select':''}}">
                     <img src="../../res/image/ticket{{item.type}}.png" width="100%;" style="margin-top:15px;" />
-                    <div w-class="ticket-num">{{item.balance}}</div>
+                    <div w-class="ticket-num">{{it.STbalance}}</div>
                 </div>
                 {{end}}
             </div>

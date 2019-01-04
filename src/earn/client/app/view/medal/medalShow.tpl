@@ -4,15 +4,19 @@
 
     <div w-class="content flex-col" class="fadein">
         <div class="{{it.isHave?'':'grayscale'}}" w-class="medal" style="transform:translate( {{it.moveX}}px , {{it.moveY}}px ) scale({{it.imgScale}});transition:{{it.imgScale !== 1?'none':'transform 0.5s ease'}};" id="medalShow">
-            <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px" height="480px"/>
+            {{if it.isHave}}
+                <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px" height="480px"/>
+            {{else}}
+                <div class="sunShine" style="width:480px;height:480px" ></div>
+            {{end}}
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
         </div>
         <div w-class="flex-col" style="margin-top: -100px;">
             <widget w-class="medal-title" w-tag="pi-ui-lang">{{it.medalTitle}}</widget>
             {{if it.medalType===0}}
-            <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}KT","zh_Hant":"挖礦達到{{it.condition}}KT","en":""}</widget>
+                <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}KT","zh_Hant":"挖礦達到{{it.condition}}KT","en":""}</widget>
             {{else}}
-            <p w-class="medal-desc">{{it.condition}}</p>
+                <p w-class="medal-desc">{{it.condition}}</p>
             {{end}}
         </div>
         <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"挂出去","zh_Hant":"掛出去","en":""}</widget>

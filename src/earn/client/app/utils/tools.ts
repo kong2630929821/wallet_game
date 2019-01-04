@@ -18,3 +18,29 @@ export const timestampFormat = (timestamp) => {
 
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };
+
+/**
+ * st小转大单位
+ * @param stNum st数量
+ */
+export const st2ST = (stNum:number) => {
+    let ST = 0;
+    if (stNum !== 0) {
+        ST = stNum / 1000;
+    }
+
+    return ST;
+};
+
+/**
+ * ST大转小单位
+ * @param STNum ST数量
+ */
+export const ST2st = (STNum:number) => {
+    let st = 0;
+    if (STNum !== 0) {
+        st = STNum * 1000;
+    }
+
+    return st;
+};

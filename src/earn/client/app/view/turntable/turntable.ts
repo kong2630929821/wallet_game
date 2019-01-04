@@ -8,8 +8,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
 import { register } from '../../store/memstore';
-import { getPrizeList, getTicketBalance, getTicketNum } from '../../utils/util';
-import { ActivityType, TicketType } from '../../xls/dataEnum.s';
+import { getGoodCount, getPrizeList, getTicketNum } from '../../utils/util';
+import { ActivityType, ItemType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -18,51 +18,47 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    selectTicket: any;
-    turntableList: any;
-    turnNum: number;
-    isTurn: boolean;
-    ticketList: any;
+    selectTurntable: any;
+    prizeList: any;    // 奖品列表
+    turnNum: number;   // 旋转角度
+    isTurn: boolean;   // 正在转
+    STbalance:number;  // 账户余额(st)
+    turntableList: any;   // 转盘列表
 }
 export class Turntable extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        selectTicket: {},
+        selectTurntable: {},
         turnNum: 0,
         isTurn: false,
-        turntableList: [],
-        ticketList: [
+        STbalance:getGoodCount(ItemType.ST),
+        prizeList: [],
+        turntableList: [
             {
-                type: TicketType.SilverTicket,
+                type: ActivityType.PrimaryTurntable,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
-                balance: 0,
                 needTicketNum: getTicketNum(ActivityType.PrimaryTurntable),
-                turntableName: { zh_Hans: '初级大转盘', zh_Hant: '初級大轉盤', en: '' },
-                activityType: ActivityType.PrimaryTurntable
+                turntableName: { zh_Hans: '初级大转盘', zh_Hant: '初級大轉盤', en: '' }
             },
             {
-                type: TicketType.GoldTicket,
+                type:  ActivityType.MiddleTurntable,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
-                balance: 0,
                 needTicketNum: getTicketNum(ActivityType.MiddleTurntable),
-                turntableName: { zh_Hans: '中级大转盘', zh_Hant: '中級大轉盤', en: '' },
-                activityType: ActivityType.MiddleTurntable
+                turntableName: { zh_Hans: '中级大转盘', zh_Hant: '中級大轉盤', en: '' }
             },
             {
-                type: TicketType.DiamondTicket,
+                type: ActivityType.AdvancedTurntable,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
-                balance: 0,
                 needTicketNum: getTicketNum(ActivityType.AdvancedTurntable),
-                turntableName: { zh_Hans: '高级大转盘', zh_Hant: '高級大轉盤', en: '' },
-                activityType: ActivityType.AdvancedTurntable
+                turntableName: { zh_Hans: '高级大转盘', zh_Hant: '高級大轉盤', en: '' }
             }
         ]
     };
 
     public create() {
         super.create();
-        this.props.selectTicket = this.props.ticketList[0];
+        this.props.selectTurntable = this.props.turntableList[0];
         this.initTurntable();
         this.initData();
     }
@@ -72,15 +68,15 @@ export class Turntable extends Widget {
      */
     public initTurntable() {
         // 奖品配置  
-        const prizeList = getPrizeList(this.props.selectTicket.activityType);
-        this.props.turntableList = [];
+        const prizeList = getPrizeList(this.props.selectTurntable.type);
+        this.props.prizeList = [];
 
         for (let i = 0, length = prizeList.length; i < length; i++) {
             const prizeItem = {
                 awardType: prizeList[i],
                 deg: (-360 / length) * i
             };
-            this.props.turntableList.push(prizeItem);
+            this.props.prizeList.push(prizeItem);
         }
         this.paint();
     }
@@ -89,9 +85,6 @@ export class Turntable extends Widget {
      * 初始数据
      */
     public initData() {
-        for (let i = 0; i < this.props.ticketList.length; i++) {
-            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
-        }
         this.paint();
     }
 
@@ -103,70 +96,85 @@ export class Turntable extends Widget {
 
             return;
         }
-        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) { // 余票不足
+        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) { // 余票不足
             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
             
             return;
         }
-        this.props.isTurn = true;
         let resData;
 
-        this.goLotteryAnimation();
+        this.goLotteryAnimation(true);
 
-        openTurntable(this.props.selectTicket.type).then((res) => {
+        openTurntable(this.props.selectTurntable.type).then((res) => {
             resData = res;
-            this.goLotteryAnimation(res);
+            this.goLotteryAnimation(true,res);
         }).catch((err) => {
-            // TODO
+            resData = err;
+            this.goLotteryAnimation(true,err);
         });
 
-        setTimeout(() => {
-            this.props.isTurn = false;
-            this.goLotteryAnimation();
-            if (resData.resultNum === 1) {
-                popNew('earn-client-app-view-component-lotteryModal', resData.award);
-            }
-        }, 6000);
     }
 
     /**
      * 转盘开奖动画
      */
-    public goLotteryAnimation(resData?: any) {
+    public goLotteryAnimation(isTurn:boolean,resData?: any) {
         const $turnStyle = document.getElementById('turntable').style;
-        if (!this.props.isTurn) {// 停止转动
+        this.props.isTurn = isTurn;
+        this.paint();
+
+        if (!isTurn) {          // 停止转动
             $turnStyle.transition = 'none';
             $turnStyle.transform = `rotate(${this.props.turnNum}deg)`;
 
             return;
         }
-        if (!resData) {// 开始转动
-            $turnStyle.transition = 'transform 6s ease';
-            $turnStyle.transform = `rotate(${this.props.turnNum + 1800}deg)`;
-        } else if (resData.resultNum === 1) { // 抽奖接口成功，修改旋转角度
-            this.props.turntableList.forEach(element => {
-                if (element.awardType === resData.award.awardType) {
-                    this.props.turnNum = element.deg;
-                    this.goLotteryAnimation();
+        if (!resData) {         // 不传resData,开始转动
+            $turnStyle.transition = 'transform 2s ease-in';
+            $turnStyle.transform = `rotate(720deg)`;
 
-                    return;
+            return;
+        } else {                // 传入resData,确认结束转动旋转角度
+            if (resData.resultNum === 1) { // 抽奖接口成功，修改旋转角度
+                this.props.prizeList.forEach(element => {
+                    if (element.awardType === resData.award.awardType) {
+                        this.props.turnNum = element.deg;
+                        
+                    }
+                });
+            } else {                      // 抽奖接口失败，修改旋转角度
+                this.props.prizeList.forEach(element => {
+                    if (element.awardType === 1001) {
+                        this.props.turnNum = element.deg;
+    
+                    }
+                });
+            }
+            
+            $turnStyle.transition = 'transform 4s ease-out';
+            $turnStyle.transform = `rotate(${this.props.turnNum + 1800}deg)`;
+
+            setTimeout(() => {
+                this.goLotteryAnimation(false);
+                if (resData.resultNum === 1) {
+                    popNew('earn-client-app-view-component-lotteryModal', resData.award);
                 }
-            });
-        } else if (resData.resultNum !== 1) { // 抽奖接口失败
-            // TODO
+                this.paint();
+            }, 4000);
         }
+        
     }
 
     /**
      * 更改宝箱类型
-     * @param num 票种
+     * @param index 序号
      */
-    public change(num: number) {
+    public change(index: number) {
         if (this.props.isTurn) {
 
             return;
         }
-        this.props.selectTicket = this.props.ticketList[num];
+        this.props.selectTurntable = this.props.turntableList[index];
         this.initTurntable();
         this.paint();
     }

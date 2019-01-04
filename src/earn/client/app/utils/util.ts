@@ -257,7 +257,7 @@ export const getPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(WeightAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
+        if (cfg.id >= activityType && cfg.id <= (activityType + 99)) {
             filterCfgs.push(cfg.prop);
         }
     }
@@ -272,7 +272,7 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(RegularAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
+        if (cfg.id >= activityType  && cfg.id < (activityType + 99)) {
             filterCfgs.push(cfg);
         }
     }

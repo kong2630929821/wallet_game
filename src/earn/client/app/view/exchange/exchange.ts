@@ -40,17 +40,17 @@ export class TicketCenter extends Widget {
         ],
         ticketList: [
             {
-                type: TicketType.SilverTicket,
+                type: 0,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 balance: 0
             },
             {
-                type: TicketType.GoldTicket,
+                type: 0,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 balance: 0
             },
             {
-                type: TicketType.DiamondTicket,
+                type:0,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
                 balance: 0
             }
@@ -68,9 +68,6 @@ export class TicketCenter extends Widget {
      * 初始数据
      */
     public initData() {
-        for (let i = 0;i < this.props.ticketList.length;i++) {
-            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
-        }
         if (this.props.navbarSelected === this.props.navbarList[0].name) {
             const list = getVirtualExchangeList();
             console.log('list--------------',list);

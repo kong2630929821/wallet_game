@@ -5,6 +5,7 @@
 
 import { HandlerMap, HandlerResult } from '../../../../pi/util/event';
 import * as CONSTANT from '../../../server/data/constant';
+import { SendMsg } from '../../../server/rpc/send_message.s';
 import { subscribe } from './init';
 
 /**
@@ -23,7 +24,9 @@ export const addEvent = (cmd: string, cb: (r: any) => void) => {
 
 // 监听topic
 export const initReceive = (uid: number) => {
+    console.log('勋章弹窗uiduiduiduid！！！！！！！',uid);
     subscribe(`send/${uid}`, SendMsg, (r: any) => {
+        console.log('勋章弹窗！！！！！！！',r);
         notify(r.cmd, r.msg);
     });
 };

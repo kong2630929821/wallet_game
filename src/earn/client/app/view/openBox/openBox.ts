@@ -10,8 +10,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openChest } from '../../net/rpc';
 import { register } from '../../store/memstore';
-import { getTicketBalance, getTicketNum } from '../../utils/util';
-import { ActivityType, TicketType } from '../../xls/dataEnum.s';
+import { getGoodCount, getTicketBalance, getTicketNum } from '../../utils/util';
+import { ActivityType, ItemType, TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,10 +21,11 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
     isEmpty:boolean; // 空宝箱
-    isOpenBoxing:boolean;// 正在开启宝箱中
-    selectTicket: any; // 选择的宝箱类型
+    isOpening:boolean;// 正在开启宝箱中
+    selectChest: any; // 选择的宝箱类型
     boxList: any; // 宝箱列表
-    ticketList: any; // 奖券列表
+    STbalance: number; // 账户余额(st)
+    chestList: any; // 宝箱选择列表
 }
 
 export class OpenBox extends Widget {
@@ -32,35 +33,33 @@ export class OpenBox extends Widget {
 
     public props: Props = {
         isEmpty:false,
-        isOpenBoxing:false,
+        isOpening:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
-        ticketList: [
+        STbalance:getGoodCount(ItemType.ST),
+        chestList: [
             {
-                type: TicketType.SilverTicket,
+                type: ActivityType.PrimaryChest,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.PrimaryChest),
-                balance: 0
+                needTicketNum:getTicketNum(ActivityType.PrimaryChest)
             },
             {
-                type: TicketType.GoldTicket,
+                type: ActivityType.MiddleChest,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.MiddleChest),
-                balance: 0
+                needTicketNum:getTicketNum(ActivityType.MiddleChest)
             },
             {
-                type:   TicketType.DiamondTicket,
+                type:ActivityType.AdvancedChest,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.AdvancedChest),
-                balance: 0
+                needTicketNum:getTicketNum(ActivityType.AdvancedChest)
             }
         ],
-        selectTicket: {}
+        selectChest: {}
 
     };
 
     public create() {
         super.create();
-        this.props.selectTicket = this.props.ticketList[0];
+        this.props.selectChest = this.props.chestList[0];
         this.initData();
     }
 
@@ -68,9 +67,6 @@ export class OpenBox extends Widget {
      * 初始数据
      */
     public initData() {
-        for (let i = 0;i < this.props.ticketList.length;i++) {
-            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
-        }
         this.paint();
     }
 
@@ -85,13 +81,13 @@ export class OpenBox extends Widget {
 
             return;
         }
-        if (this.props.selectTicket.balance < this.props.selectTicket.needTicketNum) {  // 奖券不够
+        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
 
             return;
         }
         this.openBoxAnimation(e);
-        openChest(this.props.selectTicket.type).then((res:any) => {
+        openChest(this.props.selectChest.type).then((res:any) => {
             this.openBoxAnimation(e);
             popNew('earn-client-app-view-component-lotteryModal', res.award);
             if (res.award.count === 0) {
@@ -102,6 +98,8 @@ export class OpenBox extends Widget {
         }).catch((err) => {
             this.openBoxAnimation(e);
             this.emptyChest();
+            this.props.boxList[num] = 1;
+            this.paint();
         });
     }
 
@@ -123,8 +121,8 @@ export class OpenBox extends Widget {
      */
     public openBoxAnimation(e:any) {
         const $chest = getRealNode(e.node);
-        this.props.isOpenBoxing = !this.props.isOpenBoxing;
-        if (this.props.isOpenBoxing) {
+        this.props.isOpening = !this.props.isOpening;
+        if (this.props.isOpening) {
             $chest.className = 'isOpenbox';
         } else {
             $chest.className = '';
@@ -142,11 +140,11 @@ export class OpenBox extends Widget {
 
     /**
      * 更改宝箱类型
-     * @param num 票种
+     * @param index 序号
      */
-    public change(num: number) {
+    public change(index: number) {
         this.resetBoxList();
-        this.props.selectTicket = this.props.ticketList[num];
+        this.props.selectChest = this.props.chestList[index];
         this.paint();
     }
 
