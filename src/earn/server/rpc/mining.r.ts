@@ -7,7 +7,6 @@ import { Bucket } from '../../utils/db';
 import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_MINE, BTC_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
 import { AwardMap, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
-import { SeriesLogin, UserInfo } from '../data/db/user.s';
 import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, add_medal, get_award_ids, get_mine_total, get_mine_type, get_today, mining_add_medal, reduce_itemCount, reduce_mine } from '../util/item_util.r';
@@ -15,7 +14,7 @@ import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumT
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { seriesLogin_award } from '../util/regularAward';
 import { MiningResult, SeedResponse } from './itemQuery.s';
-import { get_loginDays, getUid } from './user.r';
+import { get_loginDays, getOpenid, getUid } from './user.r';
 import { add_mine, get_item } from './user_item.r';
 
 // 获取挖矿几率的随机种子
@@ -205,15 +204,8 @@ export const get_totalminingNum = (uid: number):TotalMiningNum => {
     if (!totalMiningNum) {
         const blanktotalMiningNum = new TotalMiningNum();
         blanktotalMiningNum.uid = uid;
-        const unameBucket = new Bucket(WARE_NAME, UserInfo._$info.name, dbMgr);
-        console.log('before get_uname!!!!!!!!!!!!!!!!!');
-        const userInfo = unameBucket.get<number, [UserInfo]>(uid)[0];
-        console.log('userInfo!!!!!!!!!!!!!!!!!', blanktotalMiningNum.uName);
-        if (!userInfo) {
-            blanktotalMiningNum.uName = 'nobody'; // 仅用于测试
-        } else {
-            blanktotalMiningNum.uName = userInfo.name;
-        }
+        const openid = getOpenid();
+        blanktotalMiningNum.openid = openid;
         blanktotalMiningNum.total = 0;
 
         return blanktotalMiningNum;
@@ -232,14 +224,8 @@ export const get_miningKTNum = (uid: number):MiningKTNum => {
     if (!miningKTNum) {
         const blankMiningKTNum = new MiningKTNum();
         blankMiningKTNum.uid = uid;
-        const unameBucket = new Bucket(WARE_NAME, UserInfo._$info.name, dbMgr);
-        const userInfo = unameBucket.get<number, [UserInfo]>(uid)[0];
-        console.log('userInfo!!!!!!!!!!!!!!!!!', blankMiningKTNum.uName);
-        if (!userInfo) {
-            blankMiningKTNum.uName = 'nobody'; // 仅用于测试
-        } else {
-            blankMiningKTNum.uName = userInfo.name;
-        }
+        const openid = getOpenid();
+        miningKTNum.openid = openid;
         blankMiningKTNum.total = 0;
 
         return blankMiningKTNum;

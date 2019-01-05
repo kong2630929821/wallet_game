@@ -15,6 +15,7 @@ import { get_index_id } from '../data/util';
 import { get_today } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { SeriesDaysRes } from './itemQuery.s';
+import { setSession } from './session.r';
 import { add_free_rotary } from './stParties.r';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 
@@ -51,9 +52,10 @@ export const login = (user: UserType): UserInfo => {
         return userInfo;
     }
     const mqttServer = getEnv().getNativeObject<ServerNode>('mqttServer');
-    setMqttTopic(mqttServer, `send/${loginReq.uid}`, true, true);
+    setMqttTopic(mqttServer, `send/${loginReq.uid.toString()}`, true, true);
 
     // save session
+    setSession('uid', loginReq.uid.toString(), loginReq.uid.toString());
     const session = getEnv().getSession();
     write(dbMgr, (tr: Tr) => {
         session.set(tr, 'uid', loginReq.uid.toString());

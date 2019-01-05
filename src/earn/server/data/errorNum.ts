@@ -31,6 +31,8 @@ export const INVITE_AWARD_ALREADY_TAKEN = 2102;
 export const ST_NOT_ENOUGH = 3101;
 // 转盘类型错误
 export const ROTARY_TYPE_ERROR = 3102;
+// 宝箱类型错误
+export const TREASUREBOX_TYPE_ERROR = 3103;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;

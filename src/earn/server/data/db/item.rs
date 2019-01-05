@@ -101,7 +101,8 @@ struct Award {
     src: String,
     time: String,
     desc: Option<String>,
-    convert: Option<String>
+    convert: Option<String>,
+    deadTime: Option<String>
 }
 
 /**
@@ -166,7 +167,7 @@ struct TodayMineNum {
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
 struct TotalMiningNum {
     uid: u32,
-    uName: Option<String>,
+    openid: String,
     total: u32
 }
 
@@ -184,7 +185,7 @@ struct MiningMap {
 #[primary=miningMap,db=file,dbMonitor=true,hasmgr=false]
 struct TotalMiningMap {
     miningMap: MiningMap,
-    uName: Option<String>
+    openid: String
 }
 
 /**
@@ -193,7 +194,7 @@ struct TotalMiningMap {
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
 struct MiningKTNum {
     uid: u32,
-    uName: Option<String>,
+    openid: String,
     total: u32
 }
 
@@ -211,7 +212,7 @@ struct MiningKTMap {
 #[primary=miningKTMap,db=file,dbMonitor=true,hasmgr=false]
 struct MiningKTMapTab {
     miningKTMap: MiningKTMap,
-    uName: Option<String>
+    openid: String
 }
 
 /**
@@ -258,7 +259,8 @@ struct ConvertTab {
     id: u32,
     typeNum: u32,
     convert: String,
-    state: bool
+    state: bool,
+    deadTime: String
 }
 
 /**
