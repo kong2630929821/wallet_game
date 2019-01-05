@@ -24,7 +24,6 @@ export const addEvent = (cmd: string, cb: (r: any) => void) => {
 
 // 监听topic
 export const initReceive = (uid: number) => {
-    console.log('勋章弹窗uiduiduiduid！！！！！！！',uid);
     subscribe(`send/${uid}`, SendMsg, (r: any) => {
         console.log('勋章弹窗！！！！！！！',r);
         notify(r.cmd, r.msg);

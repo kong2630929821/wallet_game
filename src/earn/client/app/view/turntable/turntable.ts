@@ -97,7 +97,7 @@ export class Turntable extends Widget {
 
             return;
         }
-        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) { // 余票不足
+        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
             
             return;

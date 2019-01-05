@@ -22,7 +22,6 @@ export class NewUserLogin extends Widget {
             };
             this.props.prizeList.push(prize);
         });
-        
     }
 
     public close(e: any) {

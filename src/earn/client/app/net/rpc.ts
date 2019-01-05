@@ -33,8 +33,8 @@ export const loginActivity = () => {
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
         getOpenId('101',(r) => {
-            walletLoginReq.openid = r.openid;
-            walletLoginReq.sign = '';
+            walletLoginReq.openid = r.openid.toString();
+            walletLoginReq.sign = 'dfefgefd';
             userType.value = walletLoginReq;
             clientRpcFunc(login, userType, (r: UserInfo) => {
                 console.log('活动登录成功！！--------------', r);

@@ -26,7 +26,7 @@ export const timestampFormat = (timestamp) => {
 export const st2ST = (stNum:number) => {
     let ST = 0;
     if (stNum !== 0) {
-        ST = stNum / 1000;
+        ST = stNum / 100;
     }
 
     return ST;
@@ -39,7 +39,7 @@ export const st2ST = (stNum:number) => {
 export const ST2st = (STNum:number) => {
     let st = 0;
     if (STNum !== 0) {
-        st = STNum * 1000;
+        st = STNum * 100;
     }
 
     return st;
