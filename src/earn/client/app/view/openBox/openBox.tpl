@@ -34,7 +34,7 @@
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"是个空宝箱","zh_Hant":"是個空寶箱","en":""}</widget>
                 </div>
                 {{end}}
-                <div w-class="sale-btn" on-tap="">
+                <div w-class="sale-btn" on-tap="goRecharge">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
             </div>

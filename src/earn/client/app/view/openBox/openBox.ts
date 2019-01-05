@@ -150,6 +150,13 @@ export class OpenBox extends Widget {
     }
 
     /**
+     * 去充值
+     */
+    public goRecharge() {
+        popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+    }
+
+    /**
      * 查看历史记录
      */
     public goHistory() {

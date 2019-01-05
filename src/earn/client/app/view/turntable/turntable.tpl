@@ -38,7 +38,7 @@
 
             {{% 售价}}
             <div w-class="sale">
-                <div w-class="sale-money">
+                <div w-class="sale-money" on-tap="goRecharge">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
                 <div w-class="sale-money">

@@ -167,6 +167,13 @@ export class Turntable extends Widget {
     }
 
     /**
+     * 去充值
+     */
+    public goRecharge() {
+        popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+    }
+
+    /**
      * 更改宝箱类型
      * @param index 序号
      */
