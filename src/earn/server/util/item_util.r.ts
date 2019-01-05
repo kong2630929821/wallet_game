@@ -16,7 +16,6 @@ import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
 import { get_miningKTNum } from '../rpc/mining.r';
-import { send } from '../rpc/sendMessage.r';
 import { IsOk } from '../rpc/test.s';
 import { getOpenid, getUid } from '../rpc/user.r';
 import { get_item, item_query } from '../rpc/user_item.r';
@@ -24,6 +23,7 @@ import { doAward } from './award.t';
 import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
+import { send } from './sendMessage';
 
 // 添加兑换码
 // #[rpc=rpcServer]

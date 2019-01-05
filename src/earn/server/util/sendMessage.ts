@@ -7,7 +7,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { mqttPublish, QoS } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Logger } from '../../utils/logger';
-import { SendMsg } from './send_message.s';
+import { SendMsg } from '../rpc/send_message.s';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module;
