@@ -5,7 +5,7 @@
         <div w-class="center">
             {{% 大转盘}}
             <div w-class="turntable-name">
-                <widget w-tag="pi-ui-lang">{{it.selectTurntable.turntableName}}</widget>
+                <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
             </div>
             <img w-class="turntable-bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
 
@@ -17,8 +17,9 @@
                         <div w-class="turntable-item" style="transform: rotate({{i*(360/it.prizeList.length)}}deg)">
                             <div w-class="turntable-item-bg" style="border-width:270px {{270*Math.tan(3.14/it.prizeList.length)}}px 0px;border-top-color:{{i%2===0?'white':'#EEF0FF'}}"></div>
                             <div w-class="turntable-icontent">
-                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg" width="80px" height="80px" />
-                                
+                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg"
+                                    width="80px" height="80px" />
+
                                 <p w-class="turntable-itext">{{% item.text}}</p>
                             </div>
                         </div>
@@ -26,7 +27,7 @@
                     </div>
                 </div>
                 <div w-class="turntable-btn" on-tap="goLottery">
-                    <img src="../../res/image/{{it.selectTurntable.type}}goLottery-btn.png" width="100%" height="100%" />
+                    <img src="../../res/image/turntable-btn.png" width="100%" height="100%" />
                 </div>
             </div>
 
@@ -38,9 +39,15 @@
             {{% 售价}}
             <div w-class="sale">
                 <div w-class="sale-money">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
+                </div>
+                <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
                     <span>{{it.selectTurntable.needTicketNum}}ST</span>
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"/1次","zh_Hant":"/1次","en":""}</widget>
+                </div>
+                <div w-class="sale-money">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"广告","zh_Hant":"廣告","en":""}</widget>
                 </div>
             </div>
 
@@ -48,8 +55,7 @@
             <div w-class="ticket">
                 {{for i,item in it.turntableList}}
                 <div on-tap="change({{i}})" w-class="ticket-item {{it.selectTurntable.type===item.type ?'select':''}}">
-                    <img src="../../res/image/ticket{{item.type}}.png" width="100%;" style="margin-top:15px;" />
-                    <div w-class="ticket-num">{{it.STbalance}}</div>
+                    <widget w-tag="pi-ui-lang" w-class="ticket-num">{{item.turntableName}}</widget>
                 </div>
                 {{end}}
             </div>

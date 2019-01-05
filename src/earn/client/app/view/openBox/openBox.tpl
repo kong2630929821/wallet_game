@@ -8,15 +8,20 @@
                 {{for i,item in it.boxList}}
                 <div w-class="box">
                     {{if item === 1}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}boxOpen.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}boxOpen.png" height="100%;"
+                        style="margin:0px auto;" />
                     {{else}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}box.png" height="100%;" style="margin:0px auto;" />
+                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}box.png" height="100%;"
+                        style="margin:0px auto;" />
                     {{end}}
                 </div>
                 {{end}}
             </div>
             {{% 售价}}
             <div w-class="sale">
+                <div w-class="sale-btn" on-tap="resetBoxList">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"换一波","zh_Hant":"換一波","en":""}</widget>
+                </div>
                 {{if !it.isEmpty}}
                 <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
@@ -29,8 +34,8 @@
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"是个空宝箱","zh_Hant":"是個空寶箱","en":""}</widget>
                 </div>
                 {{end}}
-                <div w-class="sale-btn" on-tap="resetBoxList">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"换一波","zh_Hant":"換一波","en":""}</widget>
+                <div w-class="sale-btn" on-tap="">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
             </div>
 
@@ -38,8 +43,7 @@
             <div w-class="ticket">
                 {{for i,item in it.chestList}}
                 <div on-tap="change({{i}})" w-class="ticket-item {{it.selectChest.type===item.type ?'select':''}}">
-                    <img src="../../res/image/ticket{{item.type}}.png" width="100%;" style="margin-top:15px;" />
-                    <div w-class="ticket-num">{{it.STbalance}}</div>
+                    <img src="../../res/image/{{item.type}}box.png" width="100%;" style="margin-top:-10px;margin-right: -10px" />
                 </div>
                 {{end}}
             </div>

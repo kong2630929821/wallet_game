@@ -1,5 +1,5 @@
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { popNew } from "../../../../../pi/ui/root";
 
 /**
  * 兑换虚拟奖品列表
@@ -7,7 +7,7 @@ import { popNew } from "../../../../../pi/ui/root";
 
 export class ExchangeVirtual extends Widget {
 
-    public props = {
+    public props:any = {
         list: [0,0,0,0,0,0],
         text:''
     };
@@ -20,7 +20,7 @@ export class ExchangeVirtual extends Widget {
         };
     }
 
-    public goProductDetail(index:number){
-        popNew('earn-client-app-view-exchange-exchangeDetail',{productName:`${index}号商品`});
+    public goProductDetail(index:number) {
+        popNew('earn-client-app-view-exchange-exchangeDetail',{ productName:`${index}号商品` });
     }
 }

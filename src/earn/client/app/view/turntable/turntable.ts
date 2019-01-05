@@ -39,19 +39,19 @@ export class Turntable extends Widget {
                 type: ActivityType.PrimaryTurntable,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 needTicketNum: getTicketNum(ActivityType.PrimaryTurntable),
-                turntableName: { zh_Hans: '初级大转盘', zh_Hant: '初級大轉盤', en: '' }
+                turntableName: { zh_Hans: '初级转盘', zh_Hant: '初級轉盤', en: '' }
             },
             {
                 type:  ActivityType.MiddleTurntable,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 needTicketNum: getTicketNum(ActivityType.MiddleTurntable),
-                turntableName: { zh_Hans: '中级大转盘', zh_Hant: '中級大轉盤', en: '' }
+                turntableName: { zh_Hans: '中级转盘', zh_Hant: '中級轉盤', en: '' }
             },
             {
                 type: ActivityType.AdvancedTurntable,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
                 needTicketNum: getTicketNum(ActivityType.AdvancedTurntable),
-                turntableName: { zh_Hans: '高级大转盘', zh_Hant: '高級大轉盤', en: '' }
+                turntableName: { zh_Hans: '高级转盘', zh_Hant: '高級轉盤', en: '' }
             }
         ]
     };
