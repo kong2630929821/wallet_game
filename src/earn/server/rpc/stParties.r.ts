@@ -9,12 +9,12 @@ import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
 import { AwardResponse, ConvertTab, FreeRotary } from '../data/db/item.s';
-import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH } from '../data/errorNum';
+import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
 import { oauth_send } from '../util/oauth_lib';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { CoinQueryRes } from './itemQuery.s';
+import { CoinQueryRes, ConvertAwardList } from './itemQuery.s';
 import { getOpenid, getUid } from './user.r';
 
 // 获取用户账户ST数量
@@ -134,7 +134,7 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
             stCount = LEVEL3_TREASUREBOX_STCOST;
             break;
         default:
-            awardResponse.resultNum = ROTARY_TYPE_ERROR;
+            awardResponse.resultNum = TREASUREBOX_TYPE_ERROR;
 
             return awardResponse;
     }
@@ -158,6 +158,29 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
     awardResponse.award = award;
 
     return awardResponse;
+};
+
+// 查看兑换列表
+// #[rpc=rpcServer]
+export const get_convert_list = (): ConvertAwardList => {
+    const convertAwardList = new ConvertAwardList();
+    const dbMgr = getEnv().getDbMgr(); 
+    const bucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
+    const iter = <DBIter>bucket.iter(null);
+    const list = [];
+    do {
+        const iterConvert = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterConvert);
+        if (!iterConvert) {
+            break;
+        }
+        const stConvertCfg:STConvertCfg = iterConvert[1];
+        list.push(stConvertCfg);
+        
+    } while (iter);
+    convertAwardList.list = list;
+    
+    return convertAwardList;
 };
 
 // ST兑换
@@ -200,7 +223,7 @@ export const st_convert = (awardType:number):AwardResponse => {
         
         return awardResponse;
     }
-    const award = add_award(uid, awardType, convertCfg.num, AWARD_SRC_CONVERT, convertAward.convert, desc);
+    const award = add_award(uid, awardType, convertCfg.num, AWARD_SRC_CONVERT, convertAward.convert, desc, convertAward.deadTime);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
 
@@ -213,6 +236,14 @@ export const st_convert = (awardType:number):AwardResponse => {
     awardResponse.resultNum = RESULT_SUCCESS;
     
     return awardResponse;
+};
+
+export const get_hasFree_rotary = ():FreeRotary => {
+    const uid = getUid();
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, FreeRotary._$info.name, dbMgr);
+    
+    return bucket.get<number, [FreeRotary]>(uid)[0];
 };
 
 // 每日首次登陆添加一次免费初级转盘次数

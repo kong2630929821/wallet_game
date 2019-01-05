@@ -52,7 +52,7 @@ export const add_convert = ():IsOk => {
 };
 
 // 添加奖品
-export const add_award = (uid:number, itemType:number, count:number, src:string, convert?:string, desc?:string):Award => {
+export const add_award = (uid:number, itemType:number, count:number, src:string, convert?:string, desc?:string, deadTime?:string):Award => {
     const time = (new Date()).valueOf();
     console.log('time!!!!!!!!!!!!!!!!!:', time);
     const awardid = `${time}${uid}${randomInt(10000, 99999)}`;
@@ -67,6 +67,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     console.log('award.time!!!!!!!!!!!!!!!!!:', award.time);
     if (convert) award.convert = convert;
     if (desc) award.desc = desc;
+    if (deadTime) award.deadTime = deadTime;
     
     // 写入奖励表
     const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);

@@ -64,7 +64,7 @@ export const add_miningTotal = (uid: number) => {
         blankminingMap.uid = uid;
         blankminingMap.total = 1;
         blanktotalMiningMap.miningMap = blankminingMap;
-        blanktotalMiningMap.uName = miningtotal.uName;
+        blanktotalMiningMap.openid = miningtotal.openid;
         mapBucket.put(blankminingMap, blanktotalMiningMap);
     } else {
         mapBucket.delete(miningMap);
@@ -96,7 +96,7 @@ export const add_miningKTTotal = (uid: number, ktNum: number) => {
         blankminingKTMap.uid = uid;
         blankminingKTMap.ktNum = ktNum;
         blankMiningMapTab.miningKTMap = blankminingKTMap;
-        blankMiningMapTab.uName = miningKTTotal.uName;
+        blankMiningMapTab.openid = miningKTTotal.openid;
         mapBucket.put(blankminingKTMap, blankMiningMapTab);
     } else {
         mapBucket.delete(miningKTMap);
