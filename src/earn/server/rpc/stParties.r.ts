@@ -7,8 +7,8 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
-import { AwardResponse, ConvertTab, FreeRotary } from '../data/db/item.s';
+import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
+import { Award, AwardResponse, ConvertTab, FreeRotary } from '../data/db/item.s';
 import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
@@ -103,15 +103,45 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     doAward(rotaryType, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    add_itemCount(uid, newitemType, count);
-    const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
-    if (!award) {
-        awardResponse.resultNum = DB_ERROR;
+    // 没有抽中奖品
+    if (newitemType === SURPRISE_BRO) {
+        const time = (new Date()).valueOf().toString();
+        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+        awardResponse.award = award;
+        awardResponse.resultNum = RESULT_SUCCESS;
+        console.log('awardResponse:!!!!!!!!!!!!!!!', awardResponse);
 
         return awardResponse;
     }
-    awardResponse.resultNum = RESULT_SUCCESS;
-    awardResponse.award = award;
+    // 判断奖品是否为虚拟兑换类奖品
+    const convertInfo = get_convert_info(newitemType);
+    if (!convertInfo) {
+        add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
+        if (!award) {
+            awardResponse.resultNum = DB_ERROR;
+    
+            return awardResponse;
+        }
+        awardResponse.resultNum = RESULT_SUCCESS;
+        awardResponse.award = award;
+    } else {
+        // 是可兑换奖品 添加兑换码
+        const convertAward = get_convert(newitemType);
+        if (!convertAward) {
+            awardResponse.resultNum = AWARD_NOT_ENOUGH;
+
+            return awardResponse;
+        }
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY, convertAward.convert, convertInfo.name);
+        if (!award) {
+            awardResponse.resultNum = DB_ERROR;
+    
+            return awardResponse;
+        }
+        awardResponse.award = award;
+        awardResponse.resultNum = RESULT_SUCCESS;
+    }
 
     return awardResponse;
 };
@@ -147,15 +177,45 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
     doAward(treasureboxType, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    add_itemCount(uid, newitemType, count);
-    const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
-    if (!award) {
-        awardResponse.resultNum = DB_ERROR;
+    // 没有抽中奖品
+    if (newitemType === SURPRISE_BRO) {
+        const time = (new Date()).valueOf().toString();
+        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+        awardResponse.award = award;
+        awardResponse.resultNum = RESULT_SUCCESS;
 
         return awardResponse;
     }
-    awardResponse.resultNum = RESULT_SUCCESS;
-    awardResponse.award = award;
+    // 判断奖品是否为虚拟兑换类奖品
+    const convertInfo = get_convert_info(newitemType);
+    if (!convertInfo) {
+        // 不是可兑换奖品 作为普通物品添加
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
+        if (!award) {
+            awardResponse.resultNum = DB_ERROR;
+    
+            return awardResponse;
+        }
+        awardResponse.resultNum = RESULT_SUCCESS;
+        awardResponse.award = award;
+    } else {
+        // 是可兑换奖品 添加兑换码
+        const convertAward = get_convert(newitemType);
+        if (!convertAward) {
+            awardResponse.resultNum = AWARD_NOT_ENOUGH;
+
+            return awardResponse;
+        }
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX, convertAward.convert, convertInfo.name);
+        if (!award) {
+            awardResponse.resultNum = DB_ERROR;
+    
+            return awardResponse;
+        }
+        awardResponse.award = award;
+        awardResponse.resultNum = RESULT_SUCCESS;
+    }
 
     return awardResponse;
 };
@@ -199,24 +259,13 @@ export const st_convert = (awardType:number):AwardResponse => {
     }
     const stCount = convertCfg.count;
     const desc = convertCfg.desc;
-    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
     // 从数据库获取兑换码
-    const iter = <DBIter>convertBucket.iter(null);
-    let convertAward:ConvertTab;
-    do {
-        const iterConvert = iter.nextElem();
-        console.log('elCfg----------------read---------------', iterConvert);
-        if (!iterConvert) {
-            awardResponse.resultNum = AWARD_NOT_ENOUGH;
-            
-            return awardResponse;
-        }
-        const convertTab:ConvertTab = iterConvert[1];
-        if ((convertTab.typeNum === awardType) && (convertTab.state === true)) {
-            convertAward = convertTab;
-            break;
-        }
-    } while (iter);
+    const convertAward = get_convert(awardType);
+    if (!convertAward) {
+        awardResponse.resultNum = AWARD_NOT_ENOUGH;
+
+        return awardResponse;
+    }
     // 扣除相应ST
     if (!reduce_itemCount(ST_TYPE, stCount)) {
         awardResponse.resultNum = ST_NOT_ENOUGH;
@@ -229,15 +278,34 @@ export const st_convert = (awardType:number):AwardResponse => {
 
         return awardResponse;
     }
-    // 已发出的兑换码数据库状态改为false
-    convertAward.state = false;
-    convertBucket.put(convertAward.id, convertAward);
     awardResponse.award = award;
     awardResponse.resultNum = RESULT_SUCCESS;
     
     return awardResponse;
 };
 
+// 获取可兑换的虚拟物品信息
+export const get_convert_info = (id:number):STConvertCfg => {
+    const dbMgr = getEnv().getDbMgr(); 
+    const bucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
+    const iter = <DBIter>bucket.iter(null);
+    do {
+        const iterConvert = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterConvert);
+        if (!iterConvert) {
+            return;
+        }
+        const stConvertCfg:STConvertCfg = iterConvert[1];
+        if (id === stConvertCfg.id) {
+            return stConvertCfg;
+        }
+        
+    } while (iter);
+   
+};
+
+// 查询是否有初级转盘免费次数
+// #[rpc=rpcServer]
 export const get_hasFree_rotary = ():FreeRotary => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
@@ -255,4 +323,30 @@ export const add_free_rotary = () => {
     freeRotary.uid = uid;
     freeRotary.free = true;
     bucket.put(uid, freeRotary);
+};
+
+// 从数据库获取兑换码
+export const get_convert = (id: number): ConvertTab => {
+    const dbMgr = getEnv().getDbMgr(); 
+    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
+    // 从数据库获取兑换码
+    const iter = <DBIter>convertBucket.iter(null);
+    let convertAward:ConvertTab;
+    do {
+        const iterConvert = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterConvert);
+        if (!iterConvert) {
+            return ;
+        }
+        const convertTab:ConvertTab = iterConvert[1];
+        if ((convertTab.typeNum === id) && (convertTab.state === true)) {
+            convertAward = convertTab;
+            break;
+        }
+    } while (iter);
+    // 已发出的兑换码数据库状态改为false
+    convertAward.state = false;
+    convertBucket.put(convertAward.id, convertAward);
+
+    return convertAward;
 };

@@ -205,6 +205,7 @@ export const get_totalminingNum = (uid: number):TotalMiningNum => {
         const blanktotalMiningNum = new TotalMiningNum();
         blanktotalMiningNum.uid = uid;
         const openid = getOpenid();
+        console.log('openid !!!!!!!!!!!!!!!!!', openid);
         blanktotalMiningNum.openid = openid;
         blanktotalMiningNum.total = 0;
 
@@ -217,7 +218,7 @@ export const get_totalminingNum = (uid: number):TotalMiningNum => {
 // 获取用户挖矿得到KT总数
 // #[rpc=rpcServer]
 export const get_miningKTNum = (uid: number):MiningKTNum => {
-    console.log('get_totalminingNum in!!!!!!!!!!!!!!!!!');
+    console.log('get_miningKTNum in!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, MiningKTNum._$info.name, dbMgr);
     const miningKTNum = bucket.get<number, [MiningKTNum]>(uid)[0];
@@ -225,7 +226,8 @@ export const get_miningKTNum = (uid: number):MiningKTNum => {
         const blankMiningKTNum = new MiningKTNum();
         blankMiningKTNum.uid = uid;
         const openid = getOpenid();
-        miningKTNum.openid = openid;
+        console.log('openid !!!!!!!!!!!!!!!!!', openid);
+        blankMiningKTNum.openid = openid;
         blankMiningKTNum.total = 0;
 
         return blankMiningKTNum;

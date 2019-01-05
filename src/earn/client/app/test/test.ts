@@ -12,7 +12,7 @@ import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_convert_list, get_STNum, st_convert, st_rotary } from '../../../server/rpc/stParties.p';
+import { get_convert_list, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
@@ -106,7 +106,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = '';
+    query.src = 'convert';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -122,8 +122,16 @@ export const add_ticket = () => {
 
 // 转盘
 export const rotary_test = () => {
-    const itemType = 100701;
+    const itemType = 100801;
     clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
+        console.log(r);
+    });
+};
+
+// 宝箱
+export const box_test = () => {
+    const itemType = 101101;
+    clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -257,6 +265,10 @@ const props = {
         {
             name: '转盘',
             func: () => { rotary_test(); }
+        },
+        {
+            name: '宝箱',
+            func: () => { box_test(); }
         },
         {
             name: '挖矿排行',
