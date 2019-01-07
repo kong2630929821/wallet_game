@@ -10,7 +10,7 @@ import { openTurntable } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getGoodCount, getPrizeList, getTicketNum } from '../../utils/util';
 import { PrizeCfg } from '../../xls/dataCfg.s';
-import { ActivityType, ItemType } from '../../xls/dataEnum.s';
+import { ActivityType, CoinType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

@@ -12,7 +12,7 @@ import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal } from '../../net/rpc';
 // import { getStore, register } from '../../store/memstore';
 import { computeRankMedal, getACHVmedalList, getGoodCount, getMedalList } from '../../utils/util';
-import { ItemType } from '../../xls/dataEnum.s';
+import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
 
 // ================================ 导出
@@ -62,7 +62,7 @@ export class Medal extends Widget {
      * 更新props数据
      */
     public initData() {
-        const medalList = getMedalList(ItemType.KT, 'coinType');
+        const medalList = getMedalList(CoinType.KT, 'coinType');
         this.props.mineMedal = computeRankMedal();
 
         for (const element of medalList) {

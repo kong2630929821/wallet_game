@@ -9,7 +9,7 @@ import { getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore } from '../../store/memstore';
 import { getGoodCount } from '../../utils/util';
-import { ItemType } from '../../xls/dataEnum.s';
+import { CoinType } from '../../xls/dataEnum.s';
 // import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -87,7 +87,7 @@ export class MineRank extends Widget {
             this.props.myRank.avatar = getStore('userInfo/avatar');
             this.props.myRank.userName = getStore('userInfo/name');
             this.props.myRank.rank = res.myNum;
-            this.props.myRank.ktNum = getGoodCount(ItemType.KT);
+            this.props.myRank.ktNum = getGoodCount(CoinType.KT);
             this.paint();
         });
     }

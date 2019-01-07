@@ -1,3 +1,5 @@
+import { CoinType } from '../xls/dataEnum.s';
+
 /**
  * 工具类函数
  */
@@ -33,14 +35,47 @@ export const st2ST = (stNum:number) => {
 };
 
 /**
- * ST大转小单位
- * @param STNum ST数量
+ * eth小转大单位
+ * @param ethNum eth数量
  */
-export const ST2st = (STNum:number) => {
-    let st = 0;
-    if (STNum !== 0) {
-        st = STNum * 100;
+export const eth2ETH = (ethNum:number) => {
+    let ETH = 0;
+    if (ethNum !== 0) {
+        ETH = ethNum / 1000;
     }
 
-    return st;
+    return ETH;
+};
+
+/**
+ * eth小转大单位
+ * @param btcNum eth数量
+ */
+export const btc2BTC = (btcNum:number) => {
+    let BTC = 0;
+    if (btcNum !== 0) {
+        BTC = btcNum / 10000;
+    }
+
+    return BTC;
+};
+
+/**
+ * 货币单位转换
+ */
+export const coinUnitchange = (coinType:CoinType,count:number) => {
+    switch (coinType) {
+        case CoinType.BTC:
+            return btc2BTC(count); 
+            break;
+        case CoinType.ETH:
+            return eth2ETH(count); 
+            break;
+        case CoinType.ST:
+            return st2ST(count); 
+            break;
+    
+        default:
+            return count;
+    }
 };

@@ -18,7 +18,7 @@ import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/use
 import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
-import { st2ST, timestampFormat } from '../utils/tools';
+import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
@@ -195,7 +195,7 @@ export const openTurntable = (activityType: ActivityType) => {
  * 查询中奖、兑换记录
  * @param itype 记录种类
  */
-export const getAwardHistory = (itype?: number) => {
+export const getAwardHistory = (itype:AwardSrcNum) => {
     return new Promise((resolve, reject) => {
         const awardQuery = new AwardQuery();
         if (itype !== 0) {
@@ -209,7 +209,7 @@ export const getAwardHistory = (itype?: number) => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: element.count
+                    count: coinUnitchange(element.awardType,element.count)
                 };
                 resData.push(data);
             });

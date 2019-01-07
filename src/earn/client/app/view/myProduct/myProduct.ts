@@ -5,16 +5,17 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getAwardHistory } from '../../net/rpc';
+import { AwardSrcNum } from '../../xls/dataEnum.s';
 
 interface Props {
-    type: number;
+    historyType:AwardSrcNum;
     history: any;
 }
 
 export class MyProduct extends Widget {
     public ok: () => void;
     public props:Props = {
-        type: 0,
+        historyType: 0,
         history:[]
     };
 
@@ -22,7 +23,7 @@ export class MyProduct extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            type: props.type
+            historyType: props.type
         };
         this.initData();
     }
@@ -32,8 +33,8 @@ export class MyProduct extends Widget {
      */
     public initData() {
         
-        getAwardHistory(this.props.type).then((res:any) => {
-            if (this.props.type === 0) {
+        getAwardHistory(this.props.historyType).then((res:any) => {
+            if (this.props.historyType === 0) {
                 const dealData = [];
                 res.forEach(element => {
                     if (element.pid < 2000 || element.pid > 2100) {// 排除锄头系列
@@ -50,8 +51,8 @@ export class MyProduct extends Widget {
     }
 
     public goProductDetail(index: number) {
-        if (this.props.history[index].pid < 2000 || this.props.history[index].pid > 2100) {// 排除锄头系列
-            popNew('earn-client-app-view-myProduct-productDetail', { name: this.props.history[index].name, detailType: 1 });
+        if (this.props.history[index].pid > 500000) {// 虚拟物品进入详情
+            popNew('earn-client-app-view-myProduct-productDetail', { name: this.props.history[index].name, detailhistoryType: 1 });
         }
     }
 
