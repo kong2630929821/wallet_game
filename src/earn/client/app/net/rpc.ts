@@ -3,15 +3,15 @@
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { popNew } from '../../../../pi/ui/root';
-import { AwardQuery, AwardResponse, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
-import { UserInfo } from '../../../server/data/db/user.s';
+import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
-import { ticket_compose } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
@@ -19,7 +19,7 @@ import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { st2ST, timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
-import { ActivityType, AwardSrcNum, TicketType } from '../xls/dataEnum.s';
+import { ActivityType, AwardSrcNum } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
@@ -154,25 +154,6 @@ export const openTurntable = (activityType: ActivityType) => {
                 resolve(r);
             } else {
                 showActError(r.resultNum);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 合成奖券
- */
-export const compoundTicket = (ticketType: TicketType) => {
-    return new Promise((resolve, reject) => {
-        const itemType = ticketType;
-
-        clientRpcFunc(ticket_compose, itemType, (r: AwardResponse) => {
-            console.log('rpc-compoundTicket-resData---------------', r);
-            if (r.resultNum === 1) {
-                resolve(r);
-            } else {
-                // showActError(r.resultNum);TODO
                 reject(r);
             }
         });
@@ -323,3 +304,4 @@ export const converInviteAwards = (index:number) => {
             getInvitedNumberOfPerson();
         });
     });
+};

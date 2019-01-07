@@ -27,6 +27,7 @@ export const initClient =  () => {
             mqttVersion: 3,
             onSuccess: () => {
                 clientRpc = create(rootClient, (<any>self).__mgr);
+                console.log('activity mqtt connect success');
             },
             onFailure: (r) => {
                 console.log('connect fail', r);

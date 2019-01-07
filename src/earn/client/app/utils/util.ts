@@ -8,14 +8,13 @@ import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, Wei
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore, setStore } from '../store/memstore';
+import { getStore } from '../store/memstore';
 import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, ItemType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { st2ST } from './tools';
 
 /**
  * 获取用户单个物品数量  kt/st等

@@ -4,7 +4,6 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 
-
 export class RankItem extends Widget {
 
     constructor() {
@@ -18,4 +17,3 @@ export class RankItem extends Widget {
     // }
 
 }
-
