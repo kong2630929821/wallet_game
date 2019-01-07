@@ -12,6 +12,7 @@ import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
+import { SendMsg } from '../../../server/rpc/send_message.s';
 import { get_convert_list, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
@@ -19,17 +20,18 @@ import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_achievements, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
-import { clientRpcFunc } from '../net/init';
+import { clientRpcFunc, subscribe } from '../net/init';
 
 export const login = () => {
     // 钱包登录
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2001';
+    walletLoginReq.openid = '2002';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
+        initReceive(r.uid);
         console.log(r);
     });
 };
@@ -82,7 +84,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 60;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 3;
+    miningResult.mineNum = 1;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -229,6 +231,12 @@ export const get_medal_test = () => {
     const medal = 1;
     clientRpcFunc(get_showMedal, medal, (r: ShowMedalRes) => {
         console.log(r);
+    });
+};
+
+export const initReceive = (uid: number) => {
+    subscribe(`send/${uid}`, SendMsg, (r: any) => {
+        console.log('勋章弹窗！！！！！！！',r);
     });
 };
 const props = {

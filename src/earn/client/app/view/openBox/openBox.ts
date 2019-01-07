@@ -10,8 +10,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getGoodCount, getTicketBalance, getTicketNum } from '../../utils/util';
-import { ActivityType, ItemType, TicketType } from '../../xls/dataEnum.s';
+import { getTicketNum } from '../../utils/util';
+import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

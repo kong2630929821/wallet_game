@@ -8,9 +8,9 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { loginActivity } from '../../net/rpc';
+import { getInvitedNumberOfPerson, loginActivity } from '../../net/rpc';
 import { initSubscribeInfo } from '../../net/subscribedb';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -90,12 +90,13 @@ export class PlayHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        setTimeout(() => {
+        if (getStore('userInfo/uid') === -1) {
             loginActivity().then(() => {
                 initSubscribeInfo();
             });
-        }, 2000);
-        console.log(this.props.hoeType);
+        }
+           
+        // console.log(this.props.hoeType);
     }
     /**
      * 福利活动进入
@@ -135,7 +136,7 @@ export class PlayHome extends Widget {
         popNew(this.props.page[index]);
     }
     public miningClick() {
-        popNew('earn-client-app-view-activity-mining-home');
+        popNew('earn-client-app-view-activity-miningHome');
     }
 
     /**
@@ -187,7 +188,7 @@ export class PlayHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('earn-client-app-view-activity-mining-miningRule');
+        popNew('earn-client-app-view-activity-miningRule');
     }
 
     public updateHoe() {

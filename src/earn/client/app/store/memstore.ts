@@ -129,12 +129,21 @@ const store:Store = {
         ST:0,
         KT:0
     },
-    ACHVmedals:[]
-    
+    ACHVmedals:[],
+    invited:{
+        invitedNumberOfPerson:0,
+        convertedInvitedAward:[]
+    }
+
 };
 
 export interface Mine {
     miningedNumber:0;  // 今天已挖矿山数量
+}
+
+export interface Invited {
+    invitedNumberOfPerson:number;   // 已邀请人数
+    convertedInvitedAward:number[];  // 已兑换的邀请奖励
 }
 /**
  * Store的声明
@@ -142,6 +151,7 @@ export interface Mine {
 export interface Store {
     userInfo:UserInfo; // 用户信息相关
     mine:Mine;      // 矿山相关
+    invited:Invited;  // 邀请相关
     goods:Item[];   // 拥有的物品
     balance:Balance;  // 账户余额 
     ACHVmedals:any;   // 拥有成就勋章

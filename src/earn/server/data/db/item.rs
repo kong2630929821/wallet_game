@@ -123,6 +123,7 @@ struct SpecialAward {
     awardType: u32,
     count: u32,
     uid: u32,
+    openid: String,
     src: String,
     time: String,
 }

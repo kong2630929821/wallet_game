@@ -1,10 +1,10 @@
 /**
  * sign in
  */
-import { Widget } from '../../../../../../pi/widget/widget';
-import { SeriesDaysRes } from '../../../../../server/rpc/itemQuery.s';
-import { getLoginDays } from '../../../net/rpc';
-import { getSeriesLoginAwards } from '../../../utils/util';
+import { Widget } from '../../../../../pi/widget/widget';
+import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
+import { getLoginDays } from '../../net/rpc';
+import { getSeriesLoginAwards } from '../../utils/util';
 
 export class SignIn extends Widget {
     public ok:() => void;

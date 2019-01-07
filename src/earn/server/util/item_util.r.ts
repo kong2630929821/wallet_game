@@ -93,6 +93,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
         specialAward.count = count;
         specialAward.src = src;
         specialAward.uid = uid;
+        specialAward.openid = getOpenid();
         specialAward.time = time.toString();
         const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
         specialAwardbucket.put(awardid, specialAward);
@@ -402,7 +403,7 @@ export const items_init = (uid: number) => {
     const bucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
     bucket.put(uid, itemInfo);
     // 添加初始奖章
-    add_medal(uid, MEDAL_KT0);
+    // add_medal(uid, MEDAL_KT0);
 };
 
 // 获取矿山总数

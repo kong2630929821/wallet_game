@@ -13,3 +13,6 @@ export const MineMax = 8;
 
 // hoeUseDuration时间类可点击的最大次数
 export const miningMaxHits = 200;
+
+// 邀请人数领取奖励的倍数
+export const inviteAwardsMultiple = 3;
