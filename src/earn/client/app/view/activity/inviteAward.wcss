@@ -13,48 +13,40 @@
     position: relative;
 }
 .head{
-    background-image: url(../../../res/image/sign_in_bg.png);
+    background-image: url(../../res/image/welfare_bg.png);
     background-repeat: no-repeat;
     background-size: cover;
-    height: 282px;
-    margin-top: -32px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     color:#fff;
 }
-.continued{
-    margin-top: 120px;
-    font-size:28px;
-    line-height:40px;
-}
-.days{
-    font-size: 64px;
-    line-height: 90px;
-}
+
 .desc{
     font-size:28px;
     line-height:40px;
 }
 .main{
-    padding: 10px 15px;
+    margin: 70px 20px 30px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
-.sign-btn{
+.invite-btn{
     font-size:32px;
-    color:rgba(255,255,255,1);
-    width:570px;
-    height:80px;
-    background:rgba(49,141,230,1);
+    color:rgba(34,34,34,1);
+    width:330px;
+    height:96px;
+    background:rgba(255,244,101,1);
+    box-shadow:0px 0px 5px 0px rgba(34,34,34,0.1);
     border-radius:12px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-left: auto;
     margin-right: auto;
-    display: none;
 }
 .close{
     position: absolute;

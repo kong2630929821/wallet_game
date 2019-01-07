@@ -10,15 +10,9 @@ import { Bucket } from '../../utils/db';
 import { Logger } from '../../utils/logger';
 import { WARE_NAME } from '../data/constant';
 import { Items, MiningKTNum, SpecialAward } from '../data/db/item.s';
-import { UserInfo } from '../data/db/user.s';
 import { SendMessage } from './user.s';
 
 // ================================================================= 导入
-
-// tslint:disable-next-line:no-reserved-keywords
-declare var module;
-const WIDGET_NAME = module.id.replace(/\//g, '-');
-const logger = new Logger(WIDGET_NAME);
 
 /** 
  * 物品信息 
@@ -47,8 +41,26 @@ export const watchSpecialAward = (id: string): SpecialAward => {
     return watchInfo('id', id, SpecialAward, -1);
 };
 
+// 指定用户消息推送
+export const mqtt_send = (uid:number, msgType:number, msg:number) => {
+    console.log('mqtt_send in !!!!!!!!!!!!!!!!!!!!');
+    const mqttServer = <ServerNode>getMqttServer();
+    const message = new SendMessage();
+    message.uid = uid;
+    message.msg = msg;
+    message.msgType = msgType;
+    const buf = new BonBuffer();
+    message.bonEncode(buf);
+    console.log('QoS.AtMostOnce !!!!!!!!!!!!!!!!!!!!', QoS.AtMostOnce);
+    mqttPublish(mqttServer, true, QoS.AtMostOnce, uid.toString(), buf.getBuffer());
+};
+
 // ================================================================= 本地
 
+// tslint:disable-next-line:no-reserved-keywords
+declare var module;
+const WIDGET_NAME = module.id.replace(/\//g, '-');
+const logger = new Logger(WIDGET_NAME);
 /**
  * 获取mqttServer
  */
@@ -63,7 +75,7 @@ const getMqttServer = () => {
  * @param tableStruct struct
  * @param defaultValue  default value
  */
-export const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefaultValue:any):any => {    
+const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefaultValue:any):any => {    
     // 监听数据库
     const mqttServer = getMqttServer();
     const bonKeyValue = ab2hex(new BonBuffer().write(keyValue).getBuffer());
@@ -81,18 +93,4 @@ export const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefa
     info[keyName] = info[keyName] || keyDefaultValue;
 
     return info;
-};
-
-// 指定用户消息推送
-export const mqtt_send = (uid:number, msgType:number, msg:number) => {
-    console.log('mqtt_send in !!!!!!!!!!!!!!!!!!!!');
-    const mqttServer = <ServerNode>getMqttServer();
-    const message = new SendMessage();
-    message.uid = uid;
-    message.msg = msg;
-    message.msgType = msgType;
-    const buf = new BonBuffer();
-    message.bonEncode(buf);
-    console.log('QoS.AtMostOnce !!!!!!!!!!!!!!!!!!!!', QoS.AtMostOnce);
-    mqttPublish(mqttServer, true, QoS.AtMostOnce, uid.toString(), buf.getBuffer());
 };

@@ -8,14 +8,13 @@ import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, Wei
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore, setStore } from '../store/memstore';
+import { getStore } from '../store/memstore';
 import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, ItemType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
-import { st2ST } from './tools';
 
 /**
  * 获取用户单个物品数量  kt/st等
@@ -379,11 +378,13 @@ export const showActError = (errorNum: number) => {
  * 获取连续登录奖励
  */
 export const getSeriesLoginAwards = (serielLoginDays: number) => {
+    const resetDays = 15; // 奖励重置天数
+    const tmpSerielLoginDays = serielLoginDays % resetDays === 0 ? resetDays : serielLoginDays % resetDays;
     const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
     const showAwardsDays = 7; // 同时展示几天的奖励
     // tslint:disable-next-line:prefer-array-literal
     const awards = new Array(showAwardsDays);
-    if (serielLoginDays <= showAwardsDays) {
+    if (tmpSerielLoginDays <= showAwardsDays) {
         for (const [k, cfg] of cfgs) {
             if (cfg.days > showAwardsDays) continue;
             awards[cfg.days - 1] = cfg;

@@ -1,16 +1,16 @@
 /**
  * digging mines home
  */
-import { popNew } from '../../../../../../pi/ui/root';
-import { Forelet } from '../../../../../../pi/widget/forelet';
-import { Widget } from '../../../../../../pi/widget/widget';
-import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
-import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
-import { getStore, register } from '../../../store/memstore';
-import { hoeUseDuration, MineMax } from '../../../utils/constants';
-import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
-import { HoeType } from '../../../xls/hoeType.s';
+import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
+import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
+import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getStore, register } from '../../store/memstore';
+import { hoeUseDuration, MineMax } from '../../utils/constants';
+import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
+import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -34,6 +34,7 @@ export class MiningHome extends Widget {
     public create() {
         super.create();
         this.init();
+        getInvitedNumberOfPerson();
     }
 
     public init() {
@@ -50,7 +51,7 @@ export class MiningHome extends Widget {
             miningCount:0,             // 挖矿次数
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
-            miningTips:'请选择锄头',   // 挖矿提示
+            miningTips:{ zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' },   // 挖矿提示
             haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
@@ -63,11 +64,11 @@ export class MiningHome extends Widget {
     }
 
     public signInClick() {
-        popNew('earn-client-app-view-activity-mining-signIn');
+        popNew('earn-client-app-view-activity-signIn');
     }
 
     public welfareClick() {
-        popNew('earn-client-app-view-activity-mining-welfare');
+        popNew('earn-client-app-view-activity-inviteAward');
     }
 
     public closeClick() {
@@ -83,7 +84,7 @@ export class MiningHome extends Widget {
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
         this.props.hoeSelected = hopeType;
-        this.props.miningTips = '请选择矿山';
+        this.props.miningTips = { zh_Hans:'请选择矿山',zh_Hant:'請選擇礦山',en:'' } ;
         this.paint();
     }
 
@@ -107,11 +108,11 @@ export class MiningHome extends Widget {
 
         if (this.props.miningedNumber >= MineMax) return;
 
-        // 没有选矿山
+        // 未开始挖矿前选择矿山
         if ((this.props.mineId !== mineId || this.props.mineType !== itype) && !this.props.countDownStart) {
             this.props.mineId = mineId;
             this.props.mineType = itype;
-            this.props.miningTips = '准备开始挖矿';
+            this.props.miningTips = { zh_Hans:'准备开始挖矿',zh_Hant:'準備開始挖礦',en:'' };
             this.paint();
 
             return;
@@ -128,7 +129,7 @@ export class MiningHome extends Widget {
                 this.paint();
             });
             this.props.countDownStart = true;
-            this.props.miningTips = `倒计时 ${this.props.countDown} S`;
+            this.props.miningTips = { zh_Hans:`倒计时 ${this.props.countDown} S`,zh_Hant:`倒計時 ${this.props.countDown} S`,en:'' };
             this.countDown();
             this.paint();
 
@@ -173,7 +174,7 @@ export class MiningHome extends Widget {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
-            this.props.miningTips = `倒计时 ${this.props.countDown} S`;
+            this.props.miningTips = { zh_Hans:`倒计时 ${this.props.countDown} S`,zh_Hant:`倒計時 ${this.props.countDown} S`,en:'' };
             if (!this.props.countDown) {
                 this.initMiningState();
             }
@@ -194,7 +195,7 @@ export class MiningHome extends Widget {
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
         this.props.hoeSelected = -1;
-        this.props.miningTips = '请选择锄头';
+        this.props.miningTips = { zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' };
         console.log(`挖了${this.props.miningCount}次`);
         
         this.props.miningCount = 0;
