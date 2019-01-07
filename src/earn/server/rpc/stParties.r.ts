@@ -105,6 +105,7 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     const newitemType = v[0][0];
     // 没有抽中奖品
     if (newitemType === SURPRISE_BRO) {
+        console.log('SURPRISE_BRO:!!!!!!!!!!!!!!!');
         const time = (new Date()).valueOf().toString();
         const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
         awardResponse.award = award;

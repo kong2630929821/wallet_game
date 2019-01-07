@@ -30,7 +30,7 @@ export class MineRank extends Widget {
             '五颗大蒜苗挖到了0.5ETH'
         ],
         noticeShow: 0,
-        myRank: { rank: 0, avatar: '', userName: '', ktNum: 0 },
+        myRank: { rank: 0, avatar: '', userName: '......', ktNum: 0 },
         rankList: [
             // { rank: 1,avatar: '', userName: "啊实打实的", ktNum: 500 },
             // { rank: 2,avatar: '', userName: "啊实打实的", ktNum: 500 },
@@ -56,12 +56,10 @@ export class MineRank extends Widget {
 
         subscribeSpecialAward((r) => {  // 监听新挖矿通告
             console.log('挖矿特殊奖励公告----------------', r);
-            // setTimeout(() => {
-            //     this.props.notice.push(new Date());
-            //     this.props.notice.shift();
-            //     console.log('this.props.notice----------------',this.props.notice);
+            this.props.notice.push(new Date());
+            this.props.notice.shift();
+            console.log('this.props.notice----------------',this.props.notice);
 
-            // }, 5000);
         });
         this.noticeChange();
     }

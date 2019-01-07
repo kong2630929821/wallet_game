@@ -90,7 +90,11 @@ export class OpenBox extends Widget {
         this.openBoxAnimation(e);
         openChest(this.props.selectChest.type).then((res:any) => {
             this.openBoxAnimation(e);
-            popNew('earn-client-app-view-component-lotteryModal', res.award);
+            if (res.award.awardType !== 9527) {
+                popNew('earn-client-app-view-component-lotteryModal', res.award);
+            } else {
+                this.emptyChest();
+            }
             if (res.award.count === 0) {
                 this.emptyChest();
             }

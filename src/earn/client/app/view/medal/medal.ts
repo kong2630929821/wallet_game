@@ -96,7 +96,7 @@ export class Medal extends Widget {
 
         const $realDomStyle = $realDom.style;
         $realDomStyle.visibility = `hidden`;
-
+        
         popNew('earn-client-app-view-medal-medalShow', {
             medalId,
             medalSite,
