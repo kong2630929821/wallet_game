@@ -13,13 +13,9 @@
             </div>
             {{end}}
         </div>
-        <div w-class="body">
+        <div w-class="body" id="exchangeList"> 
             {{% 内容}}
-            {{for ind,item in it.navbarList}}
-                {{if it.navbarSelected.name === item.name}}
-                    <widget w-tag="{{item.exchangeType}}">{exchangeType:{{it.navbarSelected.name}} }</widget>
-                {{end}}
-            {{end}}
+            <widget w-tag="earn-client-app-view-exchange-virtualList">{exchangeType:{{it.navbarSelected.exchangeType}} }</widget>
         </div>
     </div>
 

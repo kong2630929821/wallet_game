@@ -6,6 +6,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
+import { addST } from '../../net/rpc';
 import { register } from '../../store/memstore';
 
 // ================================ 导出
@@ -85,7 +86,8 @@ export class TicketCenter extends Widget {
      * 奖券合成 
      */
     public goCompound() {
-        popNew('earn-client-app-view-ticketCenter-ticketCompound');
+        addST();
+        // popNew('earn-client-app-view-ticketCenter-ticketCompound');
     }
 
     /**

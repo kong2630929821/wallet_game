@@ -7,7 +7,12 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { register } from '../../store/memstore';
-import { getVirtualExchangeList } from '../../utils/util';
+
+export enum MallType {
+    'primaryMall' = 1,
+    'middleMall' = 2,
+    'advancedMall' = 3
+}
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,23 +22,23 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Exchange extends Widget {
     public ok: () => void;
-    public props:any = {
+    public props: any = {
         navbarSelected: {},
         navbarList: [
             {
                 name: 'primaryMall',
                 title: { zh_Hans: '初级商场', zh_Hant: '初級商城', en: '' },
-                exchangeType:'earn-client-app-view-exchange-virtualList'
+                exchangeType: MallType.primaryMall
             },
             {
                 name: 'middleMall',
                 title: { zh_Hans: '中级商城', zh_Hant: '中級商城', en: '' },
-                exchangeType:'earn-client-app-view-exchange-virtualList'
+                exchangeType: MallType.middleMall
             },
             {
                 name: 'advancedMall',
                 title: { zh_Hans: '高级商城', zh_Hant: '高級商城', en: '' },
-                exchangeType:'earn-client-app-view-exchange-virtualList'
+                exchangeType: MallType.advancedMall
             }
         ]
     };
@@ -49,14 +54,13 @@ export class Exchange extends Widget {
      * 初始数据
      */
     public initData() {
-        const list = getVirtualExchangeList();
-        console.log('list--------------',list);
-            
+
         this.paint();
     }
 
-    public changeNavbar(index:number) {
+    public changeNavbar(index: number) {
         this.props.navbarSelected = this.props.navbarList[index];
+        document.getElementById('exchangeList').scrollTop = 0;
         this.paint();
     }
 

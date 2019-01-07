@@ -17,8 +17,7 @@
                         <div w-class="turntable-item" style="transform: rotate({{i*(360/it.prizeList.length)}}deg)">
                             <div w-class="turntable-item-bg" style="border-width:270px {{270*Math.tan(3.14/it.prizeList.length)}}px 0px;border-top-color:{{i%2===0?'white':'#EEF0FF'}}"></div>
                             <div w-class="turntable-icontent">
-                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg"
-                                    width="80px" height="80px" />
+                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg" width="80px" height="80px" />
 
                                 <p w-class="turntable-itext">{{% item.text}}</p>
                             </div>

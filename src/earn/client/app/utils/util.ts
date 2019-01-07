@@ -9,11 +9,13 @@ import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
 import { getStore, setStore } from '../store/memstore';
+import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, ItemType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { st2ST } from './tools';
 
 /**
  * 获取用户单个物品数量  kt/st等
@@ -283,11 +285,17 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
 /**
  * 获取虚拟物品兑换列表
  */
-export const getVirtualExchangeList = (): any => {
+export const getVirtualExchangeList = (typeStr: string,exchangeType?:MallType): any => {
     const cfgs = getMap(STConvertCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        filterCfgs.push(cfg);
+        if (exchangeType) {
+            if (cfg[typeStr] === exchangeType) {
+                filterCfgs.push(cfg);
+            }
+        } else {
+            filterCfgs.push(cfg);
+        }
     }
 
     return filterCfgs;

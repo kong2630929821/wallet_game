@@ -1,26 +1,42 @@
-import { popNew } from '../../../../../pi/ui/root';
-import { Widget } from '../../../../../pi/widget/widget';
-
 /**
  * 兑换虚拟奖品列表
  */
+
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
+import { getVirtualExchangeList } from '../../utils/util';
+import { MallType } from './exchange';
+
+interface Props {
+    exchangeType:MallType;
+}
 
 export class ExchangeVirtual extends Widget {
 
     public props:any = {
         list: [0,0,0,0,0,0],
-        text:''
+        exchangeType:''
     };
 
-    public setProps(props:any) {
+    public setProps(props:Props) {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            text:props.exchangeType
+            exchangeType:props.exchangeType
         };
+        this.initData();
+    }
+    public initData() {
+        this.props.list = getVirtualExchangeList('level',this.props.exchangeType);
+        console.log('list--------------', this.props.list);
+        this.paint();
     }
 
+    /**
+     * 商品详情
+     * @param index 序号
+     */
     public goProductDetail(index:number) {
-        popNew('earn-client-app-view-exchange-exchangeDetail',{ productName:`${index}号商品` });
+        popNew('earn-client-app-view-exchange-exchangeDetail',{ detail:this.props.list[index] });
     }
 }

@@ -6,10 +6,11 @@ import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+import { CoinQueryRes, ConvertAwardList, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_STNum, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
-import { item_addticket } from '../../../server/rpc/test.p';
+import { get_convert_list, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { bigint_test, item_addticket } from '../../../server/rpc/test.p';
+import { Test } from '../../../server/rpc/test.s';
 import { ticket_compose, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
@@ -254,5 +255,45 @@ export const getACHVmedal = () => {
             //     reject(r);
             // }
         });
+    });
+};
+
+/**
+ * 兑换虚拟物品 
+ * @param VirtualId 虚拟物品ID
+ */
+export const exchangeVirtual = (VirtualId:number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
+            console.log('rpc-exchangeVirtual---------------', r);
+            if (r.resultNum === 1) {
+                resolve(r);
+            } else {
+                showActError(r.resultNum);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取兑换记录列表
+ */
+export const getExchangeHistory = () => {    // TODO
+    return new Promise((resolve, reject) => {
+        const awardQuery = new AwardQuery();
+        awardQuery.src = AwardSrcNum[4];
+        
+        clientRpcFunc(award_query, awardQuery, (r: any) => {
+            console.log('rpc-getExchangeHistory-resData---------------', r);
+            resolve(r);
+        });
+    });
+};
+
+export const addST = () => {
+    clientRpcFunc(bigint_test, null, (r: Test) => {
+        console.log('rpc-bigint_test---------------', r);
+        getSTbalance();
     });
 };

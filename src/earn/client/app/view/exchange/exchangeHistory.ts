@@ -3,6 +3,7 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
+import { getExchangeHistory } from '../../net/rpc';
 
 interface Props {
     type:number;
@@ -19,26 +20,20 @@ export class ExchangeHistory extends Widget {
                 img:'../../res/image/dividend_history_none.png',
                 name:'haha',
                 time:'2018.12.28'
-            },
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
-            },
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
             }
         ]
     };
 
-    public setProps(props:any) {
-        super.setProps(this.props);
-        this.props = {
-            ...this.props,
-            type:props.type
-        };
+    public create() {
+        super.create();
+        this.initData();
+    }
+
+    public initData() {
+        getExchangeHistory().then((res:any) => {
+            this.props.history = res.awards;
+            this.paint();
+        });
     }
 
     /**
