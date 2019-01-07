@@ -64,10 +64,6 @@ export class PlayHome extends Widget {
                 title: '大转盘',
                 desc: '试试我的手气'
             }, {
-                img: 'btn_yun_9.png',
-                title: '奖券中心',
-                desc: '可以抽奖兑换物品'
-            }, {
                 img: 'btn_yun_10.png',
                 title: '兑换物品',
                 desc: '不定期上新物品'

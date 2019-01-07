@@ -34,7 +34,7 @@ export class InviteAward extends Widget {
         const awardsLen = calAwardsLen > defaultAwardsLen ? calAwardsLen : defaultAwardsLen;
         const welfareAwards = [];
         for (let i = 0;i < awardsLen;i++) {
-            const received = receiveAwards[i] === 1 ? false : true;
+            const received = receiveAwards[i] === 0 ? true : false;
             const canReceive = this.props.invitedNumberOfPerson >= (i + 1) * inviteAwardsMultiple;
             welfareAwards.push({
                 received,
