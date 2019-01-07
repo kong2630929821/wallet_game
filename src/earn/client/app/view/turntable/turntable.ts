@@ -70,7 +70,7 @@ export class Turntable extends Widget {
         // 奖品配置  
         const prizeList = getPrizeList(this.props.selectTurntable.type);
         this.props.prizeList = [];
-
+        
         for (let i = 0, length = prizeList.length; i < length; i++) {
             const prizeItem = {
                 awardType: prizeList[i],

@@ -264,7 +264,7 @@ export const getPrizeList = (activityType: ActivityType): any => {
         }
     }
 
-    return filterCfgs;
+    return shuffle(filterCfgs);
 };
 
 /**
