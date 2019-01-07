@@ -167,9 +167,6 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 //     return itemResponse;
 // };
 
-// 邀请好友奖励
-// #[rpc=rpcServer]
-
 // 查询用户当日挖矿山数量
 // #[rpc=rpcServer]
 export const get_todayMineNum = ():TodayMineNum => {

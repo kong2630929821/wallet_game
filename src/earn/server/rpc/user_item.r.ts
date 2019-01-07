@@ -114,7 +114,7 @@ export const get_medals = ():Medals => {
 export const get_showMedal = (uid: number):ShowMedalRes => {
     const showMedalRes = new ShowMedalRes(RESULT_SUCCESS);
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
     const showMedal = bucket.get<number, [ShowMedal]>(uid)[0];
     if (!showMedal) return showMedalRes;
     showMedalRes.medalType = showMedal.medal;
@@ -126,7 +126,7 @@ export const get_showMedal = (uid: number):ShowMedalRes => {
 // #[rpc=rpcServer]
 export const show_medal = (medalType: number):ShowMedalRes => {
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
     const uid = getUid();
     const showMedal = new ShowMedal(uid, medalType);
     bucket.put(uid, showMedal);
