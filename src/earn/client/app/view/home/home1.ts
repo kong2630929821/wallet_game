@@ -10,7 +10,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getInvitedNumberOfPerson, loginActivity } from '../../net/rpc';
 import { initSubscribeInfo } from '../../net/subscribedb';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -90,11 +90,12 @@ export class PlayHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        setTimeout(() => {
+        if (getStore('userInfo/uid') === -1) {
             loginActivity().then(() => {
                 initSubscribeInfo();
             });
-        }, 2000);
+        }
+           
         // console.log(this.props.hoeType);
     }
     /**

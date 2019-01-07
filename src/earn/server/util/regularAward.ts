@@ -10,7 +10,6 @@ import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, SERIES_LOGIN_CIRCLE } from '../data/constant';
 import { Award, Item, Items, Mine } from '../data/db/item.s';
-import { mqtt_send } from '../rpc/dbWatcher.r';
 import { getUid } from '../rpc/user.r';
 import { add_mine } from '../rpc/user_item.r';
 import { add_award, add_itemCount, get_mine_total } from './item_util.r';
