@@ -104,6 +104,29 @@
   }
 }
 
+@keyframes downToTop{
+  0%{
+    -webkit-transform: translateY(150%);
+    transform: translateY(150%);
+  }
+  25%{
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+  50%{
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+  75%{
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+  100%{
+    -webkit-transform: translateY(-150%);
+    transform: translateY(-150%);
+  }
+}
+
 .smallToBig{
   animation: smallToBig 0.5s ease;
 }
@@ -113,9 +136,11 @@
 .fadein{
   animation: fadein 0.5s ease;
 }
-
 .isOpenbox{
   animation: openBox 0.3s ease infinite;
+}
+.down-to-top{
+  animation: downToTop 5s ease infinite;
 }
 
 

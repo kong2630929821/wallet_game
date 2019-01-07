@@ -1,22 +1,41 @@
 /**
  * common util
  */
+import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { RegularAwardCfg, TicketConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
-import { MineHpCfg } from '../../../xlsx/item.s';
+import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
+import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore } from '../store/memstore';
+import { getStore, setStore } from '../store/memstore';
+import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
-import { ActivityType } from '../xls/dataEnum.s';
+import { ActivityType, ItemType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { st2ST } from './tools';
+
+/**
+ * 获取用户单个物品数量  kt/st等
+ */
+export const getGoodCount = (itemType: ItemType) => {
+    const goods = getStore('goods');
+    for (let i = 0; i < goods.length; i++) {
+        const good = goods[i];
+        if (good.value.num === itemType) {
+            return good.value.count;
+        }
+    }
+
+    return 0;
+};
 
 /**
  * 获取锄头对象
  */
-export const getHoeCount = (hoeType:HoeType) => {
+export const getHoeCount = (hoeType: HoeType) => {
     const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
@@ -34,15 +53,15 @@ export const getHoeCount = (hoeType:HoeType) => {
 export const getAllMines = () => {
     const goods = getStore('goods');
     const mines = [];
-    for (let i = 0;i < goods.length; i++) {
+    for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            for (let j = 0;j < good.value.count;j++) {
+            for (let j = 0; j < good.value.count; j++) {
                 const hp = good.value.hps[j].hp;
                 const itype = good.value.num;
                 const mine = {
-                    type:itype,
-                    id:good.value.hps[j].num,
+                    type: itype,
+                    id: good.value.hps[j].num,
                     hp
                 };
                 mines.push(mine);
@@ -60,10 +79,10 @@ export const getAllMines = () => {
 export const getMaxMineType = () => {
     const goods = getStore('goods');
     let mineType = MineType.SmallMine;
-    for (let i = 0;i < goods.length; i++) {
+    for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            if (good.value.count > 0 &&  good.value.num > mineType) {
+            if (good.value.count > 0 && good.value.num > mineType) {
                 mineType = good.value.num;
             }
         }
@@ -80,15 +99,15 @@ export const randomMines = () => {
     const goods = getStore('goods');
     const mines = [];
     const miningedMines = [];
-    for (let i = 0;i < goods.length; i++) {
+    for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.enum_type === Item_Enum.MINE) {
-            for (let j = 0;j < good.value.hps.length;j++) {
+            for (let j = 0; j < good.value.hps.length; j++) {
                 const hp = good.value.hps[j];
                 const itype = good.value.num;
                 const mine = {
-                    type:itype,
-                    index:j,
+                    type: itype,
+                    index: j,
                     hp
                 };
                 if (itype === MineType.SmallMine && hp < getMiningMaxHp(MineType.SmallMine)) {
@@ -104,7 +123,7 @@ export const randomMines = () => {
         }
     }
 
-    return [...shuffle(miningedMines),...shuffle(mines)];
+    return [...shuffle(miningedMines), ...shuffle(mines)];
 };
 
 // 数组乱序
@@ -123,12 +142,12 @@ export const shuffle = (arr: any[]): any[] => {
 };
 
 // 处理挖矿单次事件(一次点击)
-const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
+const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
     const cfgs = getMap(WeightMiningCfg._$info.name);
     const weights = [];
     const filterCfgs = [];
     let maxWeight = 0;
-    for (const [k,cfg] of cfgs) {
+    for (const [k, cfg] of cfgs) {
         if (cfg.id === hoeType) {
             filterCfgs.push(cfg);
             maxWeight += cfg.weight;
@@ -156,10 +175,10 @@ const getWeightIndex = (weights: number[], seed: number) => {
 /**
  * 计算挖矿数组
  */
-export const calcMiningArray = (hoeType:HoeType,seed: number) => {
+export const calcMiningArray = (hoeType: HoeType, seed: number) => {
     const hits = [];
     let cSeed = seed;
-    for (let i = 0;i < miningMaxHits;i++) {
+    for (let i = 0; i < miningMaxHits; i++) {
         const randomMgr = new RandomSeedMgr(cSeed);
         const hit = doMining(hoeType, randomMgr);
         cSeed = RandomSeedMgr.randNumber(cSeed);
@@ -174,9 +193,9 @@ export const calcMiningArray = (hoeType:HoeType,seed: number) => {
  * 获取矿山最大血量
  * @param mineType 矿山类型
  */
-export const getMiningMaxHp = (mineType:MineType) => {
+export const getMiningMaxHp = (mineType: MineType) => {
     const cfgs = getMap(MineHpCfg._$info.name);
-    for (const [k,v] of cfgs) {
+    for (const [k, v] of cfgs) {
         if (v.id === mineType) {
             return v.hp;
         }
@@ -240,12 +259,12 @@ export const getPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(WeightAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
+        if (cfg.id >= activityType && cfg.id <= (activityType + 99)) {
             filterCfgs.push(cfg.prop);
         }
     }
 
-    return filterCfgs;
+    return shuffle(filterCfgs);
 };
 
 /**
@@ -255,7 +274,7 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
     const cfgs = getMap(RegularAwardCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        if ((activityType * 100) < cfg.id && cfg.id < (activityType * 100 + 100)) {
+        if (cfg.id >= activityType  && cfg.id < (activityType + 99)) {
             filterCfgs.push(cfg);
         }
     }
@@ -266,28 +285,100 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
 /**
  * 获取虚拟物品兑换列表
  */
-export const getVirtualExchangeList = (): any => {
-    const cfgs = getMap(TicketConvertCfg._$info.name);
+export const getVirtualExchangeList = (typeStr: string,exchangeType?:MallType): any => {
+    const cfgs = getMap(STConvertCfg._$info.name);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
-        filterCfgs.push(cfg);
+        if (exchangeType) {
+            if (cfg[typeStr] === exchangeType) {
+                filterCfgs.push(cfg);
+            }
+        } else {
+            filterCfgs.push(cfg);
+        }
     }
 
     return filterCfgs;
 };
 
 /**
+ * 获取勋章列表
+ * @param typeNum 查询参数
+ * @param typeStr 查询列名
+ */
+export const getMedalList = (typeNum: string | number, typeStr: string): any => {
+    const cfgs = getMap(MedalCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (typeNum === cfg[typeStr]) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+/**
+ * 获取成就勋章列表
+ */
+export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
+    const cfgs = getMap(AchievementMedalCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (typeNum === cfg[typeStr]) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+/**
+ * 计算用户等级勋章
+ */
+export const computeRankMedal = () => {
+
+    const ktNum = getGoodCount(ItemType.KT);
+    const medalList = getMedalList(ItemType.KT, 'coinType');
+    const mineMedal = {
+        rankMedal: 8000,
+        desc: {},
+        nextNeedKt: 0
+    };
+    for (let i = 0; i < medalList.length; i++) {
+        const element = medalList[i];
+        if (ktNum >= element.coinNum) {
+            mineMedal.rankMedal = element.id;
+            mineMedal.desc = { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' };
+            if ((i + 1) <= medalList.length) {
+                mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
+            } else {
+                mineMedal.nextNeedKt = 0;
+            }
+        }
+    }
+
+    return mineMedal;
+};
+
+/**
  * 展示错误信息
  * @param errorNum 错误编号
  */
-export const showActError = (errorNum:number) => {
-    // TODO
+export const showActError = (errorNum: number) => {
+    const cfgs = getMap(ErrorNumCfg._$info.name);
+    for (const [k, cfg] of cfgs) {
+        if (errorNum === cfg.id) {
+            popNew('app-components1-message-message', { content: { zh_Hans: cfg.desc, zh_Hant: cfg.descHant, en: '' } });
+        }
+    }
+
 };
 
 /**
  * 获取连续登录奖励
  */
-export const getSeriesLoginAwards = (serielLoginDays:number) => {
+export const getSeriesLoginAwards = (serielLoginDays: number) => {
     const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
     const showAwardsDays = 7; // 同时展示几天的奖励
     // tslint:disable-next-line:prefer-array-literal
