@@ -8,7 +8,7 @@
             {{end}}
         </div>
         <div w-class="invite-btn" on-tap="inviteClick"><widget w-tag="pi-ui-lang">{"zh_Hans":"立即邀请","zh_Hant":"立即邀請","en":""}</widget></div>
-        <div w-class="close" on-tap="closeClick"><img src="../../../res/image/pop_close.png"/></div>
+        <div w-class="close" on-tap="closeClick"><img src="../../res/image/pop_close.png"/></div>
     </div>
     
 </div>

@@ -9,21 +9,21 @@
                 <div w-class="hoe-type">
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../res/image/iron_hoe.png"/>
+                            <img src="../../res/image/iron_hoe.png"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"铁锄头","zh_Hant":"鐵鋤頭","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../res/image/gold_hoe.png"/>
+                            <img src="../../res/image/gold_hoe.png"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"金锄头","zh_Hant":"金鋤頭","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../../res/image/diamond_hoe.png"/>
+                            <img src="../../res/image/diamond_hoe.png"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"钻石锄头","zh_Hant":"鑽石鋤頭","en":""}</widget></div>
                     </div>
@@ -50,15 +50,15 @@
                 <div w-class="mine-type-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"矿山分类","zh_Hant":"礦山分類","en":""}</widget></div>
                 <div w-class="mine-type">
                     <div w-class="mine-type-item">
-                        <img src="../../../res/image/small_mine.png" style="width:168px;height:122px;"/>
+                        <img src="../../res/image/small_mine.png" style="width:168px;height:122px;"/>
                         <div w-class="mine-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"普通矿山","zh_Hant":"普通礦山","en":""}</widget></div>
                     </div>
                     <div w-class="mine-type-item" style="margin:0 20px;">
-                        <img src="../../../res/image/mid_mine.png" style="width:220px;height:161px;"/>
+                        <img src="../../res/image/mid_mine.png" style="width:220px;height:161px;"/>
                         <div w-class="mine-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"富饶矿山","zh_Hant":"富饒礦山","en":""}</widget></div>
                     </div>
                     <div w-class="mine-type-item">
-                        <img src="../../../res/image/big_mine.png" style="width:250px;height:203px;"/>
+                        <img src="../../res/image/big_mine.png" style="width:250px;height:203px;"/>
                         <div w-class="mine-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"稀世矿山","zh_Hant":"稀世礦山","en":""}</widget></div>
                     </div>
                 </div>

@@ -35,7 +35,7 @@ export const loginActivity = () => {
         clientRpcFunc(login, userType, (r: UserInfo) => {
             console.log('活动登录成功！！--------------', r);
             if (r.loginCount === 0) {
-                popNew('earn-client-app-view-component-newUserLogin');
+                popNew('earn-client-app-view-components-newUserLogin');
             }
             setStore('userInfo',r);
             resolve(r);

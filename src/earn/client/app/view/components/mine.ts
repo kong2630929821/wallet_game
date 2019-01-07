@@ -24,7 +24,7 @@ export class Mine extends Widget {
     public $imgContainer:any;
     public $hoe:any;
     public setProps(props:Props,oldProps:Props) {
-        let mineImgUrl = '../../../res/image/';
+        let mineImgUrl = '../../res/image/';
         let hpMax = 0;
         if (props.mineType === MineType.SmallMine) {
             mineImgUrl = props.selected ? `${mineImgUrl}small_mine_active.png` :`${mineImgUrl}small_mine.png`;
@@ -37,7 +37,7 @@ export class Mine extends Widget {
             hpMax = getMiningMaxHp(MineType.BigMine);
         }
        
-        let hoeImgUrl = '../../../res/image/';
+        let hoeImgUrl = '../../res/image/';
 
         if (props.selectedHoe === HoeType.IronHoe) {
             hoeImgUrl = `${hoeImgUrl}iron_hoe.png`;

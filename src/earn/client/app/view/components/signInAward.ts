@@ -1,19 +1,18 @@
 /**
- * holded hoe
+ * sign in award 签到奖励
  */
-import { notify } from '../../../../../pi/widget/event';
 import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
-    holdedNumber:number; // holded hoe number
-    hoeType:HoeType;          // hoe type
-    selected:HoeType;   // selected
+    continuedDays:number;   // 持续天数
+    hoeType:HoeType;      // 锄头类型
+    received:boolean;     // 是否已领取
 }
-export class HoldedHoe extends Widget {
+export class SignInAward extends Widget {
     public props:any;
     public setProps(props:Props,oldProps:Props) {
-        let imgUrl = '../../../res/image/';
+        let imgUrl = '../../res/image/';
         if (props.hoeType === HoeType.IronHoe) {
             imgUrl = `${imgUrl}iron_hoe.png`;
         } else if (props.hoeType === HoeType.GoldHoe) {
@@ -27,7 +26,5 @@ export class HoldedHoe extends Widget {
         };
         super.setProps(this.props,oldProps);
     }
-    public selectHoeClick(event:any) {
-        notify(event.node,'ev-hoe-click',{});
-    }
+
 }

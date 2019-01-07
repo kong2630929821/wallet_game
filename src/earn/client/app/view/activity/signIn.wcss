@@ -13,7 +13,7 @@
     position: relative;
 }
 .head{
-    background-image: url(../../../res/image/sign_in_bg.png);
+    background-image: url(../../res/image/sign_in_bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     height: 282px;

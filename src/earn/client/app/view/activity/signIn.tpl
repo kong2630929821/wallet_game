@@ -10,7 +10,7 @@
             {{end}}
         </div>
         <div w-class="sign-btn"><widget w-tag="pi-ui-lang">{"zh_Hans":"签到","zh_Hant":"簽到","en":""}</widget></div>
-        <div w-class="close" on-tap="closeClick"><img src="../../../res/image/pop_close.png"/></div>
+        <div w-class="close" on-tap="closeClick"><img src="../../res/image/pop_close.png"/></div>
     </div>
     
 </div>

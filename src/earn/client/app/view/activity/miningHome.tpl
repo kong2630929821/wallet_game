@@ -16,25 +16,25 @@
         <div w-class="digging-tips"><widget w-tag="pi-ui-lang">{{it.miningTips}}</widget></div>
         <div w-class="award-container">
             <div w-class="award-item">
-                <img src="../../../res/image/KT.png" w-class="award-icon"/>
+                <img src="../../res/image/KT.png" w-class="award-icon"/>
                 {{if it.awardTypes[it.allAwardType.KT] }}
                 <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.KT] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
-                <img src="../../../res/image/GT.png" w-class="award-icon" />
+                <img src="../../res/image/GT.png" w-class="award-icon" />
                 {{if it.awardTypes[it.allAwardType.ST] }}
                 <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ST] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
-                <img src="../../../res/image/ETH.png" w-class="award-icon"/>
+                <img src="../../res/image/ETH.png" w-class="award-icon"/>
                 {{if it.awardTypes[it.allAwardType.ETH] }}
                 <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ETH] }}</span></div>
                 {{end}}
             </div>
             <div w-class="award-item">
-                <img src="../../../res/image/BTC.png" w-class="award-icon"/>
+                <img src="../../res/image/BTC.png" w-class="award-icon"/>
                 {{if it.awardTypes[it.allAwardType.BTC] }}
                 <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.BTC] }}</span></div>
                 {{end}}
@@ -59,24 +59,24 @@
             <div w-class="ad-items">
                 <div w-class="ad-item">
                     <div w-class="gift-box">
-                        <img src="../../../res/image/advertisement.png"/>
+                        <img src="../../res/image/advertisement.png"/>
                     </div>
                     <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"看广告得锄头","zh_Hant":"看廣告得鋤頭","en":""}</widget></div>
                 </div>
                 <div w-class="ad-item" style="margin:0 35px 0 20px"  on-tap="signInClick">
                     <div w-class="gift-box">
-                        <img src="../../../res/image1/gift.png"/>
+                        <img src="../../res/image1/gift.png"/>
                     </div>
                     <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"签到豪礼","zh_Hant":"簽到豪禮","en":""}</widget></div>
                 </div>
                 <div w-class="ad-item" on-tap="welfareClick">
                     <div w-class="gift-box">
-                        <img src="../../../res/image1/gift.png"/>
+                        <img src="../../res/image1/gift.png"/>
                     </div>
                     <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"福利活动","zh_Hant":"福利活動","en":""}</widget></div>
                 </div>
             </div>
-            <img src="../../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
+            <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>
         
     </div>

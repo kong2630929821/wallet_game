@@ -123,7 +123,7 @@ export class Turntable extends Widget {
             this.props.isTurn = false;
             this.goLotteryAnimation();
             if (resData.resultNum === 1) {
-                popNew('earn-client-app-view-component-lotteryModal', resData.award);
+                popNew('earn-client-app-view-components-lotteryModal', resData.award);
             }
         }, 6000);
     }

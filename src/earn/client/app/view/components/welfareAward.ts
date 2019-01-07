@@ -12,7 +12,7 @@ interface Props {
 }
 export class WelfareAward extends Widget {
     public setProps(props:Props,oldProps:Props) {
-        let imgUrl = '../../../res/image/';
+        let imgUrl = '../../res/image/';
         if (props.received) {
             imgUrl = `${imgUrl}boxOpen7002.png`;
         } else {
