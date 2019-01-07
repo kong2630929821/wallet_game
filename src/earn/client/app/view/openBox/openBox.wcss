@@ -1,7 +1,7 @@
 
 .new-page{
     background-color:#19355A;
-    background-image: url('../view/earn/client/res/image/balloon.png');
+    background-image: url('../../earn/client/app/res/image/balloon.png');
     background-repeat: no-repeat;
     background-position: left 128px;
 }
@@ -32,7 +32,7 @@
     height:1048px;
     width:100%;
     flex:0 0 auto;
-    background-image: url('../view/earn/client/res/image/openBox-bg.png');
+    background-image: url('../../earn/client/app/res/image/openBox-bg.png');
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -71,7 +71,7 @@
     line-height:50px;
     font-size:32px;
     color:#FFFFFF;
-    padding:0 65px;
+    padding:0px 25px;
     background:#B01E17;
     border-radius:30px;
     border:4px solid #9A1C1C;
@@ -79,13 +79,15 @@
 
 .sale-btn{
     height:60px;
-    padding:0px 55px;
+    width: 150px;
+    padding:0px 25px;
     background:linear-gradient(180deg,#FFEB86 0%,#F78C18 100%);
     border-radius:30px;
     border:4px solid rgba(107, 8, 8, 0.2);
     font-size:28px;
     color:#AA3509;
     line-height:50px;
+    text-align: center;
 }
 
 .ticket{
@@ -100,6 +102,7 @@
 .ticket-item{
     width: 150px;
     height: 150px;
+    border:6px solid #FFDE2D;
     background: rgba(176,30,23,1);
     box-shadow: 0px 0px 5px 0px rgba(34,34,34,0.5);
     border-radius: 24px;
@@ -117,7 +120,7 @@
 }
 
 .select{
-    border:6px solid #FFDE2D;
+    border:6px solid #9A1C1C;
 }
 
 

@@ -1,25 +1,29 @@
 /**
  * rpc通信
  */
+import { getOpenId } from '../../../../app/api/JSAPI';
 import { popNew } from '../../../../pi/ui/root';
-import { AwardQuery, AwardResponse, InviteAwardRes, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
-import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
-import { MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+import { AwardQuery, AwardResponse, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { Achievements } from '../../../server/data/db/medal.s';
+import { UserInfo } from '../../../server/data/db/user.s';
+import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { item_addticket } from '../../../server/rpc/test.p';
-import { ticket_compose, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
+import { get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { bigint_test } from '../../../server/rpc/test.p';
+import { Test } from '../../../server/rpc/test.s';
+import { ticket_compose } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, item_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
-import { timestampFormat } from '../utils/tools';
-import { getPrizeInfo } from '../utils/util';
-import { AwardSrcNum, TicketType } from '../xls/dataEnum.s';
+import { st2ST, timestampFormat } from '../utils/tools';
+import { getPrizeInfo, showActError } from '../utils/util';
+import { ActivityType, AwardSrcNum, TicketType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
+import { initReceive } from './receive';
 
 /**
  * 钱包用户登录活动
@@ -29,16 +33,22 @@ export const loginActivity = () => {
         const userType = new UserType();
         userType.enum_type = UserType_Enum.WALLET;
         const walletLoginReq = new WalletLoginReq();
-        walletLoginReq.openid = '2001';
-        walletLoginReq.sign = '';
-        userType.value = walletLoginReq;
-        clientRpcFunc(login, userType, (r: UserInfo) => {
-            console.log('活动登录成功！！--------------', r);
-            if (r.loginCount === 0) {
-                popNew('earn-client-app-view-components-newUserLogin');
-            }
-            setStore('userInfo',r);
-            resolve(r);
+        getOpenId('101',(r) => {
+            walletLoginReq.openid = r.openid.toString();
+            walletLoginReq.sign = 'dfefgefd';
+            userType.value = walletLoginReq;
+            clientRpcFunc(login, userType, (r: UserInfo) => {
+                console.log('活动登录成功！！--------------', r);
+                if (r.loginCount === 0) {
+                    popNew('earn-client-app-view-component-newUserLogin');
+                }
+                setStore('userInfo',r);
+                initReceive(r.uid);
+                getSTbalance();
+                resolve(r);
+            });
+        },(err) => {
+            console.log('活动登录失败！！--------------', err);
         });
     });
 };
@@ -50,6 +60,18 @@ export const getAllGoods = () => {
     clientRpcFunc(item_query, null, (r: Items) => {
         console.log('getAllGoods ', r);
         setStore('goods', r.item);
+    });
+};
+
+// 获取ST数量
+export const getSTbalance = () => {
+    clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
+        console.log('rpc-getSTbalance--ST余额---------------', r);
+        if (r.resultNum === 1) {
+            setStore('balance/ST', st2ST(0));
+        } else {
+            showActError(r.resultNum);
+        }
     });
 };
 
@@ -102,15 +124,16 @@ export const getTodayMineNum = () => {
 /**
  * 开宝箱
  */
-export const openChest = (ticketType: TicketType) => {
+export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
-        const itemType = ticketType;
-        clientRpcFunc(ticket_treasurebox, itemType, (r: AwardResponse) => {
+        const itemType = activityType;
+        clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
             console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
+                getSTbalance();
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -120,16 +143,17 @@ export const openChest = (ticketType: TicketType) => {
 /**
  * 转转盘
  */
-export const openTurntable = (ticketType: TicketType) => {
+export const openTurntable = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
-        const itemType = ticketType;
+        const itemType = activityType;
 
-        clientRpcFunc(ticket_rotary, itemType, (r: AwardResponse) => {
+        clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
             console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
+                getSTbalance();
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -152,17 +176,6 @@ export const compoundTicket = (ticketType: TicketType) => {
                 reject(r);
             }
         });
-    });
-};
-
-/**
- * 增加奖券
- * @param num 增加数量
- */
-export const addTicket = (num: number) => {
-    clientRpcFunc(item_addticket, num, (r: Item) => {
-        console.log('addTicket',r);
-        
     });
 };
 
@@ -203,7 +216,7 @@ export const getRankList = () => {
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
-                // showActError(r.resultNum);TODO
+                showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -224,6 +237,64 @@ export const getLoginDays = () => {
                 reject(r);
             }
         });
+    });
+};
+
+/**
+ * 获取拥有的成就勋章
+ */
+export const getACHVmedal = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_achievements, null, (r: Achievements) => {
+            console.log('rpc-getACHVmedal--成就勋章---------------', r);
+            // if (r.resultNum === 1) {
+            setStore('ACHVmedals',r.achievements);
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+/**
+ * 兑换虚拟物品 
+ * @param VirtualId 虚拟物品ID
+ */
+export const exchangeVirtual = (VirtualId:number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
+            console.log('rpc-exchangeVirtual---------------', r);
+            if (r.resultNum === 1) {
+                resolve(r);
+            } else {
+                showActError(r.resultNum);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取兑换记录列表
+ */
+export const getExchangeHistory = () => {    // TODO
+    return new Promise((resolve, reject) => {
+        const awardQuery = new AwardQuery();
+        awardQuery.src = AwardSrcNum[4];
+        
+        clientRpcFunc(award_query, awardQuery, (r: any) => {
+            console.log('rpc-getExchangeHistory-resData---------------', r);
+            resolve(r);
+        });
+    });
+};
+
+export const addST = () => {
+    clientRpcFunc(bigint_test, null, (r: Test) => {
+        console.log('rpc-bigint_test---------------', r);
+        getSTbalance();
     });
 };
 
@@ -252,4 +323,3 @@ export const converInviteAwards = (index:number) => {
             getInvitedNumberOfPerson();
         });
     });
-};

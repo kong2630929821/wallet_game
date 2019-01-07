@@ -10,16 +10,16 @@ import { AwardList, AwardQuery, AwardResponse, Hoe, InviteAwardRes, Item, Items,
 import { Achievements, Medals } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
-import { KTQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
+import { get_convert_list, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
-import { get_ticket_KTNum, ticket_compose, ticket_convert, ticket_rotary, ticket_treasurebox } from '../../../server/rpc/ticket.p';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
-import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
+import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { add_mine, award_query, get_achievements, get_item, get_medals, item_query } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
-import { clientRpcFunc, subscribe } from '../net/init';
+import { clientRpcFunc } from '../net/init';
 
 export const login = () => {
     // 钱包登录
@@ -82,7 +82,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 60;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 8;
+    miningResult.mineNum = 5;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -106,7 +106,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = '';
+    query.src = 'convert';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -120,26 +120,18 @@ export const add_ticket = () => {
     });
 };
 
-// 合成奖券
-export const compose_ticket = () => {
-    const itemType = 7001;
-    clientRpcFunc(ticket_compose, itemType, (r: Item) => {
-        console.log(r);
-    });
-};
-
 // 转盘
-export const ticket_rotary_test = () => {
-    const itemType = 7001;
-    clientRpcFunc(ticket_rotary, itemType, (r: Item) => {
+export const rotary_test = () => {
+    const itemType = 100801;
+    clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
         console.log(r);
     });
 };
 
 // 宝箱
-export const ticket_treasurebox_test = () => {
-    const  itemType = 7001;
-    clientRpcFunc(ticket_treasurebox, itemType, (r: Item) => {
+export const box_test = () => {
+    const itemType = 101101;
+    clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -161,8 +153,8 @@ export const add_convert_test = () => {
 
 // 兑换物品
 export const convert_test = () => {
-    const awardType = 500001;
-    clientRpcFunc(ticket_convert, awardType, (r: AwardResponse) => {
+    const awardType = 500002;
+    clientRpcFunc(st_convert, awardType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -170,13 +162,6 @@ export const convert_test = () => {
 // 大整数测试
 export const bigInt_test = () => {
     clientRpcFunc(bigint_test, null, (r: Test) => {
-        console.log(r);
-    });
-};
-
-// 获取钱包KT
-export const get_walletkt_test = () => {
-    clientRpcFunc(get_ticket_KTNum, null, (r: KTQueryRes) => {
         console.log(r);
     });
 };
@@ -213,6 +198,20 @@ export const get_medals_test = () => {
 // 获取所有成就
 export const get_achievements_test = () => {
     clientRpcFunc(get_achievements, null, (r: Achievements) => {
+        console.log(r);
+    });
+};
+
+// 获取ST数量
+export const get_stNum_test = () => {
+    clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
+        console.log(r);
+    });
+};
+
+// 查看兑奖列表
+export const get_convert_list_test = () => {
+    clientRpcFunc(get_convert_list, null, (r: ConvertAwardList) => {
         console.log(r);
     });
 };
@@ -264,16 +263,12 @@ const props = {
             func: () => { add_ticket(); }
         },
         {
-            name: '合成奖券',
-            func: () => { compose_ticket(); }
-        },
-        {
             name: '转盘',
-            func: () => { ticket_rotary_test(); }
+            func: () => { rotary_test(); }
         },
         {
             name: '宝箱',
-            func: () => { ticket_treasurebox_test(); }
+            func: () => { box_test(); }
         },
         {
             name: '挖矿排行',
@@ -286,10 +281,6 @@ const props = {
         {
             name: '兑换物品',
             func: () => { convert_test(); }
-        },
-        {
-            name: '获取KT',
-            func: () => { get_walletkt_test(); }
         },
         {
             name: '获取邀请人数',
@@ -306,6 +297,18 @@ const props = {
         {
             name: '获取成就',
             func: () => { get_achievements_test(); }
+        },
+        {
+            name: '查询ST',
+            func: () => { get_stNum_test(); }
+        },
+        {
+            name: '添加ST',
+            func: () => { bigInt_test(); }
+        },
+        {
+            name: '兑奖列表',
+            func: () => { get_convert_list_test(); }
         }
     ] // 按钮数组
 };

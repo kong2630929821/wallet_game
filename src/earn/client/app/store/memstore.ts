@@ -124,12 +124,17 @@ const store:Store = {
     mine:{
         miningedNumber:0
     },
+    goods:[],
+    balance:{
+        ST:0,
+        KT:0
+    },
+    ACHVmedals:[],
     invited:{
         invitedNumberOfPerson:0,
         convertedInvitedAward:[]
-    },
-    goods:[]
-    
+    }
+
 };
 
 export interface Mine {
@@ -148,6 +153,13 @@ export interface Store {
     mine:Mine;      // 矿山相关
     invited:Invited;  // 邀请相关
     goods:Item[];   // 拥有的物品
+    balance:Balance;  // 账户余额 
+    ACHVmedals:any;   // 拥有成就勋章
+}
+
+export interface Balance {
+    KT:number;
+    ST:number;
 }
 
 /**

@@ -8,7 +8,7 @@ import { Bucket } from '../../utils/db';
 import { WARE_NAME } from '../data/constant';
 import { Award, ConvertTab, Hoe, Item, Items, Mine } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
-import { add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
+import { add_award, add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { Hits, Test } from './test.s';
@@ -107,12 +107,9 @@ export const add_convert = () => {
 
 // #[rpc=rpcServer]
 export const bigint_test = ():Test => {
-    const a:bigInt.BigInteger = bigInt('10');
-    const b:bigInt.BigInteger = bigInt('20');
-    const c = a.add(b);
-    const d = c.toString();
+    add_award(4, 5001, 200, 'test');
     const test = new Test();
-    test.r = d;
+    test.r = 'test';
 
     return test;
 };

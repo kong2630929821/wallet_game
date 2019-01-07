@@ -58,17 +58,17 @@ export const MEDAL_ETH = 8017;
 export const MEDAL_BTC = 8018;
 
 // 消息推送类型编号
-export const MESSAGE_TYPE_ADDMEDAL = 8000; // 添加奖章
+export const MESSAGE_TYPE_ADDMEDAL = 'add medal'; // 添加奖章
 
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位
-export const BTC_UNIT_NUM:number = 10 ^ (-4);
+export const BTC_UNIT_NUM:number = 10 ** 4;
 // ETH 单位:10^15 精度为小数点后3位
-export const ETH_UNIT_NUM:number = 10 ^ (-15);
+export const ETH_UNIT_NUM:number = 10 ** 15;
 // ST 单位:10^4 精度为小数点后2位
-export const ST_UNIT_NUM:number = 10 ^ (-4);
+export const ST_UNIT_NUM:number = 10 ** 4;
 // KT 单位:10^8 即KT为整数
-export const KT_UNIT_NUM:number = 10 ^ (-8);
+export const KT_UNIT_NUM:number = 10 ** 8;
 
 // 人类10秒最快手速
 export const MAX_HUMAN_HITS = 200;
@@ -111,12 +111,12 @@ export const HUGE_MINE_TYPE_AWARD = 100301; // 大矿山挖矿
 export const GET_RANDOM_MINE = 100401; // 获取矿山
 export const COMPOSE_GOLD_TICKET = 100501; // 合成金券
 export const COMPOSE_RAINBOW_TICKET = 100601; // 合成彩券
-export const SILVER_TICKET_ROTARY = 100701; // 初级大转盘
-export const GOLD_TICKET_ROTARY = 100801; // 中级大转盘
-export const RAINBOW_TICKET_ROTARY = 100901; // 高级大转盘
-export const SILVER_TICKET_TREASUREBOX = 101001; // 初级宝箱
-export const GOLD_TICKET_TREASUREBOX = 101101; // 中级宝箱
-export const RAINBOW_TICKET_TREASUREBOX = 101201; // 高级宝箱
+export const LEVEL1_ROTARY_AWARD = 100701; // 初级大转盘
+export const LEVEL2_ROTARY_AWARD = 100801; // 中级大转盘
+export const LEVEL3_ROTARY_AWARD = 100901; // 高级大转盘
+export const LEVEL1_TREASUREBOX_AWARD = 101001; // 初级宝箱
+export const LEVEL2_TREASUREBOX_AWARD = 101101; // 中级宝箱
+export const LEVEL3_TREASUREBOX_AWARD = 101201; // 高级宝箱
 
 // 合成消耗奖券
 export const TICKET_COMPOSE_COUNT = 3;
@@ -127,16 +127,22 @@ export const TICKET_TREASUREBOX_COUNT = 2;
 // 获取邀请奖励最小人数
 export const MIN_INVITE_NUM = 3;
 
-// 转盘等级编号
-export const LEVEL1_ROTARY = 1;
-export const LEVEL2_ROTARY = 2;
-export const LEVEL3_ROTARY = 3;
 // 初级转盘消耗ST数
 export const LEVEL1_ROTARY_STCOST = 10;
 // 中级转盘消耗ST数
 export const LEVEL2_ROTARY_STCOST = 100;
 // 高级转盘消耗ST数
 export const LEVEL3_ROTARY_STCOST = 1000;
+// 初级宝箱消耗ST数
+export const LEVEL1_TREASUREBOX_STCOST = 10;
+// 中级宝箱消耗ST数
+export const LEVEL2_TREASUREBOX_STCOST = 100;
+// 高级宝箱消耗ST数
+export const LEVEL3_TREASUREBOX_STCOST = 1000;
+
+// 没有奖品
+export const SURPRISE_BRO = 9527;
+export const NO_AWARD_SORRY = 'noaward';
 
 // 数据库名
 export const WARE_NAME = 'file';

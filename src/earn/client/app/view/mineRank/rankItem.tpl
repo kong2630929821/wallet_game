@@ -13,5 +13,5 @@
             <p w-class="rank-kt">{{it.ktNum}} KT</p>
         </div>
     </div>
-    <img w-class="medal-right" src="../../res/image/balloon.png" height="100%" />
+    <img w-class="medal-right" src="../../res/image/medals/medal8017.png" height="100%" />
 </div>
