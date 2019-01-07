@@ -7,7 +7,7 @@ import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
-import { Achievements, Medals } from '../../../server/data/db/medal.s';
+import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -17,7 +17,7 @@ import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addtick
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_item, get_medals, item_query } from '../../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
 import { clientRpcFunc } from '../net/init';
 
@@ -82,7 +82,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 60;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 5;
+    miningResult.mineNum = 3;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -106,7 +106,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = 'convert';
+    query.src = '';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -216,6 +216,21 @@ export const get_convert_list_test = () => {
     });
 };
 
+// 挂奖章
+export const show_medal_test = () => {
+    const medal = 8001;
+    clientRpcFunc(show_medal, medal, (r: ShowMedalRes) => {
+        console.log(r);
+    });
+};
+
+// 查看挂出的奖章
+export const get_medal_test = () => {
+    const medal = 1;
+    clientRpcFunc(get_showMedal, medal, (r: ShowMedalRes) => {
+        console.log(r);
+    });
+};
 const props = {
     bts: [
         {
@@ -309,6 +324,14 @@ const props = {
         {
             name: '兑奖列表',
             func: () => { get_convert_list_test(); }
+        },
+        {
+            name: '挂奖章',
+            func: () => { show_medal_test(); }
+        },
+        {
+            name: '查奖章',
+            func: () => { get_medal_test(); }
         }
     ] // 按钮数组
 };

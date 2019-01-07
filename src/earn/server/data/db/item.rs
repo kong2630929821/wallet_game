@@ -195,7 +195,8 @@ struct TotalMiningMap {
 struct MiningKTNum {
     uid: u32,
     openid: String,
-    total: u32
+    total: u32,
+    medal:Option<u32>
 }
 
 /**
@@ -212,7 +213,8 @@ struct MiningKTMap {
 #[primary=miningKTMap,db=file,dbMonitor=true,hasmgr=false]
 struct MiningKTMapTab {
     miningKTMap: MiningKTMap,
-    openid: String
+    openid: String,
+    medal:Option<u32>
 }
 
 /**
