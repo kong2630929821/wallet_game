@@ -112,7 +112,7 @@ export const get_medals = ():Medals => {
 // 查看展示的奖章
 // #[rpc=rpcServer]
 export const get_showMedal = (uid: number):ShowMedalRes => {
-    const showMedalRes = new ShowMedalRes(RESULT_SUCCESS);
+    const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
     const showMedal = bucket.get<number, [ShowMedal]>(uid)[0];

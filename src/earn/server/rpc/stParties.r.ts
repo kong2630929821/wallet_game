@@ -56,10 +56,9 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     switch (rotaryType) {
         case LEVEL1_ROTARY_AWARD:
             stCount = LEVEL1_ROTARY_STCOST;
-            // 获取是否还有免费的初级转盘次数
             const dbMgr = getEnv().getDbMgr();
             const bucket = new Bucket(WARE_NAME, FreeRotary._$info.name, dbMgr);
-            const freeRotary = bucket.get<number, [FreeRotary]>(uid)[0];
+            const freeRotary = bucket.get<number, [FreeRotary]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freeRotary) break;
             hasfree = freeRotary.free;
             freeRotary.free = false;
@@ -76,13 +75,19 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
 
             return awardResponse;
     }
-    console.log('stCount:!!!!!!!!!!!!!!!', stCount);
-    // 如果有免费次数使用免费次数
-    if (hasfree === true) {
+    if (hasfree === true) { // 如果有免费次数使用免费次数
         const v = [];
         doAward(rotaryType, randomMgr, v);
         const count = v[0][1];
         const newitemType = v[0][0];
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+            awardResponse.award = award;
+            awardResponse.resultNum = RESULT_SUCCESS;
+    
+            return awardResponse;
+        }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
         if (!award) {
@@ -103,19 +108,16 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     doAward(rotaryType, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    // 没有抽中奖品
-    if (newitemType === SURPRISE_BRO) {
+    if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
         const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
         awardResponse.award = award;
         awardResponse.resultNum = RESULT_SUCCESS;
-        console.log('awardResponse:!!!!!!!!!!!!!!!', awardResponse);
 
         return awardResponse;
     }
-    // 判断奖品是否为虚拟兑换类奖品
     const convertInfo = get_convert_info(newitemType);
-    if (!convertInfo) {
+    if (!convertInfo) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
         if (!award) {
@@ -125,8 +127,7 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
         }
         awardResponse.resultNum = RESULT_SUCCESS;
         awardResponse.award = award;
-    } else {
-        // 是可兑换奖品 添加兑换码
+    } else {  // 是可兑换奖品 添加兑换码
         const convertAward = get_convert(newitemType);
         if (!convertAward) {
             awardResponse.resultNum = AWARD_NOT_ENOUGH;
