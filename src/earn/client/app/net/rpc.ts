@@ -2,6 +2,7 @@
  * rpc通信
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
+import { getUserList } from '../../../../app/net/pull';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -37,15 +38,19 @@ export const loginActivity = () => {
             walletLoginReq.openid = r.openid.toString();
             walletLoginReq.sign = 'dfefgefd';
             userType.value = walletLoginReq;
-            clientRpcFunc(login, userType, (r: UserInfo) => {
+            clientRpcFunc(login, userType, (res: UserInfo) => {
                 console.log('活动登录成功！！--------------', r);
                 if (r.loginCount === 0) {
                     popNew('earn-client-app-view-component-newUserLogin');
                 }
-                setStore('userInfo',r);
-                initReceive(r.uid);
+                // getUserList(r.openid,1).then(userInfo => {
+                //     console.log('userInfo-------------钱包信息',userInfo);
+                    
+                // });
+                setStore('userInfo',res);
+                initReceive(res.uid);
                 getSTbalance();
-                resolve(r);
+                resolve(res);
             });
         },(err) => {
             console.log('活动登录失败！！--------------', err);
