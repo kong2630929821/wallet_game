@@ -50,31 +50,38 @@ export class PlayHome extends Widget {
             welfareActivities: [{
                 img: 'btn_yun_5.png',
                 title: '邀请好友',
-                desc: '累计邀请有好礼'
+                desc: '累计邀请有好礼',
+                components:'earn-client-app-view-activity-inviteFriend'
             }, {
                 img: 'btn_yun_6.png',
                 title: '验证手机',
-                desc: '额外赠送2500KT'
+                desc: '额外赠送2500KT',
+                components:'earn-client-app-view-activity-verifyPhone'
             }, {
                 img: 'btn_yun_7.png',
                 title: '开宝箱',
-                desc: '不定期上新物品'
+                desc: '不定期上新物品',
+                components:'earn-client-app-view-openBox-openBox'
             }, {
                 img: 'btn_yun_8.png',
                 title: '大转盘',
-                desc: '试试我的手气'
+                desc: '试试我的手气',
+                components:'earn-client-app-view-turntable-turntable'
             }, {
                 img: 'btn_yun_10.png',
                 title: '兑换物品',
-                desc: '不定期上新物品'
+                desc: '不定期上新物品',
+                components:'earn-client-app-view-exchange-exchange'
             }, {
                 img: 'btn_yun_11.png',
                 title: '我的物品',
-                desc: '兑换和中奖的物品'
+                desc: '兑换和中奖的物品',
+                components:'earn-client-app-view-myProduct-myProduct'
             }, {
                 img: 'btn_yun_11.png',
                 title: '挖矿排名',
-                desc: '全部和好友排名'
+                desc: '全部和好友排名',
+                components:'earn-client-app-view-mineRank-mineRank'
             }],
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
@@ -99,32 +106,11 @@ export class PlayHome extends Widget {
      * @param ind 福利顺序
      */
     public goActivity(ind: number) {
-        switch (ind) {
-            case 0:
-                popNew('earn-client-app-view-activity-inviteFriend');// 邀请好友
-                break;
-            case 1:
-                popNew('earn-client-app-view-activity-verifyPhone');// 验证手机
-                break;
-            case 2:
-                popNew('earn-client-app-view-openBox-openBox');// 开宝箱
-                break;
-            case 3:
-                popNew('earn-client-app-view-turntable-turntable');// 大转盘
-                break;
-            case 4:
-                popNew('earn-client-app-view-ticketCenter-ticketCenter');// 奖券中心
-                break;
-            case 5:
-                popNew('earn-client-app-view-exchange-exchange');// 奖券兑换
-                break;
-            case 6:
-                popNew('earn-client-app-view-myProduct-myProduct', { type: 0 });// 我的物品
-                break;
-            case 7:
-                popNew('earn-client-app-view-mineRank-mineRank');// 挖矿排名
-                break;
-            default:
+        const page = this.props.welfareActivities[ind].components;
+        if (page === 'earn-client-app-view-myProduct-myProduct') {
+            popNew(page, { type: 0 });
+        } else {
+            popNew(page);
         }
     }
 
