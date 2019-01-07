@@ -6,10 +6,8 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { addTicket } from '../../net/rpc';
+import { addST } from '../../net/rpc';
 import { register } from '../../store/memstore';
-import { getTicketBalance } from '../../utils/util';
-import { TicketType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -23,19 +21,19 @@ export class TicketCenter extends Widget {
         KTbalance: 500,
         ticketList: [
             {
-                type: TicketType.SilverTicket,
+                type: 0,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
                 balance: 0,
                 priceKT: 500
             },
             {
-                type: TicketType.GoldTicket,
+                type: 0,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
                 balance: 0,
                 priceKT: 1500
             },
             {
-                type: TicketType.DiamondTicket,
+                type: 0,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
                 balance: 0,
                 priceKT: 2000
@@ -52,14 +50,7 @@ export class TicketCenter extends Widget {
      * 更新props数据
      */
     public initData() {
-        for (let i = 0; i < this.props.ticketList.length; i++) {
-            this.props.ticketList[i].balance = getTicketBalance(this.props.ticketList[i].type);
-        }
         this.paint();
-    }
-
-    public getTicket(index:number) {
-        addTicket(this.props.ticketList[index].type);
     }
 
     /**
@@ -95,7 +86,8 @@ export class TicketCenter extends Widget {
      * 奖券合成 
      */
     public goCompound() {
-        popNew('earn-client-app-view-ticketCenter-ticketCompound');
+        addST();
+        // popNew('earn-client-app-view-ticketCenter-ticketCompound');
     }
 
     /**

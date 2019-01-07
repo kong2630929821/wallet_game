@@ -92,7 +92,7 @@ struct ItemsResponse{
 /**
 *奖品表
 */
-#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+#[primary=id,db=file,dbMonitor=true,hasmgr=false,constructor=true]
 struct Award {
     id: String,
     awardType: u32,

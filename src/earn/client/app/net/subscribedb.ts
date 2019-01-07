@@ -5,8 +5,10 @@
 // ================================================================= 导入
 import { BonBuffer } from '../../../../pi/util/bon';
 import { ab2hex } from '../../../../pi/util/util';
-import { Items } from '../../../server/data/db/item.s';
-import { watchItemsInfo } from '../../../server/rpc/dbWatcher.p';
+import { THE_ELDER_SCROLLS } from '../../../server/data/constant';
+import { Items, SpecialAward } from '../../../server/data/db/item.s';
+import { watchItemsInfo, watchSpecialAward } from '../../../server/rpc/dbWatcher.p';
+import { SendMessage } from '../../../server/rpc/user.s';
 import { getStore, setStore } from '../store/memstore';
 import { WARE_NAME } from '../utils/constants';
 import { clientRpcFunc, subscribe } from './init';
@@ -20,6 +22,11 @@ export const initSubscribeInfo = () => {
     subscribeItemsInfo(getStore('userInfo/uid'),(r:Items) => {
         setStore('goods',r.item);
     });
+    subscribeUid((r) => {
+        console.log('zx--------uid   勋章--------------',r);
+        
+        // setRankMedal();
+    });
 };
 
 /**
@@ -27,6 +34,24 @@ export const initSubscribeInfo = () => {
  */
 export const subscribeItemsInfo = (uid: number,cb?:Function) => {
     subscribeTable(watchItemsInfo,uid,Items,cb);
+};
+
+/**
+ * 挖矿特殊奖励公告监听
+ */
+export const subscribeSpecialAward = (cb?:Function) => {
+    subscribeTable(watchSpecialAward,THE_ELDER_SCROLLS,SpecialAward,cb);
+};
+
+/**
+ * 订阅用户uid主题推送   // 获得勋章提醒、
+ */
+export const subscribeUid = (cb?:Function) => {
+    const uidStr = getStore('userInfo/uid').toString();
+    subscribe(uidStr,SendMessage,(r:SendMessage) => {
+
+        cb && cb(r);
+    });
 };
 
 // ================================================================= 本地

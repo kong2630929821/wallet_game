@@ -13,6 +13,7 @@ export class NewUserLogin extends Widget {
     };
 
     public create() {
+        super.create();
         const data = getRegularPrizeList(ActivityType.NewUserWelfare);
         data.forEach(element => {
             const prize = {
@@ -21,7 +22,6 @@ export class NewUserLogin extends Widget {
             };
             this.props.prizeList.push(prize);
         });
-        
     }
 
     public close(e: any) {

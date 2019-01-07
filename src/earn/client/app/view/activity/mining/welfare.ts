@@ -7,6 +7,7 @@ import { Widget } from '../../../../../../pi/widget/widget';
 export class Welfare extends Widget {
     public ok:() => void;
     public create() {
+        super.create();
         this.props = {
             welfareAwards : [
                 {

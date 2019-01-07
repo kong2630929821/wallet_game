@@ -107,7 +107,7 @@ export const add_convert = () => {
 
 // #[rpc=rpcServer]
 export const bigint_test = ():Test => {
-    add_award(1, 5001, 200, 'test');
+    add_award(4, 5001, 200, 'test');
     const test = new Test();
     test.r = 'test';
 

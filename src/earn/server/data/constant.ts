@@ -140,6 +140,10 @@ export const LEVEL2_TREASUREBOX_STCOST = 100;
 // 高级宝箱消耗ST数
 export const LEVEL3_TREASUREBOX_STCOST = 1000;
 
+// 没有奖品
+export const SURPRISE_BRO = 9527;
+export const NO_AWARD_SORRY = 'noaward';
+
 // 数据库名
 export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
