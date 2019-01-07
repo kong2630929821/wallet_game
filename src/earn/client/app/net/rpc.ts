@@ -2,7 +2,7 @@
  * rpc通信
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
-import { getUserList } from '../../../../app/net/pull';
+import { getOneUserInfo, getUserList } from '../../../../app/net/pull';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, Item, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -31,31 +31,57 @@ import { initReceive } from './receive';
  */
 export const loginActivity = () => {
     return new Promise((resolve, reject) => {
-        const userType = new UserType();
-        userType.enum_type = UserType_Enum.WALLET;
-        const walletLoginReq = new WalletLoginReq();
-        getOpenId('101',(r) => {
+        getOpenId('101',(r) => {        // 获取openid
+            
+            const userType = new UserType();
+            userType.enum_type = UserType_Enum.WALLET;
+            const walletLoginReq = new WalletLoginReq();
             walletLoginReq.openid = r.openid.toString();
             walletLoginReq.sign = 'dfefgefd';
             userType.value = walletLoginReq;
-            clientRpcFunc(login, userType, (res: UserInfo) => {
+
+            clientRpcFunc(login, userType,async (res: UserInfo) => { // 活动登录
                 console.log('活动登录成功！！--------------', r);
-                if (r.loginCount === 0) {
+                if (r.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-view-component-newUserLogin');
                 }
-                // getUserList(r.openid,1).then(userInfo => {
-                //     console.log('userInfo-------------钱包信息',userInfo);
-                    
-                // });
                 setStore('userInfo',res);
-                initReceive(res.uid);
-                getSTbalance();
-                resolve(res);
+                getUserInfo(r.openid,'self'); // 获取用户信息
+                initReceive(res.uid); // 监听uid主题
+                getSTbalance();  // 获取ST余额
+                resolve(res); 
             });
         },(err) => {
             console.log('活动登录失败！！--------------', err);
         });
     });
+};
+
+/**
+ * 获取用户信息
+ */
+export const getUserInfo = async (openid:number,self?:string) => {
+    const userInfo = await getOneUserInfo([openid],1);
+    if (self) {   // 钱包用户
+        let localUserInfo = getStore('userInfo');
+        localUserInfo = {
+            ...localUserInfo,
+            avatar : userInfo.avatar,
+            name : userInfo.nickName,
+            tel : userInfo.phoneNumber
+            
+        };
+        setStore('userInfo',localUserInfo);
+
+        return localUserInfo;
+    } else {    // 其他用户
+        return {
+            avatar : userInfo.avatar,
+            name : userInfo.nickName,
+            tel : userInfo.phoneNumber
+        };
+
+    }
 };
 
 /**
