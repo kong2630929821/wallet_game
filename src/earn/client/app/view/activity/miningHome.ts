@@ -1,16 +1,16 @@
 /**
  * digging mines home
  */
-import { popNew } from '../../../../../../pi/ui/root';
-import { Forelet } from '../../../../../../pi/widget/forelet';
-import { Widget } from '../../../../../../pi/widget/widget';
-import { Item, Item_Enum, MiningResponse } from '../../../../../server/data/db/item.s';
-import { RandomSeedMgr } from '../../../../../server/util/randomSeedMgr';
-import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../../net/rpc';
-import { getStore, register } from '../../../store/memstore';
-import { hoeUseDuration, MineMax } from '../../../utils/constants';
-import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../../utils/util';
-import { HoeType } from '../../../xls/hoeType.s';
+import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
+import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
+import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getStore, register } from '../../store/memstore';
+import { hoeUseDuration, MineMax } from '../../utils/constants';
+import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
+import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -64,11 +64,11 @@ export class MiningHome extends Widget {
     }
 
     public signInClick() {
-        popNew('earn-client-app-view-activity-mining-signIn');
+        popNew('earn-client-app-view-activity-signIn');
     }
 
     public welfareClick() {
-        popNew('earn-client-app-view-activity-mining-inviteAward');
+        popNew('earn-client-app-view-activity-inviteAward');
     }
 
     public closeClick() {

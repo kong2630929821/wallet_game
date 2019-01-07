@@ -1,8 +1,8 @@
 /**
  * sign in award 签到奖励
  */
-import { Widget } from '../../../../../../pi/widget/widget';
-import { HoeType } from '../../../xls/hoeType.s';
+import { Widget } from '../../../../../pi/widget/widget';
+import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
     continuedDays:number;   // 持续天数

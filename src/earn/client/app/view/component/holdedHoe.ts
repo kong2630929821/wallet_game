@@ -1,9 +1,9 @@
 /**
  * holded hoe
  */
-import { notify } from '../../../../../../pi/widget/event';
-import { Widget } from '../../../../../../pi/widget/widget';
-import { HoeType } from '../../../xls/hoeType.s';
+import { notify } from '../../../../../pi/widget/event';
+import { Widget } from '../../../../../pi/widget/widget';
+import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
     holdedNumber:number; // holded hoe number

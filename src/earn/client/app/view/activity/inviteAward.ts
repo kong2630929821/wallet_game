@@ -1,12 +1,11 @@
 /**
  * sign in
  */
-import { popNew } from '../../../../../../pi/ui/root';
-import { Forelet } from '../../../../../../pi/widget/forelet';
-import { Widget } from '../../../../../../pi/widget/widget';
-import { getInvitedNumberOfPerson } from '../../../net/rpc';
-import { getStore, Invited, register } from '../../../store/memstore';
-import { inviteAwardsMultiple } from '../../../utils/constants';
+import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
+import { Widget } from '../../../../../pi/widget/widget';
+import { getStore, Invited, register } from '../../store/memstore';
+import { inviteAwardsMultiple } from '../../utils/constants';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;

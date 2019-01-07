@@ -6,6 +6,7 @@
 declare var pi_modules;
 
  // ================================================ 导入
+import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { create } from '../../../../pi/net/rpc';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
@@ -31,7 +32,7 @@ export const initClient =  () => {
                 console.log('connect fail', r);
             }
         };
-        rootClient = new Client('127.0.0.1', 2234, 'clientId-wcd14PDgoZ', null, options);
+        rootClient = new Client(activeLogicIp, activeLogicPort, 'clientId-wcd14PDgoZ', null, options);
         // rootClient = new Client('192.168.9.29', 1234, 'clientId-wcd14PDgoZ', null, options);
     }
 };

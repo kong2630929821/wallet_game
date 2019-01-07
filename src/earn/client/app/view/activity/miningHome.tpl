@@ -3,13 +3,13 @@
         <div w-class="choose-tip"><widget w-tag="pi-ui-lang">{"zh_Hans":"选择锄头","zh_Hant":"選擇鋤頭","en":""}</widget></div>
         <div w-class="holded-hoes" >
             <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+                <earn-client-app-view-components-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-components-holdedHoe>
             </div>
             <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.GoldHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+                <earn-client-app-view-components-holdedHoe style="margin:0 15px;">{ holdedNumber:{{ it.goldHoe }},hoeType:{{ it.hoeType.GoldHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-components-holdedHoe>
             </div>
             <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.DiamondHoe}})">
-                <earn-client-app-view-activity-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-activity-components-holdedHoe>
+                <earn-client-app-view-components-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-components-holdedHoe>
             </div>
         </div>
         <div w-class="digging-num"><widget w-tag="pi-ui-lang">{"zh_Hans":"今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","zh_Hant":"今日已挖礦山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","en":""}</widget></div>
@@ -43,7 +43,7 @@
         <div w-class="mine-area">
             {{for index,item of it.haveMines}}
             <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
-                <earn-client-app-view-activity-components-mine>{ 
+                <earn-client-app-view-components-mine>{ 
                     mineType:{{ item.type }},
                     mineId:{{ item.id }}
                     hp:{{item.hp}},
@@ -51,7 +51,7 @@
                     selected:{{ item.type === it.mineType && item.id === it.mineId}},
                     lossHp:{{ it.lossHp }},
                     beginMining:{{ it.countDownStart }}
-                }</earn-client-app-view-activity-components-mine>
+                }</earn-client-app-view-components-mine>
             </div>
             {{end}}
         </div>

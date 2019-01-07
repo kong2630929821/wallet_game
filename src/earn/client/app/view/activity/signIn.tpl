@@ -6,7 +6,7 @@
         </div>
         <div w-class="main">
             {{for item of it.awards}}
-                <div style="margin:5px;"><earn-client-app-view-activity-components-signInAward>{ continuedDays:{{ item.days }},hoeType:{{ item.prop }},received:{{ it.signInDays >= item.days }} }</earn-client-app-view-activity-components-signInAward></div>
+                <div style="margin:5px;"><earn-client-app-view-components-signInAward>{ continuedDays:{{ item.days }},hoeType:{{ item.prop }},received:{{ it.signInDays >= item.days }} }</earn-client-app-view-components-signInAward></div>
             {{end}}
         </div>
         <div w-class="sign-btn"><widget w-tag="pi-ui-lang">{"zh_Hans":"签到","zh_Hant":"簽到","en":""}</widget></div>

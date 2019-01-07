@@ -4,7 +4,7 @@
         </div>
         <div w-class="main">
             {{ for index,item of it.welfareAwards }}
-                <div style="margin:5px;"><earn-client-app-view-activity-components-welfareAward>{ received:{{ item.received }},canReceive:{{ item.canReceive }},inviteNumber:{{ (index + 1) * it.inviteAwardsMultiple }},awardIndex:{{ index }} }</earn-client-app-view-activity-components-welfareAward></div>
+                <div style="margin:5px;"><earn-client-app-view-components-welfareAward>{ received:{{ item.received }},canReceive:{{ item.canReceive }},inviteNumber:{{ (index + 1) * it.inviteAwardsMultiple }},awardIndex:{{ index }} }</earn-client-app-view-components-welfareAward></div>
             {{end}}
         </div>
         <div w-class="invite-btn" on-tap="inviteClick"><widget w-tag="pi-ui-lang">{"zh_Hans":"立即邀请","zh_Hant":"立即邀請","en":""}</widget></div>

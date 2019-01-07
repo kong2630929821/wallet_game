@@ -1,12 +1,12 @@
 /**
  * mine
  */
-import { notify } from '../../../../../../pi/widget/event';
-import { getRealNode } from '../../../../../../pi/widget/painter';
-import { Widget } from '../../../../../../pi/widget/widget';
-import { getMiningMaxHp } from '../../../utils/util';
-import { HoeType } from '../../../xls/hoeType.s';
-import { MineType } from '../../../xls/mineType.s';
+import { notify } from '../../../../../pi/widget/event';
+import { getRealNode } from '../../../../../pi/widget/painter';
+import { Widget } from '../../../../../pi/widget/widget';
+import { getMiningMaxHp } from '../../utils/util';
+import { HoeType } from '../../xls/hoeType.s';
+import { MineType } from '../../xls/mineType.s';
 
 interface Props {
     mineType:MineType;

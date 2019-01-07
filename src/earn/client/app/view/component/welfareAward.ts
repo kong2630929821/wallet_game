@@ -1,8 +1,8 @@
 /**
  * welfare award
  */
-import { Widget } from '../../../../../../pi/widget/widget';
-import { converInviteAwards } from '../../../net/rpc';
+import { Widget } from '../../../../../pi/widget/widget';
+import { converInviteAwards } from '../../net/rpc';
 
 interface Props {
     awardIndex:number;   // 奖励下标

@@ -95,7 +95,7 @@ export class PlayHome extends Widget {
                 initSubscribeInfo();
             });
         }, 2000);
-        console.log(this.props.hoeType);
+        // console.log(this.props.hoeType);
     }
     /**
      * 福利活动进入
@@ -135,7 +135,7 @@ export class PlayHome extends Widget {
         popNew(this.props.page[index]);
     }
     public miningClick() {
-        popNew('earn-client-app-view-activity-mining-home');
+        popNew('earn-client-app-view-activity-miningHome');
     }
 
     /**
@@ -187,7 +187,7 @@ export class PlayHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('earn-client-app-view-activity-mining-miningRule');
+        popNew('earn-client-app-view-activity-miningRule');
     }
 
     public updateHoe() {
