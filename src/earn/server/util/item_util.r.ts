@@ -64,16 +64,16 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     award.src = src;
     award.uid = uid;
     award.time = time.toString();
-    console.log('award.time!!!!!!!!!!!!!!!!!:', award.time);
     if (convert) award.convert = convert;
     if (desc) award.desc = desc;
     if (deadTime) award.deadTime = deadTime;
-    
+    console.log('award!!!!!!!!!!!!!!!!!:', award);
     // 写入奖励表
     const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
     bucket.put(awardid, award);
     // 写入奖励MAP表
     const awardMap = <AwardMap>get_award_ids(uid);
+    console.log('awardMap!!!!!!!!!!!!!!!!!:', awardMap);
     let awardList = [];
     awardList = awardMap.awards;
     awardList.push(awardid);
