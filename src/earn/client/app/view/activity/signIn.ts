@@ -25,7 +25,7 @@ export class SignIn extends Widget {
         });
         
         this.props = {
-            signInDays:1,
+            signInDays:0,
             awards:getSeriesLoginAwards(1)
         };
     }

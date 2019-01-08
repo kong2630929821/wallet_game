@@ -14,9 +14,9 @@ export class WelfareAward extends Widget {
     public setProps(props:Props,oldProps:Props) {
         let imgUrl = '../../res/image/';
         if (props.received) {
-            imgUrl = `${imgUrl}boxOpen7002.png`;
+            imgUrl = `${imgUrl}101101boxOpen.png`;
         } else {
-            imgUrl = `${imgUrl}box7002.png`;
+            imgUrl = `${imgUrl}101101box.png`;
         }
         // console.log(props);
         this.props = {
