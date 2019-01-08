@@ -116,7 +116,7 @@ const store:Store = {
     userInfo:{
         uid:-1,
         name:'',
-        avator:'',
+        avatar:'',
         note:'',
         sex:0,
         tel:''
@@ -168,7 +168,7 @@ export interface Balance {
 export interface UserInfo {
     uid:number;  // user uid
     name:string; // user name
-    avator:string; // user avator
+    avatar:string; // user avatar
     note:string;  // user note
     sex:number; // user sex
     tel:string;  // user tel

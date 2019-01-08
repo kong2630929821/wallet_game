@@ -53,6 +53,8 @@ export const oauth_send = (uri: string, body) => {
 
 // 向钱包账户发起余额更改请求
 export const oauth_alter_balance = (itemType:number, oid:string, count:number) => {
+    console.log('挖矿测试 oid-------------------',oid);
+    
     let coinType;
     let num;
     switch (itemType) {

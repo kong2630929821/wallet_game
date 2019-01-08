@@ -9,7 +9,8 @@ import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getGoodCount, getPrizeList, getTicketNum } from '../../utils/util';
-import { ActivityType, ItemType } from '../../xls/dataEnum.s';
+import { PrizeCfg } from '../../xls/dataCfg.s';
+import { ActivityType, CoinType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -86,6 +87,7 @@ export class Turntable extends Widget {
      */
     public initData() {
         this.props.STbalance = getStore('balance/ST');
+        
         this.paint();
     }
 
@@ -157,7 +159,7 @@ export class Turntable extends Widget {
 
             setTimeout(() => {
                 this.goLotteryAnimation(false);
-                if (resData.resultNum === 1) {
+                if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
                     popNew('earn-client-app-view-component-lotteryModal', resData.award);
                 }
                 this.paint();

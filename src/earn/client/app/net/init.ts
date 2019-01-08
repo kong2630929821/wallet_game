@@ -5,37 +5,33 @@
  */
 declare var pi_modules;
 
- // ================================================ 导入
+// ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
 import { Client } from '../../../../pi/net/mqtt_c';
-import { create } from '../../../../pi/net/rpc';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
+import { UserInfo } from '../../../server/data/db/user.s';
+import { AutoLoginMgr, UserType } from './autologin';
+// import { initPush } from './receive';
 
 // ================================================ 导出
+export const sourceIp = activeLogicIp || '127.0.0.1';
+export const sourcePort = activeLogicPort;
 
 /**
  * 客户端初始化
  */
-export const initClient =  () => {
+export const initClient = () => {
     if (!rootClient) {
-        const options = {
-            timeout: 3,
-            keepAliveInterval: 30,
-            cleanSession: false,
-            useSSL: false,
-            mqttVersion: 3,
-            onSuccess: () => {
-                clientRpc = create(rootClient, (<any>self).__mgr);
-                console.log('activity mqtt connect success');
-            },
-            onFailure: (r) => {
-                console.log('connect fail', r);
-            }
-        };
-        rootClient = new Client(activeLogicIp, activeLogicPort, 'clientId-wcd14PDgoZ', null, options);
-        // rootClient = new Client('192.168.9.29', 1234, 'clientId-wcd14PDgoZ', null, options);
+        mqtt = new AutoLoginMgr(sourceIp, sourcePort);
+        rootClient = mqtt.connection();
     }
+    // initPush();
+};
+
+// 登录
+export const login = (userType: UserType, user: string, pwd: string, cb: (r: UserInfo) => void) => {
+    mqtt.login(userType, user, pwd, cb);
 };
 
 /**
@@ -46,9 +42,24 @@ export const initClient =  () => {
  * @param timeout  timeout
  */
 export const clientRpcFunc = (name: string, req: any, callback: Function, timeout: number = 2000) => {
-    if (!clientRpc) return;
+    if (!clientRpc) {
+        if (mqtt.getState()) {
+            clientRpc = mqtt.getRpc();
+        } else {
+            return;
+        }
+    }
+    if (!mqtt.getState()) {
+        console.log(`网络连接中！！！！`);
+
+        return;
+    }
     clientRpc(name, req, (r: Struct) => {
-        return callback(r);
+        if (!r) {
+            console.log(`${name} 失败了，返回结果 ${r}`);
+        } else {
+            return callback(r);
+        }
     }, timeout);
 };
 
@@ -81,12 +92,12 @@ export const registerRpcStruct = (fileMap) => {
  * @param platerTopic topic
  * @param cb callback
  */
-export const subscribe = (platerTopic: string, returnStruct: any, cb: Function) => {
+export const subscribe = (platerTopic: string, returnStruct: any, cb: Function, subMgr: boolean = true) => {
     if (!rootClient) return;
     const option = {
         qos: 0,
         onSuccess: () => {
-            console.log('subsuccess!===============================');
+            console.log('subsuccess!===============================', platerTopic);
         },
         onFailure: (e) => {
             console.log('subfail!=============================== ', e);
@@ -101,9 +112,24 @@ export const subscribe = (platerTopic: string, returnStruct: any, cb: Function) 
     });
 
     rootClient.subscribe(platerTopic, option); // 订阅主题
+    subMgr && mqtt.subMgr.update(platerTopic, returnStruct, cb);
+};
+
+/**
+ * 取消订阅主题
+ * @param platerTopic topic
+ * @param cb callback
+ */
+export const unSubscribe = (platerTopic: string) => {
+    if (!rootClient) return;
+
+    rootClient.unsubscribe(platerTopic); // 订阅主题
+    mqtt.subMgr.del(platerTopic);
 };
 
 // ================================================ 本地
+// MQTT管理
+let mqtt: any;
 // 客户端
 let rootClient: Client;
 // root RPC
