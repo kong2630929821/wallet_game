@@ -350,7 +350,7 @@ export const converInviteAwards = (index: number) => {
  */
 export const isFirstFree = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc('', null, (r: InviteAwardRes) => {
+        clientRpcFunc('get_hasFree_rotary', null, (r: any) => {
             console.log('[活动]rpc-isFirstFree---------------', r);
             // if (r.resultNum === 1) {
             resolve(r);

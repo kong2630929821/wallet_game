@@ -8,7 +8,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { openChest } from '../../net/rpc';
+import { isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getTicketNum } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -56,7 +56,6 @@ export class OpenBox extends Widget {
         ],
         selectChest: {},
         isFirstPlay:true
-
     };
 
     public create() {
@@ -70,6 +69,10 @@ export class OpenBox extends Widget {
      */
     public initData() {
         this.props.STbalance = getStore('balance/ST');
+        isFirstFree().then(res => {
+            console.log(res);
+            
+        });
         this.paint();
     }
 
