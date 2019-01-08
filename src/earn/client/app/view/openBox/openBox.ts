@@ -33,7 +33,7 @@ export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        showTip:null,
+        showTip:{ zh_Hans:'',zh_Hant:'',en:'' },
         isOpening:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
         STbalance:0,
@@ -61,7 +61,7 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
-        this.props.selectChest = this.props.chestList[0];
+        this.change(0);
         this.initData();
     }
 
@@ -129,7 +129,7 @@ export class OpenBox extends Widget {
                 this.props.showTip = chestTips[1];
                 this.paint();
                 setTimeout(() => {
-                    this.props.showTip = null;
+                    this.props.showTip = { zh_Hans:'',zh_Hant:'',en:'' };
                     this.paint();
                 }, 2000);
                 break;
