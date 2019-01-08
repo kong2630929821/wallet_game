@@ -20,7 +20,7 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    isEmpty:boolean; // 空宝箱
+    showTips:boolean; // 空宝箱
     isOpening:boolean;// 正在开启宝箱中
     selectChest: any; // 选择的宝箱类型
     boxList: any; // 宝箱列表
@@ -32,7 +32,7 @@ export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        isEmpty:false,
+        showTips:false,
         isOpening:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
         STbalance:0,
@@ -112,10 +112,10 @@ export class OpenBox extends Widget {
      * 设置空宝箱提示
      */
     public emptyChest() {
-        this.props.isEmpty = true;
+        this.props.showTips = true;
         this.paint();
         setTimeout(() => {
-            this.props.isEmpty = false;
+            this.props.showTips = null;
             this.paint();
         }, 2000);
 

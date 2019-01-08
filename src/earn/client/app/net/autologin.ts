@@ -11,6 +11,7 @@ import { AutoLogin, GetToken, Token } from '../../../server/rpc/user.s';
 import { clientRpcFunc, subscribe } from '../net/init';
 import { initReceive } from '../net/receive';
 import { loginActivity } from './rpc';
+import { initSubscribeInfo } from './subscribedb';
 
 // 用户类型
 export enum UserType {
@@ -122,6 +123,7 @@ export class AutoLoginMgr {
 
                 this.uid = r.uid.toString();
                 initReceive(r.uid);
+                initSubscribeInfo(); // 监听数据表变化  
                 // 获取自动登录凭证
                 this.getToken();
                 cb(r);

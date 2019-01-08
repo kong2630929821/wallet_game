@@ -25,7 +25,6 @@ import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { UserType as LoginType } from './autologin';
 import { clientRpcFunc, login as mqttLogin } from './init';
-import { initSubscribeInfo } from './subscribedb';
 
 /**
  * 钱包用户登录活动
@@ -38,7 +37,6 @@ export const goLoginActivity = () => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-view-components-newUserLogin');
                 }
-                initSubscribeInfo(); // 监听数据表变化  
                 getSTbalance();  // 获取ST余额   
                 // tslint:disable-next-line:radix
                 getUserInfo(parseInt(openid),'self'); // 获取用户信息
@@ -343,4 +341,11 @@ export const converInviteAwards = (index:number) => {
             getInvitedNumberOfPerson();
         });
     });
+};
+
+/**
+ * 初级宝箱、转盘每日第一次免费
+ */
+export const isFirstFree = () => {
+    
 };
