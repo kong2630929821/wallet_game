@@ -27,7 +27,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2002';
+    walletLoginReq.openid = '2001';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
@@ -124,7 +124,7 @@ export const add_ticket = () => {
 
 // 转盘
 export const rotary_test = () => {
-    const itemType = 100801;
+    const itemType = 100701;
     clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
         console.log(r);
     });
@@ -132,7 +132,7 @@ export const rotary_test = () => {
 
 // 宝箱
 export const box_test = () => {
-    const itemType = 101101;
+    const itemType = 101001;
     clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
         console.log(r);
     });

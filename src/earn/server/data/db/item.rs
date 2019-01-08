@@ -219,12 +219,13 @@ struct MiningKTMapTab {
 }
 
 /**
-*当天免费初级转盘表
+*当天免费初级转盘宝箱表
 */
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
-struct FreeRotary {
+struct FreePlay {
     uid: u32,
-    free: bool
+    freeRotary: bool,
+    freeBox: bool
 }
 
 /**
