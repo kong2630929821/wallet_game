@@ -10,7 +10,6 @@ import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
-import { debug } from '../../../../pi/util/log';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { AutoLoginMgr, UserType } from './autologin';
 // import { initPush } from './receive';

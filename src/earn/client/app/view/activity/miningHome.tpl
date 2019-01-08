@@ -50,6 +50,7 @@
                     selectedHoe:{{ it.hoeSelected }},
                     selected:{{ item.type === it.mineType && item.id === it.mineId}},
                     lossHp:{{ it.lossHp }},
+                    hoeSelectedLeft:{{ it.hoeSelectedLeft }},
                     beginMining:{{ it.countDownStart }}
                 }</earn-client-app-view-components-mine>
             </div>

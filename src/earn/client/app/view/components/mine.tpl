@@ -5,6 +5,8 @@
         <div w-class="hp" style="width:{{ (it.hp / it.hpMax * 100) + '%'}}; "></div>
     </div>
     
-    <div w-class="hoe"><img src="{{it.hoeImgUrl}}"/> </div>
+        {{if it.beginMining || it.hoeSelectedLeft }}
+        <div w-class="hoe"><img src="{{it.hoeImgUrl}}"/> </div>
+        {{end}}
     {{end}}
 </div>

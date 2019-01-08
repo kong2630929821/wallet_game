@@ -2,7 +2,6 @@
  * rpc通信
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
-import { getOneUserInfo, getUserList } from '../../../../app/net/pull';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -103,9 +102,9 @@ export const getAllGoods = () => {
 // 获取ST数量
 export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
-        console.log('[活动]rpc-getSTbalance--ST余额---------------', r);
+        console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', st2ST(r.num));
+            setStore('balance/ST', st2ST(0));
         } else {
             showActError(r.resultNum);
         }
@@ -165,7 +164,7 @@ export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
         clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
-            console.log('[活动]rpc-openChest-resData-------------', r);
+            console.log('rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
@@ -185,7 +184,7 @@ export const openTurntable = (activityType: ActivityType) => {
         const itemType = activityType;
 
         clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
-            console.log('[活动]rpc-openTurntable-resData---------------', r);
+            console.log('rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
@@ -201,7 +200,7 @@ export const openTurntable = (activityType: ActivityType) => {
  * 查询中奖、兑换记录
  * @param itype 记录种类
  */
-export const getAwardHistory = (itype:AwardSrcNum) => {
+export const getAwardHistory = (itype?: number) => {
     return new Promise((resolve, reject) => {
         const awardQuery = new AwardQuery();
         if (itype !== 0) {
@@ -209,13 +208,13 @@ export const getAwardHistory = (itype:AwardSrcNum) => {
         }
 
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('[活动]rpc-getAwardHistory-resData---------------', r);
+            console.log('rpc-getAwardHistory-resData---------------', r);
             const resData = [];
             r.awards.forEach(element => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: coinUnitchange(element.awardType,element.count)
+                    count: element.count
                 };
                 resData.push(data);
             });
@@ -230,7 +229,7 @@ export const getAwardHistory = (itype:AwardSrcNum) => {
 export const getRankList = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_miningKTTop, 50, (r: MineTop) => {
-            console.log('[活动]rpc-getRankList-resData---------------', r);
+            console.log('rpc-getRankList-resData---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -247,7 +246,7 @@ export const getRankList = () => {
 export const getLoginDays = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
-            console.log('[活动]rpc-getLoginDays---------------', r);
+            console.log('rpc-getLoginDays---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -264,7 +263,7 @@ export const getLoginDays = () => {
 export const getACHVmedal = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_achievements, null, (r: Achievements) => {
-            console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);
+            console.log('rpc-getACHVmedal--成就勋章---------------', r);
             // if (r.resultNum === 1) {
             setStore('ACHVmedals',r.achievements);
             resolve(r);
@@ -283,7 +282,7 @@ export const getACHVmedal = () => {
 export const exchangeVirtual = (VirtualId:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
-            console.log('[活动]rpc-exchangeVirtual---------------', r);
+            console.log('rpc-exchangeVirtual---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -303,7 +302,7 @@ export const getExchangeHistory = () => {    // TODO
         awardQuery.src = AwardSrcNum[4];
         
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
+            console.log('rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
         });
     });
@@ -311,7 +310,7 @@ export const getExchangeHistory = () => {    // TODO
 
 export const addST = () => {
     clientRpcFunc(bigint_test, null, (r: Test) => {
-        console.log('[活动]rpc-bigint_test---------------', r);
+        console.log('rpc-bigint_test---------------', r);
         getSTbalance();
     });
 };
@@ -321,7 +320,7 @@ export const addST = () => {
  */
 export const getInvitedNumberOfPerson = () => {
     clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
-        console.log('[活动]rpc-getInvitedNumberOfPerson---------------', r);
+        console.log('rpc-getInvitedNumberOfPerson---------------', r);
         const invite:Invited = {
             invitedNumberOfPerson:r.inviteNum,
             convertedInvitedAward:r.usedNum
@@ -336,16 +335,9 @@ export const getInvitedNumberOfPerson = () => {
 export const converInviteAwards = (index:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
-            console.log('[活动]rpc-converInviteAwards---------------', r);
+            console.log('rpc-converInviteAwards---------------', r);
             resolve(r);
             getInvitedNumberOfPerson();
         });
     });
-};
-
-/**
- * 初级宝箱、转盘每日第一次免费
- */
-export const isFirstFree = () => {
-    
 };
