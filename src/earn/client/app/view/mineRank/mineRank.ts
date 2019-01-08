@@ -96,22 +96,24 @@ export class MineRank extends Widget {
     public async processData(data: any) {
         const resData = [];
         const openidAry = [];  // 挖矿用户openid数组
-        data.forEach(element => {
-            // tslint:disable-next-line:radix
-            openidAry.push(parseInt(element.openid));
-        });
-        const userInfoList = await getUserList(openidAry,1);
-
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            const elementUser = userInfoList[i];
-            const res = {
-                avatar : elementUser.avatar,
-                userName : elementUser.nickName,
-                rank: i + 1,
-                ktNum: element.miningKTMap.ktNum
-            };
-            resData.push(res);
+        if (data.length !== 0) {
+            data.forEach(element => {
+                // tslint:disable-next-line:radix
+                openidAry.push(parseInt(element.openid));
+            });
+            const userInfoList = await getUserList(openidAry,1);
+    
+            for (let i = 0; i < data.length; i++) {
+                const element = data[i];
+                const elementUser = userInfoList[i];
+                const res = {
+                    avatar : elementUser.avatar,
+                    userName : elementUser.nickName,
+                    rank: i + 1,
+                    ktNum: element.miningKTMap.ktNum
+                };
+                resData.push(res);
+            }
         }
         console.log('批量获取挖矿用户信息--------------------------',resData);
 
