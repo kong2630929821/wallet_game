@@ -15,7 +15,7 @@ struct UserAcc {
 struct UserInfo {
     uid: u32,//用户id,自增,-1代表不存在
     name: String,//用户自己设置的用户名
-    avator: String,//头像
+    avatar: String,//头像
     sex: u32,//性别
     tel: String,//电话
     note: String,//用户自己的备注信息

@@ -1,0 +1,73 @@
+.new-page{
+    background: #f2f2f2;
+    background: rgba(34,34,34,0.9);
+}
+.content{
+    width: 100%;
+    height:100%;
+    margin-top: -88px;
+    padding: 0px 0px 70px;
+    justify-content: space-between;
+}
+.medal{
+    margin-top: 200px;
+    position: relative;
+    
+}
+.medal-bgimg{
+
+}
+
+.medal-img{
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.medal-title{
+    font-size:48px;
+    color:#F7CE89;
+}
+
+.other{
+    margin-top: 30px;
+    width: 550px;
+    height: 150px;
+    padding: 25px;
+    background: #FCDC3C;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.other-say{
+    width: 80%;
+    height: 100%;
+    padding-right: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.medal-desc{
+    font-size:32px;
+    color:#BFAA9A;
+    margin-top: 15px;
+}
+.medal-btn{
+    width:500px;
+    height:96px;
+    border-radius:12px;
+    font-size:32px;
+    font-weight:500;
+    color:#ffffff;
+    text-align: center;
+    line-height: 96px;
+}
+
+
+.flex-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

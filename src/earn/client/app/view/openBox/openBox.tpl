@@ -24,10 +24,7 @@
                 </div>
                 {{if !it.isEmpty}}
                 <div w-class="sale-money">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
-                    <span>{{it.selectChest.needTicketNum}}ST</span>
-
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"/1个","zh_Hant":"/1個","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：{{it.selectChest.needTicketNum}}ST/1个","zh_Hant":"售價：{{it.selectChest.needTicketNum}}ST/1個","en":""}</widget>
                 </div>
                 {{else}}
                 <div w-class="sale-money">

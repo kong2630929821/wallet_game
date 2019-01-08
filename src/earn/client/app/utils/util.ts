@@ -11,7 +11,7 @@ import { getMap } from '../store/cfgMap';
 import { getStore } from '../store/memstore';
 import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
-import { ActivityType, ItemType } from '../xls/dataEnum.s';
+import { ActivityType, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
@@ -19,7 +19,7 @@ import { miningMaxHits } from './constants';
 /**
  * 获取用户单个物品数量  kt/st等
  */
-export const getGoodCount = (itemType: ItemType) => {
+export const getGoodCount = (itemType: CoinType) => {
     const goods = getStore('goods');
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
@@ -337,8 +337,8 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
  */
 export const computeRankMedal = () => {
 
-    const ktNum = getGoodCount(ItemType.KT);
-    const medalList = getMedalList(ItemType.KT, 'coinType');
+    const ktNum = getGoodCount(CoinType.KT);
+    const medalList = getMedalList(CoinType.KT, 'coinType');
     const mineMedal = {
         rankMedal: 8000,
         desc: {},

@@ -2,6 +2,7 @@
  * rpc通信
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
+import { getOneUserInfo } from '../../../../app/net/pull';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -17,40 +18,76 @@ import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/use
 import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
-import { st2ST, timestampFormat } from '../utils/tools';
+import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
-import { clientRpcFunc } from './init';
-import { initReceive } from './receive';
+import { UserType as LoginType } from './autologin';
+import { clientRpcFunc, login as mqttLogin } from './init';
 
 /**
  * 钱包用户登录活动
  */
-export const loginActivity = () => {
-    return new Promise((resolve, reject) => {
-        const userType = new UserType();
-        userType.enum_type = UserType_Enum.WALLET;
-        const walletLoginReq = new WalletLoginReq();
-        getOpenId('101',(r) => {
-            walletLoginReq.openid = r.openid.toString();
-            walletLoginReq.sign = 'dfefgefd';
-            userType.value = walletLoginReq;
-            clientRpcFunc(login, userType, (r: UserInfo) => {
-                console.log('活动登录成功！！--------------', r);
-                if (r.loginCount === 0) {
+export const goLoginActivity = () => {
+    getOpenId('101',(r) => {        // 获取openid
+        const openid = r.openid.toString();
+        if (openid) {
+            mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
+                if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-view-components-newUserLogin');
                 }
-                setStore('userInfo',r);
-                initReceive(r.uid);
-                getSTbalance();
-                resolve(r);
+                getSTbalance();  // 获取ST余额   
+                // tslint:disable-next-line:radix
+                getUserInfo(parseInt(openid),'self'); // 获取用户信息
             });
-        },(err) => {
-            console.log('活动登录失败！！--------------', err);
-        });
+        }
+            
+    },(err) => {
+        console.log('[活动]获取openid失败！！------------', err);
     });
+};
+
+export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => void) => {
+    const userType = new UserType();
+    userType.enum_type = UserType_Enum.WALLET;
+    const walletLoginReq = new WalletLoginReq();
+    walletLoginReq.openid = userid;
+    walletLoginReq.sign = sign;
+    userType.value = walletLoginReq;
+    clientRpcFunc(login, userType,(res: UserInfo) => { // 活动登录
+        setStore('userInfo',res);       
+        console.log('[活动]登录成功！！--------------', res);
+        cb(res);
+
+    });
+};
+
+/**
+ * 获取用户信息
+ */
+export const getUserInfo = async (openid:number,self?:string) => {
+    const userInfo = await getOneUserInfo([openid],1);
+    if (self) {   // 钱包用户
+        let localUserInfo = getStore('userInfo');
+        localUserInfo = {
+            ...localUserInfo,
+            avatar : userInfo.avatar,
+            name : userInfo.nickName,
+            tel : userInfo.phoneNumber
+            
+        };
+        setStore('userInfo',localUserInfo);
+
+        return localUserInfo;
+    } else {    // 其他用户
+        return {
+            avatar : userInfo.avatar,
+            name : userInfo.nickName,
+            tel : userInfo.phoneNumber
+        };
+
+    }
 };
 
 /**
@@ -178,7 +215,7 @@ export const getAwardHistory = (itype?: number) => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: element.count
+                    count: coinUnitchange(element.awardType,element.count)
                 };
                 resData.push(data);
             });
