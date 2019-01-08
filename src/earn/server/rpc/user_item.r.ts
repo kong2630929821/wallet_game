@@ -3,9 +3,9 @@
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { MAX_ONEDAY_MINING, WARE_NAME } from '../data/constant';
+import { MAX_ONEDAY_MINING, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
 import { Award, AwardList, AwardQuery, BTC, ETH, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
-import { Achievements, Medals } from '../data/db/medal.s';
+import { Achievements, Medals, ShowMedal, ShowMedalRes } from '../data/db/medal.s';
 import { add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { getUid } from './user.r';
@@ -107,6 +107,31 @@ export const get_medals = ():Medals => {
     }
     
     return medals;
+};
+
+// 查看展示的奖章
+// #[rpc=rpcServer]
+export const get_showMedal = (uid: number):ShowMedalRes => {
+    const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const showMedal = bucket.get<number, [ShowMedal]>(uid)[0];
+    if (!showMedal) return showMedalRes;
+    showMedalRes.medalType = showMedal.medal;
+
+    return showMedalRes;
+};
+
+// 展示奖章
+// #[rpc=rpcServer]
+export const show_medal = (medalType: number):ShowMedalRes => {
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const uid = getUid();
+    const showMedal = new ShowMedal(uid, medalType);
+    bucket.put(uid, showMedal);
+
+    return new ShowMedalRes(RESULT_SUCCESS, medalType);
 };
 
 // 查询指定用户所有成就

@@ -51,7 +51,7 @@ export const oauth_send = (uri: string, body) => {
     return http.post(client, url, body);
 };
 
-// 像钱包账户发起余额更改请求
+// 向钱包账户发起余额更改请求
 export const oauth_alter_balance = (itemType:number, oid:string, count:number) => {
     let coinType;
     let num;

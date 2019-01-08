@@ -16,7 +16,6 @@ import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
 import { get_miningKTNum } from '../rpc/mining.r';
-import { send } from '../rpc/sendMessage.r';
 import { IsOk } from '../rpc/test.s';
 import { getOpenid, getUid } from '../rpc/user.r';
 import { get_item, item_query } from '../rpc/user_item.r';
@@ -24,6 +23,7 @@ import { doAward } from './award.t';
 import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
+import { send } from './sendMessage';
 
 // 添加兑换码
 // #[rpc=rpcServer]
@@ -93,6 +93,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
         specialAward.count = count;
         specialAward.src = src;
         specialAward.uid = uid;
+        specialAward.openid = getOpenid();
         specialAward.time = time.toString();
         const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
         specialAwardbucket.put(awardid, specialAward);
@@ -402,7 +403,7 @@ export const items_init = (uid: number) => {
     const bucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
     bucket.put(uid, itemInfo);
     // 添加初始奖章
-    add_medal(uid, MEDAL_KT0);
+    // add_medal(uid, MEDAL_KT0);
 };
 
 // 获取矿山总数

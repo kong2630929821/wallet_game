@@ -8,7 +8,7 @@ import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
-import { Award, AwardResponse, ConvertTab, FreeRotary } from '../data/db/item.s';
+import { Award, AwardResponse, ConvertTab, FreePlay } from '../data/db/item.s';
 import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
@@ -56,14 +56,13 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     switch (rotaryType) {
         case LEVEL1_ROTARY_AWARD:
             stCount = LEVEL1_ROTARY_STCOST;
-            // 获取是否还有免费的初级转盘次数
             const dbMgr = getEnv().getDbMgr();
-            const bucket = new Bucket(WARE_NAME, FreeRotary._$info.name, dbMgr);
-            const freeRotary = bucket.get<number, [FreeRotary]>(uid)[0];
-            if (!freeRotary) break;
-            hasfree = freeRotary.free;
-            freeRotary.free = false;
-            bucket.put(uid, freeRotary);
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+            const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
+            if (!freePlay) break;
+            hasfree = freePlay.freeRotary;
+            freePlay.freeRotary = false;
+            bucket.put(uid, freePlay);
             break;
         case LEVEL2_ROTARY_AWARD:
             stCount = LEVEL2_ROTARY_STCOST;
@@ -76,13 +75,19 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
 
             return awardResponse;
     }
-    console.log('stCount:!!!!!!!!!!!!!!!', stCount);
-    // 如果有免费次数使用免费次数
-    if (hasfree === true) {
+    if (hasfree === true) { // 如果有免费次数使用免费次数
         const v = [];
         doAward(rotaryType, randomMgr, v);
         const count = v[0][1];
         const newitemType = v[0][0];
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+            awardResponse.award = award;
+            awardResponse.resultNum = RESULT_SUCCESS;
+    
+            return awardResponse;
+        }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
         if (!award) {
@@ -103,19 +108,16 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
     doAward(rotaryType, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    // 没有抽中奖品
-    if (newitemType === SURPRISE_BRO) {
+    if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
         const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
         awardResponse.award = award;
         awardResponse.resultNum = RESULT_SUCCESS;
-        console.log('awardResponse:!!!!!!!!!!!!!!!', awardResponse);
 
         return awardResponse;
     }
-    // 判断奖品是否为虚拟兑换类奖品
     const convertInfo = get_convert_info(newitemType);
-    if (!convertInfo) {
+    if (!convertInfo) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
         if (!award) {
@@ -125,8 +127,7 @@ export const st_rotary = (rotaryType:number): AwardResponse => {
         }
         awardResponse.resultNum = RESULT_SUCCESS;
         awardResponse.award = award;
-    } else {
-        // 是可兑换奖品 添加兑换码
+    } else {  // 是可兑换奖品 添加兑换码
         const convertAward = get_convert(newitemType);
         if (!convertAward) {
             awardResponse.resultNum = AWARD_NOT_ENOUGH;
@@ -153,9 +154,17 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
     const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const awardResponse = new AwardResponse();
     let stCount;
+    let hasfree = false;
     switch (treasureboxType) {
         case LEVEL1_TREASUREBOX_AWARD:
             stCount = LEVEL1_TREASUREBOX_STCOST;
+            const dbMgr = getEnv().getDbMgr();
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+            const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
+            if (!freePlay) break;
+            hasfree = freePlay.freeBox;
+            freePlay.freeBox = false;
+            bucket.put(uid, freePlay);
             break;
         case LEVEL2_TREASUREBOX_AWARD:
             stCount = LEVEL2_TREASUREBOX_STCOST;
@@ -168,6 +177,31 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
 
             return awardResponse;
     }
+    if (hasfree === true) { // 如果有免费次数使用免费次数
+        const v = [];
+        doAward(treasureboxType, randomMgr, v);
+        const count = v[0][1];
+        const newitemType = v[0][0];
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
+            awardResponse.award = award;
+            awardResponse.resultNum = RESULT_SUCCESS;
+    
+            return awardResponse;
+        }
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
+        if (!award) {
+            awardResponse.resultNum = DB_ERROR;
+
+            return awardResponse;
+        }
+        awardResponse.resultNum = RESULT_SUCCESS;
+        awardResponse.award = award;
+
+        return awardResponse;
+    }
     if (!reduce_itemCount(ST_TYPE, stCount)) {
         awardResponse.resultNum = ST_NOT_ENOUGH;
 
@@ -177,19 +211,16 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
     doAward(treasureboxType, randomMgr, v);
     const count = v[0][1];
     const newitemType = v[0][0];
-    // 没有抽中奖品
-    if (newitemType === SURPRISE_BRO) {
+    if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
-        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
         awardResponse.award = award;
         awardResponse.resultNum = RESULT_SUCCESS;
 
         return awardResponse;
     }
-    // 判断奖品是否为虚拟兑换类奖品
     const convertInfo = get_convert_info(newitemType);
-    if (!convertInfo) {
-        // 不是可兑换奖品 作为普通物品添加
+    if (!convertInfo) {      // 不是可兑换奖品 作为普通物品添加
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
         if (!award) {
@@ -199,8 +230,7 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
         }
         awardResponse.resultNum = RESULT_SUCCESS;
         awardResponse.award = award;
-    } else {
-        // 是可兑换奖品 添加兑换码
+    } else {      // 是可兑换奖品 添加兑换码
         const convertAward = get_convert(newitemType);
         if (!convertAward) {
             awardResponse.resultNum = AWARD_NOT_ENOUGH;
@@ -304,25 +334,26 @@ export const get_convert_info = (id:number):STConvertCfg => {
    
 };
 
-// 查询是否有初级转盘免费次数
+// 查询是否有初级转盘和宝箱免费次数
 // #[rpc=rpcServer]
-export const get_hasFree_rotary = ():FreeRotary => {
+export const get_hasFree_rotary = ():FreePlay => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, FreeRotary._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
     
-    return bucket.get<number, [FreeRotary]>(uid)[0];
+    return bucket.get<number, [FreePlay]>(uid)[0];
 };
 
-// 每日首次登陆添加一次免费初级转盘次数
+// 每日首次登陆添加一次免费初级转盘和宝箱次数
 export const add_free_rotary = () => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, FreeRotary._$info.name, dbMgr);
-    const freeRotary = new FreeRotary();
-    freeRotary.uid = uid;
-    freeRotary.free = true;
-    bucket.put(uid, freeRotary);
+    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+    const freePlay = new FreePlay();
+    freePlay.uid = uid;
+    freePlay.freeRotary = true;
+    freePlay.freeBox = true;
+    bucket.put(uid, freePlay);
 };
 
 // 从数据库获取兑换码

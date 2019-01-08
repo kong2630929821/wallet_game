@@ -123,6 +123,7 @@ struct SpecialAward {
     awardType: u32,
     count: u32,
     uid: u32,
+    openid: String,
     src: String,
     time: String,
 }
@@ -195,7 +196,8 @@ struct TotalMiningMap {
 struct MiningKTNum {
     uid: u32,
     openid: String,
-    total: u32
+    total: u32,
+    medal:Option<u32>
 }
 
 /**
@@ -212,16 +214,18 @@ struct MiningKTMap {
 #[primary=miningKTMap,db=file,dbMonitor=true,hasmgr=false]
 struct MiningKTMapTab {
     miningKTMap: MiningKTMap,
-    openid: String
+    openid: String,
+    medal:Option<u32>
 }
 
 /**
-*当天免费初级转盘表
+*当天免费初级转盘宝箱表
 */
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
-struct FreeRotary {
+struct FreePlay {
     uid: u32,
-    free: bool
+    freeRotary: bool,
+    freeBox: bool
 }
 
 /**

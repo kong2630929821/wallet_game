@@ -9,6 +9,7 @@ import { WeightMiningCfg } from '../../xlsx/awardCfg.s';
 import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, GOLD_TICKET_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, RAINBOW_TICKET_TYPE, SILVER_TICKET_TYPE, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
 import { MiningKTMap, MiningKTMapTab, MiningKTNum, MiningMap, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { get_miningKTNum, get_totalminingNum } from '../rpc/mining.r';
+import { get_showMedal } from '../rpc/user_item.r';
 import { getWeightIndex } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
 
@@ -83,6 +84,7 @@ export const add_miningKTTotal = (uid: number, ktNum: number) => {
     miningKTMap.uid = uid;
     miningKTMap.ktNum = miningKTTotal.total;
     miningKTTotal.total = miningKTTotal.total + ktNum;
+    miningKTTotal.medal = get_showMedal(uid).medalType;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, MiningKTNum._$info.name, dbMgr);
     bucket.put(uid, miningKTTotal);
@@ -101,6 +103,7 @@ export const add_miningKTTotal = (uid: number, ktNum: number) => {
     } else {
         mapBucket.delete(miningKTMap);
         miningKTMap.ktNum = miningKTTotal.total;
+        miningKTMapTab.medal = miningKTTotal.medal;
         miningKTMapTab.miningKTMap =  miningKTMap;
         console.log('miningKTMapTab write !!!!!!!!!!!!!!!!!!!!!!!', miningKTMapTab);
         mapBucket.put(miningKTMap, miningKTMapTab);

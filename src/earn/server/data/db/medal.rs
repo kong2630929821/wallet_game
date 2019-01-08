@@ -24,3 +24,21 @@ struct AddMedal {
     uid: u32,
     medalType:u32
 }
+
+/**
+* 展示勋章表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct ShowMedal {
+    uid: u32,
+    medal: Option<u32>
+}
+
+/**
+* 展示勋章返回
+*/
+#[constructor=true]
+struct ShowMedalRes {
+    resultNum: u32,
+    medalType: Option<u32>
+}
