@@ -213,7 +213,7 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
     const newitemType = v[0][0];
     if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
-        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
+        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
         awardResponse.award = award;
         awardResponse.resultNum = RESULT_SUCCESS;
 
@@ -336,7 +336,7 @@ export const get_convert_info = (id:number):STConvertCfg => {
 
 // 查询是否有初级转盘和宝箱免费次数
 // #[rpc=rpcServer]
-export const get_hasFree_rotary = ():FreePlay => {
+export const get_hasFree = ():FreePlay => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);

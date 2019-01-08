@@ -5,8 +5,8 @@ import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { WARE_NAME } from '../data/constant';
-import { Award, ConvertTab, Hoe, Item, Items, Mine } from '../data/db/item.s';
+import { THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
+import { Award, ConvertTab, Hoe, Item, Items, Mine, SpecialAward } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
@@ -112,4 +112,13 @@ export const bigint_test = ():Test => {
     test.r = 'test';
 
     return test;
+};
+
+// #[rpc=rpcServer]
+export const get_objStr = ():string => {
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
+    const specialAward = bucket.get<string, [SpecialAward]>(THE_ELDER_SCROLLS)[0];
+
+    return String(specialAward);
 };
