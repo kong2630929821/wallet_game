@@ -25,11 +25,11 @@
             </div>
             <div w-class="holded-mine">我的矿山</div>
             <div w-class="medals">
-                <div w-class="box1">
+                <div w-class="box1" on-tap="goMedal()">
                     <img src="../../res/image1/medal.png" w-class="box1-img"/>
                     <div w-class="tip">勋章成就</div>
                 </div>
-                <div w-class="box1">
+                <div w-class="box1"  on-tap="goActivity(6)">
                     <img src="../../res/image1/crown.png" w-class="box1-img"/>
                     <div w-class="tip">挖矿排名</div>
                 </div>

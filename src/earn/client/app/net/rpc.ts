@@ -2,6 +2,7 @@
  * rpc通信
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
+import { getOneUserInfo } from '../../../../app/net/pull';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -214,7 +215,7 @@ export const getAwardHistory = (itype?: number) => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: element.count
+                    count: coinUnitchange(element.awardType,element.count)
                 };
                 resData.push(data);
             });
