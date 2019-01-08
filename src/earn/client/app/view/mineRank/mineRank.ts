@@ -53,7 +53,6 @@ export class MineRank extends Widget {
     public create() {
         super.create();
         this.initData();
-
         subscribeSpecialAward((r) => {  // 监听新挖矿通告
             console.log('挖矿特殊奖励公告----------------', r);
             this.props.notice.push(new Date());

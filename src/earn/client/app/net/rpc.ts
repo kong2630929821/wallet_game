@@ -3,6 +3,7 @@
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
+import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { popNew } from '../../../../pi/ui/root';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -30,33 +31,33 @@ import { clientRpcFunc, login as mqttLogin } from './init';
  * 钱包用户登录活动
  */
 export const goLoginActivity = () => {
-    getOpenId('101',(r) => {        // 获取openid
+    getOpenId('101', (r) => {        // 获取openid
         const openid = r.openid.toString();
         if (openid) {
-            mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
+            mqttLogin(LoginType.WALLET, openid, 'sign', (res: UserInfo) => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-view-components-newUserLogin');
                 }
                 getSTbalance();  // 获取ST余额   
                 // tslint:disable-next-line:radix
-                getUserInfo(parseInt(openid),'self'); // 获取用户信息
+                getUserInfo(parseInt(openid), 'self'); // 获取用户信息
             });
         }
-            
-    },(err) => {
+
+    }, (err) => {
         console.log('[活动]获取openid失败！！------------', err);
     });
 };
 
-export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => void) => {
+export const loginActivity = (userid: string, sign: string, cb: (r: UserInfo) => void) => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
     walletLoginReq.openid = userid;
     walletLoginReq.sign = sign;
     userType.value = walletLoginReq;
-    clientRpcFunc(login, userType,(res: UserInfo) => { // 活动登录
-        setStore('userInfo',res);       
+    clientRpcFunc(login, userType, (res: UserInfo) => { // 活动登录
+        setStore('userInfo', res);
         console.log('[活动]登录成功！！--------------', res);
         cb(res);
 
@@ -66,25 +67,26 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
 /**
  * 获取用户信息
  */
-export const getUserInfo = async (openid:number,self?:string) => {
-    const userInfo = await getOneUserInfo([openid],1);
+export const getUserInfo = async (openid: number, self?: string) => {
+    const userInfo = await getOneUserInfo([openid], 1);
     if (self) {   // 钱包用户
-        let localUserInfo = getStore('userInfo');
-        localUserInfo = {
-            ...localUserInfo,
-            avatar : userInfo.avatar,
-            name : userInfo.nickName,
-            tel : userInfo.phoneNumber
-            
-        };
-        setStore('userInfo',localUserInfo);
+        const walletUserInfo = getWalletStore('user/info');
+        let activityUserInfo = getStore('userInfo');
+        console.log('[活动]localUserInfo---------------', walletUserInfo);
 
-        return localUserInfo;
+        activityUserInfo = {
+            ...activityUserInfo,
+            avatar: walletUserInfo.avatar,
+            name: walletUserInfo.nickName
+        };
+        setStore('userInfo', activityUserInfo);
+
+        return activityUserInfo;
     } else {    // 其他用户
         return {
-            avatar : userInfo.avatar,
-            name : userInfo.nickName,
-            tel : userInfo.phoneNumber
+            avatar: userInfo.avatar,
+            name: userInfo.nickName,
+            tel: userInfo.phoneNumber
         };
 
     }
@@ -115,11 +117,11 @@ export const getSTbalance = () => {
 /**
  * 准备挖矿
  */
-export const readyMining = (hoeType:HoeType) => {
+export const readyMining = (hoeType: HoeType) => {
     return new Promise(resolve => {
-        console.log('beginMining hoeType = ',hoeType);
+        console.log('beginMining hoeType = ', hoeType);
         clientRpcFunc(mining, hoeType, (r: RandomSeedMgr) => {
-            console.log('beginMining ',r);
+            console.log('beginMining ', r);
             resolve(r);
         });
     });
@@ -128,15 +130,15 @@ export const readyMining = (hoeType:HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (mineType:MineType,mineId:number,diggingCount:number) => {
-    return new Promise((resolve,reject) => {
+export const startMining = (mineType: MineType, mineId: number, diggingCount: number) => {
+    return new Promise((resolve, reject) => {
         const result = new MiningResult();
         result.itemType = mineType;
         result.mineNum = mineId;
         result.hit = diggingCount;
-        console.log('startMining result = ',result);
+        console.log('startMining result = ', result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {
-            console.log('startMining MiningResponse = ',r);
+            console.log('startMining MiningResponse = ', r);
             resolve(r);
             if (r.resultNum === 1) {
                 resolve(r);
@@ -154,8 +156,8 @@ export const startMining = (mineType:MineType,mineId:number,diggingCount:number)
 export const getTodayMineNum = () => {
     const uid = getStore('userInfo/uid');
     clientRpcFunc(get_todayMineNum, uid, (r: TodayMineNum) => {
-        console.log('getTodayMineNum TodayMineNum = ',r);
-        setStore('mine/miningedNumber',r.mineNum);
+        console.log('getTodayMineNum TodayMineNum = ', r);
+        setStore('mine/miningedNumber', r.mineNum);
     });
 };
 /**
@@ -215,7 +217,7 @@ export const getAwardHistory = (itype?: number) => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: coinUnitchange(element.awardType,element.count)
+                    count: coinUnitchange(element.awardType, element.count)
                 };
                 resData.push(data);
             });
@@ -230,7 +232,7 @@ export const getAwardHistory = (itype?: number) => {
 export const getRankList = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_miningKTTop, 50, (r: MineTop) => {
-            console.log('rpc-getRankList-resData---------------', r);
+            console.log('[活动]rpc-getRankList-resData---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -247,7 +249,7 @@ export const getRankList = () => {
 export const getLoginDays = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
-            console.log('rpc-getLoginDays---------------', r);
+            console.log('[活动]rpc-getLoginDays---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -264,9 +266,9 @@ export const getLoginDays = () => {
 export const getACHVmedal = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_achievements, null, (r: Achievements) => {
-            console.log('rpc-getACHVmedal--成就勋章---------------', r);
+            console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);
             // if (r.resultNum === 1) {
-            setStore('ACHVmedals',r.achievements);
+            setStore('ACHVmedals', r.achievements);
             resolve(r);
             // } else {
             //     showActError(r.resultNum);
@@ -280,10 +282,10 @@ export const getACHVmedal = () => {
  * 兑换虚拟物品 
  * @param VirtualId 虚拟物品ID
  */
-export const exchangeVirtual = (VirtualId:number) => {
+export const exchangeVirtual = (VirtualId: number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
-            console.log('rpc-exchangeVirtual---------------', r);
+            console.log('[活动]rpc-exchangeVirtual---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -301,9 +303,9 @@ export const getExchangeHistory = () => {    // TODO
     return new Promise((resolve, reject) => {
         const awardQuery = new AwardQuery();
         awardQuery.src = AwardSrcNum[4];
-        
+
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('rpc-getExchangeHistory-resData---------------', r);
+            console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
         });
     });
@@ -311,7 +313,7 @@ export const getExchangeHistory = () => {    // TODO
 
 export const addST = () => {
     clientRpcFunc(bigint_test, null, (r: Test) => {
-        console.log('rpc-bigint_test---------------', r);
+        console.log('[活动]rpc-bigint_test---------------', r);
         getSTbalance();
     });
 };
@@ -321,24 +323,41 @@ export const addST = () => {
  */
 export const getInvitedNumberOfPerson = () => {
     clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
-        console.log('rpc-getInvitedNumberOfPerson---------------', r);
-        const invite:Invited = {
-            invitedNumberOfPerson:r.inviteNum,
-            convertedInvitedAward:r.usedNum
+        console.log('[活动]rpc-getInvitedNumberOfPerson---------------', r);
+        const invite: Invited = {
+            invitedNumberOfPerson: r.inviteNum,
+            convertedInvitedAward: r.usedNum
         };
-        setStore('invited',invite);
+        setStore('invited', invite);
     });
 };
 
 /**
  * 兑换邀请奖励
  */
-export const converInviteAwards = (index:number) => {
+export const converInviteAwards = (index: number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
-            console.log('rpc-converInviteAwards---------------', r);
+            console.log('[活动]rpc-converInviteAwards---------------', r);
             resolve(r);
             getInvitedNumberOfPerson();
+        });
+    });
+};
+
+/**
+ * 活动是否能每日第一次免费
+ */
+export const isFirstFree = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc('', null, (r: InviteAwardRes) => {
+            console.log('[活动]rpc-isFirstFree---------------', r);
+            // if (r.resultNum === 1) {
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
         });
     });
 };

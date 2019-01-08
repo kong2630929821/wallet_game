@@ -20,19 +20,20 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    showTips:boolean; // 空宝箱
+    showTip:any; // 空宝箱
     isOpening:boolean;// 正在开启宝箱中
     selectChest: any; // 选择的宝箱类型
     boxList: any; // 宝箱列表
     STbalance: number; // 账户余额(st)
     chestList: any; // 宝箱选择列表
+    isFirstPlay: boolean; // 每日第一次免费
 }
 
 export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        showTips:false,
+        showTip:null,
         isOpening:false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
         STbalance:0,
@@ -53,7 +54,8 @@ export class OpenBox extends Widget {
                 needTicketNum:getTicketNum(ActivityType.AdvancedChest)
             }
         ],
-        selectChest: {}
+        selectChest: {},
+        isFirstPlay:true
 
     };
 
@@ -93,32 +95,52 @@ export class OpenBox extends Widget {
             if (res.award.awardType !== 9527) {
                 popNew('earn-client-app-view-component-lotteryModal', res.award);
             } else {
-                this.emptyChest();
+                this.setChestTip();
             }
             if (res.award.count === 0) {
-                this.emptyChest();
+                this.setChestTip();
             }
             this.props.boxList[num] = 1;
             this.paint();
         }).catch((err) => {
             this.openBoxAnimation(e);
-            this.emptyChest();
+            this.setChestTip();
             this.props.boxList[num] = 1;
             this.paint();
         });
     }
 
     /**
-     * 设置空宝箱提示
+     * 设置宝箱提示
      */
-    public emptyChest() {
-        this.props.showTips = true;
-        this.paint();
-        setTimeout(() => {
-            this.props.showTips = null;
-            this.paint();
-        }, 2000);
+    /**
+     * 
+     * @param tipIndex 提示序号 0:免费,1:空宝箱,2:售价
+     */
+    public setChestTip(tipIndex:number = 1) {
+        const chestTips = this.config.value.chestTips;
+        
+        switch (tipIndex) {
+            case 0:
+                this.props.showTip = chestTips[0];
+                this.paint();
+                break;
+            case 1:
+                this.props.showTip = chestTips[1];
+                this.paint();
+                setTimeout(() => {
+                    this.props.showTip = null;
+                    this.paint();
+                }, 2000);
+                break;
+            case 2:
+                this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
+                this.paint();
+                break;
 
+            default:
+        }
+        
     }
 
     /**
@@ -150,6 +172,11 @@ export class OpenBox extends Widget {
     public change(index: number) {
         this.resetBoxList();
         this.props.selectChest = this.props.chestList[index];
+        if (this.props.isFirstPlay && index === 0) {
+            this.setChestTip(0);
+        } else {
+            this.setChestTip(2);
+        }
         this.paint();
     }
 
