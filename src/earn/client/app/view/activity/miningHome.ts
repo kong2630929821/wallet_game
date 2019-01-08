@@ -43,6 +43,7 @@ export class MiningHome extends Widget {
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
             diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
+            hoeSelectedLeft:0,
             hoeType:HoeType,   // 锄头类型
             hoeSelected:-1,    // 选中的锄头
             mineType:-1,       // 选中的矿山类型 
@@ -59,6 +60,7 @@ export class MiningHome extends Widget {
             miningedNumber:getStore('mine/miningedNumber')  // 已挖矿山数目
         };
         this.mineLocationInit();   // 矿山位置初始化
+        this.hoeSelectedLeft();   // 计算选中锄头剩余数
         getTodayMineNum();
         console.log('haveMines =',this.props.haveMines);
     }
@@ -83,20 +85,22 @@ export class MiningHome extends Widget {
         }
     }
     public selectHoeClick(e:any,hopeType:HoeType) {
+        if (this.props.countDownStart) return;
         this.props.hoeSelected = hopeType;
+        this.hoeSelectedLeft();
         this.props.miningTips = { zh_Hans:'请选择矿山',zh_Hant:'請選擇礦山',en:'' } ;
         this.paint();
     }
 
     public hoeSelectedLeft() {
         if (this.props.hoeSelected === HoeType.IronHoe) {
-            return this.props.ironHoe;
+            this.props.hoeSelectedLeft =  this.props.ironHoe;
         } else if (this.props.hoeSelected === HoeType.GoldHoe) {
-            return this.props.goldHoe;
+            this.props.hoeSelectedLeft = this.props.goldHoe;
         } else if (this.props.hoeSelected === HoeType.DiamondHoe) {
-            return this.props.diamondHoe;
+            this.props.hoeSelectedLeft = this.props.diamondHoe;
         } else {
-            return 0;
+            this.props.hoeSelectedLeft = 0;
         }
     }
     public mineClick(e:any) {
@@ -104,7 +108,7 @@ export class MiningHome extends Widget {
         const mineId = e.mineId;
         console.log(mineId,itype);
         // 没有选中锄头
-        if (this.props.hoeSelected < 0 || this.hoeSelectedLeft() <= 0) return;
+        if (this.props.hoeSelected < 0) return;
 
         if (this.props.miningedNumber >= MineMax) return;
 
@@ -122,10 +126,10 @@ export class MiningHome extends Widget {
         if (this.props.mineId !== mineId || this.props.mineType !== itype) return;
         // 准备开始挖矿
         if (!this.props.countDownStart) {
+            if (this.props.hoeSelectedLeft <= 0) return;
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 this.hits = hits;
-                // console.log('hits ===',hits);
                 this.paint();
             });
             this.props.countDownStart = true;
@@ -147,7 +151,7 @@ export class MiningHome extends Widget {
         for (let i = 0; i < this.props.haveMines.length; i++) {
             const mine = this.props.haveMines[i];
             if (mine.type === this.props.mineType && mine.id === this.props.mineId) {
-                this.props.lossHp = this.hits[this.props.miningCount - 1];
+                this.props.lossHp = this.hits[this.props.miningCount - 1] || 1;
                 // console.log('lossHp  ==',this.props.lossHp);
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
@@ -196,7 +200,6 @@ export class MiningHome extends Widget {
         this.props.countDown = hoeUseDuration;
         this.props.hoeSelected = -1;
         this.props.miningTips = { zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' };
-        console.log(`挖了${this.props.miningCount}次`);
         
         this.props.miningCount = 0;
         clearTimeout(this.props.countDownTimer);
@@ -205,11 +208,12 @@ export class MiningHome extends Widget {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
+        this.hoeSelectedLeft();
         if (this.props.haveMines.length === 0) {
             this.props.haveMines = getAllMines();
             this.mineLocationInit();
         }
-        
+        console.log('haveMines =',this.props.haveMines);
         this.paint();
     }
     public updateMiningedNumber(miningedNumber:number) {

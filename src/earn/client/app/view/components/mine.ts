@@ -9,13 +9,14 @@ import { HoeType } from '../../xls/hoeType.s';
 import { MineType } from '../../xls/mineType.s';
 
 interface Props {
-    mineType:MineType;
-    mineId:number;
-    hp:number;
-    selectedHoe:HoeType;
-    selected:boolean;
-    lossHp:number;
-    beginMining:boolean;
+    mineType:MineType;    // 矿山类型
+    mineId:number;        // 矿山id
+    hp:number;             // 剩余hp
+    selectedHoe:HoeType;   // 选中的锄头
+    selected:boolean;     // 是否选中当前矿山
+    lossHp:number;        // 一次挖矿掉血量
+    beginMining:boolean;   // 是否开始挖矿
+    hoeSelectedLeft:number; // 选中的锄头剩余数
     scale:number; // 等比放大倍数
 }
 export class Mine extends Widget {
@@ -58,14 +59,13 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        if (this.props.hp <= 0) return;
+        console.log(this.props);
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {
             this.$imgContainer.className = `mine-animated`;
         });
-        
-        if (!this.props.selected) {
+        if (!this.props.selected || this.props.hp <= 0 || !this.props.beginMining) {
             notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
 
             return;
