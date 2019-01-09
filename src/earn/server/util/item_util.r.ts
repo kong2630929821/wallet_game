@@ -465,7 +465,8 @@ export const get_award_ids = (uid: number): AwardMap => {
 // 获取1970年1月1日距今的时间(单位：天)
 export const get_today  = ():number => {
     const timestamps = new Date().getTime();
-    console.log('timestamps !!!!!!!!!!!!!!!', timestamps);
+    const time = timestamps + 28800000;
+    console.log('timestamps !!!!!!!!!!!!!!!', time);
 
-    return Math.round(timestamps / (1000 * 60 * 60 * 24));
+    return Math.floor(time / (1000 * 60 * 60 * 24));
 };

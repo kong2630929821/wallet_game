@@ -174,6 +174,7 @@ export const isToday_firstLogin = ():boolean => {
     console.log('isToday_firstLogin in!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     const today = get_today();
+    console.log('today is :!!!!!!!!!!!!!!!!!!!!', today);
     const dayliLoginKey = new DayliLoginKey();
     dayliLoginKey.uid = uid;
     dayliLoginKey.date = today;
