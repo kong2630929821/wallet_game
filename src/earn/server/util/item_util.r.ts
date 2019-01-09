@@ -11,7 +11,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { AwardConvertCfg, ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
-import { BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
@@ -83,22 +83,24 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     mapBucket.put(uid, awardMap);
     // 向钱包添加奖励相应的货币
     if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE || itemType === KT_TYPE) {
-        oauth_alter_balance(itemType, awardid, count);
+        const num = oauth_alter_balance(itemType, awardid, count);
+        // 写入特别奖励表
+        console.log('add_special before!!!!!!!!!!!!!!!!!:', itemType, src);
+        if ((itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE) && (src === AWARD_SRC_MINE)) {
+            console.log('add_special in!!!!!!!!!!!!!!!!!:');
+            const specialAward = new SpecialAward();
+            specialAward.id = THE_ELDER_SCROLLS;
+            specialAward.awardType = itemType;
+            specialAward.count = count;
+            specialAward.src = src;
+            specialAward.uid = uid;
+            specialAward.openid = getOpenid();
+            specialAward.time = time.toString();
+            const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
+            specialAwardbucket.put(THE_ELDER_SCROLLS, specialAward);
+        }
     }
-    // 写入特别奖励表
-    if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE) {
-        const specialAward = new SpecialAward();
-        specialAward.id = awardid;
-        specialAward.awardType = itemType;
-        specialAward.count = count;
-        specialAward.src = src;
-        specialAward.uid = uid;
-        specialAward.openid = getOpenid();
-        specialAward.time = time.toString();
-        const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
-        specialAwardbucket.put(awardid, specialAward);
-    }
-    
+
     return award;
 };
 
@@ -463,7 +465,8 @@ export const get_award_ids = (uid: number): AwardMap => {
 // 获取1970年1月1日距今的时间(单位：天)
 export const get_today  = ():number => {
     const timestamps = new Date().getTime();
-    console.log('timestamps !!!!!!!!!!!!!!!', timestamps);
+    const time = timestamps + 28800000;
+    console.log('timestamps !!!!!!!!!!!!!!!', time);
 
-    return Math.round(timestamps / (1000 * 60 * 60 * 24));
+    return Math.floor(time / (1000 * 60 * 60 * 24));
 };

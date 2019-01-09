@@ -88,6 +88,10 @@ export const oauth_alter_balance = (itemType:number, oid:string, count:number) =
             num = json.num;
             
             return num;
+        } else {
+            return;
         }
+    } else {
+        return;
     }
 };

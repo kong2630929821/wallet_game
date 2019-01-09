@@ -6,15 +6,15 @@
 import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
-import { AwardList, AwardQuery, AwardResponse, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardList, AwardQuery, AwardResponse, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { SendMsg } from '../../../server/rpc/send_message.s';
-import { get_convert_list, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
-import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
+import { get_convert_list, get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { award as awardR, bigint_test, db_test, get_objStr, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
@@ -27,7 +27,7 @@ export const login = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2001';
+    walletLoginReq.openid = '1';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(loginUser, userType, (r: UserInfo) => {
@@ -206,7 +206,7 @@ export const get_achievements_test = () => {
 
 // 获取ST数量
 export const get_stNum_test = () => {
-    clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
+    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
         console.log(r);
     });
 };
@@ -237,6 +237,12 @@ export const get_medal_test = () => {
 export const initReceive = (uid: number) => {
     subscribe(`send/${uid}`, SendMsg, (r: any) => {
         console.log('勋章弹窗！！！！！！！',r);
+    });
+};
+
+export const objtostr_test = () => {
+    clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
+        console.log(r);
     });
 };
 const props = {
@@ -322,7 +328,7 @@ const props = {
             func: () => { get_achievements_test(); }
         },
         {
-            name: '查询ST',
+            name: '查询KT',
             func: () => { get_stNum_test(); }
         },
         {
@@ -340,6 +346,10 @@ const props = {
         {
             name: '查奖章',
             func: () => { get_medal_test(); }
+        },
+        {
+            name: 'objtest',
+            func: () => { objtostr_test(); }
         }
     ] // 按钮数组
 };
