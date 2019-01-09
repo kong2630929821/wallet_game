@@ -18,7 +18,7 @@
 
             {{for i,item in it.history}}
             <div w-class="mat item" on-tap="goProductDetail({{i}})">
-                <img src="../../res/image/virtualGoods/{{item.pid}}.jpg" width="210px;" height="210px" />
+                <img src="../../res/image/virtualGoods/{{item.pid}}.jpg" height="150px" style="padding:5px 30px;"/>
                 <div w-class="item-text">
                     <div style="height:45px;font-size:32px;margin-bottom: 20px;">
                         <widget w-tag="pi-ui-lang">{"zh_Hans":"{{item.zh_hans}}","zh_Hant":"{{item.zh_hant}}","en":""}</widget>
