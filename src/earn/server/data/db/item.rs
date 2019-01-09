@@ -234,6 +234,7 @@ struct FreePlay {
 struct MineKTTop {
     topList: Option<&[MiningKTMapTab]>,
     myNum: Option<u32>,
+    myKTNum: u32,
     resultNum: u32
 }
 
