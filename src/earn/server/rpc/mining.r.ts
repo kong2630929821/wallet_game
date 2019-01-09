@@ -15,7 +15,7 @@ import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { seriesLogin_award } from '../util/regularAward';
 import { MiningResult, SeedResponse } from './itemQuery.s';
 import { get_loginDays, getOpenid, getUid } from './user.r';
-import { add_mine, get_item } from './user_item.r';
+import { add_mine, get_item, get_showMedal } from './user_item.r';
 
 // 获取挖矿几率的随机种子
 // #[rpc=rpcServer]
@@ -243,6 +243,7 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
     const iter = <DBIter>mapbucket.iter(null, true);
     const mineTop = new MineKTTop();
     mineTop.myKTNum = get_miningKTNum(uid).total;
+    mineTop.myMedal = get_showMedal(uid).medalType;
     const mineTopList = [];
     for (let i = 0; i < topNum; i ++) {
         const iterEle = iter.nextElem();

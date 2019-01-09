@@ -235,6 +235,7 @@ struct MineKTTop {
     topList: Option<&[MiningKTMapTab]>,
     myNum: Option<u32>,
     myKTNum: u32,
+    myMedal: Option<u32>,
     resultNum: u32
 }
 
