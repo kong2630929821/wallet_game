@@ -58,7 +58,7 @@ export const MEDAL_ETH = 8017;
 export const MEDAL_BTC = 8018;
 
 // 消息推送类型编号
-export const MESSAGE_TYPE_ADDMEDAL = 'add medal'; // 添加奖章
+export const MESSAGE_TYPE_ADDMEDAL = 'add_medal'; // 添加奖章
 
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位

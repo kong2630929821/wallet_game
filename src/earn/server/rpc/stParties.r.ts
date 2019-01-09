@@ -7,7 +7,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
 import { Award, AwardResponse, ConvertTab, FreePlay } from '../data/db/item.s';
 import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
 import { doAward } from '../util/award.t';
@@ -20,7 +20,6 @@ import { getOpenid, getUid } from './user.r';
 // 获取用户账户ST数量
 // #[rpc=rpcServer]
 export const get_STNum = (): CoinQueryRes => {
-    console.log('get_ticket_KTNum!!!!!!!!!!!!!!!!!!!!');
     const coinQueryRes = new CoinQueryRes();
     coinQueryRes.itemType = ST_TYPE;
     const openid = Number(getOpenid());
@@ -34,6 +33,32 @@ export const get_STNum = (): CoinQueryRes => {
             const walletST = json.balance / ST_UNIT_NUM;
             coinQueryRes.num = walletST;
             console.log('http success walletST!!!!!!!!!!!!!!!!!!!!', json.balance);
+        } else {
+            coinQueryRes.resultNum = REQUEST_WALLET_FAIL;
+        }
+    } else {
+        coinQueryRes.resultNum = REQUEST_WALLET_FAIL;
+    }
+    coinQueryRes.resultNum = RESULT_SUCCESS;
+
+    return coinQueryRes;
+};
+
+// 获取用户账户KT数量
+// #[rpc=rpcServer]
+export const get_KTNum = (): CoinQueryRes => {
+    const coinQueryRes = new CoinQueryRes();
+    coinQueryRes.itemType = KT_TYPE;
+    const openid = Number(getOpenid());
+    const coinType = KT_WALLET_TYPE;
+    const r = oauth_send(WALLET_API_QUERY, { openid: openid, coinType: coinType });
+    console.log('http response!!!!!!!!!!!!!!!!!!!!', r);
+    if (r.ok) {
+        const json = JSON.parse(r.ok);
+        if (json.return_code === 1) {
+            // 根据平台数据库存储的单位进行转换
+            const walletKT = json.balance / KT_UNIT_NUM;
+            coinQueryRes.num = walletKT;
         } else {
             coinQueryRes.resultNum = REQUEST_WALLET_FAIL;
         }

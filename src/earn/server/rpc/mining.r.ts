@@ -242,6 +242,7 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
     const mapbucket = new Bucket(WARE_NAME, MiningKTMapTab._$info.name, dbMgr);
     const iter = <DBIter>mapbucket.iter(null, true);
     const mineTop = new MineKTTop();
+    mineTop.myKTNum = get_miningKTNum(uid).total;
     const mineTopList = [];
     for (let i = 0; i < topNum; i ++) {
         const iterEle = iter.nextElem();
