@@ -43,9 +43,7 @@
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
                 <div w-class="sale-money">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：","zh_Hant":"售價：","en":""}</widget>
-                    <span>{{it.selectTurntable.needTicketNum}}ST</span>
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"/1次","zh_Hant":"/1次","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"广告","zh_Hant":"廣告","en":""}</widget>

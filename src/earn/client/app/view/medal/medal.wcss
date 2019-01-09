@@ -33,9 +33,28 @@
     display: flex;
     justify-content: left;
 }
+.rank-desc{
+    width: 100%;
+    margin: 0px 0px 5px;
+    display: flex;
+    justify-content: space-between;
+    flex: 1 0 auto;
+}
+.total-linear{
+    width: 100%;
+    height: 10px;
+    background: white;
+    border-radius: 5px;
+}
+.now-linear{
+    height: 100%;
+    border-radius: 5px;
+    background:linear-gradient(90deg,rgba(254,157,58,1) 0%,rgba(252,104,49,1) 100%);
+    border-radius:5px;
+}
 .myMedal-text{
     height:90px;
-    font-size:64px;
+    font-size:56px;
     color:#222222;
     line-height:90px;
 }

@@ -126,6 +126,15 @@
     transform: translateY(-150%);
   }
 }
+/*宽度渐变出现*/
+@keyframes gradually-width{
+  0%{
+    width: 0%;
+  }
+  100%{
+    width: 100%;
+  }
+}
 
 .smallToBig{
   animation: smallToBig 0.5s ease;
@@ -142,7 +151,9 @@
 .down-to-top{
   animation: downToTop 5s ease infinite;
 }
-
+.gradually-width{
+  animation: gradually-width 2s ease-out;
+}
 
 .mine-animated {
   -webkit-animation-duration: .7s;

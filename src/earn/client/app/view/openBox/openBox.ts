@@ -8,7 +8,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { isFirstFree, openChest } from '../../net/rpc';
+import { addST, isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getTicketNum } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -60,7 +60,10 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
-        this.change(0);
+        isFirstFree().then((res:any) => {
+            this.props.isFirstPlay = res.freeBox;
+            this.change(0);
+        });
         this.initData();
     }
 
@@ -69,10 +72,6 @@ export class OpenBox extends Widget {
      */
     public initData() {
         this.props.STbalance = getStore('balance/ST');
-        isFirstFree().then(res => {
-            console.log(res);
-            
-        });
         this.paint();
     }
 
@@ -87,7 +86,7 @@ export class OpenBox extends Widget {
 
             return;
         }
-        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
+        if (this.props.STbalance < this.props.selectChest.needTicketNum && !this.props.isFirstPlay) {  // 奖券不够
             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
 
             return;
@@ -97,7 +96,7 @@ export class OpenBox extends Widget {
             this.props.isFirstPlay = false;
             this.openBoxAnimation(e);
             if (res.award.awardType !== 9527) {
-                popNew('earn-client-app-view-component-lotteryModal', res.award);
+                popNew('earn-client-app-view-components-lotteryModal', res.award);
             } else {
                 this.setChestTip();
             }
@@ -133,7 +132,7 @@ export class OpenBox extends Widget {
                 this.props.showTip = chestTips[1];
                 this.paint();
                 setTimeout(() => {
-                    this.props.showTip = { zh_Hans:'',zh_Hant:'',en:'' };
+                    this.setChestTip(2);
                     this.paint();
                 }, 2000);
                 break;
@@ -143,8 +142,7 @@ export class OpenBox extends Widget {
                 break;
 
             default:
-        }
-        
+        }  
     }
 
     /**
@@ -188,7 +186,8 @@ export class OpenBox extends Widget {
      * 去充值
      */
     public goRecharge() {
-        popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+        addST();
+        // popNew('app-view-wallet-cloudWalletGT-rechargeGT');
     }
 
     /**

@@ -11,7 +11,7 @@ import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
@@ -107,7 +107,7 @@ export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', st2ST(0));
+            setStore('balance/ST', st2ST(r.num));
         } else {
             showActError(r.resultNum);
         }
@@ -167,7 +167,7 @@ export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
         clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
-            console.log('rpc-openChest-resData-------------', r);
+            console.log('[活动]rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
@@ -187,7 +187,7 @@ export const openTurntable = (activityType: ActivityType) => {
         const itemType = activityType;
 
         clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
-            console.log('rpc-openTurntable-resData---------------', r);
+            console.log('[活动]rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
@@ -211,7 +211,7 @@ export const getAwardHistory = (itype?: number) => {
         }
 
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('rpc-getAwardHistory-resData---------------', r);
+            console.log('[活动]rpc-getAwardHistory-resData---------------', r);
             const resData = [];
             r.awards.forEach(element => {
                 const data = {
@@ -350,7 +350,7 @@ export const converInviteAwards = (index: number) => {
  */
 export const isFirstFree = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc('get_hasFree_rotary', null, (r: any) => {
+        clientRpcFunc(get_hasFree, null, (r: any) => {
             console.log('[活动]rpc-isFirstFree---------------', r);
             // if (r.resultNum === 1) {
             resolve(r);

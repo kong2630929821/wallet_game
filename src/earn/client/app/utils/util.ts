@@ -342,7 +342,8 @@ export const computeRankMedal = () => {
     const mineMedal = {
         rankMedal: 8000,
         desc: {},
-        nextNeedKt: 0
+        nextNeedKt: 0,
+        ktNum
     };
     for (let i = 0; i < medalList.length; i++) {
         const element = medalList[i];

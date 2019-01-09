@@ -49,7 +49,8 @@ export class Medal extends Widget {
             mineMedal: {
                 rankMedal: 8001,
                 desc: '',
-                nextNeedKt: 0
+                nextNeedKt: 0,
+                ktNum:0
             },
             totalMedal:0,
             collectMedal:0
@@ -64,7 +65,6 @@ export class Medal extends Widget {
     public initData() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
         this.props.mineMedal = computeRankMedal();
-
         for (const element of medalList) {
             const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
             for (const element1 of this.props.medalList) {
