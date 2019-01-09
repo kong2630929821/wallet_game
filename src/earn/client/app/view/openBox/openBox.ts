@@ -60,13 +60,14 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
+        this.change(0);
         isFirstFree().then((res:any) => {
             this.props.isFirstPlay = res.freeBox;
-            this.change(0);
+            this.setChestTip(2);
         });
         this.initData();
     }
-
+    
     /**
      * 初始数据
      */
@@ -134,10 +135,14 @@ export class OpenBox extends Widget {
                 setTimeout(() => {
                     this.setChestTip(2);
                     this.paint();
-                }, 2000);
+                }, 1000);
                 break;
             case 2:
-                this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
+                if (!this.props.isFirstPlay) {
+                    this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
+                } else {
+                    this.setChestTip(0);
+                }
                 this.paint();
                 break;
 
@@ -174,11 +179,7 @@ export class OpenBox extends Widget {
     public change(index: number) {
         this.resetBoxList();
         this.props.selectChest = this.props.chestList[index];
-        if (this.props.isFirstPlay && index === 0) {
-            this.setChestTip(0);
-        } else {
-            this.setChestTip(2);
-        }
+        this.setChestTip(2);
         this.paint();
     }
 
@@ -207,12 +208,12 @@ export class OpenBox extends Widget {
 
 // ===================================================== 立即执行
 
-register('goods',(goods:Item[]) => {
+register('userInfo/uid',(r:any) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });
 
-register('balance/ST',(r) => {
+register('balance/ST',(r:any) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

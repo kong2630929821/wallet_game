@@ -10,8 +10,8 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal } from '../../net/rpc';
-// import { getStore, register } from '../../store/memstore';
-import { computeRankMedal, getACHVmedalList, getGoodCount, getMedalList } from '../../utils/util';
+import { register } from '../../store/memstore';
+import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
 
@@ -146,7 +146,7 @@ export class Medal extends Widget {
 
 // ===================================================== 立即执行
 
-// register('goods', (goods: Item[]) => {
-//     const w: any = forelet.getWidget(WIDGET_NAME);
-//     w && w.initData();
-// });
+register('goods', (goods: Item[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

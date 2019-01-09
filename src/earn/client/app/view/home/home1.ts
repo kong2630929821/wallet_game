@@ -2,6 +2,7 @@
  * earn home 
  */
 // ================================ 导入
+import { register as walletRegister } from '../../../../../app/store/memstore';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
@@ -92,9 +93,6 @@ export class PlayHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        if (getStore('userInfo/uid') === -1) {
-            goLoginActivity();
-        }
            
         // console.log(this.props.hoeType);
     }
@@ -203,4 +201,8 @@ export class PlayHome extends Widget {
 register('goods', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.updateHoe();
+});
+
+walletRegister('user/isLogin', (r:any) => {
+    goLoginActivity();
 });

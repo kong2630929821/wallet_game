@@ -152,7 +152,7 @@
   animation: downToTop 5s ease infinite;
 }
 .gradually-width{
-  animation: gradually-width 2s ease-out;
+  animation: gradually-width 1s ease-out;
 }
 
 .mine-animated {
