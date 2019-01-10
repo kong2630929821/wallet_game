@@ -1,0 +1,16 @@
+.body{
+    padding: 20px 30px;
+}
+.day-item{
+    width:100%;
+    padding: 20px;
+    background:rgba(255,255,255,0.2);
+    border-radius:6px;
+}
+.top-date{
+    height:45px;
+    font-size:32px;
+    font-weight:500;
+    color: white;
+    line-height:45px;
+}

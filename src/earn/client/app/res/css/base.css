@@ -135,16 +135,6 @@
     width: 100%;
   }
 }
-@keyframes startTurn{
-  0%{
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100%{
-    -webkit-transform: rotate(720deg);
-    transform: rotate(720deg);
-  }
-}
 
 
 .smallToBig{
@@ -164,9 +154,6 @@
 }
 .gradually-width{
   animation: gradually-width 1s ease-out;
-}
-.startTurn{
-  animation: startTurn 2s linear infinite;
 }
 
 .mine-animated {
