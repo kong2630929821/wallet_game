@@ -4,6 +4,7 @@
 
 // ================================================ 导入
 import { BigNumber } from '../../../../pi/bigint/biginteger';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
@@ -245,6 +246,10 @@ export const objtostr_test = () => {
         console.log(r);
     });
 };
+
+export const competition_edit_test = () => {
+    popNew('earn-client-app-test-compEditor');
+};
 const props = {
     bts: [
         {
@@ -350,6 +355,10 @@ const props = {
         {
             name: 'objtest',
             func: () => { objtostr_test(); }
+        },
+        {
+            name: '添加比赛',
+            func: () => { competition_edit_test(); }
         }
     ] // 按钮数组
 };
