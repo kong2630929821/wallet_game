@@ -160,6 +160,7 @@ export class PlayHome extends Widget {
      */
     public refreshPage() {
         this.props.refresh = true;
+        goLoginActivity();
         this.paint();
         setTimeout(() => {
             this.props.refresh = false;

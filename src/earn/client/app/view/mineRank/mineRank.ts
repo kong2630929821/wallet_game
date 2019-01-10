@@ -7,10 +7,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
-import { getStore } from '../../store/memstore';
-import { getGoodCount } from '../../utils/util';
-import { CoinType } from '../../xls/dataEnum.s';
-// import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -30,12 +27,12 @@ export class MineRank extends Widget {
             '五颗大蒜苗挖到了0.5ETH'
         ],
         noticeShow: 0,
-        myRank: { rank: 0, avatar: '', userName: '......', ktNum: 0 },
+        myRank: { rank: 0, avatar: '', userName: '......', ktNum: 0, medal: null },
         rankList: [
-            // { rank: 1,avatar: '', userName: "啊实打实的", ktNum: 500 },
-            // { rank: 2,avatar: '', userName: "啊实打实的", ktNum: 500 },
-            // { rank: 3,avatar: '', userName: "啊实打实的", ktNum: 500 },
-            // { rank: 4,avatar: '', userName: "啊实打实的", ktNum: 500 }
+            // { rank: 1,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
+            // { rank: 2,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
+            // { rank: 3,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
+            // { rank: 4,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null}
         ],
         topbarList: [
             {
@@ -57,7 +54,7 @@ export class MineRank extends Widget {
             console.log('挖矿特殊奖励公告----------------', r);
             this.props.notice.push(new Date());
             this.props.notice.shift();
-            console.log('this.props.notice----------------',this.props.notice);
+            console.log('this.props.notice----------------', this.props.notice);
 
         });
         this.noticeChange();
@@ -86,7 +83,7 @@ export class MineRank extends Widget {
             this.props.myRank.avatar = getStore('userInfo/avatar');
             this.props.myRank.userName = getStore('userInfo/name');
             this.props.myRank.rank = res.myNum;
-            this.props.myRank.ktNum = getGoodCount(CoinType.KT);
+            this.props.myRank.ktNum = res.myKTNum;
             this.paint();
         });
     }
@@ -100,21 +97,22 @@ export class MineRank extends Widget {
                 // tslint:disable-next-line:radix
                 openidAry.push(parseInt(element.openid));
             });
-            const userInfoList = await getUserList(openidAry,1);
-    
+            const userInfoList = await getUserList(openidAry, 1);
+
             for (let i = 0; i < data.length; i++) {
                 const element = data[i];
                 const elementUser = userInfoList[i];
                 const res = {
-                    avatar : elementUser.avatar,
-                    userName : elementUser.nickName,
+                    avatar: elementUser.avatar,
+                    userName: elementUser.nickName,
                     rank: i + 1,
-                    ktNum: element.miningKTMap.ktNum
+                    ktNum: element.miningKTMap.ktNum,
+                    medal: element.medal
                 };
                 resData.push(res);
             }
         }
-        console.log('批量获取挖矿用户信息--------------------------',resData);
+        console.log('批量获取挖矿用户信息--------------------------', resData);
 
         return resData;
     }
@@ -128,6 +126,13 @@ export class MineRank extends Widget {
         document.getElementById('rankList').scrollTop = 0;
         this.paint();
     }
+
+    /**
+     * 刷新页面
+     */
+    public refresh() {
+        this.initData();
+    }
     /**
      * 返回上一页
      */
@@ -138,7 +143,7 @@ export class MineRank extends Widget {
 
 // ===================================================== 立即执行
 
-// register('goods', (goods: Item[]) => {
-//     const w: any = forelet.getWidget(WIDGET_NAME);
-//     w && w.initData();
-// });
+register('userInfo', (r: any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

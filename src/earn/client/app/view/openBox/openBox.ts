@@ -8,7 +8,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { addST, isFirstFree, openChest } from '../../net/rpc';
+import { addST, getSTbalance, isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getTicketNum } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -81,33 +81,36 @@ export class OpenBox extends Widget {
      * @param num 宝箱序数
      */
     public openBox(e:any,num: number) {
-        
+        if (this.props.isOpening) {
+            return;
+        }
         if (this.props.boxList[num] === 1) {  // 宝箱已打开
             popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
 
             return;
         }
-        if (this.props.STbalance < this.props.selectChest.needTicketNum && !this.props.isFirstPlay) {  // 奖券不够
-            popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
+            if (!((this.props.selectChest.type === ActivityType.PrimaryChest) && this.props.isFirstPlay)) {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
 
-            return;
+                return;
+
+            }
         }
-        this.openBoxAnimation(e);
+        this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((res:any) => {
             this.props.isFirstPlay = false;
-            this.openBoxAnimation(e);
+            this.endOpenChest(e);
             if (res.award.awardType !== 9527) {
                 popNew('earn-client-app-view-components-lotteryModal', res.award);
+                this.setChestTip(2);
             } else {
-                this.setChestTip();
-            }
-            if (res.award.count === 0) {
                 this.setChestTip();
             }
             this.props.boxList[num] = 1;
             this.paint();
         }).catch((err) => {
-            this.openBoxAnimation(e);
+            this.endOpenChest(e);
             this.setChestTip();
             this.props.boxList[num] = 1;
             this.paint();
@@ -138,10 +141,10 @@ export class OpenBox extends Widget {
                 }, 1000);
                 break;
             case 2:
-                if (!this.props.isFirstPlay) {
-                    this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
-                } else {
+                if (this.props.isFirstPlay && this.props.selectChest.type === ActivityType.PrimaryChest) {
                     this.setChestTip(0);
+                } else {
+                    this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
                 }
                 this.paint();
                 break;
@@ -151,16 +154,22 @@ export class OpenBox extends Widget {
     }
 
     /**
-     * 设置是否正在开宝箱动画
+     * 结束开宝箱
      */
-    public openBoxAnimation(e:any) {
+    public endOpenChest(e:any) {
         const $chest = getRealNode(e.node);
-        this.props.isOpening = !this.props.isOpening;
-        if (this.props.isOpening) {
-            $chest.className = 'isOpenbox';
-        } else {
-            $chest.className = '';
-        }
+        $chest.className = '';
+        this.props.isOpening = false;
+        this.paint();
+    }
+
+    /**
+     * 开始开宝箱
+     */
+    public startOpenChest(e:any) {
+        const $chest = getRealNode(e.node);
+        $chest.className = 'isOpenbox';
+        this.props.isOpening = true;
         this.paint();
     }
 
@@ -189,6 +198,13 @@ export class OpenBox extends Widget {
     public goRecharge() {
         addST();
         // popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+    }
+
+    /**
+     * 刷新页面
+     */
+    public refresh() {
+        getSTbalance();
     }
 
     /**

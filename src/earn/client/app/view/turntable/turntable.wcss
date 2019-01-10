@@ -198,3 +198,15 @@
     border: 2px solid #CCCCCC;
     border-radius: 50%;
 }
+
+
+
+
+
+
+
+
+.AD-alert{
+    position: absolute;
+    top: -60px;
+}

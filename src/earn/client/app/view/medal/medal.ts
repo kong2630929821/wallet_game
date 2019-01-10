@@ -102,7 +102,7 @@ export class Medal extends Widget {
         popNew('earn-client-app-view-medal-medalShow', {
             medalId,
             medalSite,
-            isHave: true,
+            isHave: (this.props.mineMedal.rankMedal >= medalId),
             medalType:MedalType.rankMedal
         }, () => {
             $realDomStyle.visibility = `visible`;
@@ -138,6 +138,14 @@ export class Medal extends Widget {
     public goMyCollect() {
         popNew('earn-client-app-view-medal-collect');
     }
+
+    /**
+     * 刷新页面
+     */
+    public refresh() {
+        this.initData();
+    }
+
     /**
      * 返回上一页
      */
@@ -148,7 +156,7 @@ export class Medal extends Widget {
 
 // ===================================================== 立即执行
 
-register('goods', (goods: Item[]) => {
+register('balance/KT', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

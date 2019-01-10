@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"开宝箱","zh_Hant":"開寶箱","en":""} }}
     <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}},nextImg:"../../res/image/26_white.png" }</app-components1-topBar-topBar2>
     <div w-class="content">

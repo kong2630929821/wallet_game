@@ -337,7 +337,7 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
  */
 export const computeRankMedal = () => {
 
-    const ktNum = getGoodCount(CoinType.KT);
+    const ktNum = getStore('balance/KT');
     const medalList = getMedalList(CoinType.KT, 'coinType');
     const mineMedal = {
         rankMedal: 8000,

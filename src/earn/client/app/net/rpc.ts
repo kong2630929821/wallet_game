@@ -11,17 +11,17 @@ import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
 import { getPrizeInfo, showActError } from '../utils/util';
-import { ActivityType, AwardSrcNum } from '../xls/dataEnum.s';
+import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { UserType as LoginType } from './autologin';
@@ -38,9 +38,9 @@ export const goLoginActivity = () => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-view-components-newUserLogin');
                 }
-                getSTbalance();  // 获取ST余额   
-                // tslint:disable-next-line:radix
-                getUserInfo(parseInt(openid), 'self'); // 获取用户信息
+                getSTbalance();  // 获取ST余额
+                getKTbalance();  // 获取KT余额   
+                getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
             });
         }
 
@@ -102,12 +102,25 @@ export const getAllGoods = () => {
     });
 };
 
-// 获取ST数量
+// 获取ST余额
 export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', st2ST(r.num));
+            setStore('balance/ST', coinUnitchange(CoinType.ST,r.num));
+        } else {
+            showActError(r.resultNum);
+        }
+    });
+};
+/**
+ * 获取KT余额
+ */
+export const getKTbalance = () => {
+    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
+        console.log('rpc-getSTbalance--KT余额---------------', r);
+        if (r.resultNum === 1) {
+            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num));
         } else {
             showActError(r.resultNum);
         }
@@ -172,7 +185,7 @@ export const openChest = (activityType: ActivityType) => {
                 getSTbalance();
                 resolve(r);
             } else {
-                showActError(r.resultNum);
+                // showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -269,6 +282,41 @@ export const getACHVmedal = () => {
             console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);
             // if (r.resultNum === 1) {
             setStore('ACHVmedals', r.achievements);
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+/**
+ * 展示勋章
+ * @param medalId 需要展示勋章的id 
+ */
+export const showMedal = (medalId:number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(show_medal, medalId, (r: Achievements) => {
+            console.log('[活动]rpc-show_medal--挂出勋章---------------', r);
+            // if (r.resultNum === 1) {
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+/**
+ * 获取展示勋章
+ */
+export const getShowMedal = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_showMedal, null, (r: Achievements) => {
+            console.log('[活动]rpc-show_medal--挂出勋章---------------', r);
+            // if (r.resultNum === 1) {
             resolve(r);
             // } else {
             //     showActError(r.resultNum);

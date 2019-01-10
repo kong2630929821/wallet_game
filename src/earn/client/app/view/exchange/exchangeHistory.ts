@@ -16,11 +16,11 @@ export class ExchangeHistory extends Widget {
     public props:Props = {
         type :0,
         history:[
-            {
-                img:'../../res/image/dividend_history_none.png',
-                name:'haha',
-                time:'2018.12.28'
-            }
+            // {
+            //     img:'../../res/image/dividend_history_none.png',
+            //     name:'haha',
+            //     time:'2018.12.28'
+            // }
         ]
     };
 

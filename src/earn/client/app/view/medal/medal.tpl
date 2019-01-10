@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"勋章成就","zh_Hant":"勳章成就","en":""} }}
     <widget style="position: fixed;width: 100%;" w-tag="app-components1-topBar-topBar2">{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
 
@@ -27,7 +27,7 @@
                         <span>{{it.collectMedal}}/{{it.totalMedal}}</span>
                         <img src="../../res/image1/rightArrow-white.png" height="48px" />
                     </div>
-                    <div w-class="share" w-tap="shareClick">
+                    <div w-class="share" on-tap="shareClick">
                         <img src="../../res/image1/share-white.png" height="48px" />
                         <widget w-class="myCollect-text" w-tag="pi-ui-lang">{"zh_Hans":"分享勋章画报","zh_Hant":"分享勋章画报","en":""}</widget>
                     </div>
