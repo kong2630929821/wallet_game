@@ -7,6 +7,14 @@ struct UserAcc {
     uid: u32,
 }
 
+/**
+*用户MAP表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct UserAccMap {
+    uid: u32,
+    openid: String,
+}
 
 /**
 *用户本人的基本信息
