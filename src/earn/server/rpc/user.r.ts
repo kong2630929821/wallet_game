@@ -9,7 +9,7 @@ import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import * as CONSTANT from '../data/constant';
-import { DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserInfo } from '../data/db/user.s';
+import { DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
 import { DB_ERROR } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today } from '../util/item_util.r';
@@ -31,7 +31,8 @@ export const login = (user: UserType): UserInfo => {
         openid = walletLoginReq.openid;
         const sign = walletLoginReq.sign;
         // TODO 验证签名
-        const userAccountBucket = new Bucket('file', UserAcc._$info.name, dbMgr);
+        const userAccountBucket = new Bucket(CONSTANT.WARE_NAME, UserAcc._$info.name, dbMgr);
+        const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name, dbMgr);
         console.log('------login-------', userAccountBucket.get(openid));
         const v = userAccountBucket.get(openid)[0];
         if (!v) {
@@ -41,6 +42,8 @@ export const login = (user: UserType): UserInfo => {
             userAcc.uid = uid;
             userAcc.user = openid;
             userAccountBucket.put(openid, userAcc);
+            const userAccMap = new UserAccMap(uid, openid);
+            userAccountMapBucket.put(uid, userAccMap);
             loginReq.uid = uid;
         } else {
             loginReq.uid = v.uid;
