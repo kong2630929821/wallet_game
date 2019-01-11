@@ -1,28 +1,21 @@
 /**
- * 竞猜主页-我的
+ * 竞猜详情-下单
  */
 
-import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 
-export class SelfGuess extends Widget {
+export class GuessDetail extends Widget {
     public ok: () => void;
     
     public props:any = {
-        selectTopbar:{}
+        selectTopbar:{},
+        guessSTnum:0
     };
 
     public create () {
         super.create();
         console.log();
         
-    }
-
-    /**
-     * 详情
-     */
-    public goDetail() {
-        popNew('earn-client-app-view-guess-selfGuess-selfGuessDetail');
     }
 
     /**

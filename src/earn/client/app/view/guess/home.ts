@@ -13,7 +13,7 @@ export class GuessHome extends Widget {
             {
                 name:'filter',
                 title:{ zh_Hans:'筛选',zh_Hant:'篩選',en:'' },
-                component:'earn-client-app-view-guess-allGuess-allGuess'
+                component:'earn-client-app-view-guess-allGuess-filterGuess'
             },
             {
                 name:'all',

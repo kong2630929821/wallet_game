@@ -1,8 +1,23 @@
 .body{
     height: 100%;
     padding: 20px 30px 127px;
-    overflow: hidden auto;
+}
+.topbar{
+    height: 50px;
+    width: 100%;
+    font-size:28px;
+    font-weight:500;
+    display: flex;
+    color: white;
+    margin-bottom: 20px;
+    overflow: auto hidden;
     scroll-behavior: smooth;
+}
+.topbar-item{
+    margin-right: 30px;
+    height: 40px;
+    line-height: 40px;
+    flex: 1 0 auto;
 }
 .day-item{
     width:100%;

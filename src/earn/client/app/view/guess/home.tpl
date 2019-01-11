@@ -13,7 +13,7 @@
             {{end}}
         </div>
 
-        <div style="height:100%">
+        <div style="height:100%;">
             <widget w-tag="{{it.selectTopbar.component}}"></widget>
         </div>
     </div>

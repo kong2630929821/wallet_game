@@ -9,15 +9,25 @@
     <div w-class="guess-center">
         <div w-class="guess-center-team">
             <img src="../../res/image/100701bg.png" height="100px" />
-            <span style="margin-top:20px">ko</span>
+            <span style="margin-top:10px">ko</span>
+            <div>
+                <span>赔率</span>
+                <span style="color:#1E6DEF">2.3</span>
+            </div>
         </div>
         <div w-class="guess-center-vs">
-            <span style="font-size:32px;">VS</span>
-            <div>预测</div>
+            <span style="font-size:32px;margin-bottom: 20px;">VS</span>
+            {{if it.guessBtn}}
+            <div on-tap="goGuess" w-class="guess-btn">预测</div>
+            {{end}}
         </div>
         <div w-class="guess-center-team">
             <img src="../../res/image/100701bg.png" height="100px" />
-            <span style="margin-top:20px">ko</span>
+            <span style="margin-top:10px">ko</span>
+            <div>
+                <span>赔率</span>
+                <span style="color:#1E6DEF">2.3</span>
+            </div>
         </div>
     </div>
 
@@ -25,9 +35,7 @@
     <div w-class="guess-bottom">
         <div w-class="suport-left">
             66225次
-            <div w-class="line">
-
-            </div>
+            <div w-class="line"></div>
         </div>
         <div w-class="suport-right">66225次</div>
     </div>

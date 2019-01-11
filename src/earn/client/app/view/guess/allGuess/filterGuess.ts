@@ -1,11 +1,10 @@
 /**
- * 竞猜主页-我的
+ * 竞猜主页-筛选
  */
 
-import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 
-export class SelfGuess extends Widget {
+export class FilterGuess extends Widget {
     public ok: () => void;
     
     public props:any = {
@@ -16,13 +15,6 @@ export class SelfGuess extends Widget {
         super.create();
         console.log();
         
-    }
-
-    /**
-     * 详情
-     */
-    public goDetail() {
-        popNew('earn-client-app-view-guess-selfGuess-selfGuessDetail');
     }
 
     /**

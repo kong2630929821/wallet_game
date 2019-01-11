@@ -1,0 +1,95 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    height: 100%;
+    padding: 0px 30px;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('../../earn/client/app/res/image/guess-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+.detail{
+    width: 100%;
+    height: 870px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 40px;
+}
+.detail-box{
+    width: 100%;
+    height: 556px;
+    padding: 0px 20px;
+    background: rgba(28,28,28,0.8);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.detail-box-top{
+    width: 100%;
+    height: 240px;
+    text-align: center;
+    border-bottom: 2px solid #A0ACC0;
+    color: white;
+    font-size: 30px;
+    flex: 1 0 auto;
+}
+
+.guess-box-detail{
+    width:100%;
+    height: 100%;
+    padding: 20px 0px;
+    color: white;
+    font-size: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+
+.btn1{
+    width:300px;
+    height:80px;
+    background:rgba(255,255,255,1);
+    border-radius:40px;
+    font-size: 28px;
+    color: rgba(136,136,136,1);
+    line-height: 80px;
+    text-align:center;
+}
+.btn2{
+    width:300px;
+    height:80px;
+    background:#E36115;
+    border-radius:40px;
+    font-size: 28px;
+    color: #ffffff;
+    line-height: 80px;
+    text-align:center;
+}
+
+
+
+
+
+
+.detail-item{
+    display: flex;
+    justify-content: space-between;
+}
