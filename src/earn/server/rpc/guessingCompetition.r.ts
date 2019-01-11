@@ -59,7 +59,8 @@ export const get_main_competitions = (): Result => {
 
 // 获取竞猜奖池信息
 // #[rpc=rpcServer]
-export const get_CompJackpots = (cid: number): Result => {
+export const get_compJackpots = (cid: number): Result => {
+    console.log('get_compJackpots in!!!!!!!!!!!!');
     const result = new Result();
     const dbMgr = getEnv().getDbMgr(); 
     const bucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
@@ -71,6 +72,8 @@ export const get_CompJackpots = (cid: number): Result => {
     }
     result.msg = JSON.stringify(jackpots);
     result.reslutCode = RESULT_SUCCESS;
+
+    return result;
 };
 
 // 竞猜投注

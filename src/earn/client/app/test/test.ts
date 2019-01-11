@@ -11,7 +11,7 @@ import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
+import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -260,6 +260,14 @@ export const guessing_test = () => {
     });
 };
 
+// 奖池信息
+export const get_jackpots_test = () => {
+    const cid = 4;
+    clientRpcFunc(get_compJackpots, cid, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
 // 竞猜历史
 export const get_my_guessing = () => {
     clientRpcFunc(get_user_guessingInfo, null, (r: FreePlay) => {
@@ -375,6 +383,10 @@ const props = {
         {
             name: '竞猜',
             func: () => { guessing_test(); }
+        },
+        {
+            name: '奖池',
+            func: () => { get_jackpots_test(); }
         },
         {
             name: '竞猜历史',
