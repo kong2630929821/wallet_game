@@ -177,3 +177,13 @@
   -webkit-animation-name: hoeMining;
     animation-name: hoeMining;
 }
+
+.put-out-up{
+  transform: translateY(-400px);
+}
+.put-out-down{
+  transform: translateY(1500px);
+}
+.reset-put-out{
+  transform: translateY(0px);
+}

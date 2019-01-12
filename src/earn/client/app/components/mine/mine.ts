@@ -18,6 +18,7 @@ interface Props {
     beginMining:boolean;   // 是否开始挖矿
     hoeSelectedLeft:number; // 选中的锄头剩余数
     scale:number; // 等比放大倍数
+    countDown:number;   // 倒计时
 }
 export class Mine extends Widget {
     public props:any;

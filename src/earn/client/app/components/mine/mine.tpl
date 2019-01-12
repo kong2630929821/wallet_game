@@ -3,10 +3,11 @@
     {{if it.selected}}
     <div w-class="hp-bg">
         <div w-class="hp" style="width:{{ (it.hp / it.hpMax * 100) + '%'}}; "></div>
+        <div w-class="count-down">{{ it.countDown }}</div>
     </div>
     
         {{if it.beginMining || it.hoeSelectedLeft }}
-        <div w-class="hoe"><img src="{{it.hoeImgUrl}}"/> </div>
+        <div w-class="hoe"><img src="{{it.hoeImgUrl}}" w-class="hoe-img"/> </div>
         {{end}}
     {{end}}
 </div>

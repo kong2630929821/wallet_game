@@ -26,6 +26,7 @@ export class HoldedHoe extends Widget {
             imgUrl
         };
         super.setProps(this.props,oldProps);
+        console.log(this.props,this.props.selected === this.props.hoeType);
     }
     public selectHoeClick(event:any) {
         notify(event.node,'ev-hoe-click',{});

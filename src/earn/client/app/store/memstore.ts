@@ -121,6 +121,7 @@ const store:Store = {
         sex:0,
         tel:''
     },
+    flags:{},
     mine:{
         miningedNumber:0
     },
@@ -155,6 +156,7 @@ export interface Store {
     goods:Item[];   // 拥有的物品
     balance:Balance;  // 账户余额 
     ACHVmedals:any;   // 拥有成就勋章
+    flags:any;       //  全局标识位    
 }
 
 export interface Balance {

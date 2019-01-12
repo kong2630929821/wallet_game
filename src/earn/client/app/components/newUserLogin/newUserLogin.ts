@@ -9,6 +9,7 @@ import { ActivityType } from '../../xls/dataEnum.s';
 export class NewUserLogin extends Widget {
     public ok: () => void;
     public props:any = {
+        pi_norouter:true,
         prizeList:[]
     };
 

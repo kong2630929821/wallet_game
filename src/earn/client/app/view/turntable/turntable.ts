@@ -8,9 +8,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { openTurntable } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getGoodCount, getPrizeList, getTicketNum } from '../../utils/util';
-import { PrizeCfg } from '../../xls/dataCfg.s';
-import { ActivityType, CoinType } from '../../xls/dataEnum.s';
+import { getPrizeList, getTicketNum } from '../../utils/util';
+import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -160,7 +159,7 @@ export class Turntable extends Widget {
             setTimeout(() => {
                 this.goLotteryAnimation(false);
                 if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-                    popNew('earn-client-app-view-component-lotteryModal', resData.award);
+                    popNew('earn-client-app-view-component-lotteryModal-lotteryModal', resData.award);
                 }
                 this.paint();
             }, 4000);

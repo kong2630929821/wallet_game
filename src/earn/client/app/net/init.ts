@@ -7,11 +7,13 @@ declare var pi_modules;
 
 // ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
+import { register } from '../../../../app/store/memstore';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { AutoLoginMgr, UserType } from './autologin';
+import { goLoginActivity } from './rpc';
 // import { initPush } from './receive';
 
 // ================================================ 导出
@@ -134,3 +136,10 @@ let mqtt: any;
 let rootClient: Client;
 // root RPC
 let clientRpc: any;
+
+// 监听wallet登录
+register('user/isLogin',(isLogin:boolean) => {
+    if (isLogin) {
+        goLoginActivity();
+    }
+});

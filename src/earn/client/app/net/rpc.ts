@@ -30,12 +30,13 @@ import { clientRpcFunc, login as mqttLogin } from './init';
  * 钱包用户登录活动
  */
 export const goLoginActivity = () => {
+    console.log('goLoginActivity -----------------');
     getOpenId('101',(r) => {        // 获取openid
         const openid = r.openid.toString();
         if (openid) {
             mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
-                    popNew('earn-client-app-view-components-newUserLogin');
+                    popNew('earn-client-app-components-newUserLogin-newUserLogin');
                 }
                 getSTbalance();  // 获取ST余额   
                 // tslint:disable-next-line:radix
@@ -48,6 +49,9 @@ export const goLoginActivity = () => {
     });
 };
 
+/**
+ * 用户登录
+ */
 export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => void) => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
@@ -67,7 +71,9 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
  * 获取用户信息
  */
 export const getUserInfo = async (openid:number,self?:string) => {
+    return;
     const userInfo = await getOneUserInfo([openid],1);
+
     if (self) {   // 钱包用户
         let localUserInfo = getStore('userInfo');
         localUserInfo = {

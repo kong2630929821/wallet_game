@@ -7,8 +7,9 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
+import { coinUnitchange } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -57,7 +58,8 @@ export class MiningHome extends Widget {
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
-            miningedNumber:getStore('mine/miningedNumber')  // 已挖矿山数目
+            miningedNumber:getStore('mine/miningedNumber'),  // 已挖矿山数目
+            zIndex:-1            // z-index数值
         };
         this.mineLocationInit();   // 矿山位置初始化
         this.hoeSelectedLeft();   // 计算选中锄头剩余数
@@ -74,7 +76,7 @@ export class MiningHome extends Widget {
     }
 
     public closeClick() {
-        this.ok && this.ok();
+        setStore('flags/earnHomeHidden',false);
     }
 
     public mineLocationInit() {
@@ -106,7 +108,7 @@ export class MiningHome extends Widget {
     public mineClick(e:any) {
         const itype = e.itype;
         const mineId = e.mineId;
-        console.log(mineId,itype);
+        // console.log(mineId,itype);
         // 没有选中锄头
         if (this.props.hoeSelected < 0) return;
 
@@ -190,8 +192,8 @@ export class MiningHome extends Widget {
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
             if (r.leftHp <= 0) {
                 getTodayMineNum();
-                this.props.awardTypes[r.awards[0].enum_type] = r.awards[0].value.count;
                 this.paint();
+                this.props.awardTypes[r.awards[0].enum_type] = coinUnitchange(r.awards[0].value.num,r.awards[0].value.count);
             }
         });
         this.props.mineId = -1;
@@ -232,4 +234,18 @@ register('goods',(goods:Item[]) => {
 register('mine/miningedNumber',(miningedNumber:number) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMiningedNumber(miningedNumber);
+});
+
+register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (earnHomeHidden) {
+        setTimeout(() => {
+            w.props.zIndex = 0;
+            w.paint();
+        },800);
+    } else {
+        w.props.zIndex = -1;
+        w.paint();
+    }
+   
 });
