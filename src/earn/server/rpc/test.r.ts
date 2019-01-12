@@ -5,8 +5,9 @@ import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { WARE_NAME } from '../data/constant';
-import { Award, ConvertTab, Hoe, Item, Items, Mine } from '../data/db/item.s';
+import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
+import { Result } from '../data/db/guessing.s';
+import { Award, ConvertTab, Hoe, Item, Items, Mine, SpecialAward } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
@@ -107,9 +108,19 @@ export const add_convert = () => {
 
 // #[rpc=rpcServer]
 export const bigint_test = ():Test => {
-    add_award(4, 5001, 200, 'test');
+    add_award(2, 6001, 200, 'test');
     const test = new Test();
     test.r = 'test';
 
     return test;
+};
+
+// #[rpc=rpcServer]
+export const get_objStr = ():Result => {
+    const result = new Result();
+    const items = item_query();
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = JSON.stringify(items);
+
+    return result;
 };

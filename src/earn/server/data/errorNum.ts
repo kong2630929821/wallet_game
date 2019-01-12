@@ -34,6 +34,15 @@ export const ROTARY_TYPE_ERROR = 3102;
 // 宝箱类型错误
 export const TREASUREBOX_TYPE_ERROR = 3103;
 
+// ST数量错误
+export const ST_NUM_ERROR = 4101;
+// 比赛不存在
+export const COMPETITION_NOT_EXIST = 4102;
+// 比赛已经封盘
+export const COMPETITION_ALREADY_CLOSE = 4103;
+// 单场比赛竞猜总投注超过上限
+export const GUESSINGNUM_BEYOUND_LIMIT = 4104;
+
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
 // 奖券类型错误
