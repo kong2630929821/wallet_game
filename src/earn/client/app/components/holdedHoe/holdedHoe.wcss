@@ -13,6 +13,9 @@
 .box-selected{
     background-image: url(../../res/image/can_receive_bg.png);
 }
+.box-noselected{
+    background-image: none;
+}
 .select-bg{
     position: absolute;
     top: 0;
