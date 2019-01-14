@@ -1,8 +1,8 @@
 /**
  * digging rule
  */
-import { popNew } from '../../../../../../pi/ui/root';
-import { Widget } from '../../../../../../pi/widget/widget';
+import { popNew } from '../../../../../pi/ui/root';
+import { Widget } from '../../../../../pi/widget/widget';
 
 export class MiningRule extends Widget {
     public ok:() => void;

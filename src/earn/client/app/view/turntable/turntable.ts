@@ -210,7 +210,7 @@ export class Turntable extends Widget {
         setTimeout(() => {
             this.endLottery();
             if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-                popNew('earn-client-app-view-components-lotteryModal', resData.award);
+                    popNew('earn-client-app-view-components-lotteryModal-lotteryModal', resData.award);
             }
             this.paint();
         }, 4000);

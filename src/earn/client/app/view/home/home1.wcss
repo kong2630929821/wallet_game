@@ -1,16 +1,20 @@
-.userHead{
-    width: 40px;
-    height: 40px;
-    margin: 40px 5px 0;
-    border: 24px solid transparent;
-    border-radius: 50%;    
+.new-page{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0);
+}
+.top-animate-container{
+    transition: all .5s;
+    position:relative;
+}
+.topbar-container{
+    background:linear-gradient(90deg,rgba(49,141,230,1) 0%,rgba(56,207,231,1) 100%);
 }
 .mine-card{
     height:650px;
-    background-image: url(../../res/image/mining_bg.png);
     position: relative;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: rgba(0, 0, 0, 0);
+    padding-top: 20px;
 }
 .holded-hoes{
     display: flex;
@@ -18,7 +22,7 @@
 }
 .explanation-box{
     position: absolute;
-    top: 50px;
+    bottom: 40px;
     right: 30px;
     font-size:28px;
     color:rgba(255,255,255,1);
@@ -39,56 +43,12 @@
 .mine{
     position: absolute;
 }
-.holded-mine{
-    width:150px;
-    height:60px;
-    background:linear-gradient(27deg,rgba(243,148,57,1) 0%,rgba(248,188,69,1) 100%);
-    box-shadow:0px 13px 13px 0px rgba(248,141,60,0.2);
-    border-radius:30px;
-    position: absolute;
-    right: 30px;
-    bottom: 110px;
-    font-size:28px;
-    font-weight:500;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.medals{
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 0;
-    height: 80px;
-    transform: translateY(50%);
+.card-container{
     background-color: #fff;
-    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
-    border-radius:12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 35px;
+    padding-bottom: 130px;
+    padding-top: 35px;
 }
-.box1{
-    display: flex;
-    align-items: center;
-}
-.box1-img{
-    width: 70px;
-    height: 70px;
 
-}
-.tip{
-    font-size:28px;
-    color:rgba(34,34,34,1);
-    font-weight:500;
-    margin-left: 10px;
-}
-.medal{
-    width: 60px;
-    height: 60px;
-}
 .menuCard{
     margin:70px 20px 45px;
     display: flex;
@@ -141,18 +101,17 @@
     overflow-y: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    transition: all .8s;
 }
 .bottomMode{
     height: 110px;
-    background: transparent;
+    background-color: #fff;
     flex-shrink: 0;
 }
 .welfare-activities-item{
     width:350px;
     height:180px;
     background:rgba(255,255,255,1);
-    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
-    border-radius:12px;
     display: flex;
     padding-left: 30px;
     align-items: center;
@@ -188,4 +147,57 @@
     justify-content: center;
     align-items: center;
     margin-left: 15px;
+}
+.mining-rank{
+    height:140px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 2px 4px 0px rgba(0,0,0,0.1);
+    border-radius:12px;
+    opacity:0.9;
+    display: flex;
+    align-items: center;
+    padding: 0 25px 0 10px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+}
+.mining-rank-copy{
+    height:140px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 2px 4px 0px rgba(0,0,0,0.1);
+    border-radius:12px;
+    opacity:0.9;
+    display: flex;
+    align-items: center;
+    padding: 0 25px 0 10px;
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    transform: translateY(100%);
+}
+.medal-img{
+    width: 120px;
+    height: 120px;
+}
+.mining-result{
+    flex: 1 0 0;
+}
+.mining-title{
+    font-size:28px;
+    font-weight:500;
+    color:rgba(34,34,34,1);
+    line-height:40px;
+}
+.mining-number{
+    font-size:24px;
+    color:rgba(34,34,34,1);
+    line-height:33px;
+    margin-top: 10px;
+}
+.rank-num{
+    font-size:48px;
+    font-weight:300;
+    color:rgba(34,34,34,1);
+    line-height:67px;
 }

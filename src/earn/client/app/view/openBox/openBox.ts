@@ -101,7 +101,7 @@ export class OpenBox extends Widget {
             this.props.isFirstPlay = false;
             this.endOpenChest(e);
             if (res.award.awardType !== 9527) {
-                popNew('earn-client-app-view-components-lotteryModal', res.award);
+                popNew('earn-client-app-view-components-lotteryModal-lotteryModal', res.award);
                 this.setChestTip(2);
             } else {
                 this.setChestTip();

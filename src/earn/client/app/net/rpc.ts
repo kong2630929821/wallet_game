@@ -33,33 +33,37 @@ import { clientRpcFunc, login as mqttLogin } from './init';
  * 钱包用户登录活动
  */
 export const goLoginActivity = () => {
-    getOpenId('101', (r) => {        // 获取openid
+    console.log('goLoginActivity -----------------');
+    getOpenId('101',(r) => {        // 获取openid
         const openid = r.openid.toString();
         if (openid) {
-            mqttLogin(LoginType.WALLET, openid, 'sign', (res: UserInfo) => {
+            mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
-                    popNew('earn-client-app-view-components-newUserLogin');
+                    popNew('earn-client-app-components-newUserLogin-newUserLogin');
                 }
                 getSTbalance();  // 获取ST余额
                 getKTbalance();  // 获取KT余额   
                 getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
             });
         }
-
-    }, (err) => {
+            
+    },(err) => {
         console.log('[活动]获取openid失败！！------------', err);
     });
 };
 
-export const loginActivity = (userid: string, sign: string, cb: (r: UserInfo) => void) => {
+/**
+ * 用户登录
+ */
+export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => void) => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
     walletLoginReq.openid = userid;
     walletLoginReq.sign = sign;
     userType.value = walletLoginReq;
-    clientRpcFunc(login, userType, (res: UserInfo) => { // 活动登录
-        setStore('userInfo', res);
+    clientRpcFunc(login, userType,(res: UserInfo) => { // 活动登录
+        setStore('userInfo',res);       
         console.log('[活动]登录成功！！--------------', res);
         cb(res);
 
@@ -104,25 +108,12 @@ export const getAllGoods = () => {
     });
 };
 
-// 获取ST余额
+// 获取ST数量
 export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', coinUnitchange(CoinType.ST,r.num));
-        } else {
-            showActError(r.resultNum);
-        }
-    });
-};
-/**
- * 获取KT余额
- */
-export const getKTbalance = () => {
-    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
-        console.log('rpc-getSTbalance--KT余额---------------', r);
-        if (r.resultNum === 1) {
-            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num));
+            setStore('balance/ST', st2ST(0));
         } else {
             showActError(r.resultNum);
         }
@@ -132,11 +123,11 @@ export const getKTbalance = () => {
 /**
  * 准备挖矿
  */
-export const readyMining = (hoeType: HoeType) => {
+export const readyMining = (hoeType:HoeType) => {
     return new Promise(resolve => {
-        console.log('beginMining hoeType = ', hoeType);
+        console.log('beginMining hoeType = ',hoeType);
         clientRpcFunc(mining, hoeType, (r: RandomSeedMgr) => {
-            console.log('beginMining ', r);
+            console.log('beginMining ',r);
             resolve(r);
         });
     });
@@ -145,15 +136,15 @@ export const readyMining = (hoeType: HoeType) => {
 /**
  * 开始挖矿
  */
-export const startMining = (mineType: MineType, mineId: number, diggingCount: number) => {
-    return new Promise((resolve, reject) => {
+export const startMining = (mineType:MineType,mineId:number,diggingCount:number) => {
+    return new Promise((resolve,reject) => {
         const result = new MiningResult();
         result.itemType = mineType;
         result.mineNum = mineId;
         result.hit = diggingCount;
-        console.log('startMining result = ', result);
+        console.log('startMining result = ',result);
         clientRpcFunc(mining_result, result, (r: MiningResponse) => {
-            console.log('startMining MiningResponse = ', r);
+            console.log('startMining MiningResponse = ',r);
             resolve(r);
             if (r.resultNum === 1) {
                 resolve(r);
@@ -171,8 +162,8 @@ export const startMining = (mineType: MineType, mineId: number, diggingCount: nu
 export const getTodayMineNum = () => {
     const uid = getStore('userInfo/uid');
     clientRpcFunc(get_todayMineNum, uid, (r: TodayMineNum) => {
-        console.log('getTodayMineNum TodayMineNum = ', r);
-        setStore('mine/miningedNumber', r.mineNum);
+        console.log('getTodayMineNum TodayMineNum = ',r);
+        setStore('mine/miningedNumber',r.mineNum);
     });
 };
 /**
@@ -232,7 +223,7 @@ export const getAwardHistory = (itype?: number) => {
                 const data = {
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
-                    count: coinUnitchange(element.awardType, element.count)
+                    count: coinUnitchange(element.awardType,element.count)
                 };
                 resData.push(data);
             });
@@ -332,7 +323,7 @@ export const getShowMedal = () => {
  * 兑换虚拟物品 
  * @param VirtualId 虚拟物品ID
  */
-export const exchangeVirtual = (VirtualId: number) => {
+export const exchangeVirtual = (VirtualId:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
             console.log('[活动]rpc-exchangeVirtual---------------', r);
@@ -353,7 +344,7 @@ export const getExchangeHistory = () => {    // TODO
     return new Promise((resolve, reject) => {
         const awardQuery = new AwardQuery();
         awardQuery.src = AwardSrcNum[4];
-
+        
         clientRpcFunc(award_query, awardQuery, (r: any) => {
             console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
@@ -378,14 +369,14 @@ export const getInvitedNumberOfPerson = () => {
             invitedNumberOfPerson: r.inviteNum,
             convertedInvitedAward: r.usedNum
         };
-        setStore('invited', invite);
+        setStore('invited',invite);
     });
 };
 
 /**
  * 兑换邀请奖励
  */
-export const converInviteAwards = (index: number) => {
+export const converInviteAwards = (index:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
             console.log('[活动]rpc-converInviteAwards---------------', r);
