@@ -119,6 +119,19 @@ export const getSTbalance = () => {
         }
     });
 };
+/**
+ * 获取KT余额
+ */
+export const getKTbalance = () => {
+    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
+        console.log('rpc-getSTbalance--KT余额---------------', r);
+        if (r.resultNum === 1) {
+            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num));
+        } else {
+            showActError(r.resultNum);
+        }
+    });
+};
 
 /**
  * 准备挖矿

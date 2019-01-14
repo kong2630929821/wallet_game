@@ -2,15 +2,13 @@
  * earn home 
  */
 // ================================ 导入
-import { register as walletRegister } from '../../../../../app/store/memstore';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { goLoginActivity } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -95,9 +93,6 @@ export class EarnHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        if (getStore('userInfo/uid') === -1) {
-            goLoginActivity();
-        }
         // console.log(this.props.hoeType);
     }
     /**
@@ -228,8 +223,4 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         },800);
         w.paint();
     } 
-});
-
-walletRegister('user/isLogin', (r:any) => {
-    goLoginActivity();
 });
