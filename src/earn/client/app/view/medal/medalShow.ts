@@ -2,7 +2,9 @@
  * 勋章成就 --主页
  */
 
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { showMedal } from '../../net/rpc';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 
 export enum MedalType {
@@ -20,6 +22,7 @@ interface Props {
 export class MedalShow extends Widget {
     public ok: () => void;
     public props: any = {
+        pi_norouter:true,
         medalImg: '',
         medalSite: {}, // 勋章坐标位置
         imgScale: 1, // 勋章图片缩放倍数
@@ -44,6 +47,7 @@ export class MedalShow extends Widget {
         
         this.props = {
             ...this.props,
+            medalId: props.medalId,
             medalImg: `medal${props.medalId}`,
             medalSite: props.medalSite,
             
@@ -75,6 +79,20 @@ export class MedalShow extends Widget {
         }, 200);
 
     }
+
+    /**
+     * 挂出去展示勋章
+     */
+    public putoutMedal() {
+        showMedal(this.props.medalId).then((res:any) => {
+            if (res.resultNum === 1) {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+            } else {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+            }
+        });
+    }
+
     /**
      * 返回上一页
      */

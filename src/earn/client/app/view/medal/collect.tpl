@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div style="display: flex;flex-direction: row-reverse;">
-                <div w-class="share" w-tap="shareClick">
+                <div w-class="share" on-tap="shareClick">
                     <img src="../../res/image1/share-white.png" height="48px" />
                     <widget w-class="myCollect-text" w-tag="pi-ui-lang">{"zh_Hans":"分享勋章画报","zh_Hant":"分享勋章画报","en":""}</widget>
                 </div>

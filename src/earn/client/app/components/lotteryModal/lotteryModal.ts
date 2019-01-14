@@ -4,6 +4,7 @@
 
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award } from '../../../../server/data/db/item.s';
+import { coinUnitchange } from '../../utils/tools';
 import { getPrizeInfo } from '../../utils/util';
 
 interface Props {
@@ -23,7 +24,7 @@ export class LotteryModal extends Widget {
         this.props = {
             prizeType:props.awardType,
             prizeName:{ zh_Hans:`${prize.zh_hans}`,zh_Hant:`${prize.zh_hant}`,en:'' },
-            prizeNum:props.count,
+            prizeNum: coinUnitchange(props.awardType,props.count),
             prizeUnit:{ zh_Hans:`${prize.unit}`,zh_Hant:`${prize.unit}`,en:'' }
         };
         
