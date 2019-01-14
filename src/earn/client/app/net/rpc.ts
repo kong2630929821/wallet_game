@@ -5,9 +5,11 @@ import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { popNew } from '../../../../pi/ui/root';
+import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_main_competitions, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -20,7 +22,7 @@ import { award_query, get_achievements, get_showMedal, item_query, show_medal } 
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
-import { getPrizeInfo, showActError } from '../utils/util';
+import { getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -406,6 +408,82 @@ export const isFirstFree = () => {
             //     showActError(r.resultNum);
             //     reject(r);
             // }
+        });
+    });
+};
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+// 竞猜rpc通信;
+
+/**
+ * 获取所有比赛信息
+ */
+export const getAllGuess = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_main_competitions, null, (r: Result) => {
+            console.log('[活动]rpc-getAllGuess---------------', r);
+            if (r.reslutCode === 1) {
+                const compList: MainPageCompList = JSON.parse(r.msg);
+                const resData = [];
+                compList.list.forEach(element => {
+                    const data = {
+                        cid: element.comp.cid,
+                        team1: getTeamCfg(element.comp.team1).teamName,
+                        team2: getTeamCfg(element.comp.team2).teamName,
+                        time: timestampFormat(element.comp.time),
+                        result: element.comp.result,
+                        state: element.comp.state,
+                        team1Num: element.team1num,
+                        team2Num: element.team2num
+                    };
+                    resData.push(data);
+                });
+                console.log('比赛信息!!!!!!!!：', resData);
+                resolve(resData);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 下注竞猜
+ */
+export const betGuess = (cid:number,num:number,teamSide:number) => {
+    return new Promise((resolve, reject) => {
+        const guessingReq = new GuessingReq();
+        guessingReq.cid = cid;
+        guessingReq.num = num;
+        guessingReq.teamSide = teamSide;
+        clientRpcFunc(start_guessing, guessingReq, (r: Result) => {
+            console.log('[活动]rpc-betGuess---------------', r);
+            if (r.reslutCode === 1) {
+                console.log('下注成功!!!!!!!!：', r);
+                resolve(r);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取我的竞猜
+ */
+export const getMyGuess = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_user_guessingInfo, null, (r: Result) => {
+            console.log('[活动]rpc-getMyGuess---------------', r);
+            if (r.reslutCode === 1) {
+                console.log('获取我的竞猜成功!!!!!!!!：', r);
+                resolve(r);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
         });
     });
 };

@@ -8,21 +8,9 @@
     <div style="overflow: hidden auto;scroll-behavior: smooth;height: 100%;padding-bottom: 50px;">
         <div w-class="day-item">
             <div w-class="top-date">01月14日 星期一</div>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-        </div>
-        <div w-class="day-item">
-            <div w-class="top-date">01月14日 星期一</div>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-        </div>
-        <div w-class="day-item">
-            <div w-class="top-date">01月14日 星期一</div>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
-            <widget w-tag="earn-client-app-view-components-guessItem"></widget>
+            <widget w-tag="earn-client-app-view-components-guessItem">{guessBtn:true}</widget>
+            <widget w-tag="earn-client-app-view-components-guessItem">{guessBtn:true}</widget>
+            <widget w-tag="earn-client-app-view-components-guessItem">{guessBtn:true}</widget>
         </div>
     </div>
 </div>

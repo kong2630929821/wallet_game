@@ -7,7 +7,6 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Item } from '../../../../server/data/db/item.s';
 import { addST, getSTbalance, isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getTicketNum } from '../../utils/util';

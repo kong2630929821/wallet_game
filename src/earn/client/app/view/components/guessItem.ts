@@ -7,6 +7,13 @@ import { Widget } from '../../../../../pi/widget/widget';
 
 export interface Props {
     guessBtn:boolean;
+    guessData:{
+        team1:string;
+        team2:string;
+        support1:number;
+        support2:number;
+    };
+    showOdds:boolean;
 }
 export class GuessItem extends Widget {
     public ok: () => void;
@@ -18,7 +25,9 @@ export class GuessItem extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            guessBtn:props.guessBtn
+            guessBtn:props.guessBtn,
+            guessData:props.guessData,
+            showOdds:props.showOdds
         };
     }
 

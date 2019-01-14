@@ -7,27 +7,37 @@
 
     {{% 中部 比赛队}}
     <div w-class="guess-center">
+        {{% 队伍1}}
         <div w-class="guess-center-team">
             <img src="../../res/image/100701bg.png" height="100px" />
             <span style="margin-top:10px">ko</span>
+            {{if it.showOdds}}
             <div>
                 <span>赔率</span>
                 <span style="color:#1E6DEF">2.3</span>
             </div>
+            {{end}}
         </div>
+
+        {{% VS}}
         <div w-class="guess-center-vs">
             <span style="font-size:32px;margin-bottom: 20px;">VS</span>
             {{if it.guessBtn}}
             <div on-tap="goGuess" w-class="guess-btn">预测</div>
             {{end}}
         </div>
+
+
+        {{% 队伍2}}
         <div w-class="guess-center-team">
             <img src="../../res/image/100701bg.png" height="100px" />
             <span style="margin-top:10px">ko</span>
+            {{if it.showOdds}}
             <div>
                 <span>赔率</span>
                 <span style="color:#1E6DEF">2.3</span>
             </div>
+            {{end}}
         </div>
     </div>
 

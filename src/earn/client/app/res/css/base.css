@@ -189,3 +189,9 @@
   -webkit-animation-name: hoeMining;
     animation-name: hoeMining;
 }
+
+.btnClick{
+  box-shadow: 0px 5px 0px transparent!important;
+  transform: translateY(3px);
+  transition: all 0.1s ease;
+}
