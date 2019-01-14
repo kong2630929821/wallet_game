@@ -4,11 +4,14 @@
 
 // ================================================ 导入
 import { BigNumber } from '../../../../pi/bigint/biginteger';
+import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
+import { GuessingReq } from '../../../server/data/db/guessing.s';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, ConvertAwardList, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -206,7 +209,7 @@ export const get_achievements_test = () => {
 
 // 获取ST数量
 export const get_stNum_test = () => {
-    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
+    clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log(r);
     });
 };
@@ -244,6 +247,36 @@ export const objtostr_test = () => {
     clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
         console.log(r);
     });
+};
+
+// 竞猜投注
+export const guessing_test = () => {
+    const guessingReq = new GuessingReq();
+    guessingReq.cid = 4;
+    guessingReq.teamSide = 1;
+    guessingReq.num = 200;
+    clientRpcFunc(start_guessing, guessingReq, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 奖池信息
+export const get_jackpots_test = () => {
+    const cid = 4;
+    clientRpcFunc(get_compJackpots, cid, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 竞猜历史
+export const get_my_guessing = () => {
+    clientRpcFunc(get_user_guessingInfo, null, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+export const competition_edit_test = () => {
+    popNew('earn-client-app-test-compEditor');
 };
 const props = {
     bts: [
@@ -328,7 +361,7 @@ const props = {
             func: () => { get_achievements_test(); }
         },
         {
-            name: '查询KT',
+            name: '查询ST',
             func: () => { get_stNum_test(); }
         },
         {
@@ -348,8 +381,20 @@ const props = {
             func: () => { get_medal_test(); }
         },
         {
-            name: 'objtest',
-            func: () => { objtostr_test(); }
+            name: '竞猜',
+            func: () => { guessing_test(); }
+        },
+        {
+            name: '奖池',
+            func: () => { get_jackpots_test(); }
+        },
+        {
+            name: '竞猜历史',
+            func: () => { get_my_guessing(); }
+        },
+        {
+            name: '添加比赛',
+            func: () => { competition_edit_test(); }
         }
     ] // 按钮数组
 };

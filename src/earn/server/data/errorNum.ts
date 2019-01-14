@@ -42,6 +42,12 @@ export const COMPETITION_NOT_EXIST = 4102;
 export const COMPETITION_ALREADY_CLOSE = 4103;
 // 单场比赛竞猜总投注超过上限
 export const GUESSINGNUM_BEYOUND_LIMIT = 4104;
+// 比赛结果已出
+export const COMPETITION_RESULT_EXIST = 4105;
+// 比赛结果未出
+export const COMPETITION_RESULT_NOT_EXIST = 4106;
+// 竞猜已结算
+export const GUESSING_ALREADY_SETTLED = 4107;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
