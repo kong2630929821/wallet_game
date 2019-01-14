@@ -17,7 +17,7 @@ import { goLoginActivity } from './rpc';
 // import { initPush } from './receive';
 
 // ================================================ 导出
-export const sourceIp = activeLogicIp || '127.0.0.1';
+export const sourceIp = activeLogicIp;
 export const sourcePort = activeLogicPort;
 
 /**

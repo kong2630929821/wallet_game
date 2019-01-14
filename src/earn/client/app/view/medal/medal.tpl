@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"勋章成就","zh_Hant":"勳章成就","en":""} }}
     <widget style="position: fixed;width: 100%;" w-tag="app-components1-topBar-topBar2">{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
 
@@ -8,8 +8,17 @@
             <div w-class="myMedal mat">
                 <div w-class="myMedal-top">
                     <img src="../../res/image/medals/medal{{it.mineMedal.rankMedal}}.png" height="100%" style="margin-right:20px;" />
-                    <div style="display: flex;flex-direction: column;align-items: left;">
+                    <div style="display: flex;flex-direction: column;align-items: left;width: 100%">
                         <widget w-class="myMedal-text" w-tag="pi-ui-lang">{{it.mineMedal.desc}}</widget>
+                        <div w-class="rank-desc">
+                            <widget style="font-size: 24px;" w-tag="pi-ui-lang">{{it.mineMedal.desc}}</widget>
+                            <widget style="font-size: 24px;" w-tag="pi-ui-lang">{"zh_Hans":"下一等级还需：{{it.mineMedal.nextNeedKt}}KT","zh_Hant":"下一等級還需：{{it.mineMedal.nextNeedKt}}KT","en":""}</widget>
+                        </div>
+                        <div w-class="total-linear">
+                            <div style="width:{{it.mineMedal.ktNum / (it.mineMedal.ktNum+it.mineMedal.nextNeedKt) * 100}}%;height: 100%;">
+                                <div w-class="now-linear" class="gradually-width"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div w-class="myCollect">
@@ -18,7 +27,7 @@
                         <span>{{it.collectMedal}}/{{it.totalMedal}}</span>
                         <img src="../../res/image1/rightArrow-white.png" height="48px" />
                     </div>
-                    <div w-class="share" w-tap="shareClick">
+                    <div w-class="share" on-tap="shareClick">
                         <img src="../../res/image1/share-white.png" height="48px" />
                         <widget w-class="myCollect-text" w-tag="pi-ui-lang">{"zh_Hans":"分享勋章画报","zh_Hant":"分享勋章画报","en":""}</widget>
                     </div>

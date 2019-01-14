@@ -56,7 +56,7 @@ winit.initNext = function () {
 
 		//加载框架代码
 		var loadFramework = function () {
-			util.loadDir(["client/rpc/", "pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
+			util.loadDir(["earn/client/rpc/", "earn/xlsx/","pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
 				loadApp()
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);

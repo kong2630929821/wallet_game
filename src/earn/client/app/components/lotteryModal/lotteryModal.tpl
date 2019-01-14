@@ -11,10 +11,10 @@
             <div w-class="prize-img">
                 <img src="../../res/image/virtualGoods/{{it.prizeType}}.jpg" width="200px" height="200px;"  alt="" />
             </div>
-            <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"恭喜你获得","zh_Hant":"恭喜你獲得","en":""}</widget>
+            <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"抽中了","zh_Hant":"抽中了","en":""}</widget>
             <div>
                 <widget w-class="prize-name" w-tag="pi-ui-lang">{{it.prizeName}}</widget>
-                <span w-class="prize-name">{{it.prizeNum}}</span>
+                <span w-class="prize-name">&nbsp;x&nbsp;{{it.prizeNum}}</span>
                 <widget w-class="prize-name" w-tag="pi-ui-lang">{{it.prizeUnit}}</widget>
             </div>
         </div>

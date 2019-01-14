@@ -3,24 +3,27 @@
  */
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
+import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { popNew } from '../../../../pi/ui/root';
+import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+import { get_main_competitions, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, get_achievements, item_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
-import { getPrizeInfo, showActError } from '../utils/util';
-import { ActivityType, AwardSrcNum } from '../xls/dataEnum.s';
+import { getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { UserType as LoginType } from './autologin';
@@ -38,9 +41,9 @@ export const goLoginActivity = () => {
                 if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-components-newUserLogin-newUserLogin');
                 }
-                getSTbalance();  // 获取ST余额   
-                // tslint:disable-next-line:radix
-                getUserInfo(parseInt(openid),'self'); // 获取用户信息
+                getSTbalance();  // 获取ST余额
+                getKTbalance();  // 获取KT余额   
+                getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
             });
         }
             
@@ -70,27 +73,26 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
 /**
  * 获取用户信息
  */
-export const getUserInfo = async (openid:number,self?:string) => {
-    return;
-    const userInfo = await getOneUserInfo([openid],1);
-
+export const getUserInfo = async (openid: number, self?: string) => {
+    const userInfo = await getOneUserInfo([openid], 1);
     if (self) {   // 钱包用户
-        let localUserInfo = getStore('userInfo');
-        localUserInfo = {
-            ...localUserInfo,
-            avatar : userInfo.avatar,
-            name : userInfo.nickName,
-            tel : userInfo.phoneNumber
-            
-        };
-        setStore('userInfo',localUserInfo);
+        const walletUserInfo = getWalletStore('user/info');
+        let activityUserInfo = getStore('userInfo');
+        console.log('[活动]localUserInfo---------------', walletUserInfo);
 
-        return localUserInfo;
+        activityUserInfo = {
+            ...activityUserInfo,
+            avatar: walletUserInfo.avatar,
+            name: walletUserInfo.nickName
+        };
+        setStore('userInfo', activityUserInfo);
+
+        return activityUserInfo;
     } else {    // 其他用户
         return {
-            avatar : userInfo.avatar,
-            name : userInfo.nickName,
-            tel : userInfo.phoneNumber
+            avatar: userInfo.avatar,
+            name: userInfo.nickName,
+            tel: userInfo.phoneNumber
         };
 
     }
@@ -112,6 +114,19 @@ export const getSTbalance = () => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
             setStore('balance/ST', st2ST(0));
+        } else {
+            showActError(r.resultNum);
+        }
+    });
+};
+/**
+ * 获取KT余额
+ */
+export const getKTbalance = () => {
+    clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
+        console.log('rpc-getSTbalance--KT余额---------------', r);
+        if (r.resultNum === 1) {
+            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num));
         } else {
             showActError(r.resultNum);
         }
@@ -171,12 +186,12 @@ export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
         clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
-            console.log('rpc-openChest-resData-------------', r);
+            console.log('[活动]rpc-openChest-resData-------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
             } else {
-                showActError(r.resultNum);
+                // showActError(r.resultNum);
                 reject(r);
             }
         });
@@ -191,7 +206,7 @@ export const openTurntable = (activityType: ActivityType) => {
         const itemType = activityType;
 
         clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
-            console.log('rpc-openTurntable-resData---------------', r);
+            console.log('[活动]rpc-openTurntable-resData---------------', r);
             if (r.resultNum === 1) {
                 getSTbalance();
                 resolve(r);
@@ -215,7 +230,7 @@ export const getAwardHistory = (itype?: number) => {
         }
 
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('rpc-getAwardHistory-resData---------------', r);
+            console.log('[活动]rpc-getAwardHistory-resData---------------', r);
             const resData = [];
             r.awards.forEach(element => {
                 const data = {
@@ -236,7 +251,7 @@ export const getAwardHistory = (itype?: number) => {
 export const getRankList = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_miningKTTop, 50, (r: MineTop) => {
-            console.log('rpc-getRankList-resData---------------', r);
+            console.log('[活动]rpc-getRankList-resData---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -253,7 +268,7 @@ export const getRankList = () => {
 export const getLoginDays = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
-            console.log('rpc-getLoginDays---------------', r);
+            console.log('[活动]rpc-getLoginDays---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -270,9 +285,44 @@ export const getLoginDays = () => {
 export const getACHVmedal = () => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_achievements, null, (r: Achievements) => {
-            console.log('rpc-getACHVmedal--成就勋章---------------', r);
+            console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);
             // if (r.resultNum === 1) {
-            setStore('ACHVmedals',r.achievements);
+            setStore('ACHVmedals', r.achievements);
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+/**
+ * 展示勋章
+ * @param medalId 需要展示勋章的id 
+ */
+export const showMedal = (medalId:number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(show_medal, medalId, (r: Achievements) => {
+            console.log('[活动]rpc-show_medal--挂出勋章---------------', r);
+            // if (r.resultNum === 1) {
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+/**
+ * 获取展示勋章
+ */
+export const getShowMedal = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_showMedal, null, (r: Achievements) => {
+            console.log('[活动]rpc-show_medal--挂出勋章---------------', r);
+            // if (r.resultNum === 1) {
             resolve(r);
             // } else {
             //     showActError(r.resultNum);
@@ -289,7 +339,7 @@ export const getACHVmedal = () => {
 export const exchangeVirtual = (VirtualId:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
-            console.log('rpc-exchangeVirtual---------------', r);
+            console.log('[活动]rpc-exchangeVirtual---------------', r);
             if (r.resultNum === 1) {
                 resolve(r);
             } else {
@@ -309,7 +359,7 @@ export const getExchangeHistory = () => {    // TODO
         awardQuery.src = AwardSrcNum[4];
         
         clientRpcFunc(award_query, awardQuery, (r: any) => {
-            console.log('rpc-getExchangeHistory-resData---------------', r);
+            console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
         });
     });
@@ -317,7 +367,7 @@ export const getExchangeHistory = () => {    // TODO
 
 export const addST = () => {
     clientRpcFunc(bigint_test, null, (r: Test) => {
-        console.log('rpc-bigint_test---------------', r);
+        console.log('[活动]rpc-bigint_test---------------', r);
         getSTbalance();
     });
 };
@@ -327,10 +377,10 @@ export const addST = () => {
  */
 export const getInvitedNumberOfPerson = () => {
     clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
-        console.log('rpc-getInvitedNumberOfPerson---------------', r);
-        const invite:Invited = {
-            invitedNumberOfPerson:r.inviteNum,
-            convertedInvitedAward:r.usedNum
+        console.log('[活动]rpc-getInvitedNumberOfPerson---------------', r);
+        const invite: Invited = {
+            invitedNumberOfPerson: r.inviteNum,
+            convertedInvitedAward: r.usedNum
         };
         setStore('invited',invite);
     });
@@ -342,9 +392,102 @@ export const getInvitedNumberOfPerson = () => {
 export const converInviteAwards = (index:number) => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
-            console.log('rpc-converInviteAwards---------------', r);
+            console.log('[活动]rpc-converInviteAwards---------------', r);
             resolve(r);
             getInvitedNumberOfPerson();
+        });
+    });
+};
+
+/**
+ * 活动是否能每日第一次免费
+ */
+export const isFirstFree = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_hasFree, null, (r: any) => {
+            console.log('[活动]rpc-isFirstFree---------------', r);
+            // if (r.resultNum === 1) {
+            resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+        });
+    });
+};
+
+// ----------------------------------------------------------------------------------------------------------------------------------------
+// 竞猜rpc通信;
+
+/**
+ * 获取所有比赛信息
+ */
+export const getAllGuess = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_main_competitions, null, (r: Result) => {
+            console.log('[活动]rpc-getAllGuess---------------', r);
+            if (r.reslutCode === 1) {
+                const compList: MainPageCompList = JSON.parse(r.msg);
+                const resData = [];
+                compList.list.forEach(element => {
+                    const data = {
+                        cid: element.comp.cid,
+                        team1: getTeamCfg(element.comp.team1).teamName,
+                        team2: getTeamCfg(element.comp.team2).teamName,
+                        time: timestampFormat(element.comp.time),
+                        result: element.comp.result,
+                        state: element.comp.state,
+                        team1Num: element.team1num,
+                        team2Num: element.team2num
+                    };
+                    resData.push(data);
+                });
+                console.log('比赛信息!!!!!!!!：', resData);
+                resolve(resData);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 下注竞猜
+ */
+export const betGuess = (cid:number,num:number,teamSide:number) => {
+    return new Promise((resolve, reject) => {
+        const guessingReq = new GuessingReq();
+        guessingReq.cid = cid;
+        guessingReq.num = num;
+        guessingReq.teamSide = teamSide;
+        clientRpcFunc(start_guessing, guessingReq, (r: Result) => {
+            console.log('[活动]rpc-betGuess---------------', r);
+            if (r.reslutCode === 1) {
+                console.log('下注成功!!!!!!!!：', r);
+                resolve(r);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取我的竞猜
+ */
+export const getMyGuess = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_user_guessingInfo, null, (r: Result) => {
+            console.log('[活动]rpc-getMyGuess---------------', r);
+            if (r.reslutCode === 1) {
+                console.log('获取我的竞猜成功!!!!!!!!：', r);
+                resolve(r);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
         });
     });
 };
