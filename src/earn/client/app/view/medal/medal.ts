@@ -156,7 +156,7 @@ export class Medal extends Widget {
 
 // ===================================================== 立即执行
 
-register('balance/KT', (goods: Item[]) => {
+register('good', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

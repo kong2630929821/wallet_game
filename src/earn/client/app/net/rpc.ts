@@ -118,7 +118,7 @@ export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', st2ST(0));
+            setStore('balance/ST', st2ST(r.num));
         } else {
             showActError(r.resultNum);
         }

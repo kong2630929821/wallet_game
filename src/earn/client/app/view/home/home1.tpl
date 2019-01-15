@@ -6,9 +6,13 @@
             <img src="../../res/image/medals/medal8001.png" w-class="medal-img"/>
             <div w-class="mining-result">
                 <div w-class="mining-title">挖矿</div>
-                <div w-class="mining-number">25,222,325.00KT</div>
+                <div w-class="mining-number">{{it.miningKTnum}}KT</div>
             </div>
-            <div w-class="rank-num">99名</div>
+            {{if it.miningRank === 0}}
+            <div w-class="rank-num">暂无排名</div>
+            {{else}}
+            <div w-class="rank-num">{{it.miningRank}}名</div>
+            {{end}}
         </div>
     </div>
     <div w-class="contain" on-scroll="scrollPage" id="earn-home" class="{{it.downAnimate}}">
@@ -17,9 +21,13 @@
                 <img src="../../res/image/medals/medal8001.png" w-class="medal-img"/>
                 <div w-class="mining-result">
                     <div w-class="mining-title">挖矿</div>
-                    <div w-class="mining-number">25,222,325.00KT</div>
+                    <div w-class="mining-number">{{it.miningKTnum}}KT</div>
                 </div>
-                <div w-class="rank-num">99名</div>
+                {{if it.miningRank === 0}}
+                <div w-class="rank-num">暂无排名</div>
+                {{else}}
+                <div w-class="rank-num">{{it.miningRank}}名</div>
+                {{end}}
             </div>
             <div w-class="explanation-box">
                 <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
