@@ -82,6 +82,7 @@ export class Turntable extends Widget {
             };
             this.props.prizeList.push(prizeItem);
         }
+        
         this.paint();
     }
 
@@ -194,7 +195,10 @@ export class Turntable extends Widget {
             this.props.prizeList.forEach(element => {
                 if (element.awardType === resData.award.awardType) {
                     this.props.turnNum = element.deg;
-                    
+                    if (resData.award.awardType === 5001) {
+                        console.log(this.props.turnNum);
+                        
+                    }
                 }
             });
         } else { // 未中奖
@@ -210,7 +214,7 @@ export class Turntable extends Widget {
         setTimeout(() => {
             this.endLottery();
             if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-                    popNew('earn-client-app-view-components-lotteryModal-lotteryModal', resData.award);
+                popNew('earn-client-app-components-lotteryModal-lotteryModal', resData.award);
             }
             this.paint();
         }, 4000);

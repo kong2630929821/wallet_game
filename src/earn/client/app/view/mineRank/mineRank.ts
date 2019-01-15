@@ -8,6 +8,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, register } from '../../store/memstore';
+import { coinUnitchange } from '../../utils/tools';
+import { CoinType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -50,9 +52,11 @@ export class MineRank extends Widget {
     public create() {
         super.create();
         this.initData();
-        subscribeSpecialAward((r) => {  // 监听新挖矿通告
-            console.log('挖矿特殊奖励公告----------------', r);
-            this.props.notice.push(new Date());
+        subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
+            console.log('[活动]挖矿特殊奖励公告----------------', r);
+            const userInfo:any = await getUserList([r.openid],1);
+            const dataStr = `${userInfo.nickName}挖到了${coinUnitchange(r.awardType,r.count)} ${CoinType[r.awardType]}`;
+            this.props.notice.push(dataStr);
             this.props.notice.shift();
             console.log('this.props.notice----------------', this.props.notice);
 

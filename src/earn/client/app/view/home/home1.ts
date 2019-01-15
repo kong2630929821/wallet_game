@@ -8,6 +8,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
+import { getRankList } from '../../net/rpc';
 import { getStore, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -73,7 +74,7 @@ export class EarnHome extends Widget {
                 img: 'btn_yun_7.png',
                 title: '充KT送ST',
                 desc: '赠品可以玩游戏',
-                components:''
+                components:'app-view-wallet-cloudWallet-rechargeKT'
             }, {
                 img: 'btn_yun_8.png',
                 title: '兑换码',
@@ -88,11 +89,14 @@ export class EarnHome extends Widget {
             maxMineType:getMaxMineType(),
             upAnimate:'',
             downAnimate:'',
-            animateStart:false
+            animateStart:false,
+            miningKTnum:0,
+            miningRank:0
         };
         setTimeout(() => {
             this.scrollPage();
         }, 17);
+        this.getMiningInfo();
         // console.log(this.props.hoeType);
     }
     /**
@@ -176,6 +180,17 @@ export class EarnHome extends Widget {
     }
 
     /**
+     * 获取挖矿排名信息
+     */
+    public getMiningInfo() {
+        getRankList().then(async (res: any) => {
+            this.props.miningRank = res.myNum;
+            this.props.miningKTnum = res.myKTNum;
+            this.paint();
+        });
+    }
+
+    /**
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
@@ -187,6 +202,7 @@ export class EarnHome extends Widget {
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
         this.props.maxMineType = getMaxMineType();
+        this.getMiningInfo();
         this.paint();
     }
 

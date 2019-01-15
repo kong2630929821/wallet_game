@@ -6,7 +6,7 @@
 
     <div w-class="content">
         <div>
-            <widget w-tag="earn-client-app-view-components-guessItem">{showOdds:true}</widget>
+            <widget w-tag="earn-client-app-components-guessItem-guessItem">{showOdds:true}</widget>
             <div w-class="guess-box">
 
                 <div w-class="guess-btn-box">
@@ -19,7 +19,7 @@
                 <div w-class="input-box" ev-input-change="inputChange">
                     {{% 竞猜ST输入}}
                     <div style="height:50%">
-                        {{: inputPlace = {"zh_Hans":"输入加油ST","zh_Hant":"输入加油ST","en":""} }}
+                        {{: inputPlace = {"zh_Hans":"输入加油ST数","zh_Hant":"輸入加油ST數","en":""} }}
                         <app-components1-input-input>{itype:"moneyNum",maxLength:7,placeHolder:{{inputPlace}},input:{{it.guessSTnum}},style:"padding:0;background:transparent;color:white;text-align:center"}</app-components1-input-input>
                     </div>
 

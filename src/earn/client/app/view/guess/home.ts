@@ -2,6 +2,7 @@
  * 竞猜主页
  */
 
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class GuessHome extends Widget {
@@ -25,7 +26,9 @@ export class GuessHome extends Widget {
                 title:{ zh_Hans:'我的',zh_Hant:'我的',en:'' },
                 component:'earn-client-app-view-guess-selfGuess-selfGuess'
             }
-        ]
+        ],
+        showMoreSetting:false,
+        needNotPassword:false
     };
 
     public create () {
@@ -35,11 +38,45 @@ export class GuessHome extends Widget {
     }
 
     /**
+     * 更多设置
+     */
+    public goSetting() {
+        this.props.showMoreSetting = !this.props.showMoreSetting;
+        this.paint();
+    }
+
+    /**
+     * 关闭设置
+     */
+    public closeSetting() {
+        this.props.showMoreSetting = false;
+        this.paint();
+    }
+
+    /**
      * 修改topbar
      */
     public changeTopbar(index:number) {
         this.props.selectTopbar = this.props.topbarList[index];
         this.paint();
+    }
+
+    /**
+     * 设置免密支付
+     */
+    public setting() {
+        if (!this.props.needNotPassword) {
+            popNew('app-components1-modalBox-modalBox',{ 
+                title:'开通小额免密',
+                content:'累计未超过20ST不再验证密码，超过后直至下个20ST。' 
+            },() => {
+                console.log(11);
+                this.props.needNotPassword = true;
+            });
+        } else {
+            this.props.needNotPassword = false;
+        }
+        this.closeSetting();
     }
 
     /**
