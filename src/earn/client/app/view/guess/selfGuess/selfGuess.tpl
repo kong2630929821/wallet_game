@@ -1,6 +1,6 @@
 <div w-class="body">
     <div on-tap="goDetail">
-        <widget w-tag="earn-client-app-view-components-guessItem"></widget>
+        <widget w-tag="earn-client-app-components-guessItem-guessItem"></widget>
         <div w-class="guess-detail">
             <div w-class="guess-detail-item">
                 <span>我的竞猜</span>
