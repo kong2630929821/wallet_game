@@ -42,6 +42,7 @@ export class InviteAward extends Widget {
             });
         }
         this.props.welfareAwards = welfareAwards;
+        console.log('InviteAward ==========',this.props.welfareAwards);
     }
     public closeClick() {
         this.ok && this.ok();

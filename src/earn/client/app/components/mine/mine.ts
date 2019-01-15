@@ -60,7 +60,7 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        console.log(this.props);
+        // console.log(this.props);
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {

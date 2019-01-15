@@ -101,7 +101,7 @@
     overflow-y: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    transition: all .8s;
+    transition: all .5s;
 }
 .bottomMode{
     height: 110px;

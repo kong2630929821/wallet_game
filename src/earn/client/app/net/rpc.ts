@@ -22,7 +22,7 @@ import { award_query, get_achievements, get_showMedal, item_query, show_medal } 
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
-import { getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { canInviteAward, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -44,6 +44,11 @@ export const goLoginActivity = () => {
                 getSTbalance();  // 获取ST余额
                 getKTbalance();  // 获取KT余额   
                 getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
+                getInvitedNumberOfPerson().then((invite:Invited) => {
+                    if (canInviteAward(invite)) {
+                        popNew('earn-client-app-view-activity-inviteAward');
+                    }
+                });  // 获取邀请成功人数
             });
         }
             
@@ -376,14 +381,17 @@ export const addST = () => {
  * 获取已经邀请的人数
  */
 export const getInvitedNumberOfPerson = () => {
-    clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
-        console.log('[活动]rpc-getInvitedNumberOfPerson---------------', r);
-        const invite: Invited = {
-            invitedNumberOfPerson: r.inviteNum,
-            convertedInvitedAward: r.usedNum
-        };
-        setStore('invited',invite);
-    });
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_inviteNum, null, (r: InviteNumTab) => {
+            console.log('[活动]rpc-getInvitedNumberOfPerson---------------', r);
+            const invite: Invited = {
+                invitedNumberOfPerson: r.inviteNum,
+                convertedInvitedAward: r.usedNum
+            };
+            setStore('invited',invite);
+            resolve(invite);
+        });
+    }); 
 };
 
 /**

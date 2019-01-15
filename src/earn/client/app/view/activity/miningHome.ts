@@ -23,19 +23,18 @@ export class MiningHome extends Widget {
     public props:any;
     public hits:number[] = [];
     public mineStyle:string[] = [
-        'right:98px;top:370px;',
-        'left:145px;top:395px;',
-        'right:110px;top:505px;',
-        'left:108px;top:578px;',
-        'right:177px;top:710px;',
-        'left:56px;top:786px;',
-        'right:10px;top:854px;',
-        'left:239px;top:870px;'
+        'right:305px;top:292px;',
+        'left:165px;top:462px;',
+        'right:118px;top:436px;',
+        'left:128px;top:645px;',
+        'right:197px;top:777px;',
+        'left:76px;top:853px;',
+        'right:22px;top:921px;',
+        'left:259px;top:937px;'
     ];
     public create() {
         super.create();
         this.init();
-        getInvitedNumberOfPerson();
     }
 
     public init() {
@@ -53,7 +52,7 @@ export class MiningHome extends Widget {
             miningCount:0,             // 挖矿次数
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
-            miningTips:{ zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' },   // 挖矿提示
+            miningTips:{ zh_Hans:'',zh_Hant:'',en:'' },   // 挖矿提示
             haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
@@ -90,7 +89,11 @@ export class MiningHome extends Widget {
         if (this.props.countDownStart) return;
         this.props.hoeSelected = hopeType;
         this.hoeSelectedLeft();
-        this.props.miningTips = { zh_Hans:'请选择矿山',zh_Hant:'請選擇礦山',en:'' } ;
+        if (this.props.mineType === -1 || this.props.mineId === -1) {
+            this.props.miningTips = { zh_Hans:'请选择矿山',zh_Hant:'請選擇礦山',en:'' } ;
+        } else {
+            this.props.miningTips = { zh_Hans:'开始挖矿',zh_Hant:'開始挖礦',en:'' } ;
+        }
         this.paint();
     }
 
@@ -105,12 +108,10 @@ export class MiningHome extends Widget {
             this.props.hoeSelectedLeft = 0;
         }
     }
+
     public mineClick(e:any) {
         const itype = e.itype;
         const mineId = e.mineId;
-        // console.log(mineId,itype);
-        // 没有选中锄头
-        if (this.props.hoeSelected < 0) return;
 
         if (this.props.miningedNumber >= MineMax) return;
 
@@ -118,7 +119,11 @@ export class MiningHome extends Widget {
         if ((this.props.mineId !== mineId || this.props.mineType !== itype) && !this.props.countDownStart) {
             this.props.mineId = mineId;
             this.props.mineType = itype;
-            this.props.miningTips = { zh_Hans:'准备开始挖矿',zh_Hant:'準備開始挖礦',en:'' };
+            if (this.props.hoeSelected === -1) {
+                this.props.miningTips = { zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' };
+            } else {
+                this.props.miningTips = { zh_Hans:'开始挖矿',zh_Hant:'開始挖礦',en:'' };
+            }
             this.paint();
 
             return;
@@ -135,7 +140,7 @@ export class MiningHome extends Widget {
                 this.paint();
             });
             this.props.countDownStart = true;
-            this.props.miningTips = { zh_Hans:`倒计时 ${this.props.countDown} S`,zh_Hant:`倒計時 ${this.props.countDown} S`,en:'' };
+            this.props.miningTips = { zh_Hans:``,zh_Hant:``,en:'' };
             this.countDown();
             this.paint();
 
@@ -180,7 +185,7 @@ export class MiningHome extends Widget {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
-            this.props.miningTips = { zh_Hans:`倒计时 ${this.props.countDown} S`,zh_Hant:`倒計時 ${this.props.countDown} S`,en:'' };
+            this.props.miningTips = { zh_Hans:``,zh_Hant:``,en:'' };
             if (!this.props.countDown) {
                 this.initMiningState();
             }
@@ -201,7 +206,7 @@ export class MiningHome extends Widget {
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
         this.props.hoeSelected = -1;
-        this.props.miningTips = { zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' };
+        this.props.miningTips = { zh_Hans:'',zh_Hant:'',en:'' };
         
         this.props.miningCount = 0;
         clearTimeout(this.props.countDownTimer);
@@ -242,7 +247,7 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         setTimeout(() => {
             w.props.zIndex = 0;
             w.paint();
-        },800);
+        },500);
     } else {
         w.props.zIndex = -1;
         w.paint();

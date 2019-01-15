@@ -9,21 +9,21 @@
                 <div w-class="hoe-type">
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../res/image/iron_hoe.png"/>
+                            <img src="../../res/image/iron_hoe.png" w-class="hoe-img"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"铁锄头","zh_Hant":"鐵鋤頭","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../res/image/gold_hoe.png"/>
+                            <img src="../../res/image/gold_hoe.png" w-class="hoe-img"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"金锄头","zh_Hant":"金鋤頭","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
-                            <img src="../../res/image/diamond_hoe.png"/>
+                            <img src="../../res/image/diamond_hoe.png" w-class="hoe-img"/>
                         </div>
                         <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"钻石锄头","zh_Hant":"鑽石鋤頭","en":""}</widget></div>
                     </div>

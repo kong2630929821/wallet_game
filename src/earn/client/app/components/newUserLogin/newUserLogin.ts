@@ -15,6 +15,7 @@ export class NewUserLogin extends Widget {
 
     public create() {
         super.create();
+        this.config = { value: { group: 'top' } };
         const data = getRegularPrizeList(ActivityType.NewUserWelfare);
         data.forEach(element => {
             const prize = {

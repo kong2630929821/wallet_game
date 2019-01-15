@@ -2,7 +2,7 @@
     <div w-class="body">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="container">
-            <div w-class="holded-hoes" >
+            <div w-class="holded-hoes" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                     <earn-client-app-components-holdedHoe-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components-holdedHoe-holdedHoe>
                 </div>
@@ -13,9 +13,9 @@
                     <earn-client-app-components-holdedHoe-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components-holdedHoe-holdedHoe>
                 </div>
             </div>
-            <div w-class="digging-num"><widget w-tag="pi-ui-lang">{"zh_Hans":"今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","zh_Hant":"今日已挖礦山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","en":""}</widget></div>
-            <div w-class="digging-tips"><widget w-tag="pi-ui-lang">{{it.miningTips}}</widget></div>
-            <div w-class="award-container">
+            <div w-class="digging-num" style="{{it.zIndex ? 'visibility: hidden;' : ''}}"><widget w-tag="pi-ui-lang">{"zh_Hans":"今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","zh_Hant":"今日已挖礦山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","en":""}</widget></div>
+            <div w-class="digging-tips" style="{{it.zIndex ? 'visibility: hidden;' : ''}}"><widget w-tag="pi-ui-lang">{{it.miningTips}}</widget></div>
+            <div w-class="award-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
                     {{if it.awardTypes[it.allAwardType.KT] }}

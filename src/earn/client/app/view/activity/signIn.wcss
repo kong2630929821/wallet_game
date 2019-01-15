@@ -1,30 +1,31 @@
 .new-page{
     background-color:rgba(50,50,50,0.5);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
 }
 .body{
-    width:630px;
-    background:rgba(255,255,255,1);
-    box-shadow:0px 0px 20px 0px rgba(0,0,0,0.2);
-    border-radius:18px;
-    padding-bottom: 30px;
     position: relative;
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .head{
-    background-image: url(../../res/image/sign_in_bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 282px;
-    margin-top: -32px;
+    height: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
     color:#fff;
+    width:630px;
+    background:linear-gradient(180deg,rgba(129,220,249,1) 0%,rgba(74,183,241,1) 100%);
+    box-shadow:0px 5px 20px 0px rgba(0,0,0,0.2);
+    border-radius:18px;
+    margin-top: 80px;
 }
+
 .continued{
-    margin-top: 120px;
+    margin-top: 34px;
     font-size:28px;
     line-height:40px;
 }
@@ -37,35 +38,28 @@
     line-height:40px;
 }
 .main{
-    padding: 10px 15px;
+    margin-top: -43px;
+    width:630px;
+    min-height: 313px;
+    background-image: url(../../res/image/sign_in_bg.png);
+    background-repeat: no-repeat;
+    background-size: 630px 313px;
+    background-position: 0 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    border-radius:18px;
+    overflow: hidden;
 }
-.sign-btn{
-    font-size:32px;
-    color:rgba(255,255,255,1);
-    width:570px;
-    height:80px;
-    background:rgba(49,141,230,1);
-    border-radius:12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    display: none;
+.welfares{
+    height: 510px;
+    width:630px;
+    margin-top: 312px;
+    background:rgba(74,183,241,1);
+    padding: 20px;
 }
-.close{
-    position: absolute;
-    left: 50%;
-    bottom:-60px;
-    transform: translate(-50%,100%);
-    width:70px;
-    height:70px;
-    border:2px solid rgba(204,204,204,1);
+.welfare-item{
+    flex: 1 0 0;
+}
+.row{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
+    justify-content: space-between;
 }
