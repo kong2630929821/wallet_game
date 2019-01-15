@@ -9,7 +9,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList } from '../../net/rpc';
-import { register, setStore } from '../../store/memstore';
+import { Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -96,7 +96,8 @@ export class EarnHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        this.getMiningInfo();
+        // this.getMiningInfo();
+        // console.log(this.props.hoeType);
     }
     /**
      * 热门活动进入
@@ -165,12 +166,10 @@ export class EarnHome extends Widget {
     /**
      * 获取挖矿排名信息
      */
-    public getMiningInfo() {
-        getRankList().then(async (res: any) => {
-            this.props.miningRank = res.myNum;
-            this.props.miningKTnum = res.myKTNum;
-            this.paint();
-        });
+    public updateMiningInfo(mine:Mine) {
+        this.props.miningRank = mine.miningRank;
+        this.props.miningKTnum = mine.miningKTnum;
+        this.paint();
     }
 
     /**
@@ -198,4 +197,9 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         },500);
         w.paint();
     } 
+});
+
+register('mine',(mine:Mine) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateMiningInfo(mine);
 });

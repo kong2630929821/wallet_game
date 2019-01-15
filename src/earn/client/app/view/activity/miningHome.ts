@@ -6,7 +6,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
-import { getInvitedNumberOfPerson, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { getStore, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange } from '../../utils/tools';
@@ -62,8 +62,6 @@ export class MiningHome extends Widget {
         };
         this.mineLocationInit();   // 矿山位置初始化
         this.hoeSelectedLeft();   // 计算选中锄头剩余数
-        getTodayMineNum();
-        console.log('haveMines =',this.props.haveMines);
     }
 
     public signInClick() {

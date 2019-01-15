@@ -6,7 +6,7 @@ import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { popNew } from '../../../../pi/ui/root';
 import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
-import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineKTTop, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_main_competitions, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
@@ -38,6 +38,7 @@ export const goLoginActivity = () => {
         const openid = r.openid.toString();
         if (openid) {
             mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
+                setStore('userInfo',{ ...res });
                 if (res.loginCount === 0) {  // 新用户第一次登录
                     popNew('earn-client-app-components-newUserLogin-newUserLogin');
                 }
@@ -49,6 +50,8 @@ export const goLoginActivity = () => {
                         popNew('earn-client-app-view-activity-inviteAward');
                     }
                 });  // 获取邀请成功人数
+                getTodayMineNum();
+                getRankList();
             });
         }
             
@@ -255,9 +258,13 @@ export const getAwardHistory = (itype?: number) => {
  */
 export const getRankList = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(get_miningKTTop, 50, (r: MineTop) => {
+        clientRpcFunc(get_miningKTTop, 50, (r: MineKTTop) => {
             console.log('[活动]rpc-getRankList-resData---------------', r);
             if (r.resultNum === 1) {
+                const mine = getStore('mine');
+                mine.miningRank = r.myNum;
+                mine.miningKTnum = r.myKTNum;
+                setStore('mine',mine);
                 resolve(r);
             } else {
                 showActError(r.resultNum);

@@ -123,7 +123,9 @@ const store:Store = {
     },
     flags:{},
     mine:{
-        miningedNumber:0
+        miningedNumber:0,
+        miningRank:0,
+        miningKTnum:0
     },
     goods:[],
     balance:{
@@ -139,7 +141,9 @@ const store:Store = {
 };
 
 export interface Mine {
-    miningedNumber:0;  // 今天已挖矿山数量
+    miningedNumber:number;  // 今天已挖矿山数量
+    miningRank:number; // 排名
+    miningKTnum:number; // KT数量
 }
 
 export interface Invited {
