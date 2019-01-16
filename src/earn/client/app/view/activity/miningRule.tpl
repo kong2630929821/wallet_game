@@ -2,35 +2,35 @@
     <app-components1-topBar-topBar>{"title":{zh_Hans:"挖矿规则",zh_Hant:"挖礦規則",en:""}}</app-components1-topBar-topBar>
     <div w-class="body">
         <div w-class="rule-container">
-            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"锄头的使用","zh_Hant":"鋤頭的使用","en":""}</widget></div>
+            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"矿镐的使用","zh_Hant":"礦鎬的使用","en":""}</widget></div>
             <div>
-                <div w-class="desc" style="margin-top:100px;"><widget w-tag="pi-ui-lang">{"zh_Hans":"每个锄头可以使用10秒，10秒内可多次挖矿","zh_Hant":"每個鋤頭可以使用10秒，10秒內可多次挖礦","en":""}</widget></div>
-                <div w-class="desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"所有锄头都有概率双挖，但不同的锄头概率不同。","zh_Hant":"所有鋤頭都有概率雙挖，但不同的鋤頭概率不同。","en":""}</widget></div>
+                <div w-class="desc" style="margin-top:100px;"><widget w-tag="pi-ui-lang">{"zh_Hans":"每把镐可以使用10秒，10秒内可多次挖矿","zh_Hant":"每把鎬可以使用10秒，10秒內可多次挖礦","en":""}</widget></div>
+                <div w-class="desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"所有镐都有概率双挖，但不同的镐概率不同。","zh_Hant":"所有鎬都有概率雙挖，但不同的鎬概率不同。","en":""}</widget></div>
                 <div w-class="hoe-type">
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
                             <img src="../../res/image/iron_hoe.png" w-class="hoe-img"/>
                         </div>
-                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"铁锄头","zh_Hant":"鐵鋤頭","en":""}</widget></div>
+                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"铁镐","zh_Hant":"鐵鎬","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
                             <img src="../../res/image/gold_hoe.png" w-class="hoe-img"/>
                         </div>
-                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"金锄头","zh_Hant":"金鋤頭","en":""}</widget></div>
+                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"银镐","zh_Hant":"銀鎬","en":""}</widget></div>
                     </div>
                     <div w-class="dividing">></div>
                     <div w-class="hoe-item">
                         <div w-class="hoe-box">
                             <img src="../../res/image/diamond_hoe.png" w-class="hoe-img"/>
                         </div>
-                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"钻石锄头","zh_Hant":"鑽石鋤頭","en":""}</widget></div>
+                        <div w-class="hoe-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"金镐","zh_Hant":"金鎬","en":""}</widget></div>
                     </div>
                 </div>
             </div>
             
-            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"锄头的获得","zh_Hant":"鋤頭的獲得","en":""}</widget></div>
+            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"镐的获得","zh_Hant":"鎬的獲得","en":""}</widget></div>
             <div w-class="get-type">
                 {{for index,item of it.getMethod}}
                 <div w-class="get-item" >
@@ -63,6 +63,7 @@
                     </div>
                 </div>
                 <div w-class="mine-desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"每日登陆都会赠送矿山，矿场最多储备9座矿山，消耗掉矿山会继续赠送。","zh_Hant":"每日登陸都會贈送礦山，礦場最多儲備9座礦山，消耗掉礦山會繼續贈送。","en":""}</widget></div>
+                <div w-class="mine-desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"每种矿山挖出的东西是不一样的","zh_Hant":"每種礦山挖出的東西是不一樣的","en":""}</widget></div>
             </div>
         </div>
     </div>

@@ -8,8 +8,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getRankList } from '../../net/rpc';
-import { Mine, register, setStore } from '../../store/memstore';
+import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -33,6 +32,7 @@ export class EarnHome extends Widget {
      */
     public init() {
         this.language = this.config.value[getLang()];
+        const mine = getStore('mine');
         this.props = {
             ...this.props,
             scroll: false,
@@ -90,8 +90,8 @@ export class EarnHome extends Widget {
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
-            miningKTnum:0,
-            miningRank:0
+            miningKTnum:mine.miningKTnum,
+            miningRank:mine.mineRank
         };
         setTimeout(() => {
             this.scrollPage();
