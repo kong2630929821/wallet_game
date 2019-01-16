@@ -91,7 +91,7 @@ export class EarnHome extends Widget {
             downAnimate:'',
             animateStart:false,
             miningKTnum:mine.miningKTnum,
-            miningRank:mine.mineRank
+            miningRank:mine.miningRank
         };
         setTimeout(() => {
             this.scrollPage();
