@@ -179,6 +179,10 @@ export class EarnHome extends Widget {
         popNew('earn-client-app-view-activity-miningRule');
     }
 
+    public goMineRank() {
+        if (!hasWallet()) return;
+        popNew('earn-client-app-view-mineRank-mineRank');
+    }
 }
 
 // ===================================================== 本地
