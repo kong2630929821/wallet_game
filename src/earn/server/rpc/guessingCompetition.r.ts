@@ -138,15 +138,15 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     }
     // 根据用户选择的队伍增加相应奖金池的数量
     if (guessingReq.teamSide === HOST_TEAM_NUM) {
+        jackpots.jackpot1 += num;
         rate = (jackpots.jackpot2 / jackpots.jackpot1) + 1;
         benefit = rate * num;
-        jackpots.jackpot1 += num;
         jackpots.guessings1.push(guessingKey);
     }
     if (guessingReq.teamSide === GUEST_TEAM_NUM) {
+        jackpots.jackpot2 += num;
         rate = (jackpots.jackpot1 / jackpots.jackpot2) + 1;
         benefit = rate * num;
-        jackpots.jackpot2 += num;
         jackpots.guessings2.push(guessingKey);
     }
     jackpotsBucket.put(cid, jackpots);
@@ -313,20 +313,23 @@ export const settle_guessing_award = (cid: number): Result => {
         return result;
     }
     let guessings: GuessingKey[];
+    let loserguessings: GuessingKey[];
     let winnersJackpots: number;
     let losersJackpot: number;
     if (competition.result === RESULT_TEAM1_WIN) {
         guessings = jackpots.guessings1;
+        loserguessings = jackpots.guessings2;
         winnersJackpots = jackpots.jackpot1;
         losersJackpot = jackpots.jackpot2;
     }
     if (competition.result === RESULT_TEAM2_WIN) {
         guessings = jackpots.guessings2;
+        loserguessings = jackpots.guessings1;
         winnersJackpots = jackpots.jackpot2;
         losersJackpot = jackpots.jackpot1;
     }
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
     for (const guessingKey of guessings) {
-        const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
         const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
         if (!guessing) continue;
         // 竞猜获胜的一方根据投注比例瓜分对方的奖金池
@@ -338,6 +341,16 @@ export const settle_guessing_award = (cid: number): Result => {
         const openid = Number(accountMap.openid);
         // 向钱包发放奖励
         add_guessing_st(openid, awardNum);
+        // 写入用户竞猜的实际收益
+        guessing.benefit = awardNum;
+        guessingBucket.put(guessingKey, guessing);
+    }
+    for (const loserguessingKey of loserguessings) {
+        const guessing = guessingBucket.get<GuessingKey, [Guessing]>(loserguessingKey)[0];
+        if (!guessing) continue;
+        // 写入用户竞猜的实际收益
+        guessing.benefit = 0;
+        guessingBucket.put(loserguessingKey, guessing);
     }
     // 竞猜结算状态更新为已结算
     competition.state = GUESSING_HAS_SETTLED;
