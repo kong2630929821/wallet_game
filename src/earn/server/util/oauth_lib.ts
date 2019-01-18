@@ -4,7 +4,7 @@
  */
 import { BigNumber } from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
-import { BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WALLET_API_UNIFIEDORDER, WALLET_APPID, WALLET_MCH_ID, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
+import { BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WALLET_API_UNIFIEDORDER, WALLET_APPID, WALLET_MCH_ID, WALLET_ORDER_QUERY, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
 import { getOpenid } from '../rpc/user.r';
 import * as http from './http_client';
 
@@ -99,14 +99,46 @@ export const oauth_alter_balance = (itemType:number, oid:string, count:number) =
 
 // 第三方应用生成订单
 export const wallet_unifiedorder = (oid:string, stNum: number) => {
-    const openid = Number(getOpenid());
     const appid = WALLET_APPID;
     const mch_id = WALLET_MCH_ID;
-    const key = WALLET_SERVER_KEY;
-    const total_fee = (stNum * ST_UNIT_NUM).toString();
+    const total_fee = (stNum * ST_UNIT_NUM);
+    const body = 'ST';
     const out_trade_no = oid;
     const nonce_str = `${randomInt(100000, 999999)}`;
-    const r = oauth_send(WALLET_API_UNIFIEDORDER, { openid: openid, appid: appid, mch_id: mch_id, total_fee: total_fee, out_trade_no: out_trade_no, nonce_str: nonce_str });
+    const signBody = { appid: appid, mch_id: mch_id, body: body, out_trade_no: out_trade_no, total_fee: total_fee, nonce_str: nonce_str };
+    const signStr = sign(json_uri_sort(signBody), WALLET_SERVER_KEY);
+    const requestBody:any = { appid: appid, mch_id: mch_id, sign: signStr, body: body, out_trade_no: out_trade_no, total_fee: total_fee, nonce_str: nonce_str };
+    const url = `${WALLET_SERVER_URL}${WALLET_API_UNIFIEDORDER}`;
+    const client = http.createClient();
+    http.addHeader(client, 'content-type', 'application/json');
+    const r = http.post(client, url, requestBody);
+    if (r.ok) {
+        const json = JSON.parse(r.ok);
+        if (json.return_code === 1) {
+            console.log('returnJson!!!!!!!!!!!!', json);
+
+            return json;
+        } else {
+            return;
+        }
+    } else {
+        return;
+    }
+};
+
+// 第三方应用查询订单
+export const wallet_order_query = (oid:string) => {
+    const appid = WALLET_APPID;
+    const mch_id = WALLET_MCH_ID;
+    const out_trade_no = oid;
+    const nonce_str = `${randomInt(100000, 999999)}`;
+    const signBody = { appid: appid, mch_id: mch_id, out_trade_no: out_trade_no, nonce_str: nonce_str };
+    const signStr = sign(json_uri_sort(signBody), WALLET_SERVER_KEY);
+    const requestBody:any = { appid: appid, mch_id: mch_id, sign: signStr, out_trade_no: out_trade_no, nonce_str: nonce_str };
+    const url = `${WALLET_SERVER_URL}${WALLET_ORDER_QUERY}`;
+    const client = http.createClient();
+    http.addHeader(client, 'content-type', 'application/json');
+    const r = http.post(client, url, requestBody);
     if (r.ok) {
         const json = JSON.parse(r.ok);
         if (json.return_code === 1) {

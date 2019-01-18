@@ -166,6 +166,8 @@ export const WALLET_API_ALTER = '/oAuth/alterbalance';
 export const WALLET_API_INVITENUM = '/oAuth/invite';
 // 生成钱包订单
 export const WALLET_API_UNIFIEDORDER = '/pay/unifiedorder';
+// 订单查询
+export const WALLET_ORDER_QUERY = '/pay/orderquery';
 
 // 货币类型
 export const KT_WALLET_TYPE = 100;
