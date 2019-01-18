@@ -6,12 +6,12 @@
 
     <div w-class="content">
         <div>
-            <widget w-tag="earn-client-app-components-guessItem-guessItem">{showOdds:true}</widget>
+            <widget w-tag="earn-client-app-components-guessItem-guessItem">{showOdds:true,guessData:{{it.guessData}},showBtn:false }</widget>
             <div w-class="guess-box">
 
                 <div w-class="guess-btn-box">
-                    <div on-tap="guess(e,0)" w-class="guess-btn left-guessbtn">为IG加油</div>
-                    <div on-tap="guess(e,1)" w-class="guess-btn right-guessbtn">为IG加油</div>
+                    <div on-tap="guess(e,1)" w-class="guess-btn left-guessbtn">为{{it.guessData.team1}}加油</div>
+                    <div on-tap="guess(e,2)" w-class="guess-btn right-guessbtn">为{{it.guessData.team2}}加油</div>
                 </div>
 
 
@@ -20,14 +20,14 @@
                     {{% 竞猜ST输入}}
                     <div style="height:50%">
                         {{: inputPlace = {"zh_Hans":"输入加油ST数","zh_Hant":"輸入加油ST數","en":""} }}
-                        <app-components1-input-input>{itype:"moneyNum",maxLength:7,placeHolder:{{inputPlace}},input:{{it.guessSTnum}},style:"padding:0;background:transparent;color:white;text-align:center"}</app-components1-input-input>
+                        <app-components1-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.guessSTnum}},style:"padding:0;background:transparent;color:white;text-align:center"}</app-components1-input-input>
                     </div>
 
                     {{% 预计收益}}
                     <div w-class="predict">
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"0.1ST","zh_Hant":"0.1ST","en":""}</widget>
+                        <span>{{it.predictEarnTeam1}} ST</span>
                         <widget w-tag="pi-ui-lang">{"zh_Hans":"预测收益","zh_Hant":"預測收益","en":""}</widget>
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"0.5ST","zh_Hant":"0.5ST","en":""}</widget>
+                        <span>{{it.predictEarnTeam2}} ST</span>
                     </div>
                 </div>
 

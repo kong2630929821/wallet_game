@@ -6,33 +6,94 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export interface Props {
-    guessBtn:boolean;
-    guessData:{
-        team1:string;
-        team2:string;
-        support1:number;
-        support2:number;
+    guessBtn: boolean; // 竞猜按钮形态
+    guessData: {       // 竞猜数据
+        team1: string;
+        team2: string;
+        support1: number;
+        support2: number;
     };
-    showOdds:boolean;
+    showOdds: boolean; // 竞猜赔率显示
+    showBtn:boolean;  // 竞猜按钮显示
 }
 export class GuessItem extends Widget {
     public ok: () => void;
-    public props:any = {
-        
+    public props: any = {
+        guessBtn: true,
+        guessData: {
+            team1: 'ok',
+            team2: 'ok',
+            time: '2000-10-02 15:26:30',
+            week: '星期五',
+            result: 1,
+            state: 2,
+            team1Num: 1,
+            team2Num: 1
+        },
+        showOdds: false,
+        showBtn:false,
+        timer:{},
+        oddsTeam1:0,
+        oddsTeam2:0
     };
 
-    public setProps(props:Props) {
+    public setProps(props: Props) {
+
         super.setProps(this.props);
-        this.props = {
-            ...this.props,
-            guessBtn:props.guessBtn,
-            guessData:props.guessData,
-            showOdds:props.showOdds
-        };
+        if (props.guessData) {
+            this.props.guessData = props.guessData;
+        }
+        if (props.showOdds) {
+            this.props.showOdds = props.showOdds;
+        }
+        if (props.showBtn) {
+            this.props.showBtn = props.showBtn;
+        }
+        this.timer();
+        this.oddsCompute();
+        this.paint();
     }
 
+    /**
+     * 计算比赛时间
+     */
+    public timer() {
+        this.props.timer = setInterval(() => {
+            const nowDate = new Date();
+            const guessDate = new Date(this.props.guessData.time);
+            if (nowDate > guessDate) {
+                this.props.guessBtn = false;
+                clearInterval(this.props.timer);
+                this.paint();
+            }
+        },1000);
+    } 
+    /**
+     * 赔率计算
+     */
+    public oddsCompute() {
+        if (this.props.guessData.team2Num === 0) {
+            this.props.oddsTeam1 = 1;
+        } else {
+            this.props.oddsTeam1 = (this.props.guessData.team2Num / this.props.guessData.team1Num + 1).toFixed(1);
+        }
+        if (this.props.guessData.team1Num === 0) {
+            this.props.oddsTeam2 = 1;
+        } else {
+            this.props.oddsTeam2 = (this.props.guessData.team1Num / this.props.guessData.team2Num + 1).toFixed(1);
+        }   
+        this.paint();
+    }
+    public destroy() {
+        clearInterval(this.props.timer);
+
+        return true;
+    }
+    /**
+     * 竞猜详情
+     */
     public goGuess() {
-        popNew('earn-client-app-view-guess-allGuess-guessDetail');
+        popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
     }
 
 }
