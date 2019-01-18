@@ -19,8 +19,8 @@
                 <div w-class="input-box" ev-input-change="inputChange">
                     {{% 竞猜ST输入}}
                     <div style="height:50%">
-                        {{: inputPlace = {"zh_Hans":"输入加油ST数","zh_Hant":"輸入加油ST數","en":""} }}
-                        <app-components1-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.guessSTnum}},style:"padding:0;background:transparent;color:white;text-align:center"}</app-components1-input-input>
+                        {{: inputPlace = {"zh_Hans":"0.1ST","zh_Hant":"0.1ST","en":""} }}
+                        <app-components1-input-input>{itype:"moneyNum1",maxLength:7,placeHolder:{{inputPlace}},input:{{it.defaultGuessStNum}},style:"padding:0;background:transparent;color:white;text-align:center"}</app-components1-input-input>
                     </div>
 
                     {{% 预计收益}}

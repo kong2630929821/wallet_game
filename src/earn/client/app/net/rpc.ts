@@ -4,6 +4,7 @@
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
+import { walletPay } from '../../../../app/utils/pay';
 import { popNew } from '../../../../pi/ui/root';
 import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineKTTop, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
@@ -482,8 +483,15 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
         clientRpcFunc(start_guessing, guessingReq, (r: Result) => {
             console.log('[活动]rpc-betGuess---------------', r);
             if (r.reslutCode === 1) {
-                console.log('下注成功!!!!!!!!：', r);
-                resolve(r);
+                const order = JSON.parse(r.msg);
+                walletPay(order,(res,msg) => {
+                    if (res === 1) {
+                        resolve(order);
+                    } else {
+                        showActError(res);
+                        reject(res);
+                    }
+                });
             } else {
                 showActError(r.reslutCode);
                 reject(r);

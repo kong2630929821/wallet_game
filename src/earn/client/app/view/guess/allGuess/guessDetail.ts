@@ -21,7 +21,8 @@ export class GuessDetail extends Widget {
 
     public props: any = {
         selectTopbar: {},
-        guessSTnum: 0,
+        guessSTnum: 0.1,
+        defaultGuessStNum:0.1,
         selfSTnum: 0,
         predictEarnTeam1:0,
         predictEarnTeam2:0
@@ -33,6 +34,7 @@ export class GuessDetail extends Widget {
             this.props.guessData = props.guessData;
         }
         this.getSTnum();
+        this.inputChange({ value:this.props.defaultGuessStNum });
     }
 
     // public create() {
@@ -56,15 +58,16 @@ export class GuessDetail extends Widget {
 
             return;
         }
-        if (this.props.guessSTnum < 0.1) {  // 竞猜ST小于0.1
+        if (this.props.guessSTnum < this.props.defaultGuessStNum) {  // 竞猜ST小于0.1
             popNew('app-components1-message-message', { content: this.config.value.tips[1] });
 
             return;
         }
         
-        betGuess(this.props.guessData.cid,this.props.guessSTnum,team).then((res:any) => {
+        betGuess(this.props.guessData.cid,this.props.guessSTnum,team).then((order:any) => {
+            
             this.initData();
-            this.inputChange({ value:0 });
+            this.inputChange({ value:this.props.defaultGuessStNum });
         });
     }
 
@@ -75,7 +78,7 @@ export class GuessDetail extends Widget {
         if (res.value !== '') {
             this.props.guessSTnum = parseFloat(res.value);
         } else {
-            this.props.guessSTnum = 0;
+            this.props.guessSTnum = this.props.defaultGuessStNum;
         }
         this.props.predictEarnTeam1 = (this.props.guessSTnum * (this.props.guessData.team2Num / this.props.guessData.team1Num + 1)).toFixed(2);
         this.props.predictEarnTeam2 = (this.props.guessSTnum * (this.props.guessData.team1Num / this.props.guessData.team2Num + 1)).toFixed(2);
