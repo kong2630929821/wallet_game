@@ -98,14 +98,13 @@ export const oauth_alter_balance = (itemType:number, oid:string, count:number) =
 };
 
 // 第三方应用生成订单
-export const wallet_unifiedorder = (stNum: number) => {
+export const wallet_unifiedorder = (oid:string, stNum: number) => {
     const openid = Number(getOpenid());
     const appid = WALLET_APPID;
     const mch_id = WALLET_MCH_ID;
     const key = WALLET_SERVER_KEY;
     const total_fee = (stNum * ST_UNIT_NUM).toString();
-    const time = (new Date()).valueOf();
-    const out_trade_no = `${time}${openid}${randomInt(10000, 99999)}`;
+    const out_trade_no = oid;
     const nonce_str = `${randomInt(100000, 999999)}`;
     const r = oauth_send(WALLET_API_UNIFIEDORDER, { openid: openid, appid: appid, mch_id: mch_id, total_fee: total_fee, out_trade_no: out_trade_no, nonce_str: nonce_str });
     if (r.ok) {

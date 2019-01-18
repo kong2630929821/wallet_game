@@ -9,10 +9,10 @@ import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
 import { UserAcc, UserAccMap } from '../data/db/user.s';
-import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GUESSING_ALREADY_SETTLED, GUESSINGNUM_BEYOUND_LIMIT, REQUEST_WALLET_FAIL, ST_NUM_ERROR } from '../data/errorNum';
-import { EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
+import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GUESSING_ALREADY_SETTLED, GUESSINGNUM_BEYOUND_LIMIT, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
+import { EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, NOT_PAY_YET, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
-import { oauth_alter_balance, oauth_send } from '../util/oauth_lib';
+import { oauth_alter_balance, oauth_send, wallet_unifiedorder } from '../util/oauth_lib';
 import { getUid } from './user.r';
 
 // 获取主页面比赛信息
@@ -129,13 +129,29 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     guessingKey.index = get_index_id(`${uid}${cid}`);
     let rate;
     let benefit;
-    // 扣除竞猜金额
-    const oid = `${(new Date()).valueOf()}${uid}${randomInt(10000, 99999)}`;
-    if (!oauth_alter_balance(ST_TYPE, oid, -num)) {
-        result.reslutCode = REQUEST_WALLET_FAIL;
+    // 生成竞猜对象
+    const time = (new Date()).valueOf();
+    const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    const guessing = new Guessing(guessingKey, teamSide, rate, num, oid, NOT_PAY_YET, benefit, date.toString());
+    guessingBucket.put(guessingKey, guessing);
+    // 生成订单
+    const resultJson = wallet_unifiedorder(oid, num);
+    if (!resultJson) {
+        result.reslutCode = UNIFIEDORDER_API_FAILD;
 
         return result;
     }
+    result.msg = JSON.stringify(resultJson);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+    // const oid = `${(new Date()).valueOf()}${uid}${randomInt(10000, 99999)}`;
+    // if (!oauth_alter_balance(ST_TYPE, oid, -num)) {
+    //     result.reslutCode = REQUEST_WALLET_FAIL;
+
+    //     return result;
+    // }
     // 根据用户选择的队伍增加相应奖金池的数量
     if (guessingReq.teamSide === HOST_TEAM_NUM) {
         jackpots.jackpot1 += num;
@@ -150,10 +166,6 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
         jackpots.guessings2.push(guessingKey);
     }
     jackpotsBucket.put(cid, jackpots);
-    // 生成竞猜对象
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
-    const guessing = new Guessing(guessingKey, teamSide, rate, num, benefit, date.toString());
-    guessingBucket.put(guessingKey, guessing);
     const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name, dbMgr);
     let guessingKeyList = guessingKeyListBucket.get<number, [GuessingKeyList]>(uid)[0];
     if (!guessingKeyList) guessingKeyList = new GuessingKeyList(uid, []);
@@ -165,6 +177,17 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
 
     return result;
 };
+
+// 竞猜支付回调
+// export const guessing_callback = () => {
+
+// };
+
+// 竞猜支付查询
+// #[rpc=rpcServer]
+// export const guessing_pay_query = (guessingKey:GuessingKey) => {
+
+// };
 
 // 获取用户已参与的竞猜信息
 // #[rpc=rpcServer]
