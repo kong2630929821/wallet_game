@@ -26,7 +26,9 @@ export const sourcePort = activeLogicPort;
 export const initClient = () => {
     if (!rootClient) {
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
-        rootClient = mqtt.connection();
+        rootClient = mqtt.connection(() => {
+            goLoginActivity();
+        });
     }
     // initPush();
 };
@@ -140,6 +142,6 @@ let clientRpc: any;
 // 监听wallet登录
 register('user/isLogin',(isLogin:boolean) => {
     if (isLogin) {
-        goLoginActivity();
+        initClient();
     }
 });
