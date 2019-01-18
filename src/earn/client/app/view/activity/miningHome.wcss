@@ -5,15 +5,18 @@
     color: #fff;
 }
 .body{
-    position: relative;
-    background-color: #fff;
-    flex: 1 0 0;
     background-image: url(../../res/image/mining_bg.png);
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+}
+.container{
+    position: relative;
+    flex: 1 0 0;
     overflow: hidden;
-    padding: 40px 30px;
+    padding: 0 30px;
 }
 .choose-tip{
     font-size: 36px;
@@ -74,11 +77,7 @@
     justify-content: space-between;
     align-items: flex-start;
 }
-.action-tips{
-    font-size:20px;
-    line-height:33px;
-    margin-top: 10px;
-}
+
 .gift-box{
     width:90px;
     height:90px;
@@ -90,12 +89,28 @@
     align-items: center;
 }
 .close{
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
 }
 .ad-items{
     display: flex;
 }
 .ad-item{
     display: flex;
-    flex-direction: column;
     align-items: center;
+    position: absolute;
+    padding: 0 10px;
+    left: 30px;
+    bottom: 60px;
+    height:60px;
+    background:linear-gradient(180deg,rgba(138,250,255,1) 0%,rgba(91,192,255,1) 100%);
+    border-radius:40px;
+    border:2px solid;
+    border-image:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(57,74,103,0.5)) 2 2;
+    font-size:24px;
+    color:rgba(34,34,34,1);
+}
+.action-tips{
+    margin-left: 10px;
 }

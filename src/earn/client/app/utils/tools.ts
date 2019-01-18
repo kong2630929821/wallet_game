@@ -67,13 +67,10 @@ export const coinUnitchange = (coinType:CoinType,count:number) => {
     switch (coinType) {
         case CoinType.BTC:
             return btc2BTC(count); 
-            break;
         case CoinType.ETH:
             return eth2ETH(count); 
-            break;
         case CoinType.ST:
             return st2ST(count); 
-            break;
     
         default:
             return count;

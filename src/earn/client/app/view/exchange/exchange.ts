@@ -5,8 +5,6 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Item } from '../../../../server/data/db/item.s';
-import { register } from '../../store/memstore';
 
 export enum MallType {
     'primaryMall' = 1,

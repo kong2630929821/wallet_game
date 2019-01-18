@@ -1,0 +1,53 @@
+.mine{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;;
+}
+.hp-bg{
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width:200px;
+    height:16px;
+    background:rgba(34,34,34,1);
+    border-radius:7px;
+    border:3px solid rgba(255,255,255,1);
+}
+.hp{
+    height: 10px;
+    background:rgba(252,220,60,1);
+    border-radius:7px;
+}
+.count-down{
+    width: 56px;
+    height:56px;
+    background:rgba(34,34,34,1);
+    border-radius:50%;
+    border:3px solid rgba(255,255,255,1);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(-100%,-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:28px;
+    color:rgba(255,255,255,1);
+}
+.grayscale{ 
+    filter: grayscale(100%);
+}
+.hoe{
+    position: absolute;
+    top: 30px;
+    left: 50px;
+    width: 150px;
+    height: 150px;
+}
+.hoe-img{
+    width: 100%;
+    height: 100%;
+}

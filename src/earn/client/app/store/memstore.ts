@@ -121,8 +121,11 @@ const store:Store = {
         sex:0,
         tel:''
     },
+    flags:{},
     mine:{
-        miningedNumber:0
+        miningedNumber:0,
+        miningRank:0,
+        miningKTnum:0
     },
     goods:[],
     balance:{
@@ -138,7 +141,9 @@ const store:Store = {
 };
 
 export interface Mine {
-    miningedNumber:0;  // 今天已挖矿山数量
+    miningedNumber:number;  // 今天已挖矿山数量
+    miningRank:number; // 排名
+    miningKTnum:number; // KT数量
 }
 
 export interface Invited {
@@ -155,6 +160,7 @@ export interface Store {
     goods:Item[];   // 拥有的物品
     balance:Balance;  // 账户余额 
     ACHVmedals:any;   // 拥有成就勋章
+    flags:any;       //  全局标识位    
 }
 
 export interface Balance {

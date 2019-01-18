@@ -1,0 +1,51 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    height: 100%;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    background: url('../../earn/client/app/res/image/guess-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.topbar{
+    padding: 30px;
+    display: flex;
+    justify-content: space-around;
+    flex: 1 0 auto;
+}
+.topbar-itme{
+    width:180px;
+    height:80px;
+    background:rgba(255,255,255,0.2);
+    border-radius:40px;
+    color: white;
+    font-size: 28px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 80px;
+}
+.topbar-item-sel{
+    background:rgba(93,221,255,0.2);
+    color:#5DDDFF;
+}
+
+
+
+.moreSetting{
+    height: 80px;
+    width: 270px;
+    position: absolute;
+    background: white;
+    border-radius:6px;
+    right: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}

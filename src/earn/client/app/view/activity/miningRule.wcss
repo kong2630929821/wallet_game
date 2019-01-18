@@ -39,8 +39,6 @@
     position: relative;
 }
 .hoe-box{
-    width:90px;
-    height:90px;
     border-radius:18px;
     display: flex;
     justify-content: center;
@@ -48,6 +46,10 @@
     position: relative;
     background:rgba(204,204,204,1);
     border:2px solid rgba(38,67,96,0.5);
+}
+.hoe-img{
+    width: 150px;
+    height: 150px;
 }
 .hoe-name{
     font-size:28px;
@@ -57,7 +59,7 @@
 }
 .dividing{
     font-size:72px;
-    line-height: 72px;
+    line-height: 150px;
     font-weight:500;
     color:rgba(34,34,34,1);
     margin: 0 25px;

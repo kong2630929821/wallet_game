@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"开宝箱","zh_Hant":"開寶箱","en":""} }}
     <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}},nextImg:"../../res/image/26_white.png" }</app-components1-topBar-topBar2>
     <div w-class="content">
@@ -22,15 +22,10 @@
                 <div w-class="sale-btn" on-tap="resetBoxList">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"换一波","zh_Hant":"換一波","en":""}</widget>
                 </div>
-                {{if !it.isEmpty}}
+                
                 <div w-class="sale-money">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"售价：{{it.selectChest.needTicketNum}}ST/1个","zh_Hant":"售價：{{it.selectChest.needTicketNum}}ST/1個","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
-                {{else}}
-                <div w-class="sale-money">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"是个空宝箱","zh_Hant":"是個空寶箱","en":""}</widget>
-                </div>
-                {{end}}
                 <div w-class="sale-btn" on-tap="goRecharge">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>

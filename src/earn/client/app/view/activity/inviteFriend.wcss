@@ -79,7 +79,7 @@
 }
 
 .ticket_top_title{
-    margin-top:80px;
+    margin-top:60px;
     width:100%;
     height:40px;
     font-size:28px;
@@ -241,3 +241,32 @@
     line-height:48px;
 }
 
+.convert-container{
+    width: 100%;
+    display: flex;
+    padding: 0 28px;
+    justify-content: space-between;
+    position: relative;
+}
+.convert-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.convert-img{
+    width: 90px;
+    height: 90px;
+}
+.convert-text{
+    font-size:28px;
+    color:rgba(34,34,34,1);
+    line-height:40px;
+}
+.convert-line{
+    width:64px;
+    height:1px;
+    background:rgba(204,204,204,1);
+    position: absolute;
+    transform: translateX(90%);
+    bottom: 20px;
+}

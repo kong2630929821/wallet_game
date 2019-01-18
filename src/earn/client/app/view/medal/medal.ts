@@ -10,8 +10,8 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal } from '../../net/rpc';
-// import { getStore, register } from '../../store/memstore';
-import { computeRankMedal, getACHVmedalList, getGoodCount, getMedalList } from '../../utils/util';
+import { register } from '../../store/memstore';
+import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
 
@@ -49,7 +49,8 @@ export class Medal extends Widget {
             mineMedal: {
                 rankMedal: 8001,
                 desc: '',
-                nextNeedKt: 0
+                nextNeedKt: 0,
+                ktNum:0
             },
             totalMedal:0,
             collectMedal:0
@@ -64,10 +65,11 @@ export class Medal extends Widget {
     public initData() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
         this.props.mineMedal = computeRankMedal();
-
-        for (const element of medalList) {
-            const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
-            for (const element1 of this.props.medalList) {
+        
+        for (const element1 of this.props.medalList) {
+            element1.medal = [];
+            for (const element of medalList) {
+                const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
                 }
@@ -100,7 +102,7 @@ export class Medal extends Widget {
         popNew('earn-client-app-view-medal-medalShow', {
             medalId,
             medalSite,
-            isHave: true,
+            isHave: (this.props.mineMedal.rankMedal >= medalId),
             medalType:MedalType.rankMedal
         }, () => {
             $realDomStyle.visibility = `visible`;
@@ -136,6 +138,14 @@ export class Medal extends Widget {
     public goMyCollect() {
         popNew('earn-client-app-view-medal-collect');
     }
+
+    /**
+     * 刷新页面
+     */
+    public refresh() {
+        this.initData();
+    }
+
     /**
      * 返回上一页
      */
@@ -146,7 +156,7 @@ export class Medal extends Widget {
 
 // ===================================================== 立即执行
 
-// register('goods', (goods: Item[]) => {
-//     const w: any = forelet.getWidget(WIDGET_NAME);
-//     w && w.initData();
-// });
+register('good', (goods: Item[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});

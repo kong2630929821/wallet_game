@@ -8,6 +8,20 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    background-size: contain;
+}
+.box-selected{
+    background-image: url(../../res/image/can_receive_bg.png);
+}
+.box-noselected{
+    background-image: none;
+}
+.select-bg{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 .holded-num{
     padding: 0 7px;

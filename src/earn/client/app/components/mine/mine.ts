@@ -18,6 +18,7 @@ interface Props {
     beginMining:boolean;   // 是否开始挖矿
     hoeSelectedLeft:number; // 选中的锄头剩余数
     scale:number; // 等比放大倍数
+    countDown:number;   // 倒计时
 }
 export class Mine extends Widget {
     public props:any;
@@ -59,7 +60,7 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        console.log(this.props);
+        // console.log(this.props);
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {

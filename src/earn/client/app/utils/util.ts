@@ -2,13 +2,15 @@
  * common util
  */
 import { popNew } from '../../../../pi/ui/root';
+import { Invite } from '../../../server/data/db/invite.s';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { LOLTeamInfosCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore } from '../store/memstore';
+import { getStore, Invited } from '../store/memstore';
 import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, CoinType } from '../xls/dataEnum.s';
@@ -337,12 +339,13 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
  */
 export const computeRankMedal = () => {
 
-    const ktNum = getGoodCount(CoinType.KT);
+    const ktNum = getStore('balance/KT');
     const medalList = getMedalList(CoinType.KT, 'coinType');
     const mineMedal = {
         rankMedal: 8000,
         desc: {},
-        nextNeedKt: 0
+        nextNeedKt: 0,
+        ktNum
     };
     for (let i = 0; i < medalList.length; i++) {
         const element = medalList[i];
@@ -379,22 +382,42 @@ export const showActError = (errorNum: number) => {
  */
 export const getSeriesLoginAwards = (serielLoginDays: number) => {
     const resetDays = 15; // 奖励重置天数
-    const tmpSerielLoginDays = serielLoginDays % resetDays === 0 ? resetDays : serielLoginDays % resetDays;
-    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
     const showAwardsDays = 7; // 同时展示几天的奖励
-    // tslint:disable-next-line:prefer-array-literal
-    const awards = new Array(showAwardsDays);
-    if (tmpSerielLoginDays <= showAwardsDays) {
-        for (const [k, cfg] of cfgs) {
-            if (cfg.days > showAwardsDays) continue;
-            awards[cfg.days - 1] = cfg;
-        }
-    } else {
-        for (const [k, cfg] of cfgs) {
-            if (cfg.days <= showAwardsDays) continue;
-            awards[cfg.days - 1 - showAwardsDays] = cfg;
-        }
+    const multiple = Math.ceil(serielLoginDays / showAwardsDays);
+    const showAwardsDaysStart = (multiple - 1) * showAwardsDays + 1 ;
+    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
+    const awards = [];
+    for (let i = 0;i < showAwardsDays;i++) {
+        const index = (showAwardsDaysStart + i - 1) % resetDays;
+        const cfg = JSON.parse(JSON.stringify(cfgs.get(index)));
+        cfg.days = showAwardsDaysStart + i;
+        awards[i] = cfg;
     }
 
     return awards;
+};
+
+ /**
+  * 获取队伍信息
+  * @param teamNum 可选,队伍编号，不填返回所有
+  */
+export const getTeamCfg = (teamNum?:number) => {
+    const cfgs = getMap(LOLTeamInfosCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (teamNum && teamNum === cfg.pid) {
+            return cfg;
+        } else {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+/**
+ * 判断是否有邀请奖励可以领取
+ */
+export const canInviteAward = (invited:Invited) => {
+    return invited.convertedInvitedAward.indexOf(1) >= 0 ;
 };

@@ -9,11 +9,13 @@ import { ActivityType } from '../../xls/dataEnum.s';
 export class NewUserLogin extends Widget {
     public ok: () => void;
     public props:any = {
+        pi_norouter:true,
         prizeList:[]
     };
 
     public create() {
         super.create();
+        this.config = { value: { group: 'top' } };
         const data = getRegularPrizeList(ActivityType.NewUserWelfare);
         data.forEach(element => {
             const prize = {

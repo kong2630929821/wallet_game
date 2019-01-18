@@ -2,14 +2,13 @@
  * earn home 
  */
 // ================================ 导入
+import { hasWallet } from '../../../../../app/utils/tools';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Item } from '../../../../server/data/db/item.s';
-import { goLoginActivity } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -19,7 +18,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
-export class PlayHome extends Widget {
+export class EarnHome extends Widget {
     public ok: () => void;
     public language: any;
     public props: any;
@@ -33,110 +32,104 @@ export class PlayHome extends Widget {
      */
     public init() {
         this.language = this.config.value[getLang()];
+        const mine = getStore('mine');
         this.props = {
             ...this.props,
-            page: [
-                'app-view-earn-mining-dividend', // 领分红
-                'app-view-earn-redEnvelope-writeRedEnv', // 发红包
-                'app-view-earn-exchange-exchange', // 兑换
-                'app-view-earn-mining-addMine'  // 任务
-                // 'app-view-earn-mining-rankList', // 挖矿排名
-            ],
             scroll: false,
             scrollHeight: 0,
             refresh: false,
             avatar: '../../res/image1/default_avatar.png',
-            welfareActivities: [{
-                img: 'btn_yun_5.png',
+            hotActivities: [{
+                img: 'btn_yun_1.png',
+                title: '每日登录',
+                desc: '连续登录有大奖',
+                components:'earn-client-app-view-activity-signIn'
+            }, {
+                img: 'btn_yun_2.png',
+                title: '做任务',
+                desc: '可以抽奖兑换物品',
+                components:'app-view-earn-mining-addMine'
+            }, {
+                img: 'btn_yun_3.png',
                 title: '邀请好友',
                 desc: '累计邀请有好礼',
                 components:'earn-client-app-view-activity-inviteFriend'
             }, {
-                img: 'btn_yun_6.png',
+                img: 'btn_yun_4.png',
                 title: '验证手机',
-                desc: '额外赠送2500KT',
+                desc: '确认是真实用户',
                 components:'earn-client-app-view-activity-verifyPhone'
+            }],
+            applicationWelfares:[{
+                img: 'btn_yun_5.png',
+                title: '领分红',
+                desc: '根据KT领分红',
+                components:'app-view-earn-mining-dividend'
+            }, {
+                img: 'btn_yun_6.png',
+                title: '发红包',
+                desc: '试试朋友的手气',
+                components:'app-view-earn-redEnvelope-writeRedEnv'
             }, {
                 img: 'btn_yun_7.png',
-                title: '开宝箱',
-                desc: '不定期上新物品',
-                components:'earn-client-app-view-openBox-openBox'
+                title: '充KT送ST',
+                desc: '赠品可以玩游戏',
+                components:'app-view-wallet-cloudWallet-rechargeKT'
             }, {
                 img: 'btn_yun_8.png',
-                title: '大转盘',
-                desc: '试试我的手气',
-                components:'earn-client-app-view-turntable-turntable'
-            }, {
-                img: 'btn_yun_10.png',
-                title: '兑换物品',
-                desc: '不定期上新物品',
-                components:'earn-client-app-view-exchange-exchange'
-            }, {
-                img: 'btn_yun_11.png',
-                title: '我的物品',
-                desc: '兑换和中奖的物品',
-                components:'earn-client-app-view-myProduct-myProduct'
-            }, {
-                img: 'btn_yun_11.png',
-                title: '挖矿排名',
-                desc: '全部和好友排名',
-                components:'earn-client-app-view-mineRank-mineRank'
+                title: '兑换码',
+                desc: '兑换礼物和红包',
+                components:'app-view-earn-exchange-exchange'
             }],
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
             diamondHoe: getHoeCount(HoeType.DiamondHoe),
             hoeType: HoeType,
             hoeSelected:-1,
-            maxMineType:getMaxMineType()
+            maxMineType:getMaxMineType(),
+            upAnimate:'',
+            downAnimate:'',
+            animateStart:false,
+            miningKTnum:mine.miningKTnum,
+            miningRank:mine.miningRank
         };
         setTimeout(() => {
             this.scrollPage();
         }, 17);
-        if (getStore('userInfo/uid') === -1) {
-            goLoginActivity();
-        }
-           
+        // this.getMiningInfo();
         // console.log(this.props.hoeType);
     }
     /**
-     * 福利活动进入
-     * @param ind 福利顺序
+     * 热门活动进入
      */
-    public goActivity(ind: number) {
-        const page = this.props.welfareActivities[ind].components;
-        if (page === 'earn-client-app-view-myProduct-myProduct') {
-            popNew(page, { type: 0 });
-        } else {
-            popNew(page);
-        }
+    public goHotActivity(ind: number) {
+        if (!hasWallet()) return;
+        const page = this.props.hotActivities[ind].components;
+        popNew(page);
     }
 
     /**
-     * 去勋章
+     * 应用福利
      */
-    public goMedal() {
-        popNew('earn-client-app-view-medal-medal');
+    public goApplicationWelfares(ind:number) {
+        if (!hasWallet()) return;
+        const page = this.props.applicationWelfares[ind].components;
+        popNew(page);
     }
 
-    public goNextPage(index:number) {
-        popNew(this.props.page[index]);
-    }
+    /**
+     * 挖矿点击展开
+     */
     public miningClick() {
-        popNew('earn-client-app-view-activity-miningHome');
-    }
-
-    /**
-     * 打开我的设置
-     */
-    public showMine() {
-        popNew('app-view-mine-home-home');
-    }
-
-    /**
-     * 返回上一页
-     */
-    public backPrePage() {
-        this.ok && this.ok();
+        if (!hasWallet()) return;
+        this.props.upAnimate = 'put-out-up';
+        this.props.downAnimate = 'put-out-down';
+        this.props.animateStart = true;
+        setStore('flags/earnHomeHidden',true);
+        setTimeout(() => {
+            document.getElementById('earn-home').scrollTop = 0;
+        },500);
+        this.paint();
     }
 
     /**
@@ -171,36 +164,46 @@ export class PlayHome extends Widget {
     }
 
     /**
+     * 获取挖矿排名信息
+     */
+    public updateMiningInfo(mine:Mine) {
+        this.props.miningRank = mine.miningRank;
+        this.props.miningKTnum = mine.miningKTnum;
+        this.paint();
+    }
+
+    /**
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
         popNew('earn-client-app-view-activity-miningRule');
     }
 
-    public updateHoe() {
-        this.props.ironHoe = getHoeCount(HoeType.IronHoe);
-        this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
-        this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
-        this.props.maxMineType = getMaxMineType();
-        this.paint();
-    }
-
-    public selectHoeClick(e:any,hopeType:HoeType) {
-        console.log('select index',hopeType);
-        this.props.hoeSelected = hopeType;
-        this.paint();
-    }
-    // 阻止点击穿透
-    public mineClick() {
-    
-        // console.log('mineClick');
+    public goMineRank() {
+        if (!hasWallet()) return;
+        popNew('earn-client-app-view-mineRank-mineRank');
     }
 }
 
 // ===================================================== 本地
 // ===================================================== 立即执行
 
-register('goods', (goods: Item[]) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateHoe();
+register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (!earnHomeHidden) {
+        w.props.upAnimate = 'reset-put-out';
+        w.props.downAnimate = 'reset-put-out';
+        setTimeout(() => {
+            w.props.upAnimate = '';
+            w.props.downAnimate = '';
+            w.props.animateStart = false;
+            w.paint();
+        },500);
+        w.paint();
+    } 
+});
+
+register('mine',(mine:Mine) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.updateMiningInfo(mine);
 });
