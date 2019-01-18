@@ -17,7 +17,7 @@
     </div>
     <div w-class="contain" on-scroll="scrollPage" id="earn-home" class="{{it.downAnimate}}">
         <div w-class="mine-card" on-tap="miningClick">
-            <div w-class="mining-rank" style="{{ it.animateStart ? 'visibility: hidden;' : ''}}">
+            <div w-class="mining-rank" style="{{ it.animateStart ? 'visibility: hidden;' : ''}}" on-tap="goMineRank">
                 <img src="../../res/image/medals/medal8001.png" w-class="medal-img"/>
                 <div w-class="mining-result">
                     <div w-class="mining-title">挖矿</div>

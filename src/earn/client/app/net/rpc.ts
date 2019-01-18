@@ -262,8 +262,8 @@ export const getRankList = () => {
             console.log('[活动]rpc-getRankList-resData---------------', r);
             if (r.resultNum === 1) {
                 const mine = getStore('mine');
-                mine.miningRank = r.myNum;
-                mine.miningKTnum = r.myKTNum;
+                mine.miningRank = r.myNum || 0;
+                mine.miningKTnum = r.myKTNum || 0;
                 setStore('mine',mine);
                 resolve(r);
             } else {

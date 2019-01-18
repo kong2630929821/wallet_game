@@ -50,7 +50,7 @@ export class AutoLoginMgr {
     }
 
     // 连接服务器
-    public connection() {
+    public connection(success:Function) {
         const options = {
             reconnect: true,
             timeout: 3,
@@ -70,9 +70,11 @@ export class AutoLoginMgr {
                 } else if (this.relogin === ReLoginState.ING) {
                     // console.log(`重新打开APP！！！`);
                 }
+                success && success();
             },
             onFailure: (r) => {
                 console.log('[活动]connect fail', r);
+                this.reconnect();
             }
         };
         // rootClient = new Client('127.0.0.1', 1234, 'clientId-wcd14PDgoZ', null, options);
@@ -96,6 +98,7 @@ export class AutoLoginMgr {
         }
 
     }
+
     // 获取MATT客户端
     public getClient() {
         return this.rootClient;
