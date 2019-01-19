@@ -1,3 +1,6 @@
+import { uploadFileUrl } from '../../../../app/config';
+import { arrayBuffer2File, base64ToFile, popNewMessage } from '../../../../app/utils/tools';
+import { resize } from '../../../../pi/widget/resize/resize';
 import { Widget } from '../../../../pi/widget/widget';
 import { RESULT_SUCCESS } from '../../../server/data/constant';
 import { AddCompetition, CompetitionList, CompResult, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
@@ -97,6 +100,17 @@ export class CompEditor extends Widget {
         this.props.compIndex = event.srcElement.selectedIndex;
         this.paint();
     }
+
+    public uploadAvatar(event: any) {
+        console.log('res!!!!!', event);
+        const file = event.srcElement.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            console.log(reader.result);
+            uploadFile(reader.result);
+        };
+    }
 }
 
 // 获取比赛信息
@@ -194,6 +208,37 @@ const settle_guessing = (cid: number) => {
             }
         });
     });
+};
+
+// 上传文件
+export const uploadFile = async (base64) => {
+    console.log('uploadFile in !!!!!!!!!!!!!');
+    const file = base64ToFile(base64);
+    const formData = new FormData();
+    formData.append('upload',file);
+    fetch(`${uploadFileUrl}?$forceServer=1`, {
+        body: formData, // must match 'Content-Type' header
+        // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        // credentials: 'same-origin', // include, same-origin, *omit
+        // headers: {
+        //     'user-agent': 'Mozilla/4.0 MDN Example'
+        // },
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors' // no-cors, cors, *same-origin
+        // redirect: 'follow', // manual, *follow, error
+        // referrer: 'no-referrer' // *client, no-referrer
+    }).then(response => response.json())
+        .then(res => {
+            console.log('uploadFile success ',res);
+            popNewMessage('图片上传成功');
+            if (res.result === 1) {
+                const sid = res.sid;
+                alert(`图片上传成功${sid}`);
+            }
+        }).catch(err => {
+            console.log('uploadFile fail ',err);
+            popNewMessage('图片上传失败');
+        });
 };
 
 export const getTeamCfg = (cfgName: string, teamNum?: number, teamName?: string) => {

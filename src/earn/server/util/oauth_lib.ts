@@ -98,11 +98,10 @@ export const oauth_alter_balance = (itemType:number, oid:string, count:number) =
 };
 
 // 第三方应用生成订单
-export const wallet_unifiedorder = (oid:string, stNum: number) => {
+export const wallet_unifiedorder = (oid:string, stNum: number, body: string) => {
     const appid = WALLET_APPID;
     const mch_id = WALLET_MCH_ID;
     const total_fee = (stNum * ST_UNIT_NUM);
-    const body = 'ST';
     const out_trade_no = oid;
     const nonce_str = `${randomInt(100000, 999999)}`;
     const signBody = { appid: appid, mch_id: mch_id, body: body, out_trade_no: out_trade_no, total_fee: total_fee, nonce_str: nonce_str };

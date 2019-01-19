@@ -25,4 +25,5 @@
         <div>队伍2初始奖池：<input value= "{{it.team2Num}}" on-input="inputTeam2Num"/></div>
     </div>
     <button on-tap="addComp" w-class="btn">添加比赛</button>
+    <input type="file" on-change="uploadAvatar"/>
 </div>

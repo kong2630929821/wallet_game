@@ -7,9 +7,9 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
-import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
+import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingOrder, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
 import { UserAcc, UserAccMap } from '../data/db/user.s';
-import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, GUESSING_ALREADY_SETTLED, GUESSING_NOT_EXIST, GUESSINGNUM_BEYOUND_LIMIT, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
+import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, GUESSING_ALREADY_SETTLED, GUESSING_NOT_EXIST, GUESSINGNUM_BEYOUND_LIMIT, ORDER_NOT_EXIST, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
 import { BILL_ALREADY_PAY, EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, NOT_PAY_YET, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { json_uri_sort, oauth_alter_balance, oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
@@ -122,18 +122,23 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     userGuessBucket.put(guessingKey, userGuessing);
     guessingKey.index = get_index_id(`${uid}${cid}`);
     // 生成竞猜对象
-    const time = (new Date()).valueOf();
-    const oid = `${time}${uid}${randomInt(10000, 99999)}`;
     const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
-    const guessing = new Guessing(guessingKey, teamSide, null, num, oid, NOT_PAY_YET, null, date.toString());
+    const guessing = new Guessing(guessingKey, teamSide, null, num, null, date.toString());
     guessingBucket.put(guessingKey, guessing);
     // 生成订单
-    const resultJson = wallet_unifiedorder(oid, num);
+    const time = (new Date()).valueOf();
+    const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
+    const guessingOrder = new GuessingOrder(oid, guessingKey, NOT_PAY_YET);
+    guessingOrderBucket.put(oid, guessingOrder);
+    const resultJson = wallet_unifiedorder(oid, num, 'LOL Guessing');
     if (!resultJson) {
         result.reslutCode = UNIFIEDORDER_API_FAILD;
 
         return result;
     }
+    resultJson.oid = oid;
+    console.log('resultJson!!!!!!!!!!', resultJson);
     result.msg = JSON.stringify(resultJson);
     result.reslutCode = RESULT_SUCCESS;
 
@@ -153,10 +158,19 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
 
 // 竞猜支付查询
 // #[rpc=rpcServer]
-export const guessing_pay_query = (guessingKey:GuessingKey):Result => {
+export const guessing_pay_query = (oid: string):Result => {
+    console.log('guessing_pay_query in!!!!!!!!!!!!');
     const uid = getUid();
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr(); 
+    const dbMgr = getEnv().getDbMgr();
+    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
+    const guessingOrder = guessingOrderBucket.get<string, [GuessingOrder]>(oid)[0];
+    if (!guessingOrder) {
+        result.reslutCode = ORDER_NOT_EXIST;
+
+        return result;
+    }
+    const guessingKey = guessingOrder.gid;
     const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
     const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
     if (!guessing) {
@@ -164,14 +178,15 @@ export const guessing_pay_query = (guessingKey:GuessingKey):Result => {
 
         return result;
     }
-    const oid = guessing.oid;
     const resultJson = wallet_order_query(oid);
     if (!resultJson) {
         result.reslutCode = GET_ORDERINFO_FAILD;
 
         return result;
     }
-    // 支付成功 更新奖池信息
+    // 支付成功
+    guessingOrder.state = BILL_ALREADY_PAY;
+    guessingOrderBucket.put(oid, guessingOrder);
     const num = guessing.num;
     // 获取该场比赛奖金池信息
     const jackpotsBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
@@ -205,7 +220,6 @@ export const guessing_pay_query = (guessingKey:GuessingKey):Result => {
     // 更新竞猜信息
     guessing.rate = rate;
     guessing.benefit = benefit;
-    guessing.state = BILL_ALREADY_PAY;
     guessingBucket.put(guessingKey, guessing);
     // 返回竞猜结果
     result.msg = JSON.stringify(guessing);

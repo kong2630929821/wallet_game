@@ -62,10 +62,18 @@ struct Guessing {
     teamSide: u8, // 选择队伍 1:主场, 2:客场
     rate: Option<f32>, // 购买时预计赔率
     num: u32, // 购买金额
-    oid: String, // 订单号
-    state: u8, // 支付状态
     benefit: Option<u32>, // 预计收益
     time: String, // 购买时间
+}
+
+/**
+*竞猜订单表
+*/
+#[primary=oid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct GuessingOrder {
+    oid: String, // 订单号
+    gid: GuessingKey, // 竞猜id
+    state: u8, // 支付状态
 }
 
 /**
