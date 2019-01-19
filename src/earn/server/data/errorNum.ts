@@ -48,6 +48,12 @@ export const COMPETITION_RESULT_EXIST = 4105;
 export const COMPETITION_RESULT_NOT_EXIST = 4106;
 // 竞猜已结算
 export const GUESSING_ALREADY_SETTLED = 4107;
+// 生成订单失败
+export const UNIFIEDORDER_API_FAILD = 4108;
+// 竞猜不存在
+export const GUESSING_NOT_EXIST = 4109;
+// 获取订单信息失败
+export const GET_ORDERINFO_FAILD = 4110;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;

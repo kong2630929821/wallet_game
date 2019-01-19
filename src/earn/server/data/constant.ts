@@ -152,6 +152,8 @@ export const MEMORY_NAME = 'memory';
 export const WALLET_SERVER_URL = 'http://127.0.0.1:8099';
 // appid
 export const WALLET_APPID = '101';
+// mch_id
+export const WALLET_MCH_ID = '15';
 // 私钥
 export const WALLET_SERVER_KEY = 'xxxxxxxxx';
 // 兑换邀请码
@@ -162,6 +164,10 @@ export const WALLET_API_QUERY = '/oAuth/balancequery';
 export const WALLET_API_ALTER = '/oAuth/alterbalance';
 // 邀请人数
 export const WALLET_API_INVITENUM = '/oAuth/invite';
+// 生成钱包订单
+export const WALLET_API_UNIFIEDORDER = '/pay/unifiedorder';
+// 订单查询
+export const WALLET_ORDER_QUERY = '/pay/orderquery';
 
 // 货币类型
 export const KT_WALLET_TYPE = 100;
