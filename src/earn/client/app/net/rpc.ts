@@ -501,6 +501,36 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
 };
 
 /**
+ * 竞猜下注成功后查询
+ * @param order 订单信息
+ */
+export const queryBetGuess = ((order:any) => {
+    return new Promise((resolve, reject) => {
+        const guessingReq = new GuessingReq();
+        guessingReq.cid = cid;
+        guessingReq.num = ST2st(num);
+        guessingReq.teamSide = teamSide;
+        clientRpcFunc(guessing_pay_query, guessingReq, (r: Result) => {
+            console.log('[活动]rpc-queryBetGuess---------------', r);
+            if (r.reslutCode === 1) {
+                const order = JSON.parse(r.msg);
+                walletPay(order,(res,msg) => {
+                    if (res === 1) {
+                        resolve(order);
+                    } else {
+                        showActError(res);
+                        reject(res);
+                    }
+                });
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+});
+
+/**
  * 获取我的竞猜
  */
 export const getMyGuess = () => {

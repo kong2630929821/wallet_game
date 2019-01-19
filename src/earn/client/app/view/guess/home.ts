@@ -2,40 +2,44 @@
  * 竞猜主页
  */
 
-import { popPswBox } from '../../../../../app/utils/tools';
-import { popNew } from '../../../../../pi/ui/root';
+import { queryNoPWD } from '../../../../../app/api/JSAPI';
+import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class GuessHome extends Widget {
     public ok: () => void;
-    
-    public props:any = {
-        selectTopbar:{},
-        topbarList:[
+
+    public props: any = {
+        selectTopbar: {},
+        topbarList: [
             {
-                name:'filter',
-                title:{ zh_Hans:'筛选',zh_Hant:'篩選',en:'' },
-                component:'earn-client-app-view-guess-allGuess-filterGuess'
+                name: 'filter',
+                title: { zh_Hans: '筛选', zh_Hant: '篩選', en: '' },
+                component: 'earn-client-app-view-guess-allGuess-filterGuess'
             },
             {
-                name:'all',
-                title:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
-                component:'earn-client-app-view-guess-allGuess-allGuess'
+                name: 'all',
+                title: { zh_Hans: '全部', zh_Hant: '全部', en: '' },
+                component: 'earn-client-app-view-guess-allGuess-allGuess'
             },
             {
-                name:'self',
-                title:{ zh_Hans:'我的',zh_Hant:'我的',en:'' },
-                component:'earn-client-app-view-guess-selfGuess-selfGuess'
+                name: 'self',
+                title: { zh_Hans: '我的', zh_Hant: '我的', en: '' },
+                component: 'earn-client-app-view-guess-selfGuess-selfGuess'
             }
         ],
-        showMoreSetting:false,
-        needNotPassword:false
+        showMoreSetting: false,
+        needNotPassword: false
     };
 
-    public create () {
+    public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
-        
+        queryNoPWD('101', (res, msg) => {
+            console.log(res, msg);
+
+        });
+
     }
 
     /**
@@ -58,7 +62,7 @@ export class GuessHome extends Widget {
     /**
      * 修改topbar
      */
-    public changeTopbar(index:number) {
+    public changeTopbar(index: number) {
         this.props.selectTopbar = this.props.topbarList[index];
         this.paint();
     }
@@ -67,12 +71,16 @@ export class GuessHome extends Widget {
      * 设置免密支付
      */
     public async setting() {
+        let state = 0;
         if (!this.props.needNotPassword) {
-            console.log();
-            
+            state = 1;
         } else {
-            this.props.needNotPassword = false;
+            state = 0;
         }
+        walletSetNoPSW('101', '15', state, (res, msg) => {
+            console.log(res, msg);
+
+        });
         this.closeSetting();
     }
 
