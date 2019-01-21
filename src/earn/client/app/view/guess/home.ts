@@ -4,6 +4,7 @@
 
 import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class GuessHome extends Widget {
@@ -29,14 +30,20 @@ export class GuessHome extends Widget {
             }
         ],
         showMoreSetting: false,
-        needNotPassword: false
+        noPassword: false
     };
 
     public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
         queryNoPWD('101', (res, msg) => {
-            console.log(res, msg);
+            if (res === 1) {
+                this.props.noPassword = true;
+            } else {
+                this.props.noPassword = false;
+            }
+            
+            this.paint();
 
         });
 
@@ -72,13 +79,19 @@ export class GuessHome extends Widget {
      */
     public async setting() {
         let state = 0;
-        if (!this.props.needNotPassword) {
+        if (this.props.noPassword === false) {
             state = 1;
-        } else {
-            state = 0;
-        }
+        } 
+
         walletSetNoPSW('101', '15', state, (res, msg) => {
             console.log(res, msg);
+            if (res === 1) {
+                this.props.noPassword = !this.props.noPassword; 
+                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                this.paint();
+            } else {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+            }
 
         });
         this.closeSetting();

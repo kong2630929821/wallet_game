@@ -6,7 +6,7 @@ import { Invite } from '../../../server/data/db/invite.s';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
-import { LOLTeamInfosCfg } from '../../../xlsx/competition.s';
+import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
@@ -406,6 +406,24 @@ export const getTeamCfg = (teamNum?:number) => {
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (teamNum && teamNum === cfg.pid) {
+            return cfg;
+        } else {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
+};
+
+ /**
+  * 获取赛事信息
+  * @param macthType 可选,赛事编号，不填返回所有
+  */
+export const getMacthTypeCfg = (macthType?:number) => {
+    const cfgs = getMap(LOLTypeCfg._$info.name);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (macthType && macthType === cfg.pid) {
             return cfg;
         } else {
             filterCfgs.push(cfg);

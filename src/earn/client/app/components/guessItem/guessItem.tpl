@@ -1,7 +1,7 @@
 <div w-class="body">
     {{% 上部 比赛时间}}
     <div w-class="guess-top">
-        <span>2019LPL春季赛常规赛</span>
+        <span>{{it.guessData.matchName}}</span>
         <span>截止：{{it.guessData.time.slice(11)}}</span>
     </div>
 

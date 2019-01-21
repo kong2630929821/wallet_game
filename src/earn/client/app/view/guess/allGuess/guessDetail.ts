@@ -7,7 +7,7 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Props } from '../../../components/guessItem/guessItem';
-import { betGuess, getOneGuessInfo, getSTbalance } from '../../../net/rpc';
+import { betGuess, getOneGuessInfo, getSTbalance, queryBetGuess } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
 
 // ================================ 导出
@@ -65,9 +65,16 @@ export class GuessDetail extends Widget {
         }
         
         betGuess(this.props.guessData.cid,this.props.guessSTnum,team).then((order:any) => {
-            
-            this.initData();
-            this.inputChange({ value:this.props.defaultGuessStNum });
+            queryBetGuess(order.oid).then(res => {      
+                console.log('下注成功，查询！！！！！',res);
+                popNew('app-components1-message-message', { content: this.config.value.tips[2] });
+                this.initData();
+                this.inputChange({ value:this.props.defaultGuessStNum });
+            }).catch(err => {
+                // popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+            });
+        }).catch(err => {
+            // popNew('app-components1-message-message', { content: this.config.value.tips[3] });
         });
     }
 

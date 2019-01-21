@@ -6,11 +6,11 @@ import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { walletPay } from '../../../../app/utils/pay';
 import { popNew } from '../../../../pi/ui/root';
-import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
+import { GuessingKey, GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineKTTop, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_compJackpots, get_main_competitions, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
+import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -23,7 +23,7 @@ import { award_query, get_achievements, get_showMedal, item_query, show_medal } 
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
-import { canInviteAward, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { canInviteAward, getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -449,7 +449,7 @@ export const getAllGuess = () => {
                     const data = {
                         cid: element.comp.cid,
                         matchType:element.comp.matchType,
-                        matchName:element.comp.matchType,
+                        matchName: getMacthTypeCfg(element.comp.matchType).season + getMacthTypeCfg(element.comp.matchType).name,
                         team1: getTeamCfg(element.comp.team1).teamName,
                         team2: getTeamCfg(element.comp.team2).teamName,
                         time: timestampFormat(element.comp.time),
@@ -504,31 +504,20 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
  * 竞猜下注成功后查询
  * @param order 订单信息
  */
-export const queryBetGuess = ((order:any) => {
+export const queryBetGuess = (oid:string) => {
     return new Promise((resolve, reject) => {
-        const guessingReq = new GuessingReq();
-        guessingReq.cid = cid;
-        guessingReq.num = ST2st(num);
-        guessingReq.teamSide = teamSide;
-        clientRpcFunc(guessing_pay_query, guessingReq, (r: Result) => {
+        clientRpcFunc(guessing_pay_query, oid, (r: Result) => {
             console.log('[活动]rpc-queryBetGuess---------------', r);
             if (r.reslutCode === 1) {
-                const order = JSON.parse(r.msg);
-                walletPay(order,(res,msg) => {
-                    if (res === 1) {
-                        resolve(order);
-                    } else {
-                        showActError(res);
-                        reject(res);
-                    }
-                });
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
             } else {
                 showActError(r.reslutCode);
                 reject(r);
             }
         });
     });
-});
+};
 
 /**
  * 获取我的竞猜
@@ -544,6 +533,8 @@ export const getMyGuess = () => {
                     const data = {
                         guessData:{
                             cid: element.competition.cid,
+                            matchType:element.competition.matchType,
+                            matchName: getMacthTypeCfg(element.competition.matchType).season + getMacthTypeCfg(element.competition.matchType).name,
                             team1: getTeamCfg(element.competition.team1).teamName,
                             team2: getTeamCfg(element.competition.team2).teamName,
                             time: timestampFormat(element.competition.time),
@@ -557,8 +548,8 @@ export const getMyGuess = () => {
                             time:timestampFormat(element.guessing.time),
                             guessTeam:getTeamCfg(element.competition[`team${element.guessing.teamSide}`]).teamName,
                             guessSide:element.guessing.teamSide,
-                            benefit:coinUnitchange(CoinType.ST,element.guessing.benefit),
-                            guessSTnum:coinUnitchange(CoinType.ST,element.guessing.num)
+                            benefit:element.guessing.benefit,
+                            guessSTnum:element.guessing.num
                         }
                     };
                     resData.push(data);

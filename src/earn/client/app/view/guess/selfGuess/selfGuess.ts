@@ -5,18 +5,17 @@
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { getMyGuess } from '../../../net/rpc';
+import { st2ST } from '../../../utils/tools';
 
 export class SelfGuess extends Widget {
     public ok: () => void;
     
     public props:any = {
-        selectTopbar:{},
         myGuessList:[]
     };
 
     public create () {
         super.create();
-        console.log();
         getMyGuess().then((resAry:any) => {
             this.props.myGuessList = this.processData(resAry);
             this.paint();
@@ -46,6 +45,11 @@ export class SelfGuess extends Widget {
                     }
                 });
             }
+        });
+
+        list.forEach(element => {
+            element.guessing.benefit = st2ST(element.guessing.benefit);
+            element.guessing.guessSTnum = st2ST(element.guessing.guessSTnum);
         });
         console.log(list);
         

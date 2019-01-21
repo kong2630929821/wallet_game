@@ -58,7 +58,7 @@ export class GuessItem extends Widget {
      * 计算比赛时间
      */
     public timer() {
-        this.props.timer = setInterval(() => {
+        const compareTime = () => {
             const nowDate = new Date();
             const guessDate = new Date(this.props.guessData.time);
             if (nowDate > guessDate) {
@@ -66,7 +66,13 @@ export class GuessItem extends Widget {
                 clearInterval(this.props.timer);
                 this.paint();
             }
+        };
+        
+        compareTime();
+        this.props.timer = setInterval(() => {
+            compareTime();
         },1000);
+
     } 
     /**
      * 赔率计算
