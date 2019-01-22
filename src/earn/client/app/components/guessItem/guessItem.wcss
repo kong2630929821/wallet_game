@@ -48,7 +48,9 @@
     text-align: center;
     font-size: 28px;
 }
-
+.notguess{
+    background: #888888;
+}
 
 
 
@@ -69,6 +71,7 @@
     padding-left: 10px;
     color: white;
     position: relative;
+    transition: all 0.3s ease;
 }
 .line{
     transform: skewX(-12deg);
@@ -88,4 +91,5 @@
     padding-right: 10px;
     color: white;
     text-align: right;
+    transition: all 0.3s ease;
 }

@@ -2,39 +2,51 @@
  * 竞猜主页
  */
 
+import { queryNoPWD } from '../../../../../app/api/JSAPI';
+import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class GuessHome extends Widget {
     public ok: () => void;
-    
-    public props:any = {
-        selectTopbar:{},
-        topbarList:[
+
+    public props: any = {
+        selectTopbar: {},
+        topbarList: [
             {
-                name:'filter',
-                title:{ zh_Hans:'筛选',zh_Hant:'篩選',en:'' },
-                component:'earn-client-app-view-guess-allGuess-filterGuess'
+                name: 'filter',
+                title: { zh_Hans: '筛选', zh_Hant: '篩選', en: '' },
+                component: 'earn-client-app-view-guess-allGuess-filterGuess'
             },
             {
-                name:'all',
-                title:{ zh_Hans:'全部',zh_Hant:'全部',en:'' },
-                component:'earn-client-app-view-guess-allGuess-allGuess'
+                name: 'all',
+                title: { zh_Hans: '全部', zh_Hant: '全部', en: '' },
+                component: 'earn-client-app-view-guess-allGuess-allGuess'
             },
             {
-                name:'self',
-                title:{ zh_Hans:'我的',zh_Hant:'我的',en:'' },
-                component:'earn-client-app-view-guess-selfGuess-selfGuess'
+                name: 'self',
+                title: { zh_Hans: '我的', zh_Hant: '我的', en: '' },
+                component: 'earn-client-app-view-guess-selfGuess-selfGuess'
             }
         ],
-        showMoreSetting:false,
-        needNotPassword:false
+        showMoreSetting: false,
+        noPassword: false
     };
 
-    public create () {
+    public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
-        
+        queryNoPWD('101', (res, msg) => {
+            if (res === 1) {
+                this.props.noPassword = true;
+            } else {
+                this.props.noPassword = false;
+            }
+            
+            this.paint();
+
+        });
+
     }
 
     /**
@@ -42,6 +54,7 @@ export class GuessHome extends Widget {
      */
     public goSetting() {
         this.props.showMoreSetting = !this.props.showMoreSetting;
+
         this.paint();
     }
 
@@ -56,7 +69,7 @@ export class GuessHome extends Widget {
     /**
      * 修改topbar
      */
-    public changeTopbar(index:number) {
+    public changeTopbar(index: number) {
         this.props.selectTopbar = this.props.topbarList[index];
         this.paint();
     }
@@ -64,18 +77,23 @@ export class GuessHome extends Widget {
     /**
      * 设置免密支付
      */
-    public setting() {
-        if (!this.props.needNotPassword) {
-            popNew('app-components1-modalBox-modalBox',{ 
-                title:'开通小额免密',
-                content:'累计未超过20ST不再验证密码，超过后直至下个20ST。' 
-            },() => {
-                console.log(11);
-                this.props.needNotPassword = true;
-            });
-        } else {
-            this.props.needNotPassword = false;
-        }
+    public async setting() {
+        let state = 0;
+        if (this.props.noPassword === false) {
+            state = 1;
+        } 
+
+        walletSetNoPSW('101', '15', state, (res, msg) => {
+            console.log(res, msg);
+            if (res === 1) {
+                this.props.noPassword = !this.props.noPassword; 
+                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                this.paint();
+            } else {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+            }
+
+        });
         this.closeSetting();
     }
 

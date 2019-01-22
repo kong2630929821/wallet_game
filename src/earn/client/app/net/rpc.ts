@@ -4,12 +4,13 @@
 import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
+import { walletPay } from '../../../../app/utils/pay';
 import { popNew } from '../../../../pi/ui/root';
-import { GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
+import { GuessingKey, GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineKTTop, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_main_competitions, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
+import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
@@ -21,8 +22,8 @@ import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/use
 import { award_query, get_achievements, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
-import { coinUnitchange, st2ST, timestampFormat } from '../utils/tools';
-import { canInviteAward, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
+import { canInviteAward, getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -447,13 +448,16 @@ export const getAllGuess = () => {
                 compList.list.forEach(element => {
                     const data = {
                         cid: element.comp.cid,
+                        matchType:element.comp.matchType,
+                        matchName: getMacthTypeCfg(element.comp.matchType).season + getMacthTypeCfg(element.comp.matchType).name,
                         team1: getTeamCfg(element.comp.team1).teamName,
                         team2: getTeamCfg(element.comp.team2).teamName,
                         time: timestampFormat(element.comp.time),
+                        week: timestampFormatWeek(element.comp.time),
                         result: element.comp.result,
                         state: element.comp.state,
-                        team1Num: element.team1num,
-                        team2Num: element.team2num
+                        team1Num: coinUnitchange(CoinType.ST,element.team1num),
+                        team2Num: coinUnitchange(CoinType.ST,element.team2num)
                     };
                     resData.push(data);
                 });
@@ -474,13 +478,39 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
     return new Promise((resolve, reject) => {
         const guessingReq = new GuessingReq();
         guessingReq.cid = cid;
-        guessingReq.num = num;
+        guessingReq.num = ST2st(num);
         guessingReq.teamSide = teamSide;
         clientRpcFunc(start_guessing, guessingReq, (r: Result) => {
             console.log('[活动]rpc-betGuess---------------', r);
             if (r.reslutCode === 1) {
-                console.log('下注成功!!!!!!!!：', r);
-                resolve(r);
+                const order = JSON.parse(r.msg);
+                walletPay(order,(res,msg) => {
+                    if (res === 1) {
+                        resolve(order);
+                    } else {
+                        showActError(res);
+                        reject(res);
+                    }
+                });
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 竞猜下注成功后查询
+ * @param order 订单信息
+ */
+export const queryBetGuess = (oid:string) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(guessing_pay_query, oid, (r: Result) => {
+            console.log('[活动]rpc-queryBetGuess---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
             } else {
                 showActError(r.reslutCode);
                 reject(r);
@@ -497,8 +527,59 @@ export const getMyGuess = () => {
         clientRpcFunc(get_user_guessingInfo, null, (r: Result) => {
             console.log('[活动]rpc-getMyGuess---------------', r);
             if (r.reslutCode === 1) {
-                console.log('获取我的竞猜成功!!!!!!!!：', r);
-                resolve(r);
+                const compList = JSON.parse(r.msg);
+                const resData = [];
+                compList.list.forEach(element => {
+                    const data = {
+                        guessData:{
+                            cid: element.competition.cid,
+                            matchType:element.competition.matchType,
+                            matchName: getMacthTypeCfg(element.competition.matchType).season + getMacthTypeCfg(element.competition.matchType).name,
+                            team1: getTeamCfg(element.competition.team1).teamName,
+                            team2: getTeamCfg(element.competition.team2).teamName,
+                            time: timestampFormat(element.competition.time),
+                            week: timestampFormatWeek(element.competition.time),
+                            result: element.competition.result,
+                            state: element.competition.state,
+                            team1Num: coinUnitchange(CoinType.ST,element.team1num),
+                            team2Num: coinUnitchange(CoinType.ST,element.team2num)
+                        },
+                        guessing:{
+                            time:timestampFormat(element.guessing.time),
+                            guessTeam:getTeamCfg(element.competition[`team${element.guessing.teamSide}`]).teamName,
+                            guessSide:element.guessing.teamSide,
+                            benefit:element.guessing.benefit,
+                            guessSTnum:element.guessing.num
+                        }
+                    };
+                    resData.push(data);
+                });
+                console.log('获取我的竞猜成功!!!!!!!!：', compList);
+                resolve(resData);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取单个竞猜奖池信息
+ */
+export const getOneGuessInfo = (cid:number) => {
+    return new Promise((resolve, reject) => {
+
+        clientRpcFunc(get_compJackpots, cid, (r: Result) => {
+            console.log('[活动]rpc-getOneGuessInfo---------------', r);
+            if (r.reslutCode === 1) {
+                const data = JSON.parse(r.msg);
+                const reaData = {
+                    uid: data.uid,
+                    team1Num : coinUnitchange(CoinType.ST,data.jackpot1),
+                    team2Num : coinUnitchange(CoinType.ST,data.jackpot2)
+                };
+                resolve(reaData);
             } else {
                 showActError(r.reslutCode);
                 reject(r);
