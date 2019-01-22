@@ -1,16 +1,17 @@
 <div w-class="body">
     <div w-class="topbar">
-        <div w-class="topbar-item">2019LPL春季赛常规赛</div>
-        <div w-class="topbar-item">2019LPL春季赛常规赛</div>
-        <div w-class="topbar-item">2019LPL春季赛常规赛</div>
-        <div w-class="topbar-item">2019LPL春季赛常规赛</div>
+        {{for i,item of it.guessList}}
+            <div on-tap="changeTopbar({{i}})" w-class="topbar-item" style="color:{{item.matchType===it.selectMacth.matchType?'#5DDDFF':'#ffffff'}}">{{item.matchName}}</div>
+        {{end}}
     </div>
     <div style="overflow: hidden auto;scroll-behavior: smooth;height: 100%;padding-bottom: 50px;">
-        <div w-class="day-item">
-            <div w-class="top-date">01月14日 星期一</div>
-            <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-            <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-            <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        </div>
+        {{for i,item of it.selectMacth.list}}
+            <div w-class="day-item">
+                <div w-class="top-date">{{item.time}} {{item.week}}</div>
+                {{for j,item1 of item.list}}
+                    <widget w-tag="earn-client-app-components-guessItem-guessItem">{showBtn:true,guessData:{{item1}} }</widget>
+                {{end}}
+            </div>
+        {{end}}
     </div>
 </div>

@@ -1,20 +1,10 @@
 <div w-class="body">
+    {{for i,item of it.guessList}}
     <div w-class="day-item">
-        <div w-class="top-date">01月14日 星期一</div>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
+        <div w-class="top-date">{{item.time}} {{item.week}}</div>
+        {{for j,item1 of item.data}}
+        <widget w-tag="earn-client-app-components-guessItem-guessItem">{showBtn:true,guessData:{{item1}} }</widget>
+        {{end}}
     </div>
-    <div w-class="day-item">
-        <div w-class="top-date">01月14日 星期一</div>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-    </div>
-    <div w-class="day-item">
-        <div w-class="top-date">01月14日 星期一</div>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-        <widget w-tag="earn-client-app-components-guessItem-guessItem">{guessBtn:true}</widget>
-    </div>
+    {{end}}
 </div>

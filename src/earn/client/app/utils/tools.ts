@@ -21,6 +21,17 @@ export const timestampFormat = (timestamp) => {
     return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
 };
 
+export const timestampFormatWeek = (timestamp) => {
+    if (typeof(timestamp) === 'string') {
+        // tslint:disable-next-line:radix
+        timestamp = parseInt(timestamp);
+    }
+    const weekAry = ['日', '一', '二', '三', '四', '五', '六'];
+    const date = new Date(timestamp);
+
+    return `星期${weekAry[date.getDay()]}`;
+};    
+
 /**
  * st小转大单位
  * @param stNum st数量
@@ -32,6 +43,18 @@ export const st2ST = (stNum:number) => {
     }
 
     return ST;
+};
+/**
+ * ST大转小单位
+ * @param STNum ST数量
+ */
+export const ST2st = (STNum:number) => {
+    let st = 0;
+    if (STNum !== 0) {
+        st = STNum * 100;
+    }
+
+    return st;
 };
 
 /**
@@ -61,7 +84,7 @@ export const btc2BTC = (btcNum:number) => {
 };
 
 /**
- * 货币单位转换
+ * 显示货币单位转换
  */
 export const coinUnitchange = (coinType:CoinType,count:number) => {
     switch (coinType) {

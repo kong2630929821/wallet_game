@@ -8,10 +8,10 @@
     <div w-class="content">
         {{if it.showMoreSetting}}
         <div w-class="moreSetting" on-tap="setting(0)">
-            {{if it.needNotPassword}}
-            关闭免密支付
+            {{if it.noPassword}}
+                关闭免密支付
             {{else}}
-            开启免密支付
+                开启免密支付
             {{end}}
         </div>
         {{end}}
