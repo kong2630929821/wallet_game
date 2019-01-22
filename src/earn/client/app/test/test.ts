@@ -252,7 +252,7 @@ export const objtostr_test = () => {
 // 竞猜投注
 export const guessing_test = () => {
     const guessingReq = new GuessingReq();
-    guessingReq.cid = 4;
+    guessingReq.cid = 6;
     guessingReq.teamSide = 1;
     guessingReq.num = 200;
     clientRpcFunc(start_guessing, guessingReq, (r: FreePlay) => {

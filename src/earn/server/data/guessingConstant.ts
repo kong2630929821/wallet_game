@@ -17,6 +17,11 @@ export const NOT_SETTLE_YET = 0;
 export const GUESSING_IS_SETTLING = 1;
 export const GUESSING_HAS_SETTLED = 2;
 
+// 支付状态
+export const NOT_PAY_YET = 0;
+export const IS_PAYING_NOW = 1;
+export const BILL_ALREADY_PAY = 2;
+
 // 单场竞猜最小投注
 export const EACH_GUESSING_MIN = 10; // 0.1ST
 // 单场竞猜投注上限
