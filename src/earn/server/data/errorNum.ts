@@ -21,6 +21,12 @@ export const HOE_NOT_ENOUGH = 1104;
 export const ARE_YOU_SUPERMAN = 1105;
 // 这座矿山不存在
 export const MINE_NOT_EXIST = 1106;
+// 当日看广告次数已达上限
+export const ONEDAY_ADAWARD_LIMIT = 1107;
+// 广告编号错误
+export const ADVERTISEMENT_NUM_ERROR = 1108;
+// 看广告时间间隔小于最低时间间隔
+export const ADVERTISEMENT_TIME_ERROR = 1109;
 
 // 邀请人数不足兑换奖励
 export const INVITE_NOT_ENOUGH = 2101;

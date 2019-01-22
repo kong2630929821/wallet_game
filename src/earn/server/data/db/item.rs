@@ -284,3 +284,13 @@ struct InviteAwardRes {
     resultNum: u32,
     award:Option<&[Award]>
 }
+
+/**
+*用户每日观看广告数量表
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+struct DailyWatchAdNum {
+    id: String, // 用户id和天数拼成的字符串
+    num: u8, // 当天已领取广告奖励次数
+    lastTime: u32 // 上次看广告的时间
+}

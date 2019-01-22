@@ -11,6 +11,7 @@ export const GUEST_TEAM_NUM = 2;
 export const RESULT_NOT_EXIST = 0;
 export const RESULT_TEAM1_WIN = 1;
 export const RESULT_TEAM2_WIN = 2;
+export const COMPETITION_HAS_CANCLED = 3;
 
 // 结算状态
 export const NOT_SETTLE_YET = 0;

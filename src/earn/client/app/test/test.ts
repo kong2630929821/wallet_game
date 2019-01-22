@@ -21,7 +21,7 @@ import { award as awardR, bigint_test, db_test, get_objStr, hit_test, item_add, 
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { add_convert } from '../../../server/util/item_util.p';
 import { clientRpcFunc, subscribe } from '../net/init';
 
@@ -252,7 +252,7 @@ export const objtostr_test = () => {
 // 竞猜投注
 export const guessing_test = () => {
     const guessingReq = new GuessingReq();
-    guessingReq.cid = 6;
+    guessingReq.cid = 7;
     guessingReq.teamSide = 1;
     guessingReq.num = 200;
     clientRpcFunc(start_guessing, guessingReq, (r: FreePlay) => {
@@ -275,6 +275,14 @@ export const get_my_guessing = () => {
     });
 };
 
+// 广告奖励
+export const ad_award_test = () => {
+    clientRpcFunc(get_ad_award, 1, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 编辑比赛
 export const competition_edit_test = () => {
     popNew('earn-client-app-test-compEditor');
 };
@@ -391,6 +399,10 @@ const props = {
         {
             name: '竞猜历史',
             func: () => { get_my_guessing(); }
+        },
+        {
+            name: '广告奖励',
+            func: () => { ad_award_test(); }
         },
         {
             name: '添加比赛',
