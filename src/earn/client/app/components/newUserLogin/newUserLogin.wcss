@@ -15,7 +15,7 @@
     width: 600px;
     border-radius: 12px;
     position:relative;
-    background: url('../../earn/client/app/res/image/newUserLogin.png');
+    background: url(../../res/image/newUserLogin.png);
     background-position: top;
     background-repeat: no-repeat;
 }

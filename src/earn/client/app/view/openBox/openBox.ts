@@ -1,4 +1,3 @@
-
 /**
  * 开宝箱 - 首页
  */
@@ -19,54 +18,60 @@ export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 interface Props {
-    showTip:any; // 空宝箱
-    isOpening:boolean;// 正在开启宝箱中
+    showTip: any; // 空宝箱
+    isOpening: boolean;// 正在开启宝箱中
     selectChest: any; // 选择的宝箱类型
     boxList: any; // 宝箱列表
     STbalance: number; // 账户余额(st)
     chestList: any; // 宝箱选择列表
-    isFirstPlay: boolean; // 每日第一次免费
+    isFirstPlay: boolean; // 每日第一次免费,
+    ledShow:boolean;  // 彩灯状态
+    LEDTimer:any;     // 彩灯控制器
 }
 
 export class OpenBox extends Widget {
     public ok: () => void;
 
     public props: Props = {
-        showTip:{ zh_Hans:'',zh_Hant:'',en:'' },
-        isOpening:false,
-        boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:已开
-        STbalance:0,
+        showTip: { zh_Hans: '', zh_Hant: '', en: '' },
+        isOpening: false,
+        boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:空宝箱 2:获奖
+        STbalance: 0,
         chestList: [
             {
                 type: ActivityType.PrimaryChest,
                 name: { zh_Hans: '银券', zh_Hant: '銀券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.PrimaryChest)
+                needTicketNum: getTicketNum(ActivityType.PrimaryChest)
             },
             {
                 type: ActivityType.MiddleChest,
                 name: { zh_Hans: '金券', zh_Hant: '金券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.MiddleChest)
+                needTicketNum: getTicketNum(ActivityType.MiddleChest)
             },
             {
-                type:ActivityType.AdvancedChest,
+                type: ActivityType.AdvancedChest,
                 name: { zh_Hans: '彩券', zh_Hant: '彩券', en: '' },
-                needTicketNum:getTicketNum(ActivityType.AdvancedChest)
+                needTicketNum: getTicketNum(ActivityType.AdvancedChest)
             }
         ],
         selectChest: {},
-        isFirstPlay:true
+        isFirstPlay: true,
+        ledShow:false,
+        LEDTimer:{}
     };
 
     public create() {
         super.create();
         this.change(0);
-        isFirstFree().then((res:any) => {
+        isFirstFree().then((res: any) => {
             this.props.isFirstPlay = res.freeBox;
             this.setChestTip(2);
         });
         this.initData();
+        this.ledTimer();
+        // inviteUsersToGroup();
     }
-    
+
     /**
      * 初始数据
      */
@@ -79,34 +84,35 @@ export class OpenBox extends Widget {
      * 打开宝箱 
      * @param num 宝箱序数
      */
-    public openBox(e:any,num: number) {
+    public openBox(e: any, num: number) {
         if (this.props.isOpening) {
             return;
         }
-        if (this.props.boxList[num] === 1) {  // 宝箱已打开
-            popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+        if (this.props.boxList[num] !== 0) {  // 宝箱已打开
+            popNew('app-components1-message-message', { content: this.config.value.tips[1] });
 
             return;
         }
         if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
             if (!((this.props.selectChest.type === ActivityType.PrimaryChest) && this.props.isFirstPlay)) {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
 
                 return;
 
             }
         }
         this.startOpenChest(e);
-        openChest(this.props.selectChest.type).then((res:any) => {
+        openChest(this.props.selectChest.type).then((res: any) => {
             this.props.isFirstPlay = false;
             this.endOpenChest(e);
             if (res.award.awardType !== 9527) {
-                popNew('earn-client-app-view-components-lotteryModal-lotteryModal', res.award);
+                popNew('earn-client-app-components-lotteryModal-lotteryModal', res.award);
+                this.props.boxList[num] = 1;
                 this.setChestTip(2);
             } else {
+                this.props.boxList[num] = 2;
                 this.setChestTip();
             }
-            this.props.boxList[num] = 1;
             this.paint();
         }).catch((err) => {
             this.endOpenChest(e);
@@ -123,9 +129,9 @@ export class OpenBox extends Widget {
      * 
      * @param tipIndex 提示序号 0:免费,1:空宝箱,2:售价
      */
-    public setChestTip(tipIndex:number = 1) {
+    public setChestTip(tipIndex: number = 1) {
         const chestTips = this.config.value.chestTips;
-        
+
         switch (tipIndex) {
             case 0:
                 this.props.showTip = chestTips[0];
@@ -143,19 +149,19 @@ export class OpenBox extends Widget {
                 if (this.props.isFirstPlay && this.props.selectChest.type === ActivityType.PrimaryChest) {
                     this.setChestTip(0);
                 } else {
-                    this.props.showTip = { zh_Hans:`售价：${this.props.selectChest.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectChest.needTicketNum}ST/1個`,en:'' };
+                    this.props.showTip = { zh_Hans: `售价：${this.props.selectChest.needTicketNum}ST/1个`, zh_Hant: `售價：${this.props.selectChest.needTicketNum}ST/1個`, en: '' };
                 }
                 this.paint();
                 break;
 
             default:
-        }  
+        }
     }
 
     /**
      * 结束开宝箱
      */
-    public endOpenChest(e:any) {
+    public endOpenChest(e: any) {
         const $chest = getRealNode(e.node);
         $chest.className = '';
         this.props.isOpening = false;
@@ -165,7 +171,7 @@ export class OpenBox extends Widget {
     /**
      * 开始开宝箱
      */
-    public startOpenChest(e:any) {
+    public startOpenChest(e: any) {
         const $chest = getRealNode(e.node);
         $chest.className = 'isOpenbox';
         this.props.isOpening = true;
@@ -192,6 +198,18 @@ export class OpenBox extends Widget {
     }
 
     /**
+     * 计算比赛时间
+     */
+    public ledTimer() {
+
+        this.props.LEDTimer = setInterval(() => {
+            this.props.ledShow = !this.props.ledShow;
+            this.paint();
+        }, 1000);
+
+    }
+
+    /**
      * 去充值
      */
     public goRecharge() {
@@ -213,6 +231,12 @@ export class OpenBox extends Widget {
         popNew('earn-client-app-view-myProduct-myProduct', { type: 3 });
     }
 
+    public destroy() {
+        clearInterval(this.props.LEDTimer);
+
+        return true;
+    }
+
     /**
      * 返回上一页
      */
@@ -223,12 +247,12 @@ export class OpenBox extends Widget {
 
 // ===================================================== 立即执行
 
-register('userInfo/uid',(r:any) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
+register('userInfo/uid', (r: any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });
 
-register('balance/ST',(r:any) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
+register('balance/ST', (r: any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });

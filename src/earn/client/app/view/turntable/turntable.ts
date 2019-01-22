@@ -65,6 +65,7 @@ export class Turntable extends Widget {
         this.change(0);
         this.initTurntable();
         this.initData();
+        // inviteUsersToGroup();
     }
 
     /**

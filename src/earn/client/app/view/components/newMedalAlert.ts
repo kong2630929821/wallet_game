@@ -3,6 +3,7 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
+import { getStore } from '../../store/memstore';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 
 interface Props {
@@ -18,7 +19,8 @@ export class NewMedalAlert extends Widget {
 
         medalImg: '',
         condition: 0, // 勋章获得条件
-        medalTitle: {} // 勋章称号
+        medalTitle: {}, // 勋章称号,
+        userInfo:getStore('userInfo')
     };
 
     public setProps(props: Props) {
@@ -40,6 +42,8 @@ export class NewMedalAlert extends Widget {
             medalId: props.medalId,
             medalType: props.medalType
         };
+        console.log(this.props);
+        
     }
 
     /**

@@ -36,14 +36,23 @@
     background-position: center;
     background-repeat: no-repeat;
 }
-
+.box-content{
+    width: 100%;
+    height: 550px;
+    padding: 0px 22px;
+    padding-top: 5px;
+    margin-top: 135px;
+    position: relative;
+}
 .box-list{
-    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 60px;
+    position: absolute;
+    top: 40px;
+    left: 0px;
     height: 510px;
-    padding: 0px 60px;
-    margin-top: 175px;
-    display:flex;
-    flex-wrap:wrap;
+    width: 100%;
 }
 
 .box{
@@ -68,10 +77,13 @@
 
 .sale-money{
     height:60px;
+    width: 60%;
+    margin: 0 20px;
+    text-align: center;
     line-height:50px;
     font-size:32px;
     color:#FFFFFF;
-    padding:0px 25px;
+    padding:0px 15px;
     background:#B01E17;
     border-radius:30px;
     border:4px solid #9A1C1C;
@@ -80,7 +92,6 @@
 .sale-btn{
     height:60px;
     width: 150px;
-    padding:0px 25px;
     background:linear-gradient(180deg,#FFEB86 0%,#F78C18 100%);
     border-radius:30px;
     border:4px solid rgba(107, 8, 8, 0.2);
