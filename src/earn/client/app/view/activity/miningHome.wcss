@@ -106,7 +106,6 @@
     height:60px;
     background:linear-gradient(180deg,rgba(138,250,255,1) 0%,rgba(91,192,255,1) 100%);
     border-radius:40px;
-    border:2px solid;
     border-image:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(57,74,103,0.5)) 2 2;
     font-size:24px;
     color:rgba(34,34,34,1);

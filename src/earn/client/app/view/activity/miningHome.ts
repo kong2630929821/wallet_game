@@ -1,6 +1,7 @@
 /**
  * digging mines home
  */
+import { watchAd } from '../../../../../app/logic/native';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -225,6 +226,13 @@ export class MiningHome extends Widget {
     public updateMiningedNumber(miningedNumber:number) {
         this.props.miningedNumber = miningedNumber;
         this.paint();
+    }
+
+    public watchAdClick() {
+        watchAd(1,(err,res) => {
+            console.log('ad err = ',err);
+            console.log('ad res = ',res);
+        });
     }
 }
 
