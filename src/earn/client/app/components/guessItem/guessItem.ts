@@ -49,6 +49,7 @@ export class GuessItem extends Widget {
         if (props.showBtn) {
             this.props.showBtn = props.showBtn;
         }
+        this.props.guessBtn = true;// 初始化
         this.timer();
         this.oddsCompute();
         this.paint();
@@ -61,7 +62,7 @@ export class GuessItem extends Widget {
         const compareTime = () => {
             const nowDate = new Date();
             const guessDate = new Date(this.props.guessData.time);
-            if (nowDate > guessDate) {
+            if (nowDate > guessDate || this.props.guessData.result === 3) {
                 this.props.guessBtn = false;
                 clearInterval(this.props.timer);
                 this.paint();

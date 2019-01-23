@@ -26,7 +26,11 @@
                 {{if it.guessBtn}}
                 <div on-tap="goGuess" w-class="guess-btn">预测</div>
                 {{else}}
-                <div w-class="guess-btn notguess">停止预测</div>
+                    {{if it.guessData.result ===3}}
+                    <div w-class="guess-btn notguess">比赛取消</div>
+                    {{else}}
+                    <div w-class="guess-btn notguess">停止预测</div>
+                    {{end}}
                 {{end}}
             {{end}}
         </div>

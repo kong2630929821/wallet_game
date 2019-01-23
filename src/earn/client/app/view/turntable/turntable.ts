@@ -65,6 +65,7 @@ export class Turntable extends Widget {
         this.change(0);
         this.initTurntable();
         this.initData();
+        // inviteUsersToGroup();
     }
 
     /**
@@ -190,8 +191,10 @@ export class Turntable extends Widget {
      * 修改转动角度
      */
     public changeDeg(resData:any) {
+        console.log('changeDeg------------------',resData);
+        
         const $turnStyle = document.getElementById('turntable').style;
-        if (resData.resultNum) {   // 中奖
+        if (resData.resultNum && resData.resultNum === 1) {   // 请求成功
             this.props.prizeList.forEach(element => {
                 if (element.awardType === resData.award.awardType) {
                     this.props.turnNum = element.deg;
@@ -201,7 +204,7 @@ export class Turntable extends Widget {
                     }
                 }
             });
-        } else { // 未中奖
+        } else { // 请求失败
             this.props.prizeList.forEach(element => {
                 if (element.awardType === 9527) {
                     this.props.turnNum = element.deg;   

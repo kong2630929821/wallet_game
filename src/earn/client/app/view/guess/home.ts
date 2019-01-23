@@ -37,7 +37,7 @@ export class GuessHome extends Widget {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
         queryNoPWD('101', (res, msg) => {
-            if (res === 1) {
+            if (!res) {
                 this.props.noPassword = true;
             } else {
                 this.props.noPassword = false;
@@ -46,7 +46,7 @@ export class GuessHome extends Widget {
             this.paint();
 
         });
-
+        // inviteUsersToGroup();
     }
 
     /**
@@ -85,7 +85,7 @@ export class GuessHome extends Widget {
 
         walletSetNoPSW('101', '15', state, (res, msg) => {
             console.log(res, msg);
-            if (res === 1) {
+            if (!res) {
                 this.props.noPassword = !this.props.noPassword; 
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
                 this.paint();

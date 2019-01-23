@@ -71,10 +71,12 @@ export class GuessDetail extends Widget {
                 this.initData();
                 this.inputChange({ value:this.props.defaultGuessStNum });
             }).catch(err => {
-                // popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+                popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+                console.log('查询下注失败',err);
             });
         }).catch(err => {
-            // popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+            popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+            console.log('下注失败！！！！！',err);
         });
     }
 

@@ -25,6 +25,7 @@
     align-items: center;
 }
 .guess-center-team{
+    width: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
