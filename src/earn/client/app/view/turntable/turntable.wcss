@@ -27,7 +27,7 @@
     height:1000px;;
     width:100%;
     flex:0 0 auto;
-    background-image: url('../../earn/client/app/res/image/turntable-bg.png');
+    background-image: url(../../res/image/turntable-bg.png);
     background-repeat: no-repeat;
     background-position: top;
 }
@@ -108,7 +108,7 @@
     padding: 70px 40px 0px;
     height:300px;
     border-radius:12px;
-    background-image: url('../../earn/client/app/res/image/turntable-bg1.png');
+    background-image: url(../../res/image/turntable-bg1.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
@@ -118,7 +118,7 @@
     width: 220px;
     height: 120px;
     font-size: 32px;
-    background-image: url('../../earn/client/app/res/image/turntable-btn-bg.png');
+    background-image: url(../../res/image/turntable-btn-bg.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size:100%;
@@ -134,7 +134,7 @@
 
 .select{
     font-size: 28px;
-    background-image: url('../../earn/client/app/res/image/turntable-btn-bg-select.png');
+    background-image: url(../../res/image/turntable-btn-bg-select.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;

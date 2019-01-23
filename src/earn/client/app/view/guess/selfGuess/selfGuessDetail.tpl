@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            {{if it.guessData.state !== 2}}
+            {{if it.guessData.state !== 2 || it.guessData.result ===3}}
             <div w-class="btn1" on-tap="continueGuess">继续加油</div>
             {{else}}
             <div w-class="btn1" on-tap="backPrePage">返回</div>
