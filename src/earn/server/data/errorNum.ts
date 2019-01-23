@@ -54,6 +54,8 @@ export const UNIFIEDORDER_API_FAILD = 4108;
 export const GUESSING_NOT_EXIST = 4109;
 // 获取订单信息失败
 export const GET_ORDERINFO_FAILD = 4110;
+// 订单不存在
+export const ORDER_NOT_EXIST = 4111;
 
 // 用户奖券不足
 export const TICKET_NOT_ENOUGH = 7101;
