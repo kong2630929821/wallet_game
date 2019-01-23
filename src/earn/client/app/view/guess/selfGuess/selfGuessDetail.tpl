@@ -15,9 +15,12 @@
                         {{if it.guessData.result ===1}}
                         <img src="../../../res/image/guessTeam/{{it.guessData.team1}}.png" style="transform: translateY(-100px);" width="200px" height="200px" />
                         <div style="margin-top:-70px">{{it.guessData.team1}}胜</div>
-                        {{else}}
+                        {{elseif it.guessData.result ===2}}
                         <img src="../../../res/image/guessTeam/{{it.guessData.team2}}.png" style="transform: translateY(-100px);" width="200px" height="200px" />
                         <div style="margin-top:-70px">{{it.guessData.team2}}胜</div>
+                        {{elseif it.guessData.result ===3}}
+                        <img src="../../../res/image/guessing-team.png" style="transform: translateY(-100px);" width="200px" height="200px" />
+                        <div style="margin-top:-70px">比赛取消</div>
                         {{end}}
                     {{end}}
                 </div>
@@ -48,12 +51,12 @@
                     </div>
                 </div>
             </div>
-            {{if it.guessData.state !== 2}}
+            {{if it.guessData.state !== 2 || it.guessData.result ===3}}
             <div w-class="btn1" on-tap="continueGuess">继续加油</div>
             {{else}}
             <div w-class="btn1" on-tap="backPrePage">返回</div>
             {{end}}
-            <div w-class="btn2" on-tap="1">分享</div>
+            <div w-class="btn2" on-tap="shareClick">分享</div>
         </div>
     </div>
 

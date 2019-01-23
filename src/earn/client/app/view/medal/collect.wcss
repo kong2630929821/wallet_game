@@ -53,7 +53,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    background: url('../../earn/client/app/res/image/cabinet-bg.png');
+    background: url(../../res/image/cabinet-bg.png);
 }
 .collect-item{
     height: 242px;

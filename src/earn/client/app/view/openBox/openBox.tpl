@@ -4,18 +4,26 @@
     <div w-class="content">
         <div w-class="center">
             {{% 宝箱九宫格}}
-            <div w-class="box-list">
-                {{for i,item in it.boxList}}
-                <div w-class="box">
-                    {{if item === 1}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}boxOpen.png" height="100%;"
-                        style="margin:0px auto;" />
-                    {{else}}
-                    <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}box.png" height="100%;"
-                        style="margin:0px auto;" />
+            <div w-class="box-content">
+                {{if it.ledShow}}
+                <img src="../../res/image/openBox-LED1.png" alt="" />
+                {{end}}
+                <div w-class="box-list">
+                    {{for i,item in it.boxList}}
+                    <div w-class="box">
+                        {{if item === 0}}
+                        <img on-tap="openBox(e,{{i}})" src="../../res/image/{{it.selectChest.type}}box.png" height="100%;"
+                            style="margin:0px auto;" />
+                        {{elseif item === 1}}
+                        <img src="../../res/image/{{it.selectChest.type}}boxOpen.png" height="100%;"
+                            style="margin:0px auto;" />
+                        {{elseif item === 2}}
+                        <img src="../../res/image/{{it.selectChest.type}}boxEmpty.png" height="100%;"
+                            style="margin:0px auto;" />
+                        {{end}}
+                    </div>
                     {{end}}
                 </div>
-                {{end}}
             </div>
             {{% 售价}}
             <div w-class="sale">
