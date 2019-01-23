@@ -9,7 +9,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
-import { getACHVmedal } from '../../net/rpc';
+import { getACHVmedal, getKTbalance } from '../../net/rpc';
 import { register } from '../../store/memstore';
 import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
@@ -56,6 +56,7 @@ export class Medal extends Widget {
             collectMedal:0
             
         };
+        getKTbalance();
         this.initData();
     }
 
@@ -157,6 +158,11 @@ export class Medal extends Widget {
 // ===================================================== 立即执行
 
 register('good', (goods: Item[]) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w && w.initData();
+});
+
+register('balance/KT', (goods: Item[]) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
 });
