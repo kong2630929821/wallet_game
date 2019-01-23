@@ -33,6 +33,8 @@ export class EarnHome extends Widget {
     public init() {
         this.language = this.config.value[getLang()];
         const mine = getStore('mine');
+        console.log('home--------mine-----------------',mine);
+        
         this.props = {
             ...this.props,
             scroll: false,
@@ -91,8 +93,10 @@ export class EarnHome extends Widget {
             downAnimate:'',
             animateStart:false,
             miningKTnum:mine.miningKTnum,
-            miningRank:mine.miningRank
+            miningRank:mine.miningRank,
+            miningMedalId:mine.miningMedalId
         };
+        this.paint();
         setTimeout(() => {
             this.scrollPage();
         }, 17);
@@ -169,6 +173,7 @@ export class EarnHome extends Widget {
     public updateMiningInfo(mine:Mine) {
         this.props.miningRank = mine.miningRank;
         this.props.miningKTnum = mine.miningKTnum;
+        this.props.miningMedalId = mine.miningMedalId;
         this.paint();
     }
 
