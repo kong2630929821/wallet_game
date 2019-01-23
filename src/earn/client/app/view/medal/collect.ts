@@ -65,16 +65,11 @@ export class Collect extends Widget {
      * 分享
      */
     public shareClick() {
-        popNew('earn-client-app-view-components-newMedalAlert', {
-            // tslint:disable-next-line:radix
-            medalId:8017,
-            medalType:MedalType.rankMedal
+        makeScreenShot(() => {
+            popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
+        },() => {
+            popNew('app-components1-message-message',{ content:this.config.value.tips });
         });
-        // makeScreenShot(() => {
-        //     popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
-        // },() => {
-        //     popNew('app-components1-message-message',{ content:this.config.value.tips });
-        // });
     }
 
     /**

@@ -54,14 +54,16 @@
     margin-top: 15px;
 }
 .medal-btn{
-    width:500px;
-    height:96px;
     border-radius:12px;
     font-size:32px;
     font-weight:500;
     color:#ffffff;
-    text-align: center;
-    line-height: 96px;
+    margin-left:15px;
+}
+.content-bottom{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 

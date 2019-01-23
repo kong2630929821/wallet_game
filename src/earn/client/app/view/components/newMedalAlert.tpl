@@ -15,14 +15,16 @@
 
             <div w-class="other">
                 <div w-class="other-say">
-                    <widget style="font-size: 32px;" w-tag="pi-ui-lang">{"zh_Hans":"成功就是比别人优秀一点点","zh_Hant":"成功就是比别人优秀一点点","en":""}</widget>
-                    <widget style="font-size: 26px;text-align: right;" w-tag="pi-ui-lang">{"zh_Hans":"by {{it.userInfo.name}}","zh_Hant":"by {{it.userInfo.name}}","en":""}</widget>
+                    <widget style="font-size: 32px;" w-tag="pi-ui-lang">{"zh_Hans":"成功就是比别人优秀一点点","zh_Hant":"成功就是比別人優秀一點點","en":"Success is a little better than others."}</widget>
+                    <span style="font-size: 26px;text-align: right;">by {{it.userInfo.name}}</span>
                 </div>
-                {{if }}
                 <img src="{{it.userInfo.avatar?it.userInfo.avatar:'../../res/image1/default_head.png'}}" height="100px" width="100px" alt="" />
             </div>
 
         </div>
-        <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"秀一下","zh_Hant":"秀一下","en":""}</widget>
+        <div w-class="content-bottom" on-tap="shareWX">
+            <img src="../../res/image1/img_share_wechat.png" alt="" width="45px" height="45px"/>
+            <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"秀一下","zh_Hant":"秀一下","en":""}</widget>
+        </div>
     </div>
 </div>

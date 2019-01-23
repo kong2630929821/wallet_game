@@ -2,6 +2,9 @@
  * 勋章成就 -- 新获勋章提示
  */
 
+import { makeScreenShot } from '../../../../../app/logic/native';
+import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getStore } from '../../store/memstore';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
@@ -43,6 +46,21 @@ export class NewMedalAlert extends Widget {
             medalType: props.medalType
         };
         console.log(this.props);
+        
+    }
+
+    public shareWX() {
+        makeScreenShot(() => {
+            const stp = new ShareToPlatforms();
+            stp.init();
+            stp.shareScreenShot({
+                success: (result) => { console.log('share success callback');alert(11); },
+                fail: (result) => { console.log('share fail callback');alert(22); },
+                platform: ShareToPlatforms.PLATFORM_WEBCHAT
+            });
+        }, () => {
+            popNew('app-components1-message-message', { content: this.config.value.tips });
+        });
         
     }
 
