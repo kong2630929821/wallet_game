@@ -12,8 +12,8 @@
             <widget w-class="product-name" w-tag="pi-ui-lang">{"zh_Hans":{{it.detail.name}},"zh_Hant":{{it.detail.name}},"en":""}</widget>
             <div w-class="product-money">
                 <div w-class="money-one">
-                    <img src="../../res/image/ticket7002.png" width="50px" height="40px;" alt="" />
                     <span w-class="money-num">{{it.detail.count / 100}}</span>
+                    <span w-class="money-num" style="color:#888888;font-size:24px;">ST</span>
                 </div>
             </div>
             <div w-class="validity-time">

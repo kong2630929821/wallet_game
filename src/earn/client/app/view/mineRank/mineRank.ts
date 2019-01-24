@@ -55,7 +55,7 @@ export class MineRank extends Widget {
         subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
             console.log('[活动]挖矿特殊奖励公告----------------', r);
             const userInfo:any = await getUserList([r.openid],1);
-            const dataStr = `${userInfo.nickName}挖到了${coinUnitchange(r.awardType,r.count)} ${CoinType[r.awardType]}`;
+            const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
             this.props.notice.push(dataStr);
             this.props.notice.shift();
             console.log('this.props.notice----------------', this.props.notice);
@@ -88,6 +88,7 @@ export class MineRank extends Widget {
             this.props.myRank.userName = getStore('userInfo/name');
             this.props.myRank.rank = res.myNum;
             this.props.myRank.ktNum = res.myKTNum;
+            this.props.myRank.medal = res.myMedal;
             this.paint();
         });
     }
@@ -102,7 +103,6 @@ export class MineRank extends Widget {
                 openidAry.push(parseInt(element.openid));
             });
             const userInfoList = await getUserList(openidAry, 1);
-
             for (let i = 0; i < data.length; i++) {
                 const element = data[i];
                 const elementUser = userInfoList[i];

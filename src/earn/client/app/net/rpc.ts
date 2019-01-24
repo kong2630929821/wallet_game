@@ -265,6 +265,7 @@ export const getRankList = () => {
                 const mine = getStore('mine');
                 mine.miningRank = r.myNum || 0;
                 mine.miningKTnum = r.myKTNum || 0;
+                mine.miningMedalId = r.myMedal;
                 setStore('mine',mine);
                 resolve(r);
             } else {

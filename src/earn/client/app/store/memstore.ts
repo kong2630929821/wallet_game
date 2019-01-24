@@ -125,7 +125,8 @@ const store:Store = {
     mine:{
         miningedNumber:0,
         miningRank:0,
-        miningKTnum:0
+        miningKTnum:0,
+        miningMedalId:8001
     },
     goods:[],
     balance:{
@@ -144,6 +145,7 @@ export interface Mine {
     miningedNumber:number;  // 今天已挖矿山数量
     miningRank:number; // 排名
     miningKTnum:number; // KT数量
+    miningMedalId:number;  // 挂出的勋章id
 }
 
 export interface Invited {

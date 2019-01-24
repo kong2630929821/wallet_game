@@ -210,6 +210,17 @@ export class OpenBox extends Widget {
     }
 
     /**
+     * 点击效果
+     */
+    public btnClick($dom: any) {
+        console.log($dom);
+        $dom.className = 'btnClick';
+        setTimeout(() => {
+            $dom.className = '';
+        }, 100);
+    }
+
+    /**
      * 去充值
      */
     public goRecharge() {
