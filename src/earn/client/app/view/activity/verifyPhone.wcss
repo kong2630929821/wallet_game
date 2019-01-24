@@ -16,7 +16,7 @@
     width:100%;
     position:relative;
     box-sizing:border-box;
-    background:url('../../app/res/image/verityPhone_topBg.png');
+    background-image:url(app/res/image/verityPhone_topBg.png);
     box-sizing: border-box;
     background-position: top;
     background-repeat: no-repeat;
@@ -36,7 +36,7 @@
     font-family: PingFangSC-Regular;
     color: rgb(34, 34, 34);
     line-height: 50px;
-    background:url('../../app/res/image/verityPhone_botBg.png');
+    background-image:url(app/res/image/verityPhone_botBg.png);
     box-sizing: border-box;
     background-position: center;
     background-repeat: no-repeat;

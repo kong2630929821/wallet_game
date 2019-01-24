@@ -53,12 +53,12 @@ export class MiningRule extends Widget {
 
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
-        if (index === 6) {
+        if (index === 5) {
             watchAd(2,(err,res) => {
                 console.log('ad err = ',err);
                 console.log('ad res = ',res);
             });
-            
+
             return;
         }
         if (index === 0 && getStore('user/id')) {
