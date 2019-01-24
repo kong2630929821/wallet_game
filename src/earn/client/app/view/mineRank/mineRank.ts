@@ -55,7 +55,7 @@ export class MineRank extends Widget {
         subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
             console.log('[活动]挖矿特殊奖励公告----------------', r);
             const userInfo:any = await getUserList([r.openid],1);
-            const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)} ${CoinType[r.awardType]}`;
+            const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
             this.props.notice.push(dataStr);
             this.props.notice.shift();
             console.log('this.props.notice----------------', this.props.notice);

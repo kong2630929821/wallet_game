@@ -3,7 +3,7 @@
         <div w-class="content">
             <div w-class="content-text">
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"确定使用","zh_Hant":"确定使用","en":""}</widget>
-                <widget style="color:#E97A1A" w-tag="pi-ui-lang">{"zh_Hans":"ST*{{it.detail.count / 100}}","zh_Hant":"ST*{{it.detail.count / 100}}","en":""}</widget>
+                <span style="color:#E97A1A">{{it.detail.count / 100}} ST</span>
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"兑换？","zh_Hant":"兌換？","en":""}</widget>
             </div>
             <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"请按后续提示使用","zh_Hant":"請按後續提示使用","en":""}</widget>
