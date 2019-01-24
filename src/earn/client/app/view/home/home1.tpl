@@ -3,7 +3,7 @@
     <div w-class="top-animate-container"  class="{{it.upAnimate}}">
         <div w-class="topbar-container" ><app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:0 }</app-components1-topBar-topBar1></div>
         <div w-class="mining-rank-copy" style="{{ !it.animateStart || it.scrollHeight >= 160 ? 'visibility: hidden;' : ''}}bottom: {{ -20 + it.scrollHeight}}px;"> 
-            <img src="../../res/image/medals/medal8001.png" w-class="medal-img"/>
+            <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
             <div w-class="mining-result">
                 <div w-class="mining-title">挖矿</div>
                 <div w-class="mining-number">{{it.miningKTnum}}KT</div>
@@ -18,7 +18,7 @@
     <div w-class="contain" on-scroll="scrollPage" id="earn-home" class="{{it.downAnimate}}">
         <div w-class="mine-card" on-tap="miningClick">
             <div w-class="mining-rank" style="{{ it.animateStart ? 'visibility: hidden;' : ''}}" on-tap="goMineRank">
-                <img src="../../res/image/medals/medal8001.png" w-class="medal-img"/>
+                <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
                 <div w-class="mining-result">
                     <div w-class="mining-title">挖矿</div>
                     <div w-class="mining-number">{{it.miningKTnum}}KT</div>

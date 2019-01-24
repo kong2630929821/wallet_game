@@ -201,7 +201,7 @@
     position: relative;
     display: block;
     font-size:30px;
-    margin: 20px auto 0px;
+    margin: 10px auto 0px;
     text-align: center;
 }
 
