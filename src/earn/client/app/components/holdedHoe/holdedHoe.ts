@@ -18,7 +18,7 @@ export class HoldedHoe extends Widget {
             imgUrl = `${imgUrl}iron_hoe.png`;
         } else if (props.hoeType === HoeType.GoldHoe) {
             imgUrl = `${imgUrl}gold_hoe.png`;
-        } else {
+        } else if (props.hoeType === HoeType.DiamondHoe) {
             imgUrl = `${imgUrl}diamond_hoe.png`;
         }
         this.props = {

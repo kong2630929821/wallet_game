@@ -1,6 +1,9 @@
 /**
  * digging rule
  */
+import { watchAd } from '../../../../../app/logic/native';
+import { getStore } from '../../../../../app/store/memstore';
+import { popNewMessage } from '../../../../../app/utils/tools';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -50,6 +53,19 @@ export class MiningRule extends Widget {
 
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
-        page && popNew(page);
+        if (index === 6) {
+            watchAd(2,(err,res) => {
+                console.log('ad err = ',err);
+                console.log('ad res = ',res);
+            });
+            
+            return;
+        }
+        if (index === 0 && getStore('user/id')) {
+            popNewMessage('已有账号');
+        } else {
+            page && popNew(page);
+        }
     }
+
 }
