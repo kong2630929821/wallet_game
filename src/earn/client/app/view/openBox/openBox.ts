@@ -8,7 +8,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { addST, getSTbalance, isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getTicketNum } from '../../utils/util';
+import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -62,17 +62,24 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
-        isFirstFree().then((res: any) => {
-            this.props.isFirstPlay = res.freeBox;
-            this.setChestTip(2);
-        });
-        this.initData();
-        this.ledTimer();
+        if (isLogin()) {
+            isFirstFree().then((res: any) => {
+                this.props.isFirstPlay = res.freeBox;
+                this.setChestTip(2);
+            });
+            this.initData();
+            this.ledTimer();
+            
+        }
         // inviteUsersToGroup();
     }
 
     public attach() {
-        this.change(0);
+        if (!isLogin()) {
+            this.backPrePage();
+        } else {
+            this.change(0);
+        }
     }
 
     /**

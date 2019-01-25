@@ -31,7 +31,7 @@ export class Medal extends Widget {
             scrollHeight: 0,
             medalList: [
                 {
-                    name: '穷人',
+                    name: '平民',
                     title: this.config.value.rankName[0],
                     medal: []
                 },
@@ -67,6 +67,7 @@ export class Medal extends Widget {
         const medalList = getMedalList(CoinType.KT, 'coinType');
         // this.props.mineMedal = computeRankMedal();
         const ktNum = getStore('balance/KT'); 
+        console.log(medalList);
         
         for (const element1 of this.props.medalList) {
             element1.medal = [];
@@ -76,11 +77,9 @@ export class Medal extends Widget {
                     medal.isHave = true;
                     this.props.mineMedal.rankMedal = element.id;
                     this.props.mineMedal.desc = medal.title;
-                    this.props.mineMedal.nextNeedKt = 0;
-                    this.props.mineMedal.nowClass = element1.title;
+                    this.props.mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
+                    this.props.mineMedal.nowClass = element.typeNum;
                     this.props.mineMedal.ktNum = ktNum;
-                } else {
-                    this.props.mineMedal.nextNeedKt = element.coinNum - ktNum;
                 }
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);

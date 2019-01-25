@@ -442,3 +442,14 @@ export const getMacthTypeCfg = (macthType?:number) => {
 export const canInviteAward = (invited:Invited) => {
     return invited.convertedInvitedAward.indexOf(1) >= 0 ;
 };
+
+export const isLogin = () => {
+    const uid = getStore('userInfo/uid');
+    if (uid === -1) {
+        popNew('app-components1-message-message', { content: '请登录再玩' });
+        
+        return false;
+    } else {
+        return true;
+    }
+};

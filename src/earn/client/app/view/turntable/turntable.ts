@@ -7,10 +7,9 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Item } from '../../../../server/data/db/item.s';
 import { addST, getSTbalance, isFirstFree, openTurntable } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getPrizeList, getTicketNum } from '../../utils/util';
+import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -64,10 +63,18 @@ export class Turntable extends Widget {
 
     public create() {
         super.create();
-        this.change(0);
-        this.initTurntable();
-        this.initData();
+        if (isLogin()) {
+            this.change(0);
+            this.initTurntable();
+            this.initData();
+        }
         // inviteUsersToGroup();
+    }
+
+    public attach() {
+        if (!isLogin()) {
+            this.backPrePage();
+        }
     }
 
     /**
@@ -321,7 +328,10 @@ export class Turntable extends Widget {
             default:
         }  
     }
-
+    
+    /**
+     * 去看广告
+     */
     public toWatchAd() {
         watchAd(1,(err,res) => {
             console.log('ad err = ',err);
