@@ -229,7 +229,7 @@ export class MiningHome extends Widget {
     }
 
     public watchAdClick() {
-        watchAd(1,(err,res) => {
+        watchAd(2,(err,res) => {
             console.log('ad err = ',err);
             console.log('ad res = ',res);
         });
