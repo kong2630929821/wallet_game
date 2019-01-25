@@ -10,7 +10,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal, getKTbalance } from '../../net/rpc';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
@@ -65,19 +65,27 @@ export class Medal extends Widget {
      */
     public initData() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
-        this.props.mineMedal = computeRankMedal();
+        // this.props.mineMedal = computeRankMedal();
+        const ktNum = getStore('balance/KT'); 
         
         for (const element1 of this.props.medalList) {
             element1.medal = [];
-            for (const element of medalList) {
+            medalList.forEach((element,i) => {
                 const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
-                if (element.coinNum < this.props.mineMedal.ktNum) {
+                if (element.coinNum < ktNum) {
                     medal.isHave = true;
+                    this.props.mineMedal.rankMedal = element.id;
+                    this.props.mineMedal.desc = medal.title;
+                    this.props.mineMedal.nextNeedKt = 0;
+                    this.props.mineMedal.nowClass = element1.title;
+                    this.props.mineMedal.ktNum = ktNum;
+                } else {
+                    this.props.mineMedal.nextNeedKt = element.coinNum - ktNum;
                 }
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
                 }
-            }
+            });
         }
         console.log(this.props.medalList);
         

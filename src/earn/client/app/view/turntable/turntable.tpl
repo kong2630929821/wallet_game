@@ -29,8 +29,8 @@
                         {{end}}
                     </div>
                 </div>
-                <div w-class="turntable-btn" on-tap="goLottery">
-                    <img src="../../res/image/turntable-btn.png" width="100%" height="100%" />
+                <div w-class="turntable-btn" >
+                    <img on-tap="goLottery" src="../../res/image/turntable-btn.png" width="100%" height="100%" />
                 </div>
             </div>
 

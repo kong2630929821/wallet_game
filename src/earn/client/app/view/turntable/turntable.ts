@@ -2,6 +2,7 @@
  * 大转盘 - 首页
  */
 
+import { watchAd } from '../../../../../app/logic/native';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -103,12 +104,17 @@ export class Turntable extends Widget {
     /**
      * 开奖
      */
-    public goLottery() {
+    public goLottery(e:any) {
         if (this.props.isTurn) {// 正在转
 
             return;
         }
-        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
+        const $turnTableBtn = getRealNode(e.node);
+        $turnTableBtn.className = 'startTurnTable';
+        setTimeout(() => {
+            $turnTableBtn.className = '';
+        }, 100);
+        if (this.props.STbalance < this.props.selectTurntable.needTicketNum); {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
 
@@ -270,7 +276,7 @@ export class Turntable extends Widget {
         }, 100);
         switch (eventType) { // 看广告
             case 0:
-            
+                this.toWatchAd();
                 break;
             case 1:          // 充值
                 this.goRecharge();
@@ -314,6 +320,13 @@ export class Turntable extends Widget {
 
             default:
         }  
+    }
+
+    public toWatchAd() {
+        watchAd(1,(err,res) => {
+            console.log('ad err = ',err);
+            console.log('ad res = ',res);
+        });
     }
 
     /**
