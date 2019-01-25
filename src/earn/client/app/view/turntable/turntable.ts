@@ -4,6 +4,7 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { addST, getSTbalance, isFirstFree, openTurntable } from '../../net/rpc';
@@ -237,8 +238,10 @@ export class Turntable extends Widget {
      * 去充值
      */
     public goRecharge() {
-        addST();
-        // popNew('app-view-wallet-cloudWalletGT-rechargeGT');
+        // addST();
+        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+            this.refresh();
+        });
     }
 
     /**
@@ -254,6 +257,30 @@ export class Turntable extends Widget {
         this.setChestTip(2);
         this.initTurntable();
         this.paint();
+    }
+
+    /**
+     * 点击效果
+     */
+    public btnClick(e: any , eventType: number, eventValue?:any) {
+        const $dom = getRealNode(e.node);
+        $dom.className = 'btnClick';
+        setTimeout(() => {
+            $dom.className = '';
+        }, 100);
+        switch (eventType) { // 看广告
+            case 0:
+            
+                break;
+            case 1:          // 充值
+                this.goRecharge();
+                break;
+            case 2:          // 更换宝箱类型
+                this.change(eventValue);
+                break;
+            
+            default:
+        }
     }
 
     /**

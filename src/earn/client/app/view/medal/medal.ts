@@ -70,12 +70,17 @@ export class Medal extends Widget {
         for (const element1 of this.props.medalList) {
             element1.medal = [];
             for (const element of medalList) {
-                const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
+                const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
+                if (element.coinNum < this.props.mineMedal.ktNum) {
+                    medal.isHave = true;
+                }
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
                 }
             }
         }
+        console.log(this.props.medalList);
+        
         this.props.totalMedal = getACHVmedalList('偶然成就','typeNum').length;
         getACHVmedal().then((res:any) => {
             this.props.collectMedal = res.achievements.length;

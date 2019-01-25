@@ -344,6 +344,7 @@ export const computeRankMedal = () => {
     const mineMedal = {
         rankMedal: 8000,
         desc: {},
+        nowClass:'',
         nextNeedKt: 0,
         ktNum
     };
@@ -352,7 +353,9 @@ export const computeRankMedal = () => {
         if (ktNum >= element.coinNum) {
             mineMedal.rankMedal = element.id;
             mineMedal.desc = { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' };
+            mineMedal.nowClass = element.typeNum;  
             if ((i + 1) <= medalList.length) {
+
                 mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
             } else {
                 mineMedal.nextNeedKt = 0;

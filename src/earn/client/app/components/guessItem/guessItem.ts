@@ -3,6 +3,7 @@
  */
 
 import { popNew } from '../../../../../pi/ui/root';
+import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export interface Props {
@@ -96,6 +97,24 @@ export class GuessItem extends Widget {
 
         return true;
     }
+
+    /**
+     * 点击效果
+     */
+    public btnClick($dom: any,btnType:number) {
+        $dom.className = 'btnClick';
+        setTimeout(() => {
+            $dom.className = '';
+        }, 100);
+        switch (btnType) {
+            case 0:
+                this.goGuess();
+                break;
+            
+            default:
+        }
+    }
+
     /**
      * 竞猜详情
      */
