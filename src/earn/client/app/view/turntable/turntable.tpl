@@ -7,7 +7,7 @@
             <div w-class="turntable-name">
                 <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
             </div>
-            <img w-class="turntable-bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
+            <img w-class="turntable_bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
 
             {{% 转}}
             <div w-class="turntable-container">
@@ -29,8 +29,8 @@
                         {{end}}
                     </div>
                 </div>
-                <div w-class="turntable-btn" on-tap="goLottery">
-                    <img src="../../res/image/turntable-btn.png" width="100%" height="100%" />
+                <div w-class="turntable-btn" >
+                    <img on-tap="goLottery" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
                 </div>
             </div>
 
@@ -41,14 +41,14 @@
 
             {{% 售价}}
             <div w-class="sale">
-                <div w-class="sale-money" on-tap="goRecharge">
+                <div w-class="sale-money" on-tap="btnClick(e,1)">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
                 <div w-class="sale-btn">
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
-                <div w-class="sale-money">
-                    <img w-class="AD-alert" src="../../res/image/AD-alert.png" alt="" />
+                <div w-class="sale-money" on-tap="btnClick(e,0)">
+                    <img w-class="AD-alert" src="../../res/image/AD_alert.png" alt="" />
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"广告","zh_Hant":"廣告","en":""}</widget>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             {{% 余票}}
             <div w-class="ticket">
                 {{for i,item in it.turntableList}}
-                <div on-tap="change({{i}})" w-class="ticket-item {{it.selectTurntable.type===item.type ?'select':''}}">
+                <div on-tap="btnClick(e,2,{{i}})" w-class="ticket-item {{it.selectTurntable.type===item.type ?'select':''}}">
                     <widget w-tag="pi-ui-lang" w-class="ticket-num">{{item.turntableName}}</widget>
                 </div>
                 {{end}}

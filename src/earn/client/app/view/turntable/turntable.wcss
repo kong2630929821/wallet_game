@@ -27,7 +27,7 @@
     height:1000px;;
     width:100%;
     flex:0 0 auto;
-    background-image: url(../../res/image/turntable-bg.png);
+    background-image: url(../../res/image/turntable_bg.png);
     background-repeat: no-repeat;
     background-position: top;
 }
@@ -45,7 +45,7 @@
     justify-content: center;
 }
 
-.turntable-bg{
+.turntable_bg{
     margin: 0 auto;
     width: 628px;
     height: 628px;
@@ -84,6 +84,7 @@
     background:#222222;
     border-radius:30px;
     border:7px solid #FFFFFF;
+    box-shadow: 0px 3px 5px #252525;
 }
 .sale-btn{
     height: 60px;
@@ -97,6 +98,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0px 3px 5px #252525;
 }
 
 
@@ -108,7 +110,7 @@
     padding: 70px 40px 0px;
     height:300px;
     border-radius:12px;
-    background-image: url(../../res/image/turntable-bg1.png);
+    background-image: url(../../res/image/turntable_bg1.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
@@ -118,7 +120,7 @@
     width: 220px;
     height: 120px;
     font-size: 32px;
-    background-image: url(../../res/image/turntable-btn-bg.png);
+    background-image: url(../../res/image/turntable_btn_bg.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size:100%;
@@ -134,7 +136,7 @@
 
 .select{
     font-size: 28px;
-    background-image: url(../../res/image/turntable-btn-bg-select.png);
+    background-image: url(../../res/image/turntable_btn_bg_select.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;

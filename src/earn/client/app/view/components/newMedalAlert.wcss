@@ -27,6 +27,16 @@
     font-size:48px;
     color:#F7CE89;
 }
+.closeImg{
+    position: absolute;
+    top: 60px;
+    right: 60px;
+    width: 36px;
+    height: 36px;
+    padding: 15px;
+    border: 2px solid #cccccc;
+    border-radius: 50%;
+}
 
 .other{
     margin-top: 30px;

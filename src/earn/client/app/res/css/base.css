@@ -34,27 +34,67 @@
       transform: scale3d(1, 1, 1);
     }
   }
-  
-@keyframes openBox{
+/* 打开宝箱 */
+@keyframes openChest{
     0%{
       -webkit-transform: rotate(0deg);
       transform: rotate(0deg);
     }
     25%{
-      -webkit-transform: rotate(5deg);
-      transform: rotate(5deg);
+      -webkit-transform: rotate(5deg) ;
+      transform: rotate(5deg) ;
     }
     50%{
       -webkit-transform: rotate(-5deg);
       transform: rotate(-5deg);
     }
     75%{
-      -webkit-transform: rotate(5deg);
-      transform: rotate(5deg);
+      -webkit-transform: rotate(5deg) ;
+      transform: rotate(5deg) ;
     }
     100%{
       -webkit-transform: rotate(0deg);
       transform: rotate(0deg);
+    }
+}
+/* 开始转盘 */
+@keyframes startTurnTable{
+    0%{
+        -webkit-transform: scale(0.95);
+        transform: scale(0.95);
+    }
+    100%{
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+/* 重置宝箱 */
+@keyframes resetChest{
+    0%{
+        -webkit-transform: scale(1) translateY(0px);
+        transform: scale(1) translateY(0px);
+        opacity: 1;
+    }
+    40%{
+        -webkit-transform: scale(0) translateY(20px);
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+    }
+    59%{
+        -webkit-transform: scale(0) translateY(20px);
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+    }
+    60%{
+        -webkit-transform: scale(1) translateY(-30px);
+        transform: scale(1) translateY(-30px);
+        opacity: 0;
+    }
+    100%{
+        -webkit-transform:  scale(1) translateY(0px);
+        transform:  scale(1) translateY(0px);
+        opacity: 1;
     }
 }
 
@@ -137,7 +177,7 @@
 }
 
 .smallToBig{
-  animation: smallToBig 0.5s ease;
+  animation: smallToBig 0.3s ease-out;
 }
 .sunShine{
   animation: sunShine 20s linear infinite;
@@ -146,7 +186,10 @@
   animation: fadein 0.5s ease;
 }
 .isOpenbox{
-  animation: openBox 0.3s ease infinite;
+  animation: openBox 0.4s ease infinite;
+}
+.startTurnTable{
+  animation: startTurnTable 0.2s ease;
 }
 .down-to-top{
   animation: downToTop 5s ease infinite;

@@ -8,12 +8,6 @@
 
     <div w-class="content flex-col">
         {{if it.history.length !==0}}
-            {{% 顶部提示}}
-            <div w-class="tips">
-                <widget w-tag="pi-ui-lang">{"zh_Hans":"部分卡券及实物奖品已放入我的背包，等待兑换","zh_Hant":"部分卡券及實物獎品已放入我的背包，等待兌換","en":""}</widget>
-            </div>
-
-
             {{% 列表}}
 
             {{for i,item in it.history}}
