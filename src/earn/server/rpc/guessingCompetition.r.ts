@@ -179,7 +179,8 @@ export const guessing_pay_query = (oid: string):Result => {
         return result;
     }
     const resultJson = wallet_order_query(oid);
-    if (!resultJson) {
+    if (resultJson.pay_status !== 'success') {
+        console.log('resultJson.pay_status!!!!!!!!!!', resultJson.pay_status);
         result.reslutCode = GET_ORDERINFO_FAILD;
 
         return result;

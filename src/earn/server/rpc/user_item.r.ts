@@ -129,6 +129,7 @@ export const get_showMedal = (uid: number):ShowMedalRes => {
 // 展示奖章
 // #[rpc=rpcServer]
 export const show_medal = (medalType: number):ShowMedalRes => {
+    console.log('show_medal in!!!!!!!!!!!!!!!!!', medalType);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
     const uid = getUid();

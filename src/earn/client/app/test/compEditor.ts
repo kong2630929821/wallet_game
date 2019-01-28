@@ -38,9 +38,9 @@ export class CompEditor extends Widget {
         teamList: getTeamCfg1(),
         compInfoList: getCompCfg(),
         cid: 0,
-        team1: '',
-        team2: '',
-        matchType: 0,
+        team1: getTeamCfg1()[0].teamName,
+        team2: getTeamCfg1()[0].teamName,
+        matchType: getCompCfg()[0].pid,
         time: '',
         team1Num: 0,
         team2Num: 0,
@@ -185,20 +185,12 @@ const add_competition = (team1Name:string, team2Name:string, matchType:number, t
             return;
         }
         console.log('比赛类型!!!!!!!!：', matchType);
-        // switch (matchType) {
-        //     case 101:
-        //         console.log('比赛类型：', matchType);
-        //         cfgName = LOLTeamInfosCfg._$info.name;
-        //         break;
-        //     default:
-        //         alert('比赛类型错误');
-        // }
         const team1 = getTeamCfg(cfgName, null, team1Name).pid;
         const team2 = getTeamCfg(cfgName, null, team2Name).pid;
         console.log('队伍编号!!!!!!!!：', team1);
         if (!team1 || !team2) alert('队伍名不存在');
         const addComp = new AddCompetition(team1, team2, time, matchType, team1Num, team2Num);
-        console.log('addComp!!!!!!!!!!!!!!');
+        console.log('addComp!!!!!!!!!!!!!!', addComp);
         clientRpcFunc(add_competitions, addComp, (r: Result) => {
             console.log(r);
             if (r.reslutCode === RESULT_SUCCESS) {
@@ -271,7 +263,7 @@ export const uploadFile = async (base64) => {
             'user-agent': 'Mozilla/4.0 MDN Example'
         },
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors' // no-cors, cors, *same-origin
+        mode: 'no-cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
     }).then(response => response.json())

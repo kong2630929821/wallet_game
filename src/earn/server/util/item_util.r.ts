@@ -25,32 +25,6 @@ import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 import { send } from './sendMessage';
 
-// 添加兑换码
-// #[rpc=rpcServer]
-export const add_convert = ():IsOk => {
-    console.log('add_convert in !!!!!!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(MEMORY_NAME, AwardConvertCfg._$info.name, dbMgr);
-    const iter = bucket.iter(null);
-    const ids = [];
-    const converts = [];
-    do {
-        const iterEle = iter.nextElem();
-        console.log('elCfg----------------read---------------', iterEle);
-        if (!iterEle) break;
-        const iterConvert:ConvertTab = iterEle[1];
-        ids.push(iterConvert.id);
-        converts.push(iterConvert);
-    } while (iter);
-    const tabBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
-    const ok = new IsOk();
-    console.log('converts !!!!!!!!!!!!!!!!!!!!!!!', converts);
-    ok.isok =  tabBucket.put(ids, converts);
-    console.log('isok !!!!!!!!!!!!!!!!!!!!!!!', ok.isok);
-    
-    return ok;
-};
-
 // 添加奖品
 export const add_award = (uid:number, itemType:number, count:number, src:string, convert?:string, desc?:string, deadTime?:string):Award => {
     const time = (new Date()).valueOf();
