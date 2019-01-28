@@ -3,6 +3,8 @@
  */
 
 import { watchAd } from '../../../../../app/logic/native';
+import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
+import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -68,7 +70,12 @@ export class Turntable extends Widget {
             this.initTurntable();
             this.initData();
         }
-        // inviteUsersToGroup();
+        console.log('聊天uid',[getChatStore('uid')]);
+        
+        inviteUsersToGroup(10001,[getChatStore('uid')],(r) => {
+            console.log('加群回调---------------',r);
+            
+        });
     }
 
     public attach() {

@@ -9,7 +9,7 @@
             <div w-class="detail-box">
                 <div w-class="detail-box-top">
                     {{if it.guessData.state !== 2}}
-                        <img src="../../../res/image/guessing-team.png" style="transform: translateY(-100px);" width="200px" height="200px" />
+                        <img src="../../../res/image/guessing_team.png" style="transform: translateY(-100px);" width="200px" height="200px" />
                         <div style="margin-top:-70px">竞赛中</div>
                     {{else}}
                         {{if it.guessData.result ===1}}
@@ -19,7 +19,7 @@
                         <img src="../../../res/image/guessTeam/{{it.guessData.team2}}.png" style="transform: translateY(-100px);" width="200px" height="200px" />
                         <div style="margin-top:-70px">{{it.guessData.team2}}胜</div>
                         {{elseif it.guessData.result ===3}}
-                        <img src="../../../res/image/guessing-team.png" style="transform: translateY(-100px);" width="200px" height="200px" />
+                        <img src="../../../res/image/guessing_team.png" style="transform: translateY(-100px);" width="200px" height="200px" />
                         <div style="margin-top:-70px">比赛取消</div>
                         {{end}}
                     {{end}}

@@ -2,7 +2,7 @@
     <div w-class="content flex-col" class="fadein">
         <img w-class="closeImg" on-tap="backPrePage" src="../../res/image1/close-white.png" alt="" />
         <div w-class="medal"  id="medalShow">
-                <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px" height="480px"/>
+                <img class="sunShine" src="../../res/image/medalShow_bg.png" width="480px" height="480px"/>
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
         </div>
         <div w-class="flex-col" style="margin-top: -100px;">

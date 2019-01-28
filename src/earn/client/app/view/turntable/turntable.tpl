@@ -7,7 +7,7 @@
             <div w-class="turntable-name">
                 <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
             </div>
-            <img w-class="turntable-bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
+            <img w-class="turntable_bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
 
             {{% 转}}
             <div w-class="turntable-container">
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div w-class="turntable-btn" >
-                    <img on-tap="goLottery" src="../../res/image/turntable-btn.png" width="100%" height="100%" />
+                    <img on-tap="goLottery" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money" on-tap="btnClick(e,0)">
-                    <img w-class="AD-alert" src="../../res/image/AD-alert.png" alt="" />
+                    <img w-class="AD-alert" src="../../res/image/AD_alert.png" alt="" />
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"广告","zh_Hant":"廣告","en":""}</widget>
                 </div>
             </div>

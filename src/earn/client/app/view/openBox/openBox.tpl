@@ -6,7 +6,7 @@
             {{% 宝箱九宫格}}
             <div w-class="box-content">
                 {{if it.ledShow}}
-                <img src="../../res/image/openBox-LED1.png" alt="" />
+                <img src="../../res/image/openBox_LED1.png" alt="" />
                 {{end}}
                 <div w-class="box-list">
                     {{for i,item in it.boxList}}

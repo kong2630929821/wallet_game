@@ -5,7 +5,7 @@
     <div w-class="content flex-col" class="fadein">
         <div class="{{it.isHave?'':'grayscale'}}" id="medalShow" w-class="medal" style="transform:translate( {{it.moveX}}px , {{it.moveY}}px ) scale({{it.imgScale}});transition:{{it.imgScale !== 1?'none':'transform 0.5s ease'}};" >
             {{if it.isHave}}
-                <img class="sunShine" src="../../res/image/medalShow-bg.png" width="480px" height="480px" />
+                <img class="sunShine" src="../../res/image/medalShow_bg.png" width="480px" height="480px" />
             {{else}}
                 <div class="sunShine" style="width:480px;height:480px"></div>
             {{end}}

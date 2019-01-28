@@ -32,7 +32,7 @@
     height:1048px;
     width:100%;
     flex:0 0 auto;
-    background-image: url(../../res/image/openBox-bg.png);
+    background-image: url(../../res/image/openBox_bg.png);
     background-position: center;
     background-repeat: no-repeat;
 }
