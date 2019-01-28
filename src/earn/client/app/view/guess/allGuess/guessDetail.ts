@@ -103,13 +103,34 @@ export class GuessDetail extends Widget {
     }
 
     /**
+     * 去充值
+     */
+    public goRecharge() {
+        popNew('app-view-wallet-cloudWallet-rechargeKT');
+    }
+
+    /**
      * 点击效果
      */
-    public btnClick($dom: any) {
+    public btnClick(e: any , eventType: number, eventValue?:any) {
+        const $dom = getRealNode(e.node);
         $dom.className = 'btnClick';
         setTimeout(() => {
             $dom.className = '';
         }, 100);
+        switch (eventType) { // 看广告
+            case 0:
+                // this.resetBoxList();
+                break;
+            case 1:          // 充值
+                // this.goRecharge();
+                break;
+            case 2:          // 更换宝箱类型
+                // this.change(eventValue);
+                break;
+            
+            default:
+        }
     }
 
     /**

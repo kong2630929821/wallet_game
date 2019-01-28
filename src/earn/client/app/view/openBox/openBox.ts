@@ -259,8 +259,8 @@ export class OpenBox extends Widget {
      * 去充值
      */
     public goRecharge() {
-        addST();
-        // popNew('app-view-wallet-cloudWallet-rechargeKT');
+        // addST();
+        popNew('app-view-wallet-cloudWallet-rechargeKT');
     }
 
     /**

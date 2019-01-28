@@ -72,10 +72,10 @@ export class Turntable extends Widget {
         }
         console.log('聊天uid',[getChatStore('uid')]);
         
-        inviteUsersToGroup(10001,[getChatStore('uid')],(r) => {
-            console.log('加群回调---------------',r);
+        // inviteUsersToGroup(10001,[getChatStore('uid')],(r) => {
+        //     console.log('加群回调---------------',r);
             
-        });
+        // });
     }
 
     public attach() {
@@ -128,7 +128,7 @@ export class Turntable extends Widget {
         setTimeout(() => {
             $turnTableBtn.className = '';
         }, 100);
-        if (this.props.STbalance < this.props.selectTurntable.needTicketNum); {    // 余票不足
+        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
 
