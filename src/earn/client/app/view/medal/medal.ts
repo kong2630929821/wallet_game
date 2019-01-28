@@ -49,7 +49,7 @@ export class Medal extends Widget {
             mineMedal: {
                 rankMedal: 8000,
                 desc: { zh_Hans: '无', zh_Hant: '无', en: '' },
-                nextNeedKt: 0,
+                nextNeedKt: 1,
                 nowClass:'无',
                 ktNum:0
             },
