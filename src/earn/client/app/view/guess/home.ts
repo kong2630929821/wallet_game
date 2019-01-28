@@ -36,16 +36,14 @@ export class GuessHome extends Widget {
     public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
-        queryNoPWD('101', (res, msg) => {
-            if (!res) {
-                this.props.noPassword = true;
-            } else {
-                this.props.noPassword = false;
-            }
-            
-            this.paint();
-
-        });
+        // queryNoPWD('101', (res, msg) => {
+        //     if (!res) {
+        //         this.props.noPassword = true;
+        //     } else {
+        //         this.props.noPassword = false;
+        //     }
+        //     this.paint();
+        // });
         // inviteUsersToGroup();
     }
 
@@ -53,9 +51,15 @@ export class GuessHome extends Widget {
      * 更多设置
      */
     public goSetting() {
-        this.props.showMoreSetting = !this.props.showMoreSetting;
-
-        this.paint();
+        queryNoPWD('101', (res, msg) => {
+            if (!res) {
+                this.props.noPassword = true;
+            } else {
+                this.props.noPassword = false;
+            }
+            this.props.showMoreSetting = !this.props.showMoreSetting;
+            this.paint();
+        });
     }
 
     /**

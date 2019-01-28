@@ -6,15 +6,16 @@ import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
-import { STConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
-import { Award, AwardResponse, ConvertTab, FreePlay } from '../data/db/item.s';
-import { AWARD_NOT_ENOUGH, DB_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
+import { Result } from '../data/db/guessing.s';
+import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
+import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR } from '../data/errorNum';
+import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
 import { oauth_send } from '../util/oauth_lib';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { CoinQueryRes, ConvertAwardList } from './itemQuery.s';
+import { CoinQueryRes } from './itemQuery.s';
 import { getOpenid, getUid } from './user.r';
 
 // 获取用户账户ST数量
@@ -277,10 +278,11 @@ export const st_treasurebox = (treasureboxType:number): AwardResponse => {
 
 // 查看兑换列表
 // #[rpc=rpcServer]
-export const get_convert_list = (): ConvertAwardList => {
+export const get_convert_list = (): Result => {
+    const result = new Result();
     const convertAwardList = new ConvertAwardList();
     const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
     const iter = <DBIter>bucket.iter(null);
     const list = [];
     do {
@@ -289,13 +291,15 @@ export const get_convert_list = (): ConvertAwardList => {
         if (!iterConvert) {
             break;
         }
-        const stConvertCfg:STConvertCfg = iterConvert[1];
+        const stConvertCfg:ProductInfo = iterConvert[1];
         list.push(stConvertCfg);
         
     } while (iter);
     convertAwardList.list = list;
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = JSON.stringify(convertAwardList);
     
-    return convertAwardList;
+    return result;
 };
 
 // ST兑换
@@ -304,16 +308,22 @@ export const st_convert = (awardType:number):AwardResponse => {
     const uid = getUid();
     const awardResponse = new AwardResponse();
     const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
-    const convertCfg = bucket.get<number, [STConvertCfg]>(awardType)[0];
+    const bucket = new Bucket(MEMORY_NAME, ProductInfo._$info.name, dbMgr);
+    const convertCfg = bucket.get<number, [ProductInfo]>(awardType)[0];
     // 从配置中获取具体兑换信息
     if (!convertCfg) {
         awardResponse.resultNum = DB_ERROR;
 
         return awardResponse;
     }
-    const stCount = convertCfg.count;
+    const stCount = convertCfg.stCount;
     const desc = convertCfg.desc;
+    // 扣除相应ST
+    if (!reduce_itemCount(ST_TYPE, stCount)) {
+        awardResponse.resultNum = ST_NOT_ENOUGH;
+        
+        return awardResponse;
+    }
     // 从数据库获取兑换码
     const convertAward = get_convert(awardType);
     if (!convertAward) {
@@ -321,13 +331,10 @@ export const st_convert = (awardType:number):AwardResponse => {
 
         return awardResponse;
     }
-    // 扣除相应ST
-    if (!reduce_itemCount(ST_TYPE, stCount)) {
-        awardResponse.resultNum = ST_NOT_ENOUGH;
-        
-        return awardResponse;
-    }
-    const award = add_award(uid, awardType, convertCfg.num, AWARD_SRC_CONVERT, convertAward.convert, desc, convertAward.deadTime);
+    convertCfg.leftCount -= 1;
+    convertCfg.convertCount += 1;
+    bucket.put(awardType, convertCfg);
+    const award = add_award(uid, awardType, convertCfg.stCount, AWARD_SRC_CONVERT, convertAward.convert, desc, convertAward.deadTime);
     if (!award) {
         awardResponse.resultNum = DB_ERROR;
 
@@ -340,9 +347,9 @@ export const st_convert = (awardType:number):AwardResponse => {
 };
 
 // 获取可兑换的虚拟物品信息
-export const get_convert_info = (id:number):STConvertCfg => {
+export const get_convert_info = (id:number):ProductInfo => {
     const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
     const iter = <DBIter>bucket.iter(null);
     do {
         const iterConvert = iter.nextElem();
@@ -350,13 +357,73 @@ export const get_convert_info = (id:number):STConvertCfg => {
         if (!iterConvert) {
             return;
         }
-        const stConvertCfg:STConvertCfg = iterConvert[1];
+        const stConvertCfg:ProductInfo = iterConvert[1];
         if (id === stConvertCfg.id) {
             return stConvertCfg;
         }
         
     } while (iter);
    
+};
+
+// 添加商品信息
+// #[rpc=rpcServer]
+export const add_convert_info = (convertAwardList :ConvertAwardList): Result => {
+    console.log('add_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', convertAwardList);
+    const result = new Result();
+    const productInfoList = convertAwardList.list;
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    for (let i = 0 ; i < productInfoList.length; i ++) {
+        const pid = productInfoList[i].id;
+        console.log('pid !!!!!!!!!!!!!!!!!!!!!!!', pid);
+        if (bucket.get(pid)[0]) {
+            result.reslutCode = PRODUCT_ALREADY_EXIST;
+
+            return result;
+        }
+        productInfoList[i].leftCount = 0;
+        productInfoList[i].convertCount = 0;
+        bucket.put(pid, productInfoList[i]);
+    }
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 添加兑换码
+// #[rpc=rpcServer]
+export const add_convert = (addConvertList: AddConvertList):Result => {
+    console.log('add_convert in !!!!!!!!!!!!!!!!!!!!!!!', addConvertList);
+    const result = new Result();
+    const addList = addConvertList.list;
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const tabBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
+    for (let i = 0; i < addList.length; i ++) {
+        const productInfo = bucket.get<number, [ProductInfo]>(addList[i].typeNum)[0];
+        if (!productInfo) {
+            result.reslutCode = PRODUCT_NOT_EXIST;
+
+            return result;
+        }
+        // const id = get_index_id(AWARD_SRC_CONVERT);
+        if (tabBucket.get(addList[i].convert)[0]) {
+            result.reslutCode = CONVERT_ALREADY_EXIST;
+
+            return result;
+        }
+        console.log('addList[i].convert!!!!!!!!!', tabBucket.get(addList[i].convert)[0]);
+        const convertTab = new ConvertTab(addList[i].convert, addList[i].typeNum, true, addList[i].deadTime);
+        tabBucket.put(addList[i].convert, convertTab);
+        // 相应商品库存加1
+        productInfo.leftCount += 1;
+        console.log('add_leftCount!!!!!!!!!', productInfo.leftCount);
+        bucket.put(addList[i].typeNum, productInfo);
+    }
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
 };
 
 // 查询是否有初级转盘和宝箱免费次数
@@ -402,7 +469,7 @@ export const get_convert = (id: number): ConvertTab => {
     } while (iter);
     // 已发出的兑换码数据库状态改为false
     convertAward.state = false;
-    convertBucket.put(convertAward.id, convertAward);
+    convertBucket.put(convertAward.convert, convertAward);
 
     return convertAward;
 };

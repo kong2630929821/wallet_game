@@ -11,7 +11,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal, getKTbalance } from '../../net/rpc';
-import { register } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
@@ -33,7 +33,7 @@ export class Medal extends Widget {
             scrollHeight: 0,
             medalList: [
                 {
-                    name: '穷人',
+                    name: '平民',
                     title: this.config.value.rankName[0],
                     medal: []
                 },
@@ -49,9 +49,10 @@ export class Medal extends Widget {
                 }
             ],
             mineMedal: {
-                rankMedal: 8001,
-                desc: '',
-                nextNeedKt: 0,
+                rankMedal: 8000,
+                desc: { zh_Hans: '无', zh_Hant: '无', en: '' },
+                nextNeedKt: 1,
+                nowClass:'无',
                 ktNum:0
             },
             totalMedal:0,
@@ -67,17 +68,29 @@ export class Medal extends Widget {
      */
     public initData() {
         const medalList = getMedalList(CoinType.KT, 'coinType');
-        this.props.mineMedal = computeRankMedal();
+        // this.props.mineMedal = computeRankMedal();
+        const ktNum = getStore('balance/KT'); 
         
         for (const element1 of this.props.medalList) {
             element1.medal = [];
-            for (const element of medalList) {
-                const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id };
+            medalList.forEach((element,i) => {
+                const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
+                if (element.coinNum < ktNum) {
+                    medal.isHave = true;
+                    this.props.mineMedal.rankMedal = element.id;
+                    this.props.mineMedal.desc = medal.title;
+                    this.props.mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
+                    this.props.mineMedal.nowClass = element.typeNum;
+                    this.props.mineMedal.ktNum = ktNum;
+                }
                 if (element1.name === element.typeNum) { // 添加到勋章等级列表
                     element1.medal.push(medal);
                 }
-            }
+            });
         }
+        console.log(this.props.medalList);
+        console.log(this.props.mineMedal);
+        
         this.props.totalMedal = getACHVmedalList('偶然成就','typeNum').length;
         getACHVmedal().then((res:any) => {
             this.props.collectMedal = res.achievements.length;

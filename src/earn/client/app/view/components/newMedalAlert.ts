@@ -55,8 +55,8 @@ export class NewMedalAlert extends Widget {
             const stp = new ShareToPlatforms();
             stp.init();
             stp.shareScreenShot({
-                success: (result) => { console.log('share success callback');alert(11); },
-                fail: (result) => { console.log('share fail callback');alert(22); },
+                success: (result) => { console.log('share success callback'); },
+                fail: (result) => { console.log('share fail callback'); },
                 platform: ShareToPlatforms.PLATFORM_WEBCHAT
             });
         }, () => {

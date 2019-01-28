@@ -49,11 +49,10 @@
 .collect-cabinet{
     width: 100%;
     padding: 0px 50px;
-    margin-top: -5px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    background: url(../../res/image/cabinet-bg.png);
+    background: url(../../res/image/cabinet_bg.png);
 }
 .collect-item{
     height: 242px;

@@ -38,12 +38,13 @@ export class MyProduct extends Widget {
                 const dealData = [];
                 res.forEach(element => {
                     if (element.pid < 2000 || element.pid > 2100) {// 排除锄头系列
-                        dealData.push(element);
+                        dealData.unshift(element);
                     } 
                 });
+                
                 this.props.history = dealData;
             } else {
-                this.props.history = res;
+                this.props.history = res.reverse();
             }
             
             this.paint();

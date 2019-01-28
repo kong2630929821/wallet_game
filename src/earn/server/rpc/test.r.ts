@@ -6,6 +6,7 @@ import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
+import { Result } from '../data/db/guessing.s';
 import { Award, ConvertTab, Hoe, Item, Items, Mine, SpecialAward } from '../data/db/item.s';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
@@ -74,40 +75,9 @@ export const hit_test = (hoeType:number): Hits => {
     return total;
 };
 
-// 添加兑换码
-// #[rpc=rpcServer]
-export const add_convert = () => {
-    console.log('add_convert in:!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
-    const convertTab = new ConvertTab();
-    convertTab.id = 1;
-    convertTab.typeNum = 500001;
-    convertTab.state = false;
-    convertTab.convert = '101';
-    const convertTab1 = new ConvertTab();
-    convertTab1.id = 2;
-    convertTab1.typeNum = 500002;
-    convertTab1.state = true;
-    convertTab1.convert = '102';
-    const convertTab2 = new ConvertTab();
-    convertTab2.id = 3;
-    convertTab2.typeNum = 500001;
-    convertTab2.state = true;
-    convertTab2.convert = '103';
-    const convertTab3 = new ConvertTab();
-    convertTab3.id = 4;
-    convertTab3.typeNum = 500001;
-    convertTab3.state = true;
-    convertTab3.convert = '104';
-    console.log('before db write:!!!!!!!!!!!!!!!!!!');
-    const isOk = bucket.put([1, 2, 3, 4], [convertTab, convertTab1, convertTab2, convertTab3]);
-    console.log('db write isOk:!!!!!!!!!!!!!!!!!!', isOk);
-};
-
 // #[rpc=rpcServer]
 export const bigint_test = ():Test => {
-    add_award(2, 5001, 200, 'test');
+    add_award(2, 5001, 20000, 'test');
     const test = new Test();
     test.r = 'test';
 
