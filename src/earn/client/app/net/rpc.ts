@@ -485,7 +485,7 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
             console.log('[活动]rpc-betGuess---------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                walletPay(order,(res,msg) => {
+                walletPay(order,'101','15',(res,msg) => {
                     if (!res) {
                         resolve(order);
                     } else {
