@@ -53,7 +53,7 @@ export class AutoLoginMgr {
     public connection(success:Function) {
         const options = {
             reconnect: true,
-            timeout: 3,
+            timeout: 30,
             keepAliveInterval: 30,
             cleanSession: false,
             useSSL: false,
