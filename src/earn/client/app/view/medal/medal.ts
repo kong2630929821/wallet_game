@@ -48,8 +48,9 @@ export class Medal extends Widget {
             ],
             mineMedal: {
                 rankMedal: 8001,
-                desc: '',
+                desc: { zh_Hans: '无', zh_Hant: '无', en: '' },
                 nextNeedKt: 0,
+                nowClass:'无',
                 ktNum:0
             },
             totalMedal:0,
@@ -67,7 +68,6 @@ export class Medal extends Widget {
         const medalList = getMedalList(CoinType.KT, 'coinType');
         // this.props.mineMedal = computeRankMedal();
         const ktNum = getStore('balance/KT'); 
-        console.log(medalList);
         
         for (const element1 of this.props.medalList) {
             element1.medal = [];
@@ -87,6 +87,7 @@ export class Medal extends Widget {
             });
         }
         console.log(this.props.medalList);
+        console.log(this.props.mineMedal);
         
         this.props.totalMedal = getACHVmedalList('偶然成就','typeNum').length;
         getACHVmedal().then((res:any) => {
