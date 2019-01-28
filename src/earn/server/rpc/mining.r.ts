@@ -251,6 +251,7 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
         const mineKTMapTab:MiningKTMapTab = iterEle[1];
         console.log('elCfg----------------read---------------', mineKTMapTab);
         if (mineKTMapTab.miningKTMap.uid === uid) mineTop.myNum = i + 1;
+        mineKTMapTab.medal = get_showMedal(mineKTMapTab.miningKTMap.uid).medalType;
         mineTopList.push(mineKTMapTab);
         console.log('mineTopList!!!!!!!!!!!!!!!!!', mineTopList);
         continue;

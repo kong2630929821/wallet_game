@@ -74,6 +74,11 @@ export const KT_UNIT_NUM:number = 10 ** 9;
 export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
 export const MAX_ONEDAY_MINING = 8;
+// 每人每天看广告可获得奖励次数
+export const MAX_ONEDAY_ADAWARD = 20;
+// 激励视频广告最低间隔时间
+export const MIN_ADVERTISEMENT_SECONDS = 15;
+
 // 连续登陆奖励循环天数
 export const SERIES_LOGIN_CIRCLE = 15;
 // 邀请好友开始循环奖励人数
@@ -102,6 +107,7 @@ export const AWARD_SRC_MINE = 'mine';
 export const AWARD_SRC_ROTARY = 'rotary';
 export const AWARD_SRC_TREASUREBOX = 'treasurebox';
 export const AWARD_SRC_CONVERT = 'convert';
+export const AWARD_SRC_ADVERTISEMENT = 'advertisement';
 
 // ================ 概率奖励 ===================
 // 抽奖配置id

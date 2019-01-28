@@ -260,12 +260,11 @@ struct MineTop {
 /**
 *虚拟奖品兑换码表
 */
-#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+#[primary=convert,db=file,dbMonitor=true,hasmgr=false,constructor=true]
 struct ConvertTab {
-    id: u32,
-    typeNum: u32,
     convert: String,
-    state: bool,
+    typeNum: u32,
+    state: Option<bool>,
     deadTime: String
 }
 
@@ -283,4 +282,50 @@ struct AwardResponse {
 struct InviteAwardRes {
     resultNum: u32,
     award:Option<&[Award]>
+}
+
+/**
+*用户每日观看广告数量表
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false]
+struct DailyWatchAdNum {
+    id: String, // 用户id和天数拼成的字符串
+    num: u8, // 当天已领取广告奖励次数
+    lastTime: u32 // 上次看广告的时间(s)
+}
+
+/**
+*商城物品信息
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct ProductInfo {
+    id: u32, // 商品编号
+    stCount: u8, // 兑换所需ST数量
+    name: String, // 名称
+    value: String, // 价值
+    desc: String, // 描述
+    progress: String, // 兑换流程
+    tips: String, // 注意事项
+    level: u8, // 类型
+    pic: Option<String>, // 图片
+    leftCount: Option<u32>, // 库存数量
+    convertCount: Option<u32> // 已兑换数量
+}
+
+// 兑换物品(虚拟)列表
+struct ConvertAwardList {
+    list: &[ProductInfo]
+}
+
+// 添加兑换码
+#[constructor=true]
+struct AddConvert {
+    typeNum: u32, // 商品编号
+    convert: String, // 兑换码
+    deadTime: String // 到期时间
+}
+
+// 添加兑换码列表
+struct AddConvertList {
+    list: &[AddConvert]
 }

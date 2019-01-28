@@ -12,15 +12,37 @@
                 <button on-tap= "addResult(e, {{1}}, {{it.compList[it.compIndex].cid}})">{{it.compList[it.compIndex].team1}}胜</button>
                 <button on-tap= "addResult(e, {{2}}, {{it.compList[it.compIndex].cid}})">{{it.compList[it.compIndex].team2}}胜</button>
                 <button on-tap= "settleGuessing(e, {{it.compList[it.compIndex].cid}})">比赛结算</button>
+                <button on-tap= "cancelGuessing(e, {{it.compList[it.compIndex].cid}})">取消比赛</button>
                 {{end}}
             </div>
         </div>
     </div>
     <div w-class="addCompInfo">
-        <div>队伍1：<input value="{{it.team1}}" on-input="inputTeam1"/></div>
-        <div>队伍2：<input value= "{{it.team2}}" on-input="inputTeam2"/></div>
-        <div>比赛类型：<input value= "{{it.matchType}}" on-input="inputMatchType"/></div>
-        <div>比赛时间：<input value= "{{it.time}}" on-input="inputTime"/></div>
+        <div>
+            队伍1：
+            <select on-change="inputTeam1">
+                {{for i,team of it.teamList}}
+                <option value="">{{team.teamName}}</option>
+                {{end}}
+            </select>
+        </div>  
+        <div>
+            队伍2：
+            <select on-change="inputTeam2">
+                {{for i,team of it.teamList}}
+                <option value="">{{team.teamName}}</option>
+                {{end}}
+            </select>
+        </div>
+        <div>
+            比赛类型：
+            <select on-change="inputMatchType">
+                {{for i,compInfo of it.compInfoList}}
+                <option value="{{compInfo.pid}}">{{compInfo.name}}</option>
+                {{end}}
+            </select>
+        </div> 
+        <div>比赛时间：<input value= "{{it.time}}" type="datetime-local" on-input="inputTime"/></div>
         <div>队伍1初始奖池：<input value= "{{it.team1Num}}" on-input="inputTeam1Num"/></div>
         <div>队伍2初始奖池：<input value= "{{it.team2Num}}" on-input="inputTeam2Num"/></div>
     </div>

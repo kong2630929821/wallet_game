@@ -1,6 +1,3 @@
-#[path=../../xlsx/]
-use awardCfg.s::{STConvertCfg};
-
 struct SpecificMine {
     uid:u32,
     enumType:u32,
@@ -31,9 +28,4 @@ struct CoinQueryRes {
     resultNum: u32,
     itemType: u32,
     num: Option<u32>
-}
-
-// 兑换物品(虚拟)
-struct ConvertAwardList {
-    list: &[STConvertCfg]
 }

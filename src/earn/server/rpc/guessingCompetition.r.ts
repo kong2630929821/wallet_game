@@ -10,7 +10,7 @@ import { RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER,
 import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingOrder, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
 import { UserAcc, UserAccMap } from '../data/db/user.s';
 import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, GUESSING_ALREADY_SETTLED, GUESSING_NOT_EXIST, GUESSINGNUM_BEYOUND_LIMIT, ORDER_NOT_EXIST, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
-import { BILL_ALREADY_PAY, EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, NOT_PAY_YET, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
+import { BILL_ALREADY_PAY, COMPETITION_HAS_CANCLED, EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, NOT_PAY_YET, NOT_SETTLE_YET, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { json_uri_sort, oauth_alter_balance, oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
 import { getUid } from './user.r';
@@ -179,7 +179,8 @@ export const guessing_pay_query = (oid: string):Result => {
         return result;
     }
     const resultJson = wallet_order_query(oid);
-    if (!resultJson) {
+    if (resultJson.pay_status !== 'success') {
+        console.log('resultJson.pay_status!!!!!!!!!!', resultJson.pay_status);
         result.reslutCode = GET_ORDERINFO_FAILD;
 
         return result;
@@ -415,6 +416,62 @@ export const settle_guessing_award = (cid: number): Result => {
         guessingBucket.put(loserguessingKey, guessing);
     }
     // 竞猜结算状态更新为已结算
+    competition.state = GUESSING_HAS_SETTLED;
+    bucket.put(cid, competition);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 取消比赛 退还下注额
+// #[rpc=rpcServer]
+export const cancle_guessing = (cid: number): Result => {
+    console.log('settle_guessing_award in', cid);
+    const result = new Result();
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const competition = bucket.get<number, [Competition]>(cid)[0];
+    if (!competition) {
+        result.reslutCode = COMPETITION_NOT_EXIST;
+
+        return result;
+    }
+    // 比赛已经结算 无法取消比赛
+    if (competition.state !== NOT_SETTLE_YET) {
+        result.reslutCode = GUESSING_ALREADY_SETTLED;
+
+        return result;
+    }
+    // 开始退还下注额 竞猜结算状态更新为结算中
+    competition.state = GUESSING_IS_SETTLING;
+    bucket.put(cid, competition);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const jackpots = jackpotBucket.get<number, [CompJackpots]>(cid)[0];
+    if (!jackpots) {
+        result.reslutCode = DB_ERROR;
+
+        return result;
+    }
+    const guessings: GuessingKey[] = jackpots.guessings1.concat(jackpots.guessings2);
+    // 退还下注额
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    for (const guessingKey of guessings) {
+        const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
+        if (!guessing) continue;
+        const uid = guessingKey.uid;
+        const accountMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
+        const accountMap: UserAccMap = accountMapBucket.get(uid)[0];
+        if (!accountMap) continue;
+        const openid = Number(accountMap.openid);
+        // 向钱包退还下注额
+        add_guessing_st(openid, guessing.num);
+        // 写入用户竞猜的实际收益
+        guessing.rate = 1;
+        guessing.benefit = guessing.num;
+        guessingBucket.put(guessingKey, guessing);
+    }
+    // 更新竞猜结果和结算状态
+    competition.result = COMPETITION_HAS_CANCLED;
     competition.state = GUESSING_HAS_SETTLED;
     bucket.put(cid, competition);
     result.reslutCode = RESULT_SUCCESS;

@@ -1,6 +1,6 @@
 #[enum=Item]
 #[path=./]
-use item.s::{Item};
+use item.s::{Award};
 
 /**
 *兑换物品
@@ -8,5 +8,5 @@ use item.s::{Item};
 #[primary=code,db=file,dbMonitor=true,hasmgr=false]
 struct Invite {
     code: String, //uid:code组成的兑换码
-    items: &[Item],
+    items: &[Award],
 }
