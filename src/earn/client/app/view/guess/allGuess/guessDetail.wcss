@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: url('../../earn/client/app/res/image/guess-bg.png');
+    background: url(../../../res/image/guess-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

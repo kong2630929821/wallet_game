@@ -2,6 +2,8 @@
  * 竞猜主页-我的-详情
  */
 
+import { makeScreenShot } from '../../../../../../app/logic/native';
+import { ShareToPlatforms } from '../../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 
@@ -32,9 +34,12 @@ export class SelfGuessDetail extends Widget {
     /**
      * 分享
      */
-    public share() {
-        console.log();
-        
+    public shareClick() {
+        makeScreenShot(() => {
+            popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_SCREEN });
+        }, () => {
+            popNew('app-components1-message-message', { content: this.config.value.tips });
+        });
     }
 
     /**

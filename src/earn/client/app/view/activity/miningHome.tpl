@@ -58,7 +58,7 @@
                 </div>
                 {{end}}
             </div>
-            <div w-class="ad-item">
+            <div w-class="ad-item" on-tap="watchAdClick">
                 <img src="../../res/image/advertisement.png"/>
                 <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"看广告得锄头","zh_Hant":"看廣告得鋤頭","en":""}</widget></div>
             </div>

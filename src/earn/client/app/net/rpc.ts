@@ -265,6 +265,7 @@ export const getRankList = () => {
                 const mine = getStore('mine');
                 mine.miningRank = r.myNum || 0;
                 mine.miningKTnum = r.myKTNum || 0;
+                mine.miningMedalId = r.myMedal;
                 setStore('mine',mine);
                 resolve(r);
             } else {
@@ -485,7 +486,7 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
                 walletPay(order,(res,msg) => {
-                    if (res === 1) {
+                    if (!res) {
                         resolve(order);
                     } else {
                         showActError(res);

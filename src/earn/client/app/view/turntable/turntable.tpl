@@ -18,9 +18,11 @@
                             <div w-class="turntable-item-bg" style="border-width:270px {{270*Math.tan(3.14/it.prizeList.length)}}px 0px;border-top-color:{{i%2===0?'white':'#EEF0FF'}}"></div>
                             <div w-class="turntable-icontent">
                                 {{if item.awardType !== 9527}}
-                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg" width="80px" height="80px" />
+                                <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.jpg" width="70px" height="70px" />
                                 {{else}}
-                                <p w-class="turntable-itext">空</p>
+                                <p w-class="turntable-itext">
+                                    <span style="width:70px;height:70px;font-size:26px;">谢谢惠顾</span>
+                                </p>
                                 {{end}}
                             </div>
                         </div>
@@ -42,7 +44,7 @@
                 <div w-class="sale-money" on-tap="goRecharge">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
                 </div>
-                <div w-class="sale-money">
+                <div w-class="sale-btn">
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money">

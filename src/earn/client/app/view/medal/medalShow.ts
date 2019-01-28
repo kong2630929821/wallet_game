@@ -4,7 +4,7 @@
 
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { showMedal } from '../../net/rpc';
+import { getRankList, showMedal } from '../../net/rpc';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 
 export enum MedalType {
@@ -87,6 +87,7 @@ export class MedalShow extends Widget {
         showMedal(this.props.medalId).then((res:any) => {
             if (res.resultNum === 1) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                getRankList();
             } else {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
             }
