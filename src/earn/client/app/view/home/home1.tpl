@@ -6,7 +6,7 @@
             <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
             <div w-class="mining-result">
                 <div w-class="mining-title">挖矿</div>
-                <div w-class="mining-number">{{it.miningKTnum}}KT</div>
+                <div w-class="mining-number">{{it.miningKTnum}}&nbsp;{{it.ktShow}}</div>
             </div>
             {{if it.miningRank === 0}}
             <div w-class="rank-num">暂无排名</div>
@@ -21,7 +21,7 @@
                 <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
                 <div w-class="mining-result">
                     <div w-class="mining-title">挖矿</div>
-                    <div w-class="mining-number">{{it.miningKTnum}}KT</div>
+                    <div w-class="mining-number">{{it.miningKTnum}}&nbsp;{{it.ktShow}}</div>
                 </div>
                 {{if it.miningRank === 0}}
                 <div w-class="rank-num">暂无排名</div>

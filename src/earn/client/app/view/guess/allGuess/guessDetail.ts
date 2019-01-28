@@ -2,6 +2,7 @@
  * 竞猜详情-下单
  */
 
+import { getModulConfig } from '../../../../../../app/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';
@@ -20,6 +21,7 @@ export class GuessDetail extends Widget {
     public ok: () => void;
 
     public props: any = {
+        stShow:getModulConfig('ST_SHOW'),
         selectTopbar: {},
         guessSTnum: 0.1,
         defaultGuessStNum:0.1,

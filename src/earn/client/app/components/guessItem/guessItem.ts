@@ -2,6 +2,7 @@
  * 竞猜组件
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -19,6 +20,7 @@ export interface Props {
 export class GuessItem extends Widget {
     public ok: () => void;
     public props: any = {
+        stShow:getModulConfig('ST_SHOW'),
         guessBtn: true,
         guessData: {
             team1: 'ok',

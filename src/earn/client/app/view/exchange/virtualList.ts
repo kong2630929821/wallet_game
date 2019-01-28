@@ -2,6 +2,7 @@
  * 兑换虚拟奖品列表
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getVirtualExchangeList } from '../../utils/util';
@@ -22,7 +23,8 @@ export class ExchangeVirtual extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            exchangeType:props.exchangeType
+            exchangeType:props.exchangeType,
+            stShow:getModulConfig('ST_SHOW')
         };
         this.initData();
     }

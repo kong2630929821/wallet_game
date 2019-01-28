@@ -10,7 +10,7 @@
             <div w-class="item-money">
                 <div w-class="money-one">
                     <span w-class="money-num">{{item.count / 100}}</span>
-                    <span w-class="money-num" style="color:#888888;font-size:24px;">ST</span>
+                    <span w-class="money-num" style="color:#888888;font-size:24px;">{{it.stShow}}</span>
                 </div>
             </div>
         </div>

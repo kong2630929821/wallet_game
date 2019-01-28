@@ -2,6 +2,7 @@
  * 开宝箱 - 首页
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -131,7 +132,7 @@ export class OpenBox extends Widget {
      */
     public setChestTip(tipIndex: number = 1) {
         const chestTips = this.config.value.chestTips;
-
+        const stShow = getModulConfig('ST_SHOW');
         switch (tipIndex) {
             case 0:
                 this.props.showTip = chestTips[0];
@@ -149,7 +150,7 @@ export class OpenBox extends Widget {
                 if (this.props.isFirstPlay && this.props.selectChest.type === ActivityType.PrimaryChest) {
                     this.setChestTip(0);
                 } else {
-                    this.props.showTip = { zh_Hans: `售价：${this.props.selectChest.needTicketNum}ST/1个`, zh_Hant: `售價：${this.props.selectChest.needTicketNum}ST/1個`, en: '' };
+                    this.props.showTip = { zh_Hans: `售价：${this.props.selectChest.needTicketNum}${stShow}/1个`, zh_Hant: `售價：${this.props.selectChest.needTicketNum}${stShow}/1個`, en: '' };
                 }
                 this.paint();
                 break;

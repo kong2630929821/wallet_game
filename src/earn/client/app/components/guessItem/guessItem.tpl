@@ -52,11 +52,11 @@
     {{% 下部 支持人数}}
     <div w-class="guess-bottom">
         <div w-class="suport-left" style="width:{{it.guessData.team1Num / (it.guessData.team2Num+it.guessData.team1Num) *100}}%">
-            {{it.guessData.team1Num}} ST
+            {{it.guessData.team1Num}}&nbsp;{{it.stShow}}
             <div w-class="line"></div>
         </div>
         <div w-class="suport-right" style="width:{{it.guessData.team2Num / (it.guessData.team2Num+it.guessData.team1Num) *100}}%">
-            {{it.guessData.team2Num}} ST
+            {{it.guessData.team2Num}}&nbsp;{{it.stShow}}
         </div>
     </div>
 </div>

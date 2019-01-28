@@ -2,6 +2,7 @@
  * 奖券兑换 --商品详情
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -12,7 +13,7 @@ interface Props {
 export class ProductDetail extends Widget {
     public ok: () => void;
 
-    public props:Props = {
+    public props:any = {
         detail :{}
     };
 
@@ -20,7 +21,8 @@ export class ProductDetail extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            detail:props.detail
+            detail:props.detail,
+            stShow:getModulConfig('ST_SHOW')
         };
     }
 

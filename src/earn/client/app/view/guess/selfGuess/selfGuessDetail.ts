@@ -3,6 +3,7 @@
  */
 
 import { makeScreenShot } from '../../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../../app/modulConfig';
 import { ShareToPlatforms } from '../../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
@@ -15,13 +16,18 @@ export class SelfGuessDetail extends Widget {
     };
 
     public setProps(props:any) {
-        super.setProps(this.props);
+        
+        this.props = {
+            ...props,
+            stShow:getModulConfig('ST_SHOW')
+        };
         if (props.guessData) {
             this.props.guessData = props.guessData;
         }
         if (props.guessing) {
             this.props.guessing = props.guessing;
         }
+        super.setProps(this.props);
         this.paint();
     }
 
