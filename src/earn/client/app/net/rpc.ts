@@ -195,29 +195,31 @@ export const getTodayMineNum = () => {
 export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
-        clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
+        clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
             console.log('[活动]rpc-openChest-resData-------------', r);
-            if (r.resultNum === 1) {
-                getSTbalance();
-                resolve(r);
-            } else {
-                // showActError(r.resultNum);
-                reject(r);
-            }
-            // if (r.reslutCode === 1) {
-            //     const order = JSON.parse(r.msg);
-            //     walletPay(order,'101','15',(res,msg) => {
-            //         if (!res) {
-            //             resolve(order);
-            //         } else {
-            //             showActError(res);
-            //             reject(res);
-            //         }
-            //     });
+            // if (r.resultNum === 1) {
+            //     getSTbalance();
+            //     resolve(r);
             // } else {
-            //     showActError(r.reslutCode);
+            //     // showActError(r.resultNum);
             //     reject(r);
             // }
+            if (r.reslutCode === 1) {
+                const order = JSON.parse(r.msg);
+                walletPay(order,'101','15',(res,msg) => {
+                    console.log('chest PAY',res,msg);
+                    
+                    if (!res) {
+                        resolve(order);
+                    } else {
+                        showActError(res);
+                        reject(res);
+                    }
+                });
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
         });
     });
 };
@@ -225,9 +227,20 @@ export const openChest = (activityType: ActivityType) => {
 /**
  * 开宝箱订单查询
  */
-// export const queryOpenChest = () => {
-    
-// };
+export const queryOpenChest = (oid:string) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(box_pay_query, oid, (r: Result) => {
+            console.log('[活动]rpc-queryBetGuess---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
 
 /**
  * 转转盘

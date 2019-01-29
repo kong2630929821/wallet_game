@@ -35,7 +35,7 @@ export class OpenBox extends Widget {
     public props: Props = {
         showTip: { zh_Hans: '', zh_Hant: '', en: '' },
         isOpening: false,
-        boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:空宝箱 2:获奖
+        boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:获奖宝箱 2:空宝箱
         STbalance: 0,
         chestList: [
             {
@@ -96,6 +96,7 @@ export class OpenBox extends Widget {
      */
     public openBox(e: any, num: number) {
         if (this.props.isOpening) {
+
             return;
         }
         if (this.props.boxList[num] !== 0) {  // 宝箱已打开
@@ -127,7 +128,7 @@ export class OpenBox extends Widget {
         }).catch((err) => {
             this.endOpenChest(e);
             this.setChestTip();
-            this.props.boxList[num] = 1;
+            this.props.boxList[num] = 0;
             this.paint();
         });
     }

@@ -37,10 +37,10 @@ export class GuessDetail extends Widget {
         this.inputChange({ value:this.props.defaultGuessStNum });
     }
 
-    // public create() {
-    //     super.create();
-
-    // }
+    public create() {
+        super.create();
+        console.log();
+    }
 
     public initData() {
         getOneGuessInfo(this.props.guessData.cid).then((res:any) => {
@@ -51,8 +51,11 @@ export class GuessDetail extends Widget {
         getSTbalance();
     }
 
-    public guess(e: any, team: number) {
-        this.btnClick(getRealNode(e.node));
+    /**
+     * 加油
+     * @param team 1:主场队 2:客场队
+     */
+    public guess(team: number) {
         if (this.props.guessSTnum > this.props.selfSTnum) { // 余额不足
             popNew('app-components1-message-message', { content: this.config.value.tips[0] });
 
@@ -69,7 +72,7 @@ export class GuessDetail extends Widget {
                 console.log('下注成功，查询！！！！！',res);
                 popNew('app-components1-message-message', { content: this.config.value.tips[2] });
                 this.initData();
-                this.inputChange({ value:this.props.defaultGuessStNum });
+                // this.inputChange({ value:this.props.defaultGuessStNum });
             }).catch(err => {
                 popNew('app-components1-message-message', { content: this.config.value.tips[3] });
                 console.log('查询下注失败',err);
@@ -125,8 +128,8 @@ export class GuessDetail extends Widget {
             case 1:          // 充值
                 // this.goRecharge();
                 break;
-            case 2:          // 更换宝箱类型
-                // this.change(eventValue);
+            case 2:          // 加油 
+                this.guess(eventValue);
                 break;
             
             default:
