@@ -65,11 +65,6 @@ export class Collect extends Widget {
      * 分享
      */
     public shareClick() {
-        // popNew('earn-client-app-view-components-newMedalAlert', {
-        //     // tslint:disable-next-line:radix
-        //     medalId:8001,
-        //     medalType:''
-        // });
         makeScreenShot(() => {
             popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
         },() => {

@@ -137,18 +137,20 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
 
         return result;
     }
+    // 是否是第一次购买
+    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name, dbMgr);
+    const guessingKeyList = guessingKeyListBucket.get<number, [GuessingKeyList]>(uid)[0];
+    if (!guessingKeyList) {
+        resultJson.isFirst = 1;
+    } else {
+        resultJson.isFirst = 0;
+    }
     resultJson.oid = oid;
     console.log('resultJson!!!!!!!!!!', resultJson);
     result.msg = JSON.stringify(resultJson);
     result.reslutCode = RESULT_SUCCESS;
 
     return result;
-    // const oid = `${(new Date()).valueOf()}${uid}${randomInt(10000, 99999)}`;
-    // if (!oauth_alter_balance(ST_TYPE, oid, -num)) {
-    //     result.reslutCode = REQUEST_WALLET_FAIL;
-
-    //     return result;
-    // }
 };
 
 // 竞猜支付回调

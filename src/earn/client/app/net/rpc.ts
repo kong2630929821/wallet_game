@@ -188,9 +188,8 @@ export const getTodayMineNum = () => {
         setStore('mine/miningedNumber',r.mineNum);
     });
 };
-
 /**
- * 开宝箱下单
+ * 开宝箱
  */
 export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
@@ -204,30 +203,9 @@ export const openChest = (activityType: ActivityType) => {
                 // showActError(r.resultNum);
                 reject(r);
             }
-            // if (r.reslutCode === 1) {
-            //     const order = JSON.parse(r.msg);
-            //     walletPay(order,'101','15',(res,msg) => {
-            //         if (!res) {
-            //             resolve(order);
-            //         } else {
-            //             showActError(res);
-            //             reject(res);
-            //         }
-            //     });
-            // } else {
-            //     showActError(r.reslutCode);
-            //     reject(r);
-            // }
         });
     });
 };
-
-/**
- * 开宝箱订单查询
- */
-// export const queryOpenChest = () => {
-    
-// };
 
 /**
  * 转转盘
@@ -507,7 +485,7 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
             console.log('[活动]rpc-betGuess---------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                walletPay(order,'101','15',(res,msg) => {
+                walletPay(order,(res,msg) => {
                     if (!res) {
                         resolve(order);
                     } else {

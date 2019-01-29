@@ -10,7 +10,7 @@ import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
-import { AwardConvertCfg, ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
+import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
 import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
@@ -224,11 +224,13 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
 
 // 挖矿添加奖章
 export const mining_add_medal = (uid:number, itemType:number) => {
+    console.log('mining_add_medal!!!!!!!!!!!!!!!!', itemType);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(MEMORY_NAME, MedalCfg._$info.name, dbMgr);
     if (itemType === KT_TYPE) {
         const ktNum = get_miningKTNum(uid).total;
-        const iter = <DBIter>bucket.iter(null);
+        const iter = <DBIter>bucket.iter(null, true);
+        let pushMsg = true;
         do {
             const iterCfg = iter.nextElem();
             console.log('elCfg----------------read---------------', iterCfg);
@@ -240,7 +242,8 @@ export const mining_add_medal = (uid:number, itemType:number) => {
                 break;
             }
             if (ktNum >= medalCfg.coinNum) {
-                add_medal(uid, medalCfg.id);
+                add_medal(uid, medalCfg.id, pushMsg);
+                pushMsg = false;
             }
         } while (iter);
     }
@@ -256,7 +259,7 @@ export const mining_add_medal = (uid:number, itemType:number) => {
 };
 
 // 添加奖章
-export const add_medal = (uid:number, medalType: number): boolean => {
+export const add_medal = (uid:number, medalType: number, pushMsg: boolean = false): boolean => {
     console.log('add_medal in!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);
@@ -275,12 +278,12 @@ export const add_medal = (uid:number, medalType: number): boolean => {
     medals.medals.push(medalType);
     bucket.put(uid, medals);
     // 推送获得奖章的信息
-    send(uid, MESSAGE_TYPE_ADDMEDAL, medalType.toString());
+    if (pushMsg) send(uid, MESSAGE_TYPE_ADDMEDAL, medalType.toString());
 };
 
 // 添加成就
 export const add_achievement = (uid:number, achievementType: number): boolean => {
-    add_medal(uid, achievementType);
+    add_medal(uid, achievementType, true);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
     let achievements = bucket.get<number, [Achievements]>(uid)[0];

@@ -40,8 +40,8 @@
         <div w-class="bottom">
             <widget w-tag="pi-ui-lang">{"zh_Hans":"我的ST：{{it.selfSTnum}}ST","zh_Hant":"我的ST：{{it.selfSTnum}}ST","en":""}</widget>
             <div style="display: flex;">
-                <widget w-class="btn" on-tap="btnClick(e,1)" w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
-                <widget w-class="btn" on-tap="btnClick(e,0)" w-tag="pi-ui-lang">{"zh_Hans":"广告送ST","zh_Hant":"广告送ST","en":""}</widget>
+                <widget w-class="btn" w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
+                <widget w-class="btn" w-tag="pi-ui-lang">{"zh_Hans":"广告送ST","zh_Hant":"广告送ST","en":""}</widget>
             </div>
         </div>
     </div>

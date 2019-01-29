@@ -349,10 +349,6 @@ const props = {
             func: () => { mine_top_test(); }
         },
         {
-            name: '添加兑换码',
-            func: () => { add_convert_test(); }
-        },
-        {
             name: '兑换物品',
             func: () => { convert_test(); }
         },

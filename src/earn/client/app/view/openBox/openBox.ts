@@ -8,7 +8,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { addST, getSTbalance, isFirstFree, openChest } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getTicketNum, isLogin } from '../../utils/util';
+import { getTicketNum } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -62,24 +62,14 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
-        if (isLogin()) {
-            isFirstFree().then((res: any) => {
-                this.props.isFirstPlay = res.freeBox;
-                this.setChestTip(2);
-            });
-            this.initData();
-            this.ledTimer();
-            
-        }
+        this.change(0);
+        isFirstFree().then((res: any) => {
+            this.props.isFirstPlay = res.freeBox;
+            this.setChestTip(2);
+        });
+        this.initData();
+        this.ledTimer();
         // inviteUsersToGroup();
-    }
-
-    public attach() {
-        if (!isLogin()) {
-            this.backPrePage();
-        } else {
-            this.change(0);
-        }
     }
 
     /**
@@ -173,7 +163,7 @@ export class OpenBox extends Widget {
      */
     public endOpenChest(e: any) {
         const $chest = getRealNode(e.node);
-        $chest.style.animation = 'none';
+        $chest.className = '';
         this.props.isOpening = false;
         this.paint();
     }
@@ -182,8 +172,8 @@ export class OpenBox extends Widget {
      * 开始开宝箱
      */
     public startOpenChest(e: any) {
-        const $chest:any = getRealNode(e.node);
-        $chest.style.animation = 'openChest 0.2s ease infinite';
+        const $chest = getRealNode(e.node);
+        $chest.className = 'isOpenbox';
         this.props.isOpening = true;
         this.paint();
     }
@@ -192,20 +182,8 @@ export class OpenBox extends Widget {
      * 重置所有宝箱
      */
     public resetBoxList() {
-        this.props.boxList.forEach((element,i) => {
-            const $chest:any = document.getElementsByClassName('chest-img')[i];
-            $chest.style.animation = 'resetChest 0.5s ease';
-            this.props.boxList[i] = 0;
-        });
+        this.props.boxList.fill(0);
         this.paint();
-        
-        setTimeout(() => {
-            this.props.boxList.forEach((element,i) => {
-                const $chest:any = document.getElementsByClassName('chest-img')[i];
-                $chest.style.animation = 'none';
-            });
-            this.paint();
-        }, 500);
     }
 
     /**
@@ -234,33 +212,20 @@ export class OpenBox extends Widget {
     /**
      * 点击效果
      */
-    public btnClick(e: any , eventType: number, eventValue?:any) {
-        const $dom = getRealNode(e.node);
+    public btnClick($dom: any) {
+        console.log($dom);
         $dom.className = 'btnClick';
         setTimeout(() => {
             $dom.className = '';
         }, 100);
-        switch (eventType) { // 重置宝箱
-            case 0:
-                this.resetBoxList();
-                break;
-            case 1:          // 充值
-                this.goRecharge();
-                break;
-            case 2:          // 更换宝箱类型
-                this.change(eventValue);
-                break;
-            
-            default:
-        }
     }
 
     /**
      * 去充值
      */
     public goRecharge() {
-        // addST();
-        popNew('app-view-wallet-cloudWallet-rechargeKT');
+        addST();
+        // popNew('app-view-wallet-cloudWalletGT-rechargeGT');
     }
 
     /**

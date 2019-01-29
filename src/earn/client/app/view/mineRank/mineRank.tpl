@@ -5,9 +5,7 @@
         <div w-class="content flex-col">
             <div w-class="top-annunciate">
                 <div w-class="notice">
-                    {{if it.notice[it.noticeShow]}}
                     <p w-class="notice-show" class="down-to-top">{{it.notice[it.noticeShow]}}</p>
-                    {{end}}
                 </div>
             </div>
             <div w-class="topbar">

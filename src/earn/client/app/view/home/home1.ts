@@ -60,7 +60,7 @@ export class EarnHome extends Widget {
                 img: 'btn_yun_4.png',
                 title: '验证手机',
                 desc: '确认是真实用户',
-                components:'app-view-mine-setting-phone'
+                components:'earn-client-app-view-activity-verifyPhone'
             }],
             applicationWelfares:[{
                 img: 'btn_yun_5.png',

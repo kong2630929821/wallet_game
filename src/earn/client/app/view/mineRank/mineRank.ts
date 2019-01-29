@@ -22,11 +22,11 @@ export class MineRank extends Widget {
     public ok: () => void;
     public props: any = {
         notice: [
-            // '一颗大蒜苗挖到了0.1ETH',
-            // '二颗大蒜苗挖到了0.2ETH',
-            // '三颗大蒜苗挖到了0.3ETH',
-            // '四颗大蒜苗挖到了0.4ETH',
-            // '五颗大蒜苗挖到了0.5ETH'
+            '一颗大蒜苗挖到了0.1ETH',
+            '二颗大蒜苗挖到了0.2ETH',
+            '三颗大蒜苗挖到了0.3ETH',
+            '四颗大蒜苗挖到了0.4ETH',
+            '五颗大蒜苗挖到了0.5ETH'
         ],
         noticeShow: 0,
         myRank: { rank: 0, avatar: '', userName: '......', ktNum: 0, medal: null },
@@ -53,14 +53,12 @@ export class MineRank extends Widget {
         super.create();
         this.initData();
         subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
-            if (r) {
-                console.log('[活动]挖矿特殊奖励公告----------------', r);
-                const userInfo:any = await getUserList([r.openid],1);
-                const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
-                this.props.notice.push(dataStr);
-                // this.props.notice.shift();
-                console.log('this.props.notice----------------', this.props.notice);
-            }
+            console.log('[活动]挖矿特殊奖励公告----------------', r);
+            const userInfo:any = await getUserList([r.openid],1);
+            const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
+            this.props.notice.push(dataStr);
+            this.props.notice.shift();
+            console.log('this.props.notice----------------', this.props.notice);
 
         });
         this.noticeChange();

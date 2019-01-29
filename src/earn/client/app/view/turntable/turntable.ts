@@ -2,16 +2,13 @@
  * 大转盘 - 首页
  */
 
-import { watchAd } from '../../../../../app/logic/native';
-import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
-import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
+import { Item } from '../../../../server/data/db/item.s';
 import { addST, getSTbalance, isFirstFree, openTurntable } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
+import { getPrizeList, getTicketNum } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -65,23 +62,10 @@ export class Turntable extends Widget {
 
     public create() {
         super.create();
-        if (isLogin()) {
-            this.change(0);
-            this.initTurntable();
-            this.initData();
-        }
-        console.log('聊天uid',[getChatStore('uid')]);
-        
-        // inviteUsersToGroup(10001,[getChatStore('uid')],(r) => {
-        //     console.log('加群回调---------------',r);
-            
-        // });
-    }
-
-    public attach() {
-        if (!isLogin()) {
-            this.backPrePage();
-        }
+        this.change(0);
+        this.initTurntable();
+        this.initData();
+        // inviteUsersToGroup();
     }
 
     /**
@@ -118,16 +102,11 @@ export class Turntable extends Widget {
     /**
      * 开奖
      */
-    public goLottery(e:any) {
+    public goLottery() {
         if (this.props.isTurn) {// 正在转
 
             return;
         }
-        const $turnTableBtn = getRealNode(e.node);
-        $turnTableBtn.className = 'startTurnTable';
-        setTimeout(() => {
-            $turnTableBtn.className = '';
-        }, 100);
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
@@ -258,10 +237,8 @@ export class Turntable extends Widget {
      * 去充值
      */
     public goRecharge() {
-        // addST();
-        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-            this.refresh();
-        });
+        addST();
+        // popNew('app-view-wallet-cloudWalletGT-rechargeGT');
     }
 
     /**
@@ -277,30 +254,6 @@ export class Turntable extends Widget {
         this.setChestTip(2);
         this.initTurntable();
         this.paint();
-    }
-
-    /**
-     * 点击效果
-     */
-    public btnClick(e: any , eventType: number, eventValue?:any) {
-        const $dom = getRealNode(e.node);
-        $dom.className = 'btnClick';
-        setTimeout(() => {
-            $dom.className = '';
-        }, 100);
-        switch (eventType) { // 看广告
-            case 0:
-                this.toWatchAd();
-                break;
-            case 1:          // 充值
-                this.goRecharge();
-                break;
-            case 2:          // 更换宝箱类型
-                this.change(eventValue);
-                break;
-            
-            default:
-        }
     }
 
     /**
@@ -334,16 +287,6 @@ export class Turntable extends Widget {
 
             default:
         }  
-    }
-    
-    /**
-     * 去看广告
-     */
-    public toWatchAd() {
-        watchAd(1,(err,res) => {
-            console.log('ad err = ',err);
-            console.log('ad res = ',res);
-        });
     }
 
     /**

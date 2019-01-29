@@ -337,34 +337,31 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
 /**
  * 计算用户等级勋章
  */
-// export const computeRankMedal = () => {
+export const computeRankMedal = () => {
 
-//     const ktNum = getStore('balance/KT');
-//     const medalList = getMedalList(CoinType.KT, 'coinType');
-//     const mineMedal = {
-//         rankMedal: 8000,
-//         desc: {},
-//         nowClass:'',
-//         nextNeedKt: 0,
-//         ktNum
-//     };
-//     for (let i = 0; i < medalList.length; i++) {
-//         const element = medalList[i];
-//         if (ktNum >= element.coinNum) {
-//             mineMedal.rankMedal = element.id;
-//             mineMedal.desc = { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' };
-//             mineMedal.nowClass = element.typeNum;  
-//             if ((i + 1) <= medalList.length) {
+    const ktNum = getStore('balance/KT');
+    const medalList = getMedalList(CoinType.KT, 'coinType');
+    const mineMedal = {
+        rankMedal: 8000,
+        desc: {},
+        nextNeedKt: 0,
+        ktNum
+    };
+    for (let i = 0; i < medalList.length; i++) {
+        const element = medalList[i];
+        if (ktNum >= element.coinNum) {
+            mineMedal.rankMedal = element.id;
+            mineMedal.desc = { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' };
+            if ((i + 1) <= medalList.length) {
+                mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
+            } else {
+                mineMedal.nextNeedKt = 0;
+            }
+        }
+    }
 
-//                 mineMedal.nextNeedKt = medalList[i + 1].coinNum - ktNum;
-//             } else {
-//                 mineMedal.nextNeedKt = 0;
-//             }
-//         }
-//     }
-
-//     return mineMedal;
-// };
+    return mineMedal;
+};
 
 /**
  * 展示错误信息
@@ -441,15 +438,4 @@ export const getMacthTypeCfg = (macthType?:number) => {
  */
 export const canInviteAward = (invited:Invited) => {
     return invited.convertedInvitedAward.indexOf(1) >= 0 ;
-};
-
-export const isLogin = () => {
-    const uid = getStore('userInfo/uid');
-    if (uid === -1) {
-        popNew('app-components1-message-message', { content: '请登录再玩' });
-        
-        return false;
-    } else {
-        return true;
-    }
 };
