@@ -27,9 +27,6 @@
     height:1000px;;
     width:100%;
     flex:0 0 auto;
-    background-image: url(../../res/image/turntable_bg.png);
-    background-repeat: no-repeat;
-    background-position: top;
 }
 
 .bottom{
@@ -43,6 +40,16 @@
     height: 184px;
     display: flex;
     justify-content: center;
+}
+.turntable-main-bg{
+    height: 100%;
+    margin-top: -100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(../../res/image/turntable_bg.png);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .turntable_bg{

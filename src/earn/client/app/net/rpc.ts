@@ -14,7 +14,7 @@ import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessin
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { box_pay_query, get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
@@ -206,16 +206,20 @@ export const openChest = (activityType: ActivityType) => {
             // }
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                walletPay(order,'101','15',(res,msg) => {
-                    console.log('chest PAY',res,msg);
-                    
-                    if (!res) {
-                        resolve(order);
-                    } else {
-                        showActError(res);
-                        reject(res);
-                    }
-                });
+                if (order.oid) { 
+                    walletPay(order,'101','15',(res,msg) => {
+                        console.log('chest PAY',res,order);
+                        
+                        if (!res) {
+                            resolve(order);
+                        } else {
+                            showActError(res);
+                            reject(res);
+                        }
+                    });
+                } else { // 免费机会返回
+                    resolve(order);
+                }
             } else {
                 showActError(r.reslutCode);
                 reject(r);
@@ -227,10 +231,12 @@ export const openChest = (activityType: ActivityType) => {
 /**
  * 开宝箱订单查询
  */
-export const queryOpenChest = (oid:string) => {
+export const queryChestOrder = (oid:string) => {
+    console.log(oid);
+    
     return new Promise((resolve, reject) => {
         clientRpcFunc(box_pay_query, oid, (r: Result) => {
-            console.log('[活动]rpc-queryBetGuess---------------', r);
+            console.log('[活动]rpc-queryChestOrder---------------', r);
             if (r.reslutCode === 1) {
                 const msg = JSON.parse(r.msg);
                 resolve(msg);

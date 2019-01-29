@@ -6,7 +6,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { addST, getSTbalance, isFirstFree, openChest } from '../../net/rpc';
+import { addST, getSTbalance, isFirstFree, openChest, queryChestOrder } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -29,6 +29,11 @@ interface Props {
     LEDTimer:any;     // 彩灯控制器
 }
 
+enum BoxState {
+    unOpenBox = 0,
+    prizeBox = 1,
+    emptyBox = 2
+}
 export class OpenBox extends Widget {
     public ok: () => void;
 
@@ -94,12 +99,12 @@ export class OpenBox extends Widget {
      * 打开宝箱 
      * @param num 宝箱序数
      */
-    public openBox(e: any, num: number) {
+    public openBox(e: any, boxIndex: number) {
         if (this.props.isOpening) {
 
             return;
         }
-        if (this.props.boxList[num] !== 0) {  // 宝箱已打开
+        if (this.props.boxList[boxIndex] !== 0) {  // 宝箱已打开
             popNew('app-components1-message-message', { content: this.config.value.tips[1] });
 
             return;
@@ -113,23 +118,22 @@ export class OpenBox extends Widget {
             }
         }
         this.startOpenChest(e);
-        openChest(this.props.selectChest.type).then((res: any) => {
-            this.props.isFirstPlay = false;
-            this.endOpenChest(e);
-            if (res.award.awardType !== 9527) {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal', res.award);
-                this.props.boxList[num] = 1;
-                this.setChestTip(2);
-            } else {
-                this.props.boxList[num] = 2;
-                this.setChestTip();
+        openChest(this.props.selectChest.type).then((order: any) => {
+            if (order.oid) { // 非免费机会开奖
+                queryChestOrder(order.oid).then((res:any) => {
+                    this.goLottery(e,boxIndex,res);
+                    
+                }).catch(err => {
+                    this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
+                    console.log('查询开宝箱订单失败',err);
+                });
+            } else {         // 免费机会开奖
+                this.props.isFirstPlay = false;
+                this.goLottery(e,boxIndex,order);
             }
-            this.paint();
+
         }).catch((err) => {
-            this.endOpenChest(e);
-            this.setChestTip();
-            this.props.boxList[num] = 0;
-            this.paint();
+            this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
     }
 
@@ -170,12 +174,39 @@ export class OpenBox extends Widget {
     }
 
     /**
+     * 开奖
+     * @param order 中奖信息
+     */
+    public goLottery(e:any,boxIndex:number,order:any) {
+        if (order.awardType !== 9527) {
+            popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
+            this.endOpenChest(e,boxIndex,BoxState.prizeBox);
+        } else {
+            this.endOpenChest(e,boxIndex,BoxState.emptyBox);
+        }
+    }
+
+    /**
      * 结束开宝箱
      */
-    public endOpenChest(e: any) {
+    public endOpenChest(e: any,boxIndex:number,boxState:number) {
         const $chest = getRealNode(e.node);
         $chest.style.animation = 'none';
         this.props.isOpening = false;
+        this.props.boxList[boxIndex] = boxState;
+        switch (boxState) {
+            case BoxState.emptyBox:
+                this.setChestTip(1);
+                break;
+            case BoxState.prizeBox:
+                this.setChestTip(2);
+                break;
+            case BoxState.unOpenBox:
+                this.setChestTip(2);
+                popNew('app-components1-message-message', { content: this.config.value.tips[2] });
+                break;
+            default:
+        }
         this.paint();
     }
 
@@ -221,7 +252,7 @@ export class OpenBox extends Widget {
     }
 
     /**
-     * 计算比赛时间
+     * led定时器
      */
     public ledTimer() {
 
@@ -260,8 +291,10 @@ export class OpenBox extends Widget {
      * 去充值
      */
     public goRecharge() {
-        // addST();
-        popNew('app-view-wallet-cloudWallet-rechargeKT');
+        addST();
+        // popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+        //     this.refresh();
+        // });
     }
 
     /**
