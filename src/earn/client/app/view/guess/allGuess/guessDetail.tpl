@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="initData">
     <div style="background:black;">
         {{: topBarTitle = {"zh_Hans":"详情","zh_Hant":"详情","en":""} }}
         <widget w-tag="app-components1-topBar-topBar2">{scrollHeight:0,text:{{topBarTitle}} }</widget>
@@ -10,8 +10,8 @@
             <div w-class="guess-box">
 
                 <div w-class="guess-btn-box">
-                    <div on-tap="guess(e,1)" w-class="guess-btn left-guessbtn">为{{it.guessData.team1}}加油</div>
-                    <div on-tap="guess(e,2)" w-class="guess-btn right-guessbtn">为{{it.guessData.team2}}加油</div>
+                    <div on-tap="btnClick(e,2,1)" w-class="guess-btn left-guessbtn">为{{it.guessData.team1}}加油</div>
+                    <div on-tap="btnClick(e,2,2)" w-class="guess-btn right-guessbtn">为{{it.guessData.team2}}加油</div>
                 </div>
 
 

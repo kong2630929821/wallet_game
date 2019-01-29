@@ -6,7 +6,7 @@
     </div>
 
     {{% 中部 比赛队}}
-    <div w-class="guess-center" on-tap="goGuess">
+    <div w-class="guess-center" on-tap={{it.showBtn?"goGuess":""}}>
         {{% 队伍1}}
         <div w-class="guess-center-team">
             <img src="../../res/image/guessTeam/{{it.guessData.team1}}.png" height="100px" />
@@ -24,7 +24,7 @@
             <span style="font-size:32px;margin-bottom: 20px;">VS</span>
             {{if it.showBtn}}
                 {{if it.guessBtn}}
-                <div on-tap="" w-class="guess-btn">预测</div>
+                <div on-tap="btnClick(e,0)" w-class="guess-btn">预测</div>
                 {{else}}
                     {{if it.guessData.result ===3}}
                     <div w-class="guess-btn notguess">比赛取消</div>

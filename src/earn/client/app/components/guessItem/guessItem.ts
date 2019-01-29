@@ -4,7 +4,6 @@
 
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
-import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export interface Props {
@@ -121,7 +120,13 @@ export class GuessItem extends Widget {
      * 竞猜详情
      */
     public goGuess() {
-        popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
+        if (this.props.showBtn) {
+            if (this.props.guessBtn) {
+                popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
+            } else {
+                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+            }
+        }
     }
 
 }

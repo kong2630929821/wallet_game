@@ -1,30 +1,39 @@
+import { popNew } from '../../../pi/ui/root';
+import { Widget } from '../../../pi/widget/widget';
+import { clientRpcFunc, subscribe } from '../../client/app/net/init';
+import { GuessingReq, Result } from '../../server/data/db/guessing.s';
+import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse } from '../../server/data/db/item.s';
+import { Achievements, Medals, ShowMedalRes } from '../../server/data/db/medal.s';
+import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
+import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
+import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
+import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
+import { get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
+import { SendMsg } from '../../server/rpc/send_message.s';
+import { add_convert, box_pay_query, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
+import { bigint_test, delete_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
+import { Hits, IsOk } from '../../server/rpc/test.s';
+import { get_loginDays, login } from '../../server/rpc/user.p';
+import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../server/rpc/user_item.p';
+
 /**
  * 登录
  */
 
 // ================================================ 导入
-import { BigNumber } from '../../../../pi/bigint/biginteger';
-import { popNew } from '../../../../pi/ui/root';
-import { Widget } from '../../../../pi/widget/widget';
-import { GuessingReq } from '../../../server/data/db/guessing.s';
-import { Invite } from '../../../server/data/db/invite.s';
-import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
-import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
-import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
-import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
-import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
-import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
-import { SendMsg } from '../../../server/rpc/send_message.s';
-import { add_convert, get_convert_list, get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
-import { award as awardR, bigint_test, db_test, get_objStr, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
-import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
-import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
-import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
-import { clientRpcFunc, subscribe } from '../net/init';
 
-export const login = () => {
+// 编辑比赛
+export const competitionEditor = () => {
+    popNew('earn-editor-edit-compEditor');
+};
+
+// 编辑商品
+export const pruductEditor = () => {
+    popNew('earn-editor-edit-convertEditor');
+};
+
+export const loginTest = () => {
     // 钱包登录
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
@@ -32,27 +41,30 @@ export const login = () => {
     walletLoginReq.openid = '1';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
-    clientRpcFunc(loginUser, userType, (r: UserInfo) => {
+    clientRpcFunc(login, userType, (r: UserInfo) => {
         initReceive(r.uid);
         console.log(r);
     });
 };
 
-// export const invite = () => {
-//     const code = 'QOTJZB';
-//     clientRpcFunc(cdkey, code, (r: Invite) => {
-//         console.log(r);
-//     });
-// };
-
-export const get_items = () => {
-    clientRpcFunc(item_query, null, (r: Items) => {
+// 订单查询
+export const orderQuery = () => {
+    const oid = '1548750027447448255';
+    clientRpcFunc(box_pay_query, oid, (r: Result) => {
         console.log(r);
     });
 };
 
-export const award = () => {
-    clientRpcFunc(awardR, 200101, (r: Test2) => {
+// 宝箱
+export const box_test = () => {
+    const itemType = 101101;
+    clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
+        console.log(r);
+    });
+};
+
+export const get_items = () => {
+    clientRpcFunc(item_query, null, (r: Items) => {
         console.log(r);
     });
 };
@@ -84,9 +96,9 @@ export const get_seed = () => {
 // 挖矿测试
 export const mining_test = () => {
     const miningResult = new MiningResult();
-    miningResult.hit = 60;
-    miningResult.itemType = 1001;
-    miningResult.mineNum = 2;
+    miningResult.hit = 100;
+    miningResult.itemType = 1002;
+    miningResult.mineNum = 1;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -116,26 +128,10 @@ export const award_query_test = () => {
     });
 };
 
-// 添加奖券
-export const add_ticket = () => {
-    const count = 7001;
-    clientRpcFunc(item_addticket, count, (r: Item) => {
-        console.log(r);
-    });
-};
-
 // 转盘
 export const rotary_test = () => {
-    const itemType = 100701;
+    const itemType = 100801;
     clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
-        console.log(r);
-    });
-};
-
-// 宝箱
-export const box_test = () => {
-    const itemType = 101001;
-    clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -163,7 +159,7 @@ export const convert_test = () => {
     });
 };
 
-// 大整数测试
+// 添加ST
 export const bigInt_test = () => {
     clientRpcFunc(bigint_test, null, (r: Test) => {
         console.log(r);
@@ -242,6 +238,7 @@ export const initReceive = (uid: number) => {
     });
 };
 
+// 免费次数查询
 export const objtostr_test = () => {
     clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
         console.log(r);
@@ -281,36 +278,54 @@ export const ad_award_test = () => {
     });
 };
 
-// 编辑比赛
-export const competition_edit_test = () => {
-    popNew('earn-client-app-test-compEditor');
+export const delete_product_test = () => {
+    clientRpcFunc(delete_test, null, (r: Result) => {
+        console.log(r);
+    });
 };
 
-// 编辑商品
-export const product_edit_test = () => {
-    popNew('earn-client-app-test-convertEditor');
-};
 const props = {
     bts: [
+        
         {
-            name: '登录',
-            func: () => { login(); }
+            name: '添加比赛',
+            func: () => { competitionEditor(); }
         },
         {
-            name: '奖励方法',
-            func: () => { award(); }
+            name: '编辑商品',
+            func: () => { pruductEditor(); }
+        },
+        {
+            name: '登陆',
+            func: () => { loginTest(); }
+        },
+        {
+            name: '加ST',
+            func: () => { bigInt_test(); }
+        },
+        {
+            name: '查ST',
+            func: () => { get_stNum_test(); }
+        },
+        {
+            name: '宝箱下单',
+            func: () => { rotary_test(); }
+        },
+        {
+            name: '订单查询',
+            func: () => { orderQuery(); }
         },
         {
             name: '所有物品',
             func: () => { get_items(); }
         },
         {
-            name: '指定物品',
-            func: () => { item_test1(); }
-        },
-        {
             name: '添加锄头',
             func: () => { item_test2(); }
+        },
+        {
+            name: '添加矿山',
+            func: () => { test_add_mine(); }
         },
         {
             name: '随机种子',
@@ -319,98 +334,6 @@ const props = {
         {
             name: '挖矿',
             func: () => { mining_test(); }
-        },
-        {
-            name: '添加矿山',
-            func: () => { test_add_mine(); }
-        },
-        {
-            name: '锄头模拟',
-            func: () => { test_hits(); }
-        },
-        {
-            name: '奖励查询',
-            func: () => { award_query_test(); }
-        },
-        {
-            name: '添加奖券',
-            func: () => { add_ticket(); }
-        },
-        {
-            name: '转盘',
-            func: () => { rotary_test(); }
-        },
-        {
-            name: '宝箱',
-            func: () => { box_test(); }
-        },
-        {
-            name: '挖矿排行',
-            func: () => { mine_top_test(); }
-        },
-        {
-            name: '兑换物品',
-            func: () => { convert_test(); }
-        },
-        {
-            name: '获取邀请人数',
-            func: () => { get_inviteNum_test(); }
-        },
-        {
-            name: '获取邀请奖励',
-            func: () => { get_inviteAward_test(); }
-        },
-        {
-            name: '获取奖章',
-            func: () => { get_medals_test(); }
-        },
-        {
-            name: '获取成就',
-            func: () => { get_achievements_test(); }
-        },
-        {
-            name: '查询ST',
-            func: () => { get_stNum_test(); }
-        },
-        {
-            name: '添加ST',
-            func: () => { bigInt_test(); }
-        },
-        {
-            name: '兑奖列表',
-            func: () => { get_convert_list_test(); }
-        },
-        {
-            name: '挂奖章',
-            func: () => { show_medal_test(); }
-        },
-        {
-            name: '查奖章',
-            func: () => { get_medal_test(); }
-        },
-        {
-            name: '竞猜',
-            func: () => { guessing_test(); }
-        },
-        {
-            name: '奖池',
-            func: () => { get_jackpots_test(); }
-        },
-        {
-            name: '竞猜历史',
-            func: () => { get_my_guessing(); }
-        },
-        {
-            name: '广告奖励',
-            func: () => { ad_award_test(); }
-        },
-        {
-            name: '添加比赛',
-            func: () => { competition_edit_test(); }
-        },
-        {
-            name: '编辑商品',
-            func: () => { product_edit_test(); }
         }
     ] // 按钮数组
 };

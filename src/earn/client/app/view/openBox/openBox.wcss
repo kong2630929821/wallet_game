@@ -102,7 +102,6 @@
     color:#AA3509;
     line-height:50px;
     text-align: center;
-    box-shadow: 0px 3px 5px #252525;
 }
 
 .ticket{

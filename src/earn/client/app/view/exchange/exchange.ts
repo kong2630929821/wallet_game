@@ -5,12 +5,7 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-
-export enum MallType {
-    'primaryMall' = 1,
-    'middleMall' = 2,
-    'advancedMall' = 3
-}
+import { getExchangeVirtualList } from '../../net/rpc';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,29 +16,11 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class Exchange extends Widget {
     public ok: () => void;
     public props: any = {
-        navbarSelected: {},
-        navbarList: [
-            {
-                name: 'primaryMall',
-                title: { zh_Hans: '初级商场', zh_Hant: '初級商城', en: '' },
-                exchangeType: MallType.primaryMall
-            },
-            {
-                name: 'middleMall',
-                title: { zh_Hans: '中级商城', zh_Hant: '中級商城', en: '' },
-                exchangeType: MallType.middleMall
-            },
-            {
-                name: 'advancedMall',
-                title: { zh_Hans: '高级商城', zh_Hant: '高級商城', en: '' },
-                exchangeType: MallType.advancedMall
-            }
-        ]
+        list:[]
     };
 
     public create() {
         super.create();
-        this.props.navbarSelected = this.props.navbarList[0];
         this.initData();
 
     }
@@ -52,13 +29,11 @@ export class Exchange extends Widget {
      * 初始数据
      */
     public initData() {
-
-        this.paint();
-    }
-
-    public changeNavbar(index: number) {
-        this.props.navbarSelected = this.props.navbarList[index];
-        document.getElementById('exchangeList').scrollTop = 0;
+        getExchangeVirtualList().then((res:any) => {
+            console.log(res);
+            this.props.list = res.list;
+            this.paint();
+        });
         this.paint();
     }
 

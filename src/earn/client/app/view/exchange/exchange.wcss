@@ -12,6 +12,12 @@
     overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    background: #F9F9F9;
+    padding: 20px;
 }
 
 .top-title{
