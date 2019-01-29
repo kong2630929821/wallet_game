@@ -109,7 +109,9 @@ export class GuessDetail extends Widget {
      * 去充值
      */
     public goRecharge() {
-        popNew('app-view-wallet-cloudWallet-rechargeKT');
+        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+            this.initData();
+        });
     }
 
     /**
@@ -126,7 +128,7 @@ export class GuessDetail extends Widget {
                 // this.resetBoxList();
                 break;
             case 1:          // 充值
-                // this.goRecharge();
+                this.goRecharge();
                 break;
             case 2:          // 加油 
                 this.guess(eventValue);

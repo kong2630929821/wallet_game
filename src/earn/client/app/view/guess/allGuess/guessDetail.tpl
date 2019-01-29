@@ -1,4 +1,4 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage">
+<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="initData">
     <div style="background:black;">
         {{: topBarTitle = {"zh_Hans":"详情","zh_Hant":"详情","en":""} }}
         <widget w-tag="app-components1-topBar-topBar2">{scrollHeight:0,text:{{topBarTitle}} }</widget>

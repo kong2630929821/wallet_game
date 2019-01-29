@@ -9,7 +9,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { addST, getSTbalance, isFirstFree, openTurntable } from '../../net/rpc';
+import { addST, getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -118,16 +118,47 @@ export class Turntable extends Widget {
     /**
      * 开奖
      */
+    // public goLottery(e:any) {
+    //     if (this.props.isTurn) {// 正在转
+
+    //         return;
+    //     }
+    //     const $turnTableBtn = getRealNode(e.node);
+    //     $turnTableBtn.className = 'startTurnTable';
+    //     setTimeout(() => {
+    //         $turnTableBtn.className = '';
+    //     }, 100);
+    //     if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
+    //         if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
+    //             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+    //             return;
+    //         }
+    //     }
+    //     this.props.isFirstPlay = false;
+    //     this.setChestTip(2);
+    //     this.startLottery();
+    //     openTurntable(this.props.selectTurntable.type).then((res) => {
+    //         this.changeDeg(res);
+    //     }).catch((err) => {
+    //         this.changeDeg(err);
+    //     });
+    // }
+
+    /**
+     * 开奖
+     */
     public goLottery(e:any) {
-        if (this.props.isTurn) {// 正在转
+        if (this.props.isTurn) { // 正在转
 
             return;
         }
+
         const $turnTableBtn = getRealNode(e.node);
         $turnTableBtn.className = 'startTurnTable';
         setTimeout(() => {
             $turnTableBtn.className = '';
         }, 100);
+
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
@@ -136,67 +167,30 @@ export class Turntable extends Widget {
 
             }
         }
-        this.props.isFirstPlay = false;
-        this.setChestTip(2);
 
-        this.startLottery();
+        openTurntable(this.props.selectTurntable.type).then((order:any) => {
+            if (order.oid) { // 非免费机会开奖
+                queryTurntableOrder(order.oid).then((res:any) => {
+                    popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+                    this.props.isFirstPlay = false;
+                    this.setChestTip(2);
+                    console.log('转盘开奖成功！',res);
+                    this.changeDeg(res);
+                }).catch(err => {
 
-        openTurntable(this.props.selectTurntable.type).then((res) => {
-            this.changeDeg(res);
+                    console.log('查询转盘订单失败',err);
+                });
+            } else {         // 免费机会开奖
+                this.props.isFirstPlay = false;
+                this.changeDeg(order);
+            }
+            
         }).catch((err) => {
-            this.changeDeg(err);
+            // this.changeDeg(err);
+            console.log('转盘下单失败',err);
         });
 
     }
-
-    /**
-     * 转盘开奖动画
-     */
-    // public goLotteryAnimation(isTurn:boolean,resData?: any) {
-    //     const $turnStyle = document.getElementById('turntable').style;
-    //     this.props.isTurn = isTurn;
-    //     this.paint();
-
-    //     if (!isTurn) {          // 停止转动
-    //         $turnStyle.transition = 'none';
-    //         $turnStyle.transform = `rotate(${this.props.turnNum}deg)`;
-
-    //         return;
-    //     }
-    //     if (!resData) {         // 不传resData,开始转动
-    //         $turnStyle.transition = 'transform 2s linear';
-    //         $turnStyle.transform = `rotate(720deg)`;
-
-    //         return;
-    //     } else {                // 传入resData,确认结束转动旋转角度
-    //         if (resData.resultNum === 1) { // 抽奖接口成功，修改旋转角度
-    //             this.props.prizeList.forEach(element => {
-    //                 if (element.awardType === resData.award.awardType) {
-    //                     this.props.turnNum = element.deg;
-                        
-    //                 }
-    //             });
-    //         } else {                      // 抽奖接口失败，修改旋转角度
-    //             this.props.prizeList.forEach(element => {
-    //                 if (element.awardType === 1001) {
-    //                     this.props.turnNum = element.deg;
-    
-    //                 }
-    //             });
-    //         }
-    //         $turnStyle.transition = 'transform 6s ease-out';
-    //         $turnStyle.transform = `rotate(${this.props.turnNum + 720}deg)`;
-            
-    //         setTimeout(() => {
-    //             this.goLotteryAnimation(false);
-    //             if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-    //                 popNew('earn-client-app-view-components-lotteryModal', resData.award);
-    //             }
-    //             this.paint();
-    //         }, 4000);
-    //     }
-        
-    // }
 
     /**
      * 开始开奖
@@ -215,33 +209,46 @@ export class Turntable extends Widget {
         console.log('changeDeg------------------',resData);
         
         const $turnStyle = document.getElementById('turntable').style;
-        if (resData.resultNum && resData.resultNum === 1) {   // 请求成功
-            this.props.prizeList.forEach(element => {
-                if (element.awardType === resData.award.awardType) {
-                    this.props.turnNum = element.deg;
-                    if (resData.award.awardType === 5001) {
-                        console.log(this.props.turnNum);
+        // if (resData.resultNum && resData.resultNum === 1) {   // 请求成功
+        //     this.props.prizeList.forEach(element => {
+        //         if (element.awardType === resData.award.awardType) {
+        //             this.props.turnNum = element.deg;
+        //             if (resData.award.awardType === 5001) {
+        //                 console.log(this.props.turnNum);
                         
-                    }
-                }
-            });
-        } else { // 请求失败
-            this.props.prizeList.forEach(element => {
-                if (element.awardType === 9527) {
-                    this.props.turnNum = element.deg;   
-                }
-            });
-        }
-        $turnStyle.transition = 'transform 4s ease-out';
-        $turnStyle.transform = `rotate(${this.props.turnNum + 1440}deg)`;
+        //             }
+        //         }
+        //     });
+        // } else { // 请求失败
+        //     this.props.prizeList.forEach(element => {
+        //         if (element.awardType === 9527) {
+        //             this.props.turnNum = element.deg;   
+        //         }
+        //     });
+        // }
+        this.props.prizeList.forEach(element => {
+            if (element.awardType === resData.awardType) {
+                this.props.turnNum = element.deg;
+            }
+        });
 
+        $turnStyle.transition = 'transform 7s ease-in-out';
+        $turnStyle.transform = `rotate(${this.props.turnNum + 2880}deg)`;
+
+        // setTimeout(() => {
+        //     this.endLottery();
+        //     if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
+        //         popNew('earn-client-app-components-lotteryModal-lotteryModal', resData.award);
+        //     }
+        //     this.paint();
+        // }, 4000);
         setTimeout(() => {
             this.endLottery();
-            if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal', resData.award);
+            if (resData.awardType !== 9527) {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal', resData);
             }
             this.paint();
-        }, 4000);
+        }, 7000);
     }
 
     /**

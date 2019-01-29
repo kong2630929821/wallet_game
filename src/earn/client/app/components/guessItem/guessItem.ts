@@ -118,10 +118,12 @@ export class GuessItem extends Widget {
      * 竞猜详情
      */
     public goGuess() {
-        if (this.props.guessBtn) {
-            popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
-        } else {
-            popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+        if (this.props.showBtn) {
+            if (this.props.guessBtn) {
+                popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
+            } else {
+                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+            }
         }
     }
 
