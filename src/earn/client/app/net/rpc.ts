@@ -14,7 +14,7 @@ import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessin
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { box_pay_query, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
@@ -188,19 +188,60 @@ export const getTodayMineNum = () => {
         setStore('mine/miningedNumber',r.mineNum);
     });
 };
+
 /**
- * 开宝箱
+ * 开宝箱下单
  */
 export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
-        clientRpcFunc(st_treasurebox, itemType, (r: AwardResponse) => {
+        clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
             console.log('[活动]rpc-openChest-resData-------------', r);
-            if (r.resultNum === 1) {
-                getSTbalance();
-                resolve(r);
+            // if (r.resultNum === 1) {
+            //     getSTbalance();
+            //     resolve(r);
+            // } else {
+            //     // showActError(r.resultNum);
+            //     reject(r);
+            // }
+            if (r.reslutCode === 1) {
+                const order = JSON.parse(r.msg);
+                if (order.oid) { 
+                    walletPay(order,'101','15',(res,msg) => {
+                        console.log('chest PAY',res,order);
+                        
+                        if (!res) {
+                            resolve(order);
+                        } else {
+                            showActError(res);
+                            reject(res);
+                        }
+                    });
+                } else { // 免费机会返回
+                    resolve(order);
+                }
             } else {
-                // showActError(r.resultNum);
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 开宝箱订单查询
+ */
+export const queryChestOrder = (oid:string) => {
+    console.log(oid);
+    
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(box_pay_query, oid, (r: Result) => {
+            console.log('[活动]rpc-queryChestOrder---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
+            } else {
+                showActError(r.reslutCode);
                 reject(r);
             }
         });
@@ -214,13 +255,53 @@ export const openTurntable = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
 
-        clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
+        clientRpcFunc(st_rotary, itemType, (r: Result) => {
             console.log('[活动]rpc-openTurntable-resData---------------', r);
-            if (r.resultNum === 1) {
-                getSTbalance();
-                resolve(r);
+            // if (r.resultNum === 1) {
+            //     getSTbalance();
+            //     resolve(r);
+            // } else {
+            //     showActError(r.resultNum);
+            //     reject(r);
+            // }
+            if (r.reslutCode === 1) {
+                const order = JSON.parse(r.msg);
+                if (order.oid) { 
+                    walletPay(order,'101','15',(res,msg) => {
+                        console.log('chest PAY',res,order);
+                        
+                        if (!res) {
+                            resolve(order);
+                        } else {
+                            showActError(res);
+                            reject(res);
+                        }
+                    });
+                } else { // 免费机会返回
+                    resolve(order);
+                }
             } else {
-                showActError(r.resultNum);
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 大转盘订单查询
+ */
+export const queryTurntableOrder = (oid:string) => {
+    console.log(oid);
+    
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(rotary_pay_query, oid, (r: Result) => {
+            console.log('[活动]rpc-queryChestOrder---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
+            } else {
+                showActError(r.reslutCode);
                 reject(r);
             }
         });
@@ -342,6 +423,24 @@ export const getShowMedal = () => {
             //     showActError(r.resultNum);
             //     reject(r);
             // }
+        });
+    });
+};
+
+/**
+ * 获取虚拟物品兑换列表
+ */
+export const getExchangeVirtualList = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_convert_list, null, (r: Result) => {
+            console.log('[活动]rpc-getExchangeVirtualList--虚拟物品兑换列表---------------', r);
+            if (r.reslutCode === 1) {
+                const list = JSON.parse(r.msg);
+                resolve(list);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
         });
     });
 };
@@ -485,7 +584,7 @@ export const betGuess = (cid:number,num:number,teamSide:number) => {
             console.log('[活动]rpc-betGuess---------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                walletPay(order,(res,msg) => {
+                walletPay(order,'101','15',(res,msg) => {
                     if (!res) {
                         resolve(order);
                     } else {
