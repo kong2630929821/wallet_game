@@ -3,6 +3,7 @@
  */
 
 import { watchAd } from '../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
