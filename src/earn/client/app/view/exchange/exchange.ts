@@ -6,6 +6,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getExchangeVirtualList } from '../../net/rpc';
+import { isLogin } from '../../utils/util';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -21,8 +22,15 @@ export class Exchange extends Widget {
 
     public create() {
         super.create();
-        this.initData();
+        if (isLogin()) {
+            this.initData();
+        }
+    }
 
+    public attach() {
+        if (!isLogin()) {
+            this.backPrePage();
+        }
     }
 
     /**

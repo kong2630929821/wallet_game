@@ -2,15 +2,17 @@
     {{: topBarTitle = {"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""} }}
     <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}},nextImg:"../../res/image/26_white.png" }</app-components1-topBar-topBar2>
     <div w-class="content">
+        {{% 大转盘标题}}
+        <div w-class="turntable-name">
+            <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
+        </div>
+        
+        {{% 大转盘}}
         <div w-class="center">
-            {{% 大转盘}}
-            <div w-class="turntable-name">
-                <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            </div>
             <div w-class="turntable-main-bg">
-                <div style="width:628px;height:628px;">
+                <div style="width:628px;height:628px;position: relative;">
                     <img w-class="turntable_bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
-
+                    <img src="../../res/image/{{it.ledShow?'turntable_LED2':'turntable_LED1'}}.png" style="position:absolute;top:0px;" width="628px;" alt="" />
                     {{% 转}}
                     <div w-class="turntable-container">
                         <div w-class="turntable-content">
@@ -33,7 +35,7 @@
                             </div>
                         </div>
                         <div w-class="turntable-btn">
-                            <img on-tap="goLottery" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
+                            <img on-tap="btnClick(e,3)" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
                         </div>
                     </div>
                 </div>
@@ -66,9 +68,7 @@
                 </div>
                 {{end}}
             </div>
+
         </div>
-
-
-
     </div>
 </div>

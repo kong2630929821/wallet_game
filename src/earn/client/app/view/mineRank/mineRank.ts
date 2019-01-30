@@ -84,7 +84,11 @@ export class MineRank extends Widget {
      */
     public initData() {
         getRankList().then(async (res: any) => {
-            this.props.rankList = await this.processData(res.topList);
+            if (this.props.topbarSel === 0) {
+                this.props.rankList = await this.processData(res.topList);
+            } else {
+                this.props.rankList = [];
+            }
             // console.log('rankList------------------------',this.props.rankList);
             this.props.myRank.avatar = getStore('userInfo/avatar');
             this.props.myRank.userName = getStore('userInfo/name');
@@ -130,6 +134,7 @@ export class MineRank extends Widget {
     public topbarChange(index: number) {
         this.props.topbarSel = index;
         document.getElementById('rankList').scrollTop = 0;
+        this.initData();
         this.paint();
     }
 

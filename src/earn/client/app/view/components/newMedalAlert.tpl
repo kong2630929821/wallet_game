@@ -1,6 +1,8 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="content flex-col" class="fadein">
-        <img w-class="closeImg" on-tap="backPrePage" src="../../res/image1/close-white.png" alt="" />
+        <div w-class="closeImg" on-tap="backPrePage">
+            <img src="../../res/image1/close-white.png" style="    padding: 15px;border: 2px solid white;border-radius: 50%;" width="36px" height="36px" alt="" />
+        </div>
         <div w-class="medal"  id="medalShow">
                 <img class="sunShine" src="../../res/image/medalShow_bg.png" width="480px" height="480px"/>
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
@@ -24,7 +26,7 @@
 
         </div>
         <div w-class="content-bottom" on-tap="shareWX">
-            <img src="../../res/image1/img_share_wechat.png" alt="" width="45px" height="45px"/>
+            <img src="../../res/image1/img_share_wechat.png" style="    background: white;border-radius: 50%;padding: 5px;" alt="" width="45px" height="45px"/>
             <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"秀一下","zh_Hant":"秀一下","en":""}</widget>
         </div>
     </div>
