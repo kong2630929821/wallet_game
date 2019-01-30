@@ -29,6 +29,8 @@ interface Props {
     turntableList: any;   // 转盘列表
     showTip:any; // 转盘显示提醒
     isFirstPlay: boolean; // 每日第一次免费
+    LEDTimer:any; // LED计时器
+    ledShow:boolean; // LED灯
 }
 export class Turntable extends Widget {
     public ok: () => void;
@@ -60,7 +62,9 @@ export class Turntable extends Widget {
             }
         ],
         showTip:{ zh_Hans:'',zh_Hant:'',en:'' },
-        isFirstPlay:true
+        isFirstPlay:true,
+        LEDTimer:{},
+        ledShow:false
     };
 
     public create() {
@@ -69,6 +73,7 @@ export class Turntable extends Widget {
             this.change(0);
             this.initTurntable();
             this.initData();
+            this.ledTimer();
         }
         console.log('聊天uid',[getChatStore('uid')]);
         
@@ -367,6 +372,23 @@ export class Turntable extends Widget {
      */
     public goHistory() {
         popNew('earn-client-app-view-myProduct-myProduct', { type: 2 });
+    }
+
+    /**
+     * led定时器
+     */
+    public ledTimer() {
+
+        this.props.LEDTimer = setInterval(() => {
+            this.props.ledShow = !this.props.ledShow;
+            this.paint();
+        }, 1000);
+    }
+
+    public destroy() {
+        clearInterval(this.props.LEDTimer);
+
+        return true;
     }
 
     /**

@@ -10,9 +10,9 @@
         {{% 大转盘}}
         <div w-class="center">
             <div w-class="turntable-main-bg">
-                <div style="width:628px;height:628px;">
+                <div style="width:628px;height:628px;position: relative;">
                     <img w-class="turntable_bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
-
+                    <img src="../../res/image/{{it.ledShow?'turntable_LED2':'turntable_LED1'}}.png" style="position:absolute;top:0px;" width="628px;" alt="" />
                     {{% 转}}
                     <div w-class="turntable-container">
                         <div w-class="turntable-content">
