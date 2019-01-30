@@ -3,12 +3,13 @@
  */
 
 import { watchAd } from '../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { addST, getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
+import { getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';

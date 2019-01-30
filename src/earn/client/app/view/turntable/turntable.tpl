@@ -2,11 +2,13 @@
     {{: topBarTitle = {"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""} }}
     <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}},nextImg:"../../res/image/26_white.png" }</app-components1-topBar-topBar2>
     <div w-class="content">
+        {{% 大转盘标题}}
+        <div w-class="turntable-name">
+            <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
+        </div>
+        
+        {{% 大转盘}}
         <div w-class="center">
-            {{% 大转盘}}
-            <div w-class="turntable-name">
-                <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            </div>
             <div w-class="turntable-main-bg">
                 <div style="width:628px;height:628px;">
                     <img w-class="turntable_bg" src="../../res/image/{{it.selectTurntable.type}}bg.png" width="628px;" />
@@ -66,9 +68,7 @@
                 </div>
                 {{end}}
             </div>
+
         </div>
-
-
-
     </div>
 </div>
