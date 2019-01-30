@@ -1,3 +1,6 @@
+import { GroupInfo } from '../../../chat/server/data/db/group.s';
+import { createGroup } from '../../../chat/server/data/rpc/group.p';
+import { GroupCreate } from '../../../chat/server/data/rpc/group.s';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { clientRpcFunc, subscribe } from '../../client/app/net/init';
@@ -11,7 +14,7 @@ import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../s
 import { get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
-import { bigint_test, delete_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
+import { bigint_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
@@ -278,9 +281,15 @@ export const ad_award_test = () => {
     });
 };
 
-export const delete_product_test = () => {
-    clientRpcFunc(delete_test, null, (r: Result) => {
-        console.log(r);
+export const createGroup1 = (name:string, avatar:string, note:string, need_agree:boolean, cb: (r: GroupInfo) => void) => {
+    const group = new GroupCreate();
+    group.note = note;
+    group.name = name;
+    group.avatar = avatar; 
+    group.need_agree = need_agree;
+    
+    clientRpcFunc(createGroup, group, (r) => {
+        cb(r);
     });
 };
 
@@ -334,6 +343,10 @@ const props = {
         {
             name: '挖矿',
             func: () => { mining_test(); }
+        },
+        {
+            name: '兑换',
+            func: () => { convert_test(); }
         }
     ] // 按钮数组
 };
