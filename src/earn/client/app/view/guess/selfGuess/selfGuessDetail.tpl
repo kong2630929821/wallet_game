@@ -39,7 +39,7 @@
                     </div>
                     <div w-class="detail-item">
                         <widget w-tag="pi-ui-lang">{"zh_Hans":"我的购买","zh_Hant":"我的購買","en":""}</widget>
-                        <span>{{it.guessing.guessSTnum}}&nbsp;ST</span>
+                        <span>{{it.guessing.guessSTnum}}&nbsp;{{it.stShow}}</span>
                     </div>
                     <div w-class="detail-item">
                         {{if it.guessData.state !== 2}}
@@ -47,7 +47,7 @@
                         {{else}}
                         <widget w-tag="pi-ui-lang">{"zh_Hans":"实际收益","zh_Hant":"實際收益","en":""}</widget>
                         {{end}}
-                        <span>{{it.guessing.benefit}}&nbsp;ST</span>
+                        <span>{{it.guessing.benefit}}&nbsp;{{it.stShow}}</span>
                     </div>
                 </div>
             </div>

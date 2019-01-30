@@ -2,6 +2,7 @@
  * 兑换虚拟奖品列表
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -25,12 +26,11 @@ export class VirtualItem extends Widget {
     };
 
     public setProps(props:VirtualItemProps) {
-        super.setProps(props);
-        this.initData();
-    }
-
-    public initData() {
-        this.paint();
+        this.props = {
+            ...props,
+            stShow:getModulConfig('ST_SHOW')
+        };
+        super.setProps(this.props);
     }
 
     /**

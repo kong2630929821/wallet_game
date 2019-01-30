@@ -10,7 +10,7 @@
         <img w-class="rank-headImg" src="{{it.avatar?it.avatar:'../../res/image1/default_head.png'}}" height="100%" />
         <div style="display: flex;justify-content: space-between;flex-direction: column;">
             <p w-class="rank-name">{{it.userName}}</p>
-            <p w-class="rank-kt">{{it.ktNum}} KT</p>
+            <p w-class="rank-kt">{{it.ktNum}}&nbsp;{{it.ktShow}}</p>
         </div>
     </div>
     {{if it.medal}}

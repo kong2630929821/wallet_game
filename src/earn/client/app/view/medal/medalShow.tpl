@@ -14,7 +14,7 @@
         <div w-class="flex-col" style="margin-top: -100px;">
             <widget w-class="medal-title" w-tag="pi-ui-lang">{{it.medalTitle}}</widget>
             {{if it.medalType===0}}
-                <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}KT","zh_Hant":"挖礦達到{{it.condition}}KT","en":""}</widget>
+                <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}{{it.ktShow}}","zh_Hant":"挖礦達到{{it.condition}}{{it.ktShow}}","en":""}</widget>
             {{else}}
                 <p w-class="medal-desc">{{it.condition}}</p>
             {{end}}

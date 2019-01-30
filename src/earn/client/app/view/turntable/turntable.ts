@@ -4,7 +4,6 @@
 
 import { watchAd } from '../../../../../app/logic/native';
 import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -315,7 +314,7 @@ export class Turntable extends Widget {
      */
     public setChestTip(tipIndex:number = 1) {
         const turntableTips = this.config.value.turntableTips;
-        
+        const stShow = getModulConfig('ST_SHOW');
         switch (tipIndex) {
             case 0:
                 this.props.showTip = turntableTips[0];
@@ -333,7 +332,7 @@ export class Turntable extends Widget {
                 if (this.props.isFirstPlay && this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
                     this.setChestTip(0);
                 } else {
-                    this.props.showTip = { zh_Hans:`售价：${this.props.selectTurntable.needTicketNum}ST/1个`,zh_Hant:`售價：${this.props.selectTurntable.needTicketNum}ST/1個`,en:'' };
+                    this.props.showTip = { zh_Hans:`售价：${this.props.selectTurntable.needTicketNum}${stShow}/1个`,zh_Hant:`售價：${this.props.selectTurntable.needTicketNum}${stShow}/1個`,en:'' };
                 }
                 this.paint();
                 break;

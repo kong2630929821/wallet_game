@@ -13,7 +13,7 @@
             <div w-class="product-money">
                 <div w-class="money-one">
                     <span w-class="money-num">{{it.stCount / 100}}</span>
-                    <widget w-tag="pi-ui-lang" w-class="money-num" style="color:#888888;font-size:24px;">{"zh_Hans":"碎银","zh_Hant":"碎銀","en":""}</widget>
+                    <span w-class="money-num" style="color:#888888;font-size:24px;">{{it.stShow}}</span>
                 </div>
             </div>
             <div w-class="validity-time">

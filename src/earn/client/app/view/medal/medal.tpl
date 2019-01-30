@@ -12,7 +12,7 @@
                         <widget w-class="myMedal-text" w-tag="pi-ui-lang">{{it.mineMedal.desc}}</widget>
                         <div w-class="rank-desc">
                             <span style="font-size: 24px;">阶级：{{it.mineMedal.nowClass}}</span>
-                            <widget style="font-size: 24px;" w-tag="pi-ui-lang">{"zh_Hans":"下一等级还需：{{it.mineMedal.nextNeedKt}}KT","zh_Hant":"下一等級還需：{{it.mineMedal.nextNeedKt}}KT","en":""}</widget>
+                            <widget style="font-size: 24px;" w-tag="pi-ui-lang">{"zh_Hans":"下一等级还需：{{it.mineMedal.nextNeedKt}}{{it.ktShow}}","zh_Hant":"下一等級還需：{{it.mineMedal.nextNeedKt}}{{it.ktShow}}","en":""}</widget>
                         </div>
                         <div w-class="total-linear">
                             <div style="width:{{it.mineMedal.ktNum / (it.mineMedal.ktNum+it.mineMedal.nextNeedKt) * 100}}%;height: 100%;">

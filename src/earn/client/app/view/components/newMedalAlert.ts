@@ -3,6 +3,7 @@
  */
 
 import { makeScreenShot } from '../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -19,7 +20,6 @@ export class NewMedalAlert extends Widget {
     public props: any = {
         medalId: 0,
         medalType: 0,
-
         medalImg: '',
         condition: 0, // 勋章获得条件
         medalTitle: {}, // 勋章称号,
@@ -38,12 +38,13 @@ export class NewMedalAlert extends Widget {
             this.props.condition = '挖到0.5ETH取得成就';
             this.props.medalTitle = { zh_Hans: medalInfo[0].desc, zh_Hant: medalInfo[0].descHant, en: '' };
         }
-
+        const ktShow = getModulConfig('KT_SHOW');
         this.props = {
             ...this.props,
             medalImg: `medal${props.medalId}`,
             medalId: props.medalId,
-            medalType: props.medalType
+            medalType: props.medalType,
+            ktShow
         };
         console.log(this.props);
         

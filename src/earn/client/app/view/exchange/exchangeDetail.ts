@@ -2,15 +2,21 @@
  * 奖券兑换 --商品详情
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class ProductDetail extends Widget {
     public ok: () => void;
+
+    public props:any;
+
     public setProps(props:any) {
-        super.setProps(props);
-        console.log(this.props);
-        
+        this.props = {
+            ...props,
+            stShow:getModulConfig('ST_SHOW')
+        };
+        super.setProps(this.props);
     }
 
     /**

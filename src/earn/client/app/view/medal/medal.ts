@@ -3,6 +3,7 @@
  */
 
 import { makeScreenShot } from '../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -28,6 +29,7 @@ export class Medal extends Widget {
     public create() {
         super.create();
         this.props = {
+            ktShow:getModulConfig('KT_SHOW'),
             scrollHeight: 0,
             medalList: [
                 {

@@ -7,7 +7,7 @@
     <div w-class="item-money">
         <div w-class="money-one">
             <img src="" width="32px" height="32px" alt="" />
-            <widget w-tag="pi-ui-lang" w-class="money-num" style="color:#888888;font-size:24px;">{"zh_Hans":"碎银","zh_Hant":"碎銀","en":""}</widget>
+            <widget w-tag="pi-ui-lang" w-class="money-num" style="color:#888888;font-size:24px;">{"zh_Hans":{{it.stShow}},"zh_Hant":{{it.stShow}},"en":""}</widget>
             <span w-class="money-num">{{it.stCount / 100}}</span>
         </div>
     </div>
