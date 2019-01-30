@@ -26,6 +26,19 @@ struct BoxOrder {
 }
 
 /**
+*兑换商城订单表
+*/
+#[primary=oid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct ConvertOrder {
+    oid: String,
+    uid: u32,
+    awardType: u32,
+    stNum: u32,
+    time: String,
+    state: u8
+}
+
+/**
 *用户转盘下单记录表
 */
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
@@ -39,6 +52,15 @@ struct UserRotaryOrderTab {
 */
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
 struct UserBoxOrderTab {
+    uid: u32,
+    oidList: Option<&[String]>
+}
+
+/**
+*用户兑换商城下单记录表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct UserConvertOrderTab {
     uid: u32,
     oidList: Option<&[String]>
 }

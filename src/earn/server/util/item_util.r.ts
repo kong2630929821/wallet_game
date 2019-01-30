@@ -224,24 +224,26 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
 
 // 挖矿添加奖章
 export const mining_add_medal = (uid:number, itemType:number) => {
-    console.log('mining_add_medal!!!!!!!!!!!!!!!!', itemType);
+    console.log('Mining_add_medal!!!!!!!!!!!!!!!!', itemType);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(MEMORY_NAME, MedalCfg._$info.name, dbMgr);
     if (itemType === KT_TYPE) {
         const ktNum = get_miningKTNum(uid).total;
+        console.log('KTnum!!!!!!!!!!!!!!!!', ktNum);
         const iter = <DBIter>bucket.iter(null, true);
         let pushMsg = true;
         do {
             const iterCfg = iter.nextElem();
             console.log('elCfg----------------read---------------', iterCfg);
             if (!iterCfg) {
+                console.log('elCfg_no_next!!!!!!!!!!!!!!!!!!!!!');
                 break;
             }
             const medalCfg:MedalCfg = iterCfg[1];  
-            if (medalCfg.coinType !== itemType) {
-                break;
-            }
-            if (ktNum >= medalCfg.coinNum) {
+            // if (medalCfg.coinType !== itemType) {
+            //     break;
+            // }
+            if (medalCfg.coinType === itemType && ktNum >= medalCfg.coinNum) {
                 add_medal(uid, medalCfg.id, pushMsg);
                 pushMsg = false;
             }
@@ -259,7 +261,7 @@ export const mining_add_medal = (uid:number, itemType:number) => {
 };
 
 // 添加奖章
-export const add_medal = (uid:number, medalType: number, pushMsg: boolean = false): boolean => {
+export const add_medal = (uid:number, medalType: number, pushMsg: boolean): boolean => {
     console.log('add_medal in!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);

@@ -4,7 +4,7 @@
 
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { Widget } from '../../../../../pi/widget/widget';
-import { exchangeVirtual } from '../../net/rpc';
+import { exchangeVirtual, queryExchangeOrder } from '../../net/rpc';
 
 interface Props {
     STcout:number;
@@ -27,10 +27,21 @@ export class ComfirmExchange extends Widget {
     public cancelClick() {
         this.cancel && this.cancel();
     }
-
+    /**
+     * 确认兑换
+     */
     public comfirmClick() {
-        exchangeVirtual(this.props.detail.id).then(res => {
-            console.log(res);
+        exchangeVirtual(this.props.detail.id).then((order:any) => {
+            queryExchangeOrder(order.oid).then(res => {
+                console.log('兑换成功',res);
+                
+            }).catch(err => {
+                console.log('兑换订单查询失败',err);
+                
+            });
+            
+        }).catch(err => {
+            console.log('兑换支付失败',err);
             
         });
 
