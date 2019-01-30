@@ -1,3 +1,4 @@
+import * as net_init from '../../../chat/client/app/net/init';
 import { GroupInfo } from '../../../chat/server/data/db/group.s';
 import { createGroup } from '../../../chat/server/data/rpc/group.p';
 import { GroupCreate } from '../../../chat/server/data/rpc/group.s';
@@ -36,17 +37,31 @@ export const pruductEditor = () => {
     popNew('earn-editor-edit-convertEditor');
 };
 
+// 创建群组
+export const groupEditor = () => {
+    popNew('earn-editor-edit-chatGroupEditor');
+};
+
 export const loginTest = () => {
     // 钱包登录
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '1';
+    walletLoginReq.openid = '5010';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
         initReceive(r.uid);
         console.log(r);
+    });
+};
+
+// 聊天登录
+export const chatLogin = () => {
+    const user = 'test';
+    const pwd = 'test';
+    net_init.login(2, user, pwd, (r) => {
+        console.log('聊天登陆成功', r);
     });
 };
 
@@ -101,7 +116,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 100;
     miningResult.itemType = 1002;
-    miningResult.mineNum = 1;
+    miningResult.mineNum = 14;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -281,15 +296,16 @@ export const ad_award_test = () => {
     });
 };
 
-export const createGroup1 = (name:string, avatar:string, note:string, need_agree:boolean, cb: (r: GroupInfo) => void) => {
+// 创建群组
+export const createGroupTest = (name:string, avatar:string, note:string, needAgree:boolean) => {
     const group = new GroupCreate();
     group.note = note;
     group.name = name;
     group.avatar = avatar; 
-    group.need_agree = need_agree;
+    group.need_agree = needAgree;
     
-    clientRpcFunc(createGroup, group, (r) => {
-        cb(r);
+    clientRpcFunc(createGroup, group, (r: GroupInfo) => {
+        console.log('创建群组成功', r.gid);
     });
 };
 
@@ -305,49 +321,57 @@ const props = {
             func: () => { pruductEditor(); }
         },
         {
+            name: '创建群组',
+            func: () => { groupEditor(); }
+        },
+        {
             name: '登陆',
             func: () => { loginTest(); }
         },
         {
-            name: '加ST',
-            func: () => { bigInt_test(); }
-        },
-        {
-            name: '查ST',
-            func: () => { get_stNum_test(); }
-        },
-        {
-            name: '宝箱下单',
-            func: () => { rotary_test(); }
-        },
-        {
-            name: '订单查询',
-            func: () => { orderQuery(); }
-        },
-        {
-            name: '所有物品',
-            func: () => { get_items(); }
-        },
-        {
-            name: '添加锄头',
-            func: () => { item_test2(); }
-        },
-        {
-            name: '添加矿山',
-            func: () => { test_add_mine(); }
-        },
-        {
-            name: '随机种子',
-            func: () => { get_seed(); }
-        },
-        {
-            name: '挖矿',
-            func: () => { mining_test(); }
-        },
-        {
-            name: '兑换',
-            func: () => { convert_test(); }
+            name: '聊天登陆',
+            func: () => { chatLogin(); }
         }
+        // {
+        //     name: '加ST',
+        //     func: () => { bigInt_test(); }
+        // },
+        // {
+        //     name: '查ST',
+        //     func: () => { get_stNum_test(); }
+        // },
+        // {
+        //     name: '宝箱下单',
+        //     func: () => { rotary_test(); }
+        // },
+        // {
+        //     name: '订单查询',
+        //     func: () => { orderQuery(); }
+        // },
+        // {
+        //     name: '所有物品',
+        //     func: () => { get_items(); }
+        // },
+        // {
+        //     name: '添加锄头',
+        //     func: () => { item_test2(); }
+        // },
+        // {
+        //     name: '添加矿山',
+        //     func: () => { test_add_mine(); }
+        // },
+        // {
+        //     name: '随机种子',
+        //     func: () => { get_seed(); }
+        // },
+        // {
+        //     name: '挖矿',
+        //     func: () => { mining_test(); }
+        // },
+        // {
+        //     name: '兑换',
+        //     func: () => { convert_test(); }
+        // }
     ] // 按钮数组
 };
 
