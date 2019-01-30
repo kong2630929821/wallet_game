@@ -147,17 +147,17 @@ export class Turntable extends Widget {
     /**
      * 开奖
      */
-    public goLottery(e:any) {
-        if (this.props.isTurn) { // 正在转
+    public goLottery() {
+        // if (this.props.isTurn) { // 正在转
 
-            return;
-        }
+        //     return;
+        // }
 
-        const $turnTableBtn = getRealNode(e.node);
-        $turnTableBtn.className = 'startTurnTable';
-        setTimeout(() => {
-            $turnTableBtn.className = '';
-        }, 100);
+        // const $turnTableBtn = getRealNode(e.node);
+        // $turnTableBtn.className = 'startTurnTable';
+        // setTimeout(() => {
+        //     $turnTableBtn.className = '';
+        // }, 100);
 
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
@@ -171,10 +171,10 @@ export class Turntable extends Widget {
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
             if (order.oid) { // 非免费机会开奖
                 queryTurntableOrder(order.oid).then((res:any) => {
+                    console.log('转盘开奖成功！',res);
                     popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
                     this.props.isFirstPlay = false;
                     this.setChestTip(2);
-                    console.log('转盘开奖成功！',res);
                     this.changeDeg(res);
                 }).catch(err => {
 
@@ -182,6 +182,7 @@ export class Turntable extends Widget {
                 });
             } else {         // 免费机会开奖
                 this.props.isFirstPlay = false;
+                this.setChestTip(2);
                 this.changeDeg(order);
             }
             
@@ -207,7 +208,7 @@ export class Turntable extends Widget {
      */
     public changeDeg(resData:any) {
         console.log('changeDeg------------------',resData);
-        
+        this.props.isTurn = true;
         const $turnStyle = document.getElementById('turntable').style;
         // if (resData.resultNum && resData.resultNum === 1) {   // 请求成功
         //     this.props.prizeList.forEach(element => {
@@ -275,10 +276,6 @@ export class Turntable extends Widget {
      * @param index 序号
      */
     public change(index: number) {
-        if (this.props.isTurn) {
-
-            return;
-        }
         this.props.selectTurntable = this.props.turntableList[index];
         this.setChestTip(2);
         this.initTurntable();
@@ -289,6 +286,10 @@ export class Turntable extends Widget {
      * 点击效果
      */
     public btnClick(e: any , eventType: number, eventValue?:any) {
+        if (this.props.isTurn) {
+
+            return;
+        }
         const $dom = getRealNode(e.node);
         $dom.className = 'btnClick';
         setTimeout(() => {
@@ -303,6 +304,9 @@ export class Turntable extends Widget {
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
+                break;
+            case 3:          // 开奖
+                this.goLottery();
                 break;
             
             default:

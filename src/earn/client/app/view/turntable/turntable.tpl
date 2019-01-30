@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div w-class="turntable-btn">
-                            <img on-tap="goLottery" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
+                            <img on-tap="btnClick(e,3)" src="../../res/image/turntable_btn.png" width="100%" height="100%" />
                         </div>
                     </div>
                 </div>

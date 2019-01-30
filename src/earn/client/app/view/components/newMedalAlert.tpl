@@ -24,7 +24,7 @@
 
         </div>
         <div w-class="content-bottom" on-tap="shareWX">
-            <img src="../../res/image1/img_share_wechat.png" alt="" width="45px" height="45px"/>
+            <img src="../../res/image1/img_share_wechat.png" style="    background: white;border-radius: 50%;padding: 5px;" alt="" width="45px" height="45px"/>
             <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"秀一下","zh_Hant":"秀一下","en":""}</widget>
         </div>
     </div>

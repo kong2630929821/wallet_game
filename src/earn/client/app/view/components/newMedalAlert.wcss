@@ -67,13 +67,17 @@
     border-radius:12px;
     font-size:32px;
     font-weight:500;
-    color:#ffffff;
+    color:#222222;
     margin-left:15px;
 }
 .content-bottom{
     display: flex;
     justify-content: center;
     align-items: center;
+    background: url(../../res/image/medalShare_btn.png);
+    height: 100px;
+    width: 280px;
+    animation: big-small 1s linear infinite;
 }
 
 
