@@ -9,7 +9,7 @@ import { Bucket } from '../../utils/db';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
-import { BoxOrder, RotaryOrder, UserBoxOrderTab, UserRotaryOrderTab } from '../data/db/stParties.s';
+import { BoxOrder, ConvertOrder, RotaryOrder, UserBoxOrderTab, UserConvertOrderTab, UserRotaryOrderTab } from '../data/db/stParties.s';
 import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
 import { BILL_ALREADY_PAY, NOT_PAY_YET } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
@@ -430,46 +430,108 @@ export const get_convert_list = (): Result => {
 
 // ST兑换
 // #[rpc=rpcServer]
-export const st_convert = (awardType:number):AwardResponse => {
+export const st_convert = (awardType:number):Result => {
+    console.log('resultJst_convertson in!!!!!!!!!!');
+    const result = new Result();
     const uid = getUid();
-    const awardResponse = new AwardResponse();
     const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(MEMORY_NAME, ProductInfo._$info.name, dbMgr);
-    const convertCfg = bucket.get<number, [ProductInfo]>(awardType)[0];
-    // 从配置中获取具体兑换信息
-    if (!convertCfg) {
-        awardResponse.resultNum = DB_ERROR;
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const productInfo = bucket.get<number, [ProductInfo]>(awardType)[0];
+    if (!productInfo) {
+        result.reslutCode = DB_ERROR;
 
-        return awardResponse;
+        return result;
     }
-    const stCount = convertCfg.stCount;
-    const desc = convertCfg.desc;
-    // 扣除相应ST
-    if (!reduce_itemCount(ST_TYPE, stCount)) {
-        awardResponse.resultNum = ST_NOT_ENOUGH;
-        
-        return awardResponse;
+    console.log('productInfo in!!!!!!!!!!', productInfo);
+    const stCount = productInfo.stCount;
+    // 生成订单
+    const time = (new Date()).valueOf();
+    const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
+    const order = new ConvertOrder(oid, uid, awardType, stCount, time.toString(), NOT_PAY_YET);
+    orderBucket.put(oid, order);
+    const resultJson = wallet_unifiedorder(oid, stCount, 'Convert');
+    if (!resultJson) {
+        result.reslutCode = UNIFIEDORDER_API_FAILD;
+
+        return result;
     }
+    // 是否是第一次购买
+    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name, dbMgr);
+    const userConvertOrderTab = userOrderBucket.get<number, [UserConvertOrderTab]>(uid)[0];
+    if (!userConvertOrderTab) {
+        resultJson.isFirst = 1;
+    } else {
+        resultJson.isFirst = 0;
+    }
+    resultJson.oid = oid;
+    console.log('resultJson!!!!!!!!!!', resultJson);
+    result.msg = JSON.stringify(resultJson);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 宝箱支付查询
+// #[rpc=rpcServer]
+export const convert_pay_query = (oid: string): Result => {
+    console.log('convert_pay_query in!!!!!!!!!!!!');
+    const uid = getUid();
+    const result = new Result();
+    const dbMgr = getEnv().getDbMgr();
+    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
+    const order = orderBucket.get<string, [ConvertOrder]>(oid)[0];
+    if (!order) {
+        result.reslutCode = ORDER_NOT_EXIST;
+
+        return result;
+    }
+    // 向钱包服务器查询订单
+    const resultJson = wallet_order_query(oid);
+    if (resultJson.pay_status !== 'success') {
+        console.log('resultJson.pay_status!!!!!!!!!!', resultJson.pay_status);
+        result.reslutCode = GET_ORDERINFO_FAILD;
+
+        return result;
+    }
+    // 支付成功 更新订单信息
+    order.state = BILL_ALREADY_PAY;
+    orderBucket.put(oid, order);
+    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name, dbMgr);
+    let userConvertOrderTab = userOrderBucket.get<number, [UserConvertOrderTab]>(uid)[0];
+    if (!userConvertOrderTab) {
+        userConvertOrderTab = new UserConvertOrderTab(uid, []);
+    }
+    userConvertOrderTab.oidList.push(oid);
+    userOrderBucket.put(uid, userConvertOrderTab);
     // 从数据库获取兑换码
+    const awardType = order.awardType;
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const productInfo = bucket.get<number, [ProductInfo]>(awardType)[0];
+    if (!productInfo) {
+        result.reslutCode = DB_ERROR;
+
+        return result;
+    }
     const convertAward = get_convert(awardType);
     if (!convertAward) {
-        awardResponse.resultNum = AWARD_NOT_ENOUGH;
-
-        return awardResponse;
-    }
-    convertCfg.leftCount -= 1;
-    convertCfg.convertCount += 1;
-    bucket.put(awardType, convertCfg);
-    const award = add_award(uid, awardType, convertCfg.stCount, AWARD_SRC_CONVERT, convertAward.convert, desc, convertAward.deadTime);
-    if (!award) {
-        awardResponse.resultNum = DB_ERROR;
-
-        return awardResponse;
-    }
-    awardResponse.award = award;
-    awardResponse.resultNum = RESULT_SUCCESS;
+        result.reslutCode = AWARD_NOT_ENOUGH;
     
-    return awardResponse;
+        return result;
+    }
+    productInfo.leftCount -= 1;
+    productInfo.convertCount += 1;
+    bucket.put(awardType, productInfo);
+    const award = add_award(uid, awardType, productInfo.stCount, AWARD_SRC_CONVERT, convertAward.convert, productInfo.desc, convertAward.deadTime);
+    if (!award) {
+        result.reslutCode = DB_ERROR;
+    
+        return result;
+    }
+    result.msg = JSON.stringify(award);
+    result.reslutCode = RESULT_SUCCESS;
+    
+    return result;
 };
 
 // 获取可兑换的虚拟物品信息
