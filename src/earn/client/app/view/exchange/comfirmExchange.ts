@@ -2,6 +2,7 @@
  * 兑换确认
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { Widget } from '../../../../../pi/widget/widget';
 import { exchangeVirtual } from '../../net/rpc';
 
@@ -18,7 +19,8 @@ export class ComfirmExchange extends Widget {
         super.setProps(this.props);
         this.props = {
             ...this.props,
-            detail:props.detail
+            detail:props.detail,
+            stShow:getModulConfig('ST_SHOW')
         };
     }
 

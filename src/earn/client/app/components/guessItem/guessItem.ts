@@ -2,6 +2,7 @@
  * 竞猜组件
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -19,6 +20,7 @@ export interface Props {
 export class GuessItem extends Widget {
     public ok: () => void;
     public props: any = {
+        stShow:getModulConfig('ST_SHOW'),
         guessBtn: true,
         guessData: {
             team1: 'ok',
@@ -96,11 +98,35 @@ export class GuessItem extends Widget {
 
         return true;
     }
+
+    /**
+     * 点击效果
+     */
+    public btnClick($dom: any,btnType:number) {
+        $dom.className = 'btnClick';
+        setTimeout(() => {
+            $dom.className = '';
+        }, 100);
+        switch (btnType) {
+            case 0:
+                this.goGuess();
+                break;
+            
+            default:
+        }
+    }
+
     /**
      * 竞猜详情
      */
     public goGuess() {
-        popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
+        if (this.props.showBtn) {
+            if (this.props.guessBtn) {
+                popNew('earn-client-app-view-guess-allGuess-guessDetail',{ guessData:this.props.guessData });
+            } else {
+                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+            }
+        }
     }
 
 }

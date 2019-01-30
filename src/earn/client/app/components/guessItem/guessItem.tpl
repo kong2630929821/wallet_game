@@ -6,7 +6,7 @@
     </div>
 
     {{% 中部 比赛队}}
-    <div w-class="guess-center">
+    <div w-class="guess-center" on-tap={{it.showBtn?"goGuess":""}}>
         {{% 队伍1}}
         <div w-class="guess-center-team">
             <img src="../../res/image/guessTeam/{{it.guessData.team1}}.png" height="100px" />
@@ -20,11 +20,11 @@
         </div>
 
         {{% VS}}
-        <div w-class="guess-center-vs">
+        <div w-class="guess-center-vs" >
             <span style="font-size:32px;margin-bottom: 20px;">VS</span>
             {{if it.showBtn}}
                 {{if it.guessBtn}}
-                <div on-tap="goGuess" w-class="guess-btn">预测</div>
+                <div on-tap="btnClick(e,0)" w-class="guess-btn">预测</div>
                 {{else}}
                     {{if it.guessData.result ===3}}
                     <div w-class="guess-btn notguess">比赛取消</div>
@@ -52,11 +52,11 @@
     {{% 下部 支持人数}}
     <div w-class="guess-bottom">
         <div w-class="suport-left" style="width:{{it.guessData.team1Num / (it.guessData.team2Num+it.guessData.team1Num) *100}}%">
-            {{it.guessData.team1Num}} ST
+            {{it.guessData.team1Num}}&nbsp;{{it.stShow}}
             <div w-class="line"></div>
         </div>
         <div w-class="suport-right" style="width:{{it.guessData.team2Num / (it.guessData.team2Num+it.guessData.team1Num) *100}}%">
-            {{it.guessData.team2Num}} ST
+            {{it.guessData.team2Num}}&nbsp;{{it.stShow}}
         </div>
     </div>
 </div>

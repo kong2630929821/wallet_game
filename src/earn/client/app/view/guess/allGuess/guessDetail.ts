@@ -2,6 +2,7 @@
  * 竞猜详情-下单
  */
 
+import { getModulConfig } from '../../../../../../app/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';
@@ -20,6 +21,7 @@ export class GuessDetail extends Widget {
     public ok: () => void;
 
     public props: any = {
+        stShow:getModulConfig('ST_SHOW'),
         selectTopbar: {},
         guessSTnum: 0.1,
         defaultGuessStNum:0.1,
@@ -37,10 +39,10 @@ export class GuessDetail extends Widget {
         this.inputChange({ value:this.props.defaultGuessStNum });
     }
 
-    // public create() {
-    //     super.create();
-
-    // }
+    public create() {
+        super.create();
+        console.log();
+    }
 
     public initData() {
         getOneGuessInfo(this.props.guessData.cid).then((res:any) => {
@@ -51,8 +53,11 @@ export class GuessDetail extends Widget {
         getSTbalance();
     }
 
-    public guess(e: any, team: number) {
-        this.btnClick(getRealNode(e.node));
+    /**
+     * 加油
+     * @param team 1:主场队 2:客场队
+     */
+    public guess(team: number) {
         if (this.props.guessSTnum > this.props.selfSTnum) { // 余额不足
             popNew('app-components1-message-message', { content: this.config.value.tips[0] });
 
@@ -69,13 +74,13 @@ export class GuessDetail extends Widget {
                 console.log('下注成功，查询！！！！！',res);
                 popNew('app-components1-message-message', { content: this.config.value.tips[2] });
                 this.initData();
-                this.inputChange({ value:this.props.defaultGuessStNum });
+                // this.inputChange({ value:this.props.defaultGuessStNum });
             }).catch(err => {
                 popNew('app-components1-message-message', { content: this.config.value.tips[3] });
                 console.log('查询下注失败',err);
             });
         }).catch(err => {
-            popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+            // popNew('app-components1-message-message', { content: this.config.value.tips[3] });
             console.log('下注失败！！！！！',err);
         });
     }
@@ -103,13 +108,36 @@ export class GuessDetail extends Widget {
     }
 
     /**
+     * 去充值
+     */
+    public goRecharge() {
+        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+            this.initData();
+        });
+    }
+
+    /**
      * 点击效果
      */
-    public btnClick($dom: any) {
+    public btnClick(e: any , eventType: number, eventValue?:any) {
+        const $dom = getRealNode(e.node);
         $dom.className = 'btnClick';
         setTimeout(() => {
             $dom.className = '';
         }, 100);
+        switch (eventType) { // 看广告
+            case 0:
+                // this.resetBoxList();
+                break;
+            case 1:          // 充值
+                this.goRecharge();
+                break;
+            case 2:          // 加油 
+                this.guess(eventValue);
+                break;
+            
+            default:
+        }
     }
 
     /**

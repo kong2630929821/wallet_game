@@ -2,10 +2,10 @@
  * earn home 
  */
 // ================================ 导入
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { hasWallet } from '../../../../../app/utils/tools';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
-import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
@@ -31,12 +31,12 @@ export class EarnHome extends Widget {
      * 初始化数据
      */
     public init() {
-        this.language = this.config.value[getLang()];
         const mine = getStore('mine');
-        console.log('home--------mine-----------------',mine);
-        
+        const ktShow = getModulConfig('KT_SHOW');
+        const stShow = getModulConfig('ST_SHOW');
         this.props = {
             ...this.props,
+            ktShow,
             scroll: false,
             scrollHeight: 0,
             refresh: false,
@@ -60,12 +60,12 @@ export class EarnHome extends Widget {
                 img: 'btn_yun_4.png',
                 title: '验证手机',
                 desc: '确认是真实用户',
-                components:'earn-client-app-view-activity-verifyPhone'
+                components:'app-view-mine-setting-phone'
             }],
             applicationWelfares:[{
                 img: 'btn_yun_5.png',
                 title: '领分红',
-                desc: '根据KT领分红',
+                desc: `根据${ktShow}领分红`,
                 components:'app-view-earn-mining-dividend'
             }, {
                 img: 'btn_yun_6.png',
@@ -74,7 +74,7 @@ export class EarnHome extends Widget {
                 components:'app-view-earn-redEnvelope-writeRedEnv'
             }, {
                 img: 'btn_yun_7.png',
-                title: '充KT送ST',
+                title: `充${ktShow}送${stShow}`,
                 desc: '赠品可以玩游戏',
                 components:'app-view-wallet-cloudWallet-rechargeKT'
             }, {

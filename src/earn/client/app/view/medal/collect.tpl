@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <img src="../../res/image/cabinetTop-bg.png" width="100%" />
+        <img src="../../res/image/cabinetTop_bg.png" style="margin-bottom:-6px;" width="100%" />
         <div w-class="collect-cabinet">
             {{for i,item of it.medalList}}
             <div w-class="collect-item flex-col">

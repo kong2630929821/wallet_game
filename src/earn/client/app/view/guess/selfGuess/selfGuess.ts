@@ -2,6 +2,7 @@
  * 竞猜主页-我的
  */
 
+import { getModulConfig } from '../../../../../../app/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { getMyGuess } from '../../../net/rpc';
@@ -10,12 +11,14 @@ import { st2ST } from '../../../utils/tools';
 export class SelfGuess extends Widget {
     public ok: () => void;
     
-    public props:any = {
-        myGuessList:[]
-    };
+    public props:any;
 
     public create () {
         super.create();
+        this.props = {
+            stShow:getModulConfig('ST_SHOW'),
+            myGuessList:[]
+        };
         getMyGuess().then((resAry:any) => {
             this.props.myGuessList = this.processData(resAry);
             this.paint();

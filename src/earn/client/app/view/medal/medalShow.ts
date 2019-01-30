@@ -2,6 +2,7 @@
  * 勋章成就 --主页
  */
 
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getRankList, showMedal } from '../../net/rpc';
@@ -22,7 +23,7 @@ interface Props {
 export class MedalShow extends Widget {
     public ok: () => void;
     public props: any = {
-        pi_norouter:true,
+        ktShow:getModulConfig('KT_SHOW'),
         medalImg: '',
         medalSite: {}, // 勋章坐标位置
         imgScale: 1, // 勋章图片缩放倍数
