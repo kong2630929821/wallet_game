@@ -204,8 +204,8 @@ export const rotary_pay_query = (oid: string): Result => {
     
         return result;
     }
-    const convertInfo = get_convert_info(newitemType);
-    if (!convertInfo) {    // 判断奖品是否为虚拟兑换类奖品
+    const convertInfoResult = get_convert_info(newitemType);
+    if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
         if (!award) {
@@ -218,6 +218,7 @@ export const rotary_pay_query = (oid: string): Result => {
     
         return result;
     } else {  // 是可兑换奖品 添加兑换码
+        const convertInfo: ProductInfo = JSON.parse(convertInfoResult.msg);
         const convertAward = get_convert(newitemType);
         if (!convertAward) {
             result.reslutCode = AWARD_NOT_ENOUGH;
@@ -369,8 +370,8 @@ export const box_pay_query = (oid: string): Result => {
     
         return result;
     }
-    const convertInfo = get_convert_info(newitemType);
-    if (!convertInfo) {    // 判断奖品是否为虚拟兑换类奖品
+    const convertInfoResult = get_convert_info(newitemType);
+    if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
         if (!award) {
@@ -383,6 +384,7 @@ export const box_pay_query = (oid: string): Result => {
     
         return result;
     } else {  // 是可兑换奖品 添加兑换码
+        const convertInfo: ProductInfo = JSON.parse(convertInfoResult.msg);
         const convertAward = get_convert(newitemType);
         if (!convertAward) {
             result.reslutCode = AWARD_NOT_ENOUGH;
@@ -472,7 +474,7 @@ export const st_convert = (awardType:number):Result => {
     return result;
 };
 
-// 宝箱支付查询
+// 兑换支付查询
 // #[rpc=rpcServer]
 export const convert_pay_query = (oid: string): Result => {
     console.log('convert_pay_query in!!!!!!!!!!!!');
@@ -535,23 +537,22 @@ export const convert_pay_query = (oid: string): Result => {
 };
 
 // 获取可兑换的虚拟物品信息
-export const get_convert_info = (id:number):ProductInfo => {
+// #[rpc=rpcServer]
+export const get_convert_info = (id:number):Result => {
+    console.log('get_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', id);
+    const result = new Result();
     const dbMgr = getEnv().getDbMgr(); 
     const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
-    const iter = <DBIter>bucket.iter(null);
-    do {
-        const iterConvert = iter.nextElem();
-        console.log('elCfg----------------read---------------', iterConvert);
-        if (!iterConvert) {
-            return;
-        }
-        const stConvertCfg:ProductInfo = iterConvert[1];
-        if (id === stConvertCfg.id) {
-            return stConvertCfg;
-        }
-        
-    } while (iter);
-   
+    const productInfo = bucket.get<number, [ProductInfo]>(id)[0];
+    if (!productInfo) {
+        result.reslutCode = PRODUCT_NOT_EXIST;
+
+        return result;
+    }
+    result.msg = JSON.stringify(productInfo);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
 };
 
 // 添加商品信息

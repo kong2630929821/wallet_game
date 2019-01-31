@@ -1,5 +1,7 @@
 import * as net_init from '../../../chat/client/app/net/init';
 import { GroupInfo } from '../../../chat/server/data/db/group.s';
+import  * as chatLogins  from '../../../chat/server/data/rpc/basic.p';
+import { UserRegister } from '../../../chat/server/data/rpc/basic.s';
 import { createGroup } from '../../../chat/server/data/rpc/group.p';
 import { GroupCreate } from '../../../chat/server/data/rpc/group.s';
 import { popNew } from '../../../pi/ui/root';
@@ -14,7 +16,7 @@ import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
-import { add_convert, box_pay_query, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
+import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
 import { bigint_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { get_loginDays, login } from '../../server/rpc/user.p';
@@ -58,10 +60,14 @@ export const loginTest = () => {
 
 // 聊天登录
 export const chatLogin = () => {
-    const user = 'test';
-    const pwd = 'test';
-    net_init.login(2, user, pwd, (r) => {
-        console.log('聊天登陆成功', r);
+    const register = new UserRegister();
+    register.name = 'GM1';
+    register.passwdHash = '12345678';
+    clientRpcFunc(chatLogins.registerUser, register, (r: UserInfo) => {
+        console.log(r);
+    });
+    clientRpcFunc(chatLogins.login, register, (r: UserInfo) => {
+        console.log(r);
     });
 };
 
@@ -309,6 +315,13 @@ export const createGroupTest = (name:string, avatar:string, note:string, needAgr
     });
 };
 
+// 广告奖励
+export const convert_info_test = () => {
+    clientRpcFunc(get_convert_info, 500001, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -329,8 +342,8 @@ const props = {
             func: () => { loginTest(); }
         },
         {
-            name: '聊天登陆',
-            func: () => { chatLogin(); }
+            name: '商品信息',
+            func: () => { convert_info_test(); }
         }
         // {
         //     name: '加ST',
