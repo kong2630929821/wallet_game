@@ -14,7 +14,7 @@ import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessin
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { box_pay_query, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { box_pay_query, convert_pay_query, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';

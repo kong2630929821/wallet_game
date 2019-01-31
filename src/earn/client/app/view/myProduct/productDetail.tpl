@@ -15,7 +15,7 @@
             <img w-class="top-img" src="../../res/image/advertisement.png" height="100%" />
             <div w-class="top-text">
                 <widget style="font-size:32px;" w-tag="pi-ui-lang">{{topBarTitle}}</widget>
-                <widget w-tag="pi-ui-lang">{"zh_Hans":"有效期：至2018-20-52","zh_Hant":"有效期：至2018-20-52","en":""}</widget>
+                <widget w-tag="pi-ui-lang">{"zh_Hans":"有效期：至{{it.orderDetail.deadTime}}","zh_Hant":"有效期：至{{it.orderDetail.deadTime}}","en":""}</widget>
             </div>
         </div>
         {{% 中部介绍}}
@@ -23,17 +23,17 @@
             <div w-class="conversionCode">
                 <div>
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"券码：","zh_Hant":"券碼：","en":""}</widget>
-                    <span style="font-weight: 700;">a4sd54s6df45s6df4s5f5s4f5</span>
+                    <span style="font-weight: 700;">{{it.orderDetail.convert}}</span>
                 </div>
-                <widget on-tap="codeCopy" w-class="btn-copy" w-tag="pi-ui-lang">{"zh_Hans":"复制","zh_Hant":"複製","en":""}</widget>
+                <widget on-tap="btnClick(e,0)" w-class="btn-copy" w-tag="pi-ui-lang">{"zh_Hans":"复制","zh_Hant":"複製","en":""}</widget>
             </div>
             <div w-class="center-text">
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"支付金额","zh_Hant":"支付金額","en":""}</widget>
-                <span style="margin-left:30px;color: #E97A1A;">银券*3 金券*3</span>
+                <span style="margin-left:30px;color: #E97A1A;">{{it.orderDetail.count / 100}} {{it.stShow}}</span>
             </div>
             <div w-class="center-text">
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"订单编号","zh_Hant":"訂單編號","en":""}</widget>
-                <span style="margin-left:30px;">152202126468616</span>
+                <span style="margin-left:30px;">{{it.orderDetail.id}}</span>
             </div>
             <div w-class="center-text">
                 <widget w-tag="pi-ui-lang">{"zh_Hans":"下单时间","zh_Hant":"下單時間","en":""}</widget>

@@ -3,18 +3,18 @@
     <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col">
-        {{if it.history.length !==0}}
+        {{if it.historyList.length !==0}}
 
         {{% 列表}}
 
-        {{for i,item in it.history}}
-        <div w-class="mat item">
-            <img src="{{item.img}}" width="210px;"/>
+        {{for i,item in it.historyList}}
+        <div w-class="mat item" on-tap="goDetail({{i}})">
+            <img src="../../res/image/virtualGoods/{{item.awardType}}.jpg" style="padding: 5px 30px;" width="150px" height="150px"/>
             <div w-class="item-text">
-                <div style="height:45px;font-size:32px;margin-bottom: 20px;">{{item.name}}</div>
+                <div style="height:45px;font-size:32px;margin-bottom: 20px;">{{item.awardType}}</div>
                 <div style="height:33px;font-size:24px;">
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"有效期：至","zh_Hant":"有效期：至","en":""}</widget>
-                    {{item.time}}
+                    {{item.deadTime}}
                 </div>
             </div>
         </div>

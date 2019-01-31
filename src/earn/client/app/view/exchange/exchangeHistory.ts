@@ -2,20 +2,19 @@
  * 奖券兑换 --兑换记录
  */
 
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getExchangeHistory } from '../../net/rpc';
 
 interface Props {
-    type:number;
-    history:any;
+    historyList:any;
 }
 
 export class ExchangeHistory extends Widget {
     public ok: () => void;
 
     public props:Props = {
-        type :0,
-        history:[
+        historyList:[
             // {
             //     img:'../../res/image/dividend_history_none.png',
             //     name:'haha',
@@ -31,9 +30,18 @@ export class ExchangeHistory extends Widget {
 
     public initData() {
         getExchangeHistory().then((res:any) => {
-            this.props.history = res.awards;
+            this.props.historyList = res.awards;
             this.paint();
         });
+    }
+
+    /**
+     * 查看兑换详情
+     * @param index 序号
+     */
+    public goDetail(index:number) {
+        console.log(this.props.historyList[index]);
+        popNew('earn-client-app-view-myProduct-productDetail', { orderDetail: this.props.historyList[index], detailType: 1 });
     }
 
     /**

@@ -141,6 +141,8 @@ let clientRpc: any;
 
 // 监听wallet登录
 register('user/isLogin',(isLogin:boolean) => {
+    console.log('???????????????',isLogin);
+    
     if (isLogin) {
         initClient();
     }
