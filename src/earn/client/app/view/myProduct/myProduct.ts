@@ -53,7 +53,7 @@ export class MyProduct extends Widget {
 
     public goProductDetail(index: number) {
         if (this.props.history[index].pid > 500000) {// 虚拟物品进入详情
-            popNew('earn-client-app-view-myProduct-productDetail', { name: this.props.history[index].name, detailhistoryType: 1 });
+            popNew('earn-client-app-view-myProduct-productDetail', { orderDetail: this.props.history[index], detailType: 1 });
         }
     }
 

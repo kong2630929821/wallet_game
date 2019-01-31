@@ -2,6 +2,7 @@
  * 竞猜详情-下单
  */
 
+import { watchAd } from '../../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../../app/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
@@ -117,6 +118,16 @@ export class GuessDetail extends Widget {
     }
 
     /**
+     * 去看广告
+     */
+    public toWatchAd() {
+        watchAd(2,(err,res) => {
+            console.log('ad err = ',err);
+            console.log('ad res = ',res);
+        });
+    }
+
+    /**
      * 点击效果
      */
     public btnClick(e: any , eventType: number, eventValue?:any) {
@@ -127,7 +138,7 @@ export class GuessDetail extends Widget {
         }, 100);
         switch (eventType) { // 看广告
             case 0:
-                // this.resetBoxList();
+                this.toWatchAd();
                 break;
             case 1:          // 充值
                 this.goRecharge();
