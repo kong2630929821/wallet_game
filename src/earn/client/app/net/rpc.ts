@@ -292,8 +292,6 @@ export const openTurntable = (activityType: ActivityType) => {
  * 大转盘订单查询
  */
 export const queryTurntableOrder = (oid:string) => {
-    console.log(oid);
-    
     return new Promise((resolve, reject) => {
         clientRpcFunc(rotary_pay_query, oid, (r: Result) => {
             console.log('[活动]rpc-queryChestOrder---------------', r);
@@ -446,17 +444,45 @@ export const getExchangeVirtualList = () => {
 };
 
 /**
- * 兑换虚拟物品 
+ * 兑换虚拟物品下单
  * @param VirtualId 虚拟物品ID
  */
 export const exchangeVirtual = (VirtualId:number) => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(st_convert, VirtualId, (r: SeriesDaysRes) => {
+        clientRpcFunc(st_convert, VirtualId, (r: Result) => {
             console.log('[活动]rpc-exchangeVirtual---------------', r);
-            if (r.resultNum === 1) {
-                resolve(r);
+            if (r.reslutCode === 1) {
+                const order = JSON.parse(r.msg);
+                walletPay(order,'101','15',(res,msg) => {
+                    console.log('exchangeVirtual',res,order);
+                        
+                    if (!res) {
+                        resolve(order);
+                    } else {
+                        showActError(res);
+                        reject(res);
+                    }
+                });
             } else {
-                showActError(r.resultNum);
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 兑换订单查询
+ */
+export const queryExchangeOrder = (oid:string) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(convert_pay_query, oid, (r: Result) => {
+            console.log('[活动]rpc-queryExchangeOrder---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                resolve(msg);
+            } else {
+                showActError(r.reslutCode);
                 reject(r);
             }
         });

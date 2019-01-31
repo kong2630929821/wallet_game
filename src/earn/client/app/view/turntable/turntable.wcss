@@ -24,22 +24,23 @@
 }
 
 .center{
-    height:1000px;;
+    height:100%;
     width:100%;
-    flex:0 0 auto;
 }
 
 .bottom{
     align-items: center;
     position: absolute;
-    bottom: 30px;
+    bottom: 0px;
 }
 
 .turntable-name{
     text-align: center;
     height: 184px;
+    width: 100%;
     display: flex;
     justify-content: center;
+    position: absolute;
 }
 .turntable-main-bg{
     height: 100%;

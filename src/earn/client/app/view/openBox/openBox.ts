@@ -292,10 +292,10 @@ export class OpenBox extends Widget {
      * 去充值
      */
     public goRecharge() {
-        // addST();
-        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-            this.refresh();
-        });
+        addST();
+        // popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+        //     this.refresh();
+        // });
     }
 
     /**
