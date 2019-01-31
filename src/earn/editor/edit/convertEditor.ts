@@ -86,6 +86,7 @@ export class ConvertEditor extends Widget {
     
     public inputStNum(event: any) {
         this.props.stNum = parseInt(event.currentTarget.value, 10);
+        console.log('this.props.productId', event.currentTarget.value);
     }
 
     public inputProductName(event: any) {
