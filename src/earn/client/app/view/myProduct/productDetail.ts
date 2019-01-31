@@ -6,6 +6,7 @@ import { getModulConfig } from '../../../../../app/modulConfig';
 import { copyToClipboard } from '../../../../../app/utils/tools';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
+import { getConvertInfo } from '../../net/rpc';
 
 interface Props {
     orderDetail:{        // 订单信息
@@ -20,38 +21,38 @@ interface Props {
         deadTime: string;
     };   
     detailType:number;   // 0:兑换成功 1：物品列表,
-    stShow:string;       //  ST名字;
 }
 
 export class ProductDetail extends Widget {
     public ok: () => void;
 
-    public props:Props = {
-        orderDetail:{
-            id: '',
-            awardType: 0,
-            count: 0,
-            uid: 0,
-            src: '',
-            time: '',
-            desc: '',
-            convert: '',
-            deadTime: ''
-        },
-        detailType:0,
-        stShow:''
-    };
-
-    public setProps(props:any) {
+    public setProps(props:Props) {
         this.props = {
             ...props,
             stShow:getModulConfig('ST_SHOW'),
-            convertInfo:{}  // 兑换物品信息
+            convertInfo:{
+                convertCount: 0,
+                desc: '...',
+                id: 0,
+                leftCount: 0,
+                level: 0,
+                name: '...',
+                pic: '...',
+                progress: '...',
+                stCount: 0,
+                tips: '...',
+                value: '...'
+            }  // 兑换物品信息
         };
         super.setProps(this.props);
-        console.log(this.props);
-        
-        this.paint();
+        this.initData();
+    }
+
+    public initData() {
+        getConvertInfo(this.props.orderDetail.awardType).then((res:any) => {
+            this.props.convertInfo = res;
+            this.paint();
+        });
     }
 
     /**

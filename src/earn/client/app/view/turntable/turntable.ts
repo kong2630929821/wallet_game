@@ -355,7 +355,7 @@ export class Turntable extends Widget {
      * 去看广告
      */
     public toWatchAd() {
-        watchAd(1,(err,res) => {
+        watchAd(2,(err,res) => {
             console.log('ad err = ',err);
             console.log('ad res = ',res);
         });
