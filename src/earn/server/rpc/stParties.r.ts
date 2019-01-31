@@ -571,6 +571,7 @@ export const add_convert_info = (convertAwardList :ConvertAwardList): Result => 
 
             return result;
         }
+        console.log('stCount !!!!!!!!!!!!!!!!!!!!!!!', productInfoList[i].stCount);
         productInfoList[i].leftCount = 0;
         productInfoList[i].convertCount = 0;
         bucket.put(pid, productInfoList[i]);
@@ -594,7 +595,9 @@ export const modify_convert_info = (product: ProductInfo): Result => {
 
         return result;
     }
+    console.log('stCount !!!!!!!!!!!!!!!!!!!!!!!', product.stCount);
     bucket.put(pid, product);
+    console.log('ProductInfo !!!!!!!!!!!!!!!!!!!!!!!', bucket.get(pid)[0]);
     result.reslutCode = RESULT_SUCCESS;
 
     return result;

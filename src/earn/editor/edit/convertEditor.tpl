@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     商品信息：
-    <div>
+    <div style="height: 300px;overflow: auto;">
         <table>
             <tr>
                 <td>商品编号</td>
