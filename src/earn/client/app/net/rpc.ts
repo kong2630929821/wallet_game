@@ -1,20 +1,19 @@
 /**
  * rpc通信
  */
-import { getOpenId } from '../../../../app/api/JSAPI';
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { walletPay } from '../../../../app/utils/pay';
 import { popNew } from '../../../../pi/ui/root';
-import { GuessingKey, GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
-import { AwardQuery, AwardResponse, InviteAwardRes, Items, MineKTTop, MineTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
+import { AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { box_pay_query, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { box_pay_query, convert_pay_query, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
@@ -33,31 +32,24 @@ import { clientRpcFunc, login as mqttLogin } from './init';
 /**
  * 钱包用户登录活动
  */
-export const goLoginActivity = () => {
+export const goLoginActivity = (openId:number) => {
     console.log('goLoginActivity -----------------');
-    getOpenId('101',(r) => {        // 获取openid
-        const openid = r.openid.toString();
-        if (openid) {
-            mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
-                setStore('userInfo',{ ...res });
-                if (res.loginCount === 0) {  // 新用户第一次登录
-                    popNew('earn-client-app-components-newUserLogin-newUserLogin');
-                }
-                getSTbalance();  // 获取ST余额
-                getKTbalance();  // 获取KT余额   
-                getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
-                getInvitedNumberOfPerson().then((invite:Invited) => {
-                    if (canInviteAward(invite)) {
-                        popNew('earn-client-app-view-activity-inviteAward');
-                    }
-                });  // 获取邀请成功人数
-                getTodayMineNum();
-                getRankList();
-            });
+    const openid = openId.toString();
+    mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
+        setStore('userInfo',{ ...res });
+        if (res.loginCount === 0) {  // 新用户第一次登录
+            popNew('earn-client-app-components-newUserLogin-newUserLogin');
         }
-            
-    },(err) => {
-        console.log('[活动]获取openid失败！！------------', err);
+        getSTbalance();  // 获取ST余额
+        getKTbalance();  // 获取KT余额   
+        getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
+        getInvitedNumberOfPerson().then((invite:Invited) => {
+            if (canInviteAward(invite)) {
+                popNew('earn-client-app-view-activity-inviteAward');
+            }
+        });  // 获取邀请成功人数
+        getTodayMineNum();
+        getRankList();
     });
 };
 
