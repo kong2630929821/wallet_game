@@ -7,7 +7,7 @@ declare var pi_modules;
 
 // ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
-import { register } from '../../../../app/store/memstore';
+import { loginWallet } from '../../../../app/net/login';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
@@ -23,11 +23,11 @@ export const sourcePort = activeLogicPort;
 /**
  * 客户端初始化
  */
-export const initClient = () => {
+export const initClient = (openId:number) => {
     if (!rootClient) {
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
         rootClient = mqtt.connection(() => {
-            goLoginActivity();
+            goLoginActivity(openId);
         });
     }
     // initPush();
@@ -139,11 +139,8 @@ let rootClient: Client;
 // root RPC
 let clientRpc: any;
 
-// 监听wallet登录
-register('user/isLogin',(isLogin:boolean) => {
-    console.log('???????????????',isLogin);
-    
-    if (isLogin) {
-        initClient();
-    }
+// 登录
+loginWallet('101',(openId:number) => {
+    console.log('获取到openId ====',openId);
+    initClient(openId);
 });
