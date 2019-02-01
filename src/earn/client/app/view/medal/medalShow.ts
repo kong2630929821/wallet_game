@@ -82,20 +82,6 @@ export class MedalShow extends Widget {
     }
 
     /**
-     * 挂出去展示勋章
-     */
-    public putoutMedal() {
-        showMedal(this.props.medalId).then((res:any) => {
-            if (res.resultNum === 1) {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
-                getRankList();
-            } else {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
-            }
-        });
-    }
-
-    /**
      * 返回上一页
      */
     public backPrePage() {

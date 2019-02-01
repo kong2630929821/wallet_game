@@ -45,6 +45,8 @@ export class ProductDetail extends Widget {
             }  // 兑换物品信息
         };
         super.setProps(this.props);
+        console.log(this.props);
+        
         this.initData();
     }
 
