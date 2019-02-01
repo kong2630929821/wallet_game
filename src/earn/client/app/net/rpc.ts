@@ -314,6 +314,7 @@ export const getAwardHistory = (itype?: number) => {
             const resData = [];
             r.awards.forEach(element => {
                 const data = {
+                    ...element,
                     ...getPrizeInfo(element.awardType),
                     time: timestampFormat(element.time),
                     count: coinUnitchange(element.awardType,element.count)
@@ -492,6 +493,27 @@ export const getExchangeHistory = () => {    // TODO
         clientRpcFunc(award_query, awardQuery, (r: any) => {
             console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
+        });
+    });
+};
+
+/**
+ * 获取虚拟兑换物品信息
+ */
+export const getConvertInfo = (id:number) => {
+    
+    return new Promise((resolve, reject) => {
+        
+        clientRpcFunc(get_convert_info, id, (r: any) => {
+            // console.log('[活动]rpc-getConvertInfo-resData---------------', r);
+            if (r.reslutCode === 1) {
+                const msg = JSON.parse(r.msg);
+                console.log('[活动]rpc-getConvertInfo-resData---------------', msg);
+                resolve(msg);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
         });
     });
 };
