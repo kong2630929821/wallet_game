@@ -300,7 +300,7 @@ struct DailyWatchAdNum {
 #[primary=id,db=file,dbMonitor=true,hasmgr=false,constructor=true]
 struct ProductInfo {
     id: u32, // 商品编号
-    stCount: u8, // 兑换所需ST数量
+    stCount: u32, // 兑换所需ST数量
     name: String, // 名称
     value: String, // 价值
     desc: String, // 描述

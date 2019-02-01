@@ -2,7 +2,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 import { clientRpcFunc } from '../../client/app/net/init';
 
-import { add_convert, add_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
+import { add_convert, add_convert_info, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
 
 import { Result } from '../../server/data/db/guessing.s';
 
@@ -86,6 +86,7 @@ export class ConvertEditor extends Widget {
     
     public inputStNum(event: any) {
         this.props.stNum = parseInt(event.currentTarget.value, 10);
+        console.log('this.props.productId', event.currentTarget.value);
     }
 
     public inputProductName(event: any) {
@@ -153,6 +154,12 @@ export class ConvertEditor extends Widget {
     public doModify() {
         const product = new ProductInfo(this.props.productId, this.props.stNum, this.props.productName, this.props.value, this.props.desc, this.props.progress, this.props.tips, this.props.level, this.props.pic, this.props.addProduct.leftCount, this.props.addProduct.convertCount);
         modify_product(product);
+        this.initData();
+        this.paint();
+    }
+
+    public deleteProduct(e:any, id: number) {
+        delete_product(id);
         this.initData();
         this.paint();
     }
@@ -232,6 +239,21 @@ const modify_product = (product: ProductInfo) => {
             console.log(r);
             if (r.reslutCode === RESULT_SUCCESS) {
                 alert('修改商品成功');
+                resolve(r);
+            } else {
+                reject(r);
+            }
+        });
+    });
+};
+
+// 删除商品
+const delete_product = (productId: number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(delete_convert_info, productId, (r: Result) => {
+            console.log(r);
+            if (r.reslutCode === RESULT_SUCCESS) {
+                alert('删除商品成功');
                 resolve(r);
             } else {
                 reject(r);

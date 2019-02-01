@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     商品信息：
-    <div>
+    <div style="height: 300px;overflow: auto;">
         <table>
             <tr>
                 <td>商品编号</td>
@@ -21,6 +21,7 @@
                 <td>{{product.leftCount}}</td>
                 <td>{{product.convertCount}}</td>
                 <button on-tap="modify(e, {{i}})" w-class="btn">修改</button>
+                <button on-tap="deleteProduct(e, {{product.id}})" w-class="btn">删除</button>
             </tr>
             {{end}}
         </table>
