@@ -1,7 +1,6 @@
 /**
  * digging mines home
  */
-import { watchAd } from '../../../../../app/logic/native';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -10,7 +9,7 @@ import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { getStore, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
-import { coinUnitchange } from '../../utils/tools';
+import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -229,10 +228,7 @@ export class MiningHome extends Widget {
     }
 
     public watchAdClick() {
-        watchAd(2,(err,res) => {
-            console.log('ad err = ',err);
-            console.log('ad res = ',res);
-        });
+        wathcAdGetAward();
     }
 }
 

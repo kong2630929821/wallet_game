@@ -6,7 +6,7 @@ import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { walletPay } from '../../../../app/utils/pay';
 import { popNew } from '../../../../pi/ui/root';
 import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
-import { AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
@@ -18,7 +18,7 @@ import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, get_achievements, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
@@ -687,7 +687,6 @@ export const getMyGuess = () => {
  */
 export const getOneGuessInfo = (cid:number) => {
     return new Promise((resolve, reject) => {
-
         clientRpcFunc(get_compJackpots, cid, (r: Result) => {
             console.log('[活动]rpc-getOneGuessInfo---------------', r);
             if (r.reslutCode === 1) {
@@ -698,6 +697,24 @@ export const getOneGuessInfo = (cid:number) => {
                     team2Num : coinUnitchange(CoinType.ST,data.jackpot2)
                 };
                 resolve(reaData);
+            } else {
+                showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取广告奖励
+ */
+export const getAdRewards = (adType:number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_ad_award, adType, (r: Result) => {
+            console.log('[活动]rpc-getAdRewards---------------', r);
+            if (r.reslutCode === 1) {
+                const award:Award = JSON.parse(r.msg);
+                resolve(award);
             } else {
                 showActError(r.reslutCode);
                 reject(r);
