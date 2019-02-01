@@ -29,3 +29,9 @@ struct CoinQueryRes {
     itemType: u32,
     num: Option<u32>
 }
+
+//随机奖励
+struct RandomAward {
+    awardType: u32,
+    count: u32
+}

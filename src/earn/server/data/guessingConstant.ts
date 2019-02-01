@@ -20,8 +20,8 @@ export const GUESSING_HAS_SETTLED = 2;
 
 // 支付状态
 export const NOT_PAY_YET = 0;
-export const IS_PAYING_NOW = 1;
-export const BILL_ALREADY_PAY = 2;
+export const BILL_ALREADY_PAY = 1;
+export const BILL_ALREADY_CHECK = 2;
 
 // 单场竞猜最小投注
 export const EACH_GUESSING_MIN = 10; // 0.1ST
