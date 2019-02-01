@@ -21,6 +21,7 @@
                 <td>{{product.leftCount}}</td>
                 <td>{{product.convertCount}}</td>
                 <button on-tap="modify(e, {{i}})" w-class="btn">修改</button>
+                <button on-tap="deleteProduct(e, {{product.id}})" w-class="btn">删除</button>
             </tr>
             {{end}}
         </table>

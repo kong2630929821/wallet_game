@@ -1,7 +1,7 @@
 import * as net_init from '../../../chat/client/app/net/init';
 import { GroupInfo } from '../../../chat/server/data/db/group.s';
 import  * as chatLogins  from '../../../chat/server/data/rpc/basic.p';
-import { UserRegister } from '../../../chat/server/data/rpc/basic.s';
+import * as chatBasic from '../../../chat/server/data/rpc/basic.s';
 import { createGroup } from '../../../chat/server/data/rpc/group.p';
 import { GroupCreate } from '../../../chat/server/data/rpc/group.s';
 import { popNew } from '../../../pi/ui/root';
@@ -58,22 +58,32 @@ export const loginTest = () => {
     });
 };
 
-// 聊天登录
-export const chatLogin = () => {
-    const register = new UserRegister();
+// 聊天注册
+export const chatRegister = () => {
+    const register = new chatBasic.UserRegister();
     register.name = 'GM1';
     register.passwdHash = '12345678';
     clientRpcFunc(chatLogins.registerUser, register, (r: UserInfo) => {
         console.log(r);
     });
-    clientRpcFunc(chatLogins.login, register, (r: UserInfo) => {
+};
+
+// 聊天登陆
+export const chatLogin = () => {
+    const userType = new chatBasic.UserType();
+    userType.enum_type = chatBasic.UserType_Enum.DEF;
+    const loginReq = new chatBasic.LoginReq();
+    loginReq.uid = 0;
+    loginReq.passwdHash = '12345678';
+    userType.value = loginReq;
+    clientRpcFunc(chatLogins.login, userType, (r: UserInfo) => {
         console.log(r);
     });
 };
 
 // 订单查询
 export const orderQuery = () => {
-    const oid = '1548750027447448255';
+    const oid = '15490044942224161101';
     clientRpcFunc(box_pay_query, oid, (r: Result) => {
         console.log(r);
     });
@@ -342,9 +352,21 @@ const props = {
             func: () => { loginTest(); }
         },
         {
-            name: '商品信息',
-            func: () => { convert_info_test(); }
-        }
+            name: '聊天注册',
+            func: () => { chatRegister(); }
+        },
+        {
+            name: '聊天登录',
+            func: () => { chatLogin(); }
+        },
+        // {
+        //     name: '商品信息',
+        //     func: () => { convert_info_test(); }
+        // },
+        // {
+        //     name: '奖励查询',
+        //     func: () => { award_query_test(); }
+        // }
         // {
         //     name: '加ST',
         //     func: () => { bigInt_test(); }
@@ -353,14 +375,14 @@ const props = {
         //     name: '查ST',
         //     func: () => { get_stNum_test(); }
         // },
-        // {
-        //     name: '宝箱下单',
-        //     func: () => { rotary_test(); }
-        // },
-        // {
-        //     name: '订单查询',
-        //     func: () => { orderQuery(); }
-        // },
+        {
+            name: '宝箱下单',
+            func: () => { rotary_test(); }
+        },
+        {
+            name: '订单查询',
+            func: () => { orderQuery(); }
+        }
         // {
         //     name: '所有物品',
         //     func: () => { get_items(); }

@@ -11,13 +11,13 @@ import { Result } from '../data/db/guessing.s';
 import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
 import { BoxOrder, ConvertOrder, RotaryOrder, UserBoxOrderTab, UserConvertOrderTab, UserRotaryOrderTab } from '../data/db/stParties.s';
 import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
-import { BILL_ALREADY_PAY, NOT_PAY_YET } from '../data/guessingConstant';
+import { BILL_ALREADY_CHECK, BILL_ALREADY_PAY, NOT_PAY_YET } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
 import { oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
-import { CoinQueryRes } from './itemQuery.s';
+import { CoinQueryRes, RandomAward } from './itemQuery.s';
 import { getOpenid, getUid } from './user.r';
 
 // 获取用户账户ST数量
@@ -78,7 +78,6 @@ export const get_KTNum = (): CoinQueryRes => {
 export const st_rotary = (rotaryType:number): Result => {
     const result = new Result(); 
     const uid = getUid();
-    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = false;
@@ -104,10 +103,9 @@ export const st_rotary = (rotaryType:number): Result => {
             return result;
     }
     if (hasfree === true) { // 如果有免费次数使用免费次数
-        const v = [];
-        doAward(rotaryType, randomMgr, v);
-        const count = v[0][1];
-        const newitemType = v[0][0];
+        const randomAward = repeat_random_award(rotaryType);
+        const newitemType = randomAward.awardType;
+        const count = randomAward.count;
         if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
             const time = (new Date()).valueOf().toString();
             const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
@@ -128,11 +126,15 @@ export const st_rotary = (rotaryType:number): Result => {
 
         return result;
     } else { // 没有免费次数则向钱包下单
+        // 随机奖品
+        const randomAward = repeat_random_award(rotaryType);
+        const newitemType = randomAward.awardType;
+        const count = randomAward.count;
         // 生成订单
         const time = (new Date()).valueOf();
         const oid = `${time}${uid}${randomInt(10000, 99999)}`;
         const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name, dbMgr);
-        const order = new RotaryOrder(oid, uid, rotaryType, stCount, time.toString(), NOT_PAY_YET);
+        const order = new RotaryOrder(oid, uid, rotaryType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
         const resultJson = wallet_unifiedorder(oid, stCount, 'Rotary');
         if (!resultJson) {
@@ -149,7 +151,6 @@ export const st_rotary = (rotaryType:number): Result => {
             resultJson.isFirst = 0;
         }
         resultJson.oid = oid;
-        console.log('resultJson!!!!!!!!!!', resultJson);
         result.msg = JSON.stringify(resultJson);
         result.reslutCode = RESULT_SUCCESS;
     
@@ -181,6 +182,11 @@ export const rotary_pay_query = (oid: string): Result => {
         return result;
     }
     // 支付成功 更新订单信息
+    if (order.state === BILL_ALREADY_CHECK) {
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    }
     order.state = BILL_ALREADY_PAY;
     orderBucket.put(oid, order);
     const userOrderBucket = new Bucket(WARE_NAME, UserRotaryOrderTab._$info.name, dbMgr);
@@ -190,24 +196,19 @@ export const rotary_pay_query = (oid: string): Result => {
     }
     userRotaryOrderTab.oidList.push(oid);
     userOrderBucket.put(uid, userRotaryOrderTab);
-    const rotaryType = order.rotatyType;
-    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const v = [];
-    doAward(rotaryType, randomMgr, v);
-    const count = v[0][1];
-    const newitemType = v[0][0];
-    if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+    
+    if (order.awardType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
-        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+        const award = new Award(NO_AWARD_SORRY, order.awardType, 1, uid, AWARD_SRC_ROTARY, time);
         result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
     
         return result;
     }
-    const convertInfoResult = get_convert_info(newitemType);
+    const convertInfoResult = get_convert_info(order.awardType);
     if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
-        add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
-        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
+        add_itemCount(uid, order.awardType, order.awardCount); // 不是可兑换奖品 作为普通物品添加
+        const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_ROTARY);
         if (!award) {
             result.reslutCode = DB_ERROR;
     
@@ -219,18 +220,21 @@ export const rotary_pay_query = (oid: string): Result => {
         return result;
     } else {  // 是可兑换奖品 添加兑换码
         const convertInfo: ProductInfo = JSON.parse(convertInfoResult.msg);
-        const convertAward = get_convert(newitemType);
+        const convertAward = get_convert(order.awardType);
         if (!convertAward) {
             result.reslutCode = AWARD_NOT_ENOUGH;
     
             return result;
         }
-        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY, convertAward.convert, convertInfo.name);
+        const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_ROTARY, convertAward.convert, convertInfo.name, convertAward.deadTime);
         if (!award) {
             result.reslutCode = DB_ERROR;
     
             return result;
         }
+        // 奖品已发放 更改订单状态
+        order.state === BILL_ALREADY_CHECK;
+        orderBucket.put(oid, order);
         result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
     
@@ -244,7 +248,6 @@ export const st_treasurebox = (treasureboxType:number): Result => {
     console.log('st_treasurebox in!!!!!!!!!!!!', treasureboxType);
     const result = new Result();
     const uid = getUid();
-    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
     const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = false;
@@ -270,10 +273,9 @@ export const st_treasurebox = (treasureboxType:number): Result => {
             return result;
     }
     if (hasfree === true) { // 如果有免费次数使用免费次数
-        const v = [];
-        doAward(treasureboxType, randomMgr, v);
-        const count = v[0][1];
-        const newitemType = v[0][0];
+        const randomAward = repeat_random_award(treasureboxType);
+        const newitemType = randomAward.awardType;
+        const count = randomAward.count;
         if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
             const time = (new Date()).valueOf().toString();
             const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
@@ -294,11 +296,15 @@ export const st_treasurebox = (treasureboxType:number): Result => {
 
         return result;
     } else { // 没有免费次数则向钱包下单
+        // 随即奖品
+        const randomAward = repeat_random_award(treasureboxType);
+        const newitemType = randomAward.awardType;
+        const count = randomAward.count;
         // 生成订单
         const time = (new Date()).valueOf();
         const oid = `${time}${uid}${randomInt(10000, 99999)}`;
         const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name, dbMgr);
-        const order = new BoxOrder(oid, uid, treasureboxType, stCount, time.toString(), NOT_PAY_YET);
+        const order = new BoxOrder(oid, uid, treasureboxType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
         const resultJson = wallet_unifiedorder(oid, stCount, 'TreasureBox');
         if (!resultJson) {
@@ -327,7 +333,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
 // 宝箱支付查询
 // #[rpc=rpcServer]
 export const box_pay_query = (oid: string): Result => {
-    console.log('guessing_pay_query in!!!!!!!!!!!!');
+    console.log('box_pay_query in!!!!!!!!!!!!', oid);
     const uid = getUid();
     const result = new Result();
     const dbMgr = getEnv().getDbMgr();
@@ -338,6 +344,7 @@ export const box_pay_query = (oid: string): Result => {
 
         return result;
     }
+    console.log('order!!!!!!!!!!', order);
     // 向钱包服务器查询订单
     const resultJson = wallet_order_query(oid);
     if (resultJson.pay_status !== 'success') {
@@ -347,6 +354,11 @@ export const box_pay_query = (oid: string): Result => {
         return result;
     }
     // 支付成功 更新订单信息
+    if (order.state === BILL_ALREADY_CHECK) {
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    }
     order.state = BILL_ALREADY_PAY;
     orderBucket.put(oid, order);
     const userOrderBucket = new Bucket(WARE_NAME, UserBoxOrderTab._$info.name, dbMgr);
@@ -356,47 +368,44 @@ export const box_pay_query = (oid: string): Result => {
     }
     userBoxOrderTab.oidList.push(oid);
     userOrderBucket.put(uid, userBoxOrderTab);
-    const rotaryType = order.boxType;
-    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
-    const v = [];
-    doAward(rotaryType, randomMgr, v);
-    const count = v[0][1];
-    const newitemType = v[0][0];
-    if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+    if (order.awardType === SURPRISE_BRO) {    // 没有抽中奖品
         const time = (new Date()).valueOf().toString();
-        const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
+        const award = new Award(NO_AWARD_SORRY, order.awardType, 1, uid, AWARD_SRC_TREASUREBOX, time);
         result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
-    
+        
         return result;
     }
-    const convertInfoResult = get_convert_info(newitemType);
+    const convertInfoResult = get_convert_info(order.awardType);
     if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
-        add_itemCount(uid, newitemType, count); // 不是可兑换奖品 作为普通物品添加
-        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
+        add_itemCount(uid, order.awardType, order.awardCount); // 不是可兑换奖品 作为普通物品添加
+        const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_TREASUREBOX);
         if (!award) {
             result.reslutCode = DB_ERROR;
-    
+            
             return result;
         }
         result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
-    
+        
         return result;
     } else {  // 是可兑换奖品 添加兑换码
         const convertInfo: ProductInfo = JSON.parse(convertInfoResult.msg);
-        const convertAward = get_convert(newitemType);
+        const convertAward = get_convert(order.awardType);
         if (!convertAward) {
             result.reslutCode = AWARD_NOT_ENOUGH;
-    
+            
             return result;
         }
-        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX, convertAward.convert, convertInfo.name);
+        const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_TREASUREBOX, convertAward.convert, convertInfo.name, convertAward.deadTime);
         if (!award) {
             result.reslutCode = DB_ERROR;
-    
+            
             return result;
         }
+        // 奖品已发放 更改订单状态
+        order.state === BILL_ALREADY_CHECK;
+        orderBucket.put(oid, order);
         result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
     
@@ -446,6 +455,12 @@ export const st_convert = (awardType:number):Result => {
     }
     console.log('productInfo in!!!!!!!!!!', productInfo);
     const stCount = productInfo.stCount;
+    // 判断该商品是否有库存
+    if (productInfo.leftCount <= 0) {
+        result.reslutCode = AWARD_NOT_ENOUGH;
+
+        return result;
+    }
     // 生成订单
     const time = (new Date()).valueOf();
     const oid = `${time}${uid}${randomInt(10000, 99999)}`;
@@ -521,10 +536,8 @@ export const convert_pay_query = (oid: string): Result => {
     
         return result;
     }
-    productInfo.leftCount -= 1;
-    productInfo.convertCount += 1;
     bucket.put(awardType, productInfo);
-    const award = add_award(uid, awardType, productInfo.stCount, AWARD_SRC_CONVERT, convertAward.convert, productInfo.desc, convertAward.deadTime);
+    const award = add_award(uid, awardType, 1, AWARD_SRC_CONVERT, convertAward.convert, productInfo.desc, convertAward.deadTime);
     if (!award) {
         result.reslutCode = DB_ERROR;
     
@@ -603,6 +616,25 @@ export const modify_convert_info = (product: ProductInfo): Result => {
     return result;
 };
 
+// 修改商品
+// #[rpc=rpcServer]
+export const delete_convert_info = (id: number): Result => {
+    console.log('delete_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', id);
+    const result = new Result();
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    console.log('pid !!!!!!!!!!!!!!!!!!!!!!!', id);
+    if (!bucket.get(id)[0]) {
+        result.reslutCode = PRODUCT_NOT_EXIST;
+
+        return result;
+    }
+    bucket.delete(id);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
 // 添加兑换码
 // #[rpc=rpcServer]
 export const add_convert = (addConvertList: AddConvertList):Result => {
@@ -664,6 +696,9 @@ export const add_free_rotary = () => {
 export const get_convert = (id: number): ConvertTab => {
     const dbMgr = getEnv().getDbMgr(); 
     const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
+    const productInfoBucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const productInfo = productInfoBucket.get<number, [ProductInfo]>(id)[0];
+    if (!productInfo) return;
     // 从数据库获取兑换码
     const iter = <DBIter>convertBucket.iter(null);
     let convertAward:ConvertTab;
@@ -683,6 +718,37 @@ export const get_convert = (id: number): ConvertTab => {
     // 已发出的兑换码数据库状态改为false
     convertAward.state = false;
     convertBucket.put(convertAward.convert, convertAward);
+    // 更改商品库存
+    productInfo.leftCount -= 1;
+    productInfo.convertCount += 1;
+    productInfoBucket.put(id, productInfo);
 
     return convertAward;
+};
+
+// 重复随机奖励
+export const repeat_random_award = (id: number): RandomAward => {
+    console.log('repeat_random_award in~ !!!!!!!!!!!!!!!!!!!!!!!', id);
+    const randomMgr = new RandomSeedMgr(randomInt(1, 10000));
+    let count;
+    let awardType;
+    let convertInfoResult: Result;
+    let convertInfo: ProductInfo;
+    do {
+        convertInfo = null;
+        const v = [];
+        doAward(id, randomMgr, v);
+        console.log('repeat awardType !!!!!!!!!!!!!!!!!!!!!!!', v);
+        count = v[0][1];
+        awardType = v[0][0];
+        convertInfoResult = get_convert_info(awardType);
+        if (convertInfoResult.reslutCode === RESULT_SUCCESS) {
+            convertInfo = JSON.parse(convertInfoResult.msg);
+        }
+    } while (convertInfoResult.reslutCode === RESULT_SUCCESS && convertInfo && convertInfo.leftCount === 0);
+    const randomAward = new RandomAward();
+    randomAward.awardType = awardType;
+    randomAward.count = count;
+
+    return randomAward;
 };

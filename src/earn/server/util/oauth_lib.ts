@@ -138,6 +138,7 @@ export const wallet_order_query = (oid:string) => {
     const client = http.createClient();
     http.addHeader(client, 'content-type', 'application/json');
     const r = http.post(client, url, requestBody);
+    console.log('wallet_response !!!!!!!!!!!!!!!!!!!', r);
     if (r.ok) {
         const json = JSON.parse(r.ok);
         if (json.return_code === 1) {

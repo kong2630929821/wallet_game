@@ -2,7 +2,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 import { clientRpcFunc } from '../../client/app/net/init';
 
-import { add_convert, add_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
+import { add_convert, add_convert_info, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
 
 import { Result } from '../../server/data/db/guessing.s';
 
@@ -158,6 +158,12 @@ export class ConvertEditor extends Widget {
         this.paint();
     }
 
+    public deleteProduct(e:any, id: number) {
+        delete_product(id);
+        this.initData();
+        this.paint();
+    }
+
     public uploadAvatar(event: any) {
         const file = event.srcElement.files[0];
         const reader = new FileReader();
@@ -233,6 +239,21 @@ const modify_product = (product: ProductInfo) => {
             console.log(r);
             if (r.reslutCode === RESULT_SUCCESS) {
                 alert('修改商品成功');
+                resolve(r);
+            } else {
+                reject(r);
+            }
+        });
+    });
+};
+
+// 删除商品
+const delete_product = (productId: number) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(delete_convert_info, productId, (r: Result) => {
+            console.log(r);
+            if (r.reslutCode === RESULT_SUCCESS) {
+                alert('删除商品成功');
                 resolve(r);
             } else {
                 reject(r);

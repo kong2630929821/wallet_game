@@ -7,6 +7,8 @@ struct RotaryOrder {
     oid: String,
     uid: u32,
     rotatyType: u32,
+    awardType: u32,
+    awardCount: u32,
     stNum: u32,
     time: String,
     state: u8
@@ -20,6 +22,8 @@ struct BoxOrder {
     oid: String,
     uid: u32,
     boxType: u32,
+    awardType: u32,
+    awardCount: u32,
     stNum: u32,
     time: String,
     state: u8
