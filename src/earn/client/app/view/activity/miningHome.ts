@@ -32,6 +32,7 @@ export class MiningHome extends Widget {
         'right:22px;top:921px;',
         'left:259px;top:937px;'
     ];
+    public hoeSelectDefault:boolean = false;
     public create() {
         super.create();
         this.init();
@@ -50,9 +51,9 @@ export class MiningHome extends Widget {
             mineId:-1,     // 选中的矿山index
             countDownStart:false,  // 是否开始倒计时
             miningCount:0,             // 挖矿次数
+            countDownMax:hoeUseDuration, // 倒计时最大值
             countDown:hoeUseDuration,  // 倒计时时间
             countDownTimer:0,        // 倒计时定时器
-            miningTips:{ zh_Hans:'',zh_Hant:'',en:'' },   // 挖矿提示
             haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
@@ -61,21 +62,15 @@ export class MiningHome extends Widget {
             zIndex:-1            // z-index数值
         };
         this.mineLocationInit();   // 矿山位置初始化
-        this.hoeSelectedLeft();   // 计算选中锄头剩余数
-    }
-
-    public signInClick() {
-        popNew('earn-client-app-view-activity-signIn');
-    }
-
-    public welfareClick() {
-        popNew('earn-client-app-view-activity-inviteAward');
     }
 
     public closeClick() {
         setStore('flags/earnHomeHidden',false);
     }
 
+    /**
+     * 矿山位置初始化
+     */
     public mineLocationInit() {
         const mineStyle = shuffle(this.mineStyle);
         for (let i = 0;i < this.props.haveMines.length;i++) {
@@ -83,18 +78,37 @@ export class MiningHome extends Widget {
             this.props.haveMines[i].location = mineStyle[i];
         }
     }
+
+    /**
+     * 选择锄头
+     */
     public selectHoeClick(e:any,hopeType:HoeType) {
         if (this.props.countDownStart) return;
         this.props.hoeSelected = hopeType;
         this.hoeSelectedLeft();
-        if (this.props.mineType === -1 || this.props.mineId === -1) {
-            this.props.miningTips = { zh_Hans:'请选择矿山',zh_Hant:'請選擇礦山',en:'' } ;
-        } else {
-            this.props.miningTips = { zh_Hans:'开始挖矿',zh_Hant:'開始挖礦',en:'' } ;
-        }
         this.paint();
     }
 
+    /**
+     * 默认选择锄头
+     */
+    public hoeSelectedDefault() {
+        if (this.hoeSelectDefault) return;  // 只有第一次才默认选中锄头
+        if (this.props.diamondHoe > 0) {
+            this.props.hoeSelected =  HoeType.DiamondHoe;
+        } else if (this.props.goldHoe > 0) {
+            this.props.hoeSelected = HoeType.GoldHoe;
+        } else if (this.props.ironHoe > 0) {
+            this.props.hoeSelected = HoeType.IronHoe;
+        } else {
+            this.props.hoeSelected = -1;
+        }
+        this.hoeSelectDefault = true;
+    }
+
+    /**
+     * 选中的锄头剩余数计算
+     */
     public hoeSelectedLeft() {
         if (this.props.hoeSelected === HoeType.IronHoe) {
             this.props.hoeSelectedLeft =  this.props.ironHoe;
@@ -107,6 +121,9 @@ export class MiningHome extends Widget {
         }
     }
 
+    /**
+     * 挖矿
+     */
     public mineClick(e:any) {
         const itype = e.itype;
         const mineId = e.mineId;
@@ -117,11 +134,6 @@ export class MiningHome extends Widget {
         if ((this.props.mineId !== mineId || this.props.mineType !== itype) && !this.props.countDownStart) {
             this.props.mineId = mineId;
             this.props.mineType = itype;
-            if (this.props.hoeSelected === -1) {
-                this.props.miningTips = { zh_Hans:'请选择锄头',zh_Hant:'請選擇鋤頭',en:'' };
-            } else {
-                this.props.miningTips = { zh_Hans:'开始挖矿',zh_Hant:'開始挖礦',en:'' };
-            }
             this.paint();
 
             return;
@@ -138,7 +150,6 @@ export class MiningHome extends Widget {
                 this.paint();
             });
             this.props.countDownStart = true;
-            this.props.miningTips = { zh_Hans:``,zh_Hant:``,en:'' };
             this.countDown();
             this.paint();
 
@@ -179,11 +190,13 @@ export class MiningHome extends Widget {
         this.initMiningState();
         this.paint();
     }
+    /**
+     * 倒计时
+     */
     public countDown() {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
-            this.props.miningTips = { zh_Hans:``,zh_Hant:``,en:'' };
             if (!this.props.countDown) {
                 this.initMiningState();
             }
@@ -196,24 +209,27 @@ export class MiningHome extends Widget {
             getRankList();
             if (r.leftHp <= 0) {
                 getTodayMineNum();
-                this.paint();
+                this.props.mineId = -1;
+                this.props.mineType = -1;
                 this.props.awardTypes[r.awards[0].enum_type] = coinUnitchange(r.awards[0].value.num,r.awards[0].value.count);
+                this.paint();
             }
         });
-        this.props.mineId = -1;
-        this.props.mineType = -1;
+        
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
-        this.props.hoeSelected = -1;
-        this.props.miningTips = { zh_Hans:'',zh_Hant:'',en:'' };
-        
         this.props.miningCount = 0;
         clearTimeout(this.props.countDownTimer);
     }
+
+    /**
+     * 更新矿山
+     */
     public updateMine() {
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
+        this.hoeSelectedDefault();
         this.hoeSelectedLeft();
         if (this.props.haveMines.length === 0) {
             this.props.haveMines = getAllMines();
@@ -222,12 +238,19 @@ export class MiningHome extends Widget {
         console.log('haveMines =',this.props.haveMines);
         this.paint();
     }
+    /**
+     * 更新已挖矿山
+     */
     public updateMiningedNumber(miningedNumber:number) {
         this.props.miningedNumber = miningedNumber;
         this.paint();
     }
 
+    /**
+     * 看广告
+     */
     public watchAdClick() {
+        popNew('earn-client-app-components-mineModalBox-mineModalBox');
         wathcAdGetAward();
     }
 }

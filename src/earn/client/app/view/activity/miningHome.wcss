@@ -39,29 +39,60 @@
 }
 .award-container{
     position: absolute;
-    right: 35px;
-    top: 55px;
+    right: 0px;
+    top: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    padding-right: 35px;
+}
+.award-title{
+    width:170px;
+    height:60px;
+    background:linear-gradient(90deg,rgba(254,157,58,1) 0%,rgba(252,104,49,1) 100%);
+    border-radius:30px 0px 0px 30px;
+    margin-bottom: 20px;
+    font-size:28px;
+    color:rgba(255,255,255,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: -35px;
 }
 .award-item{
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    height:40px;
-    background:rgba(229,229,229,1);
-    border-radius:25px;
-    border:2px solid rgba(255,255,255,1);
+    border-radius:50%;
     font-size:32px;
     color:rgba(34,34,34,1);
+    width:60px;
+    height:60px;
+    background:rgba(252,220,60,1);
+    border:2px solid rgba(105,46,15,1);
 }
 .award-num{
     margin: 0 10px;
 }
 .award-icon{
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
+}
+.mining-number-container{
+    margin-right: -5px;
+    font-size:28px;
+    color:rgba(255,255,255,1);
+    line-height:40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.mining-number{
+    background:rgba(34,34,34,1);
+    border-radius:12px;
+    border:1px solid rgba(204,204,204,1);
+    padding: 6px;
+    margin-top: 10px;
 }
 .mine-area{
 }
@@ -98,18 +129,55 @@
 }
 .ad-item{
     display: flex;
-    align-items: center;
     position: absolute;
     padding: 0 10px;
-    left: 30px;
-    bottom: 60px;
-    height:60px;
-    background:linear-gradient(180deg,rgba(138,250,255,1) 0%,rgba(91,192,255,1) 100%);
-    border-radius:40px;
-    border-image:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(57,74,103,0.5)) 2 2;
+    left: 20px;
+    bottom: 0px;
+    height:200px;
+    width: 223px;
+    background-image:url(../../res/image/billboard.png);
+    background-repeat: no-repeat;
+    background-size: 223px 200px;
     font-size:24px;
     color:rgba(34,34,34,1);
 }
 .action-tips{
-    margin-left: 10px;
+    margin: 30px 0 0 48px;
+    font-size:28px;
+    font-family:"BradleyHandITCTT-Bold";
+    font-weight:bold;
+    color:rgba(255,255,255,1);
+    line-height:35px;
+}
+.count-down-container{
+    display: flex;
+    align-items: center;
+}
+.stopwatch-container{
+    width:30px;
+    height:30px;
+    background:rgba(255,249,232,1);
+    border-radius:6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.stopwatch{
+    width: 24px;
+    height: 24px;
+}
+.count-down-bg{
+    width:265px;
+    height:14px;
+    background:rgba(34,34,34,1);
+    border-radius:7px;
+    position: relative;
+    margin-left: 5px;
+    overflow: hidden;
+    border: 2px solid rgba(34,34,34,1);
+}
+.count-down{
+    height:10px;
+    background:rgba(252,220,60,1);
+    border-radius:5px;
 }

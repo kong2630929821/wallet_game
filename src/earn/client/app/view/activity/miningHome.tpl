@@ -13,9 +13,14 @@
                     <earn-client-app-components-holdedHoe-holdedHoe>{ holdedNumber:{{ it.diamondHoe }},hoeType:{{ it.hoeType.DiamondHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components-holdedHoe-holdedHoe>
                 </div>
             </div>
-            <div w-class="digging-num" style="{{it.zIndex ? 'visibility: hidden;' : ''}}"><widget w-tag="pi-ui-lang">{"zh_Hans":"今日已挖矿山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","zh_Hant":"今日已挖礦山 {{ it.miningedNumber }}/{{ it.mineMax }} 座","en":""}</widget></div>
-            <div w-class="digging-tips" style="{{it.zIndex ? 'visibility: hidden;' : ''}}"><widget w-tag="pi-ui-lang">{{it.miningTips}}</widget></div>
+            <div w-class="count-down-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
+                <div w-class="stopwatch-container"><img src="../../res/image/stopwatch.png" w-class="stopwatch"/></div>
+                <div w-class="count-down-bg">
+                    <div w-class="count-down" style="width:{{ (it.countDown / it.countDownMax * 100) + '%'}}; "></div>
+                </div>
+            </div>
             <div w-class="award-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
+                <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"累计挖矿","zh_Hant":"累計挖礦","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
                     {{if it.awardTypes[it.allAwardType.KT] }}
@@ -40,6 +45,10 @@
                     <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.BTC] }}</span></div>
                     {{end}}
                 </div>
+                <div w-class="mining-number-container">
+                    <widget w-tag="pi-ui-lang" w-class="mining-number-tips">{"zh_Hans":"今日已挖","zh_Hant":"今日已挖","en":""}</widget>
+                    <div w-class="mining-number">{{ it.miningedNumber }}/{{ it.mineMax }}</div>
+                </div>
             </div>
             <div w-class="mine-area">
                 {{for index,item of it.haveMines}}
@@ -59,8 +68,7 @@
                 {{end}}
             </div>
             <div w-class="ad-item" on-tap="watchAdClick">
-                <img src="../../res/image/advertisement.png"/>
-                <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"看广告得锄头","zh_Hant":"看廣告得鋤頭","en":""}</widget></div>
+                <div w-class="action-tips"><widget w-tag="pi-ui-lang">{"zh_Hans":"更多锄头","zh_Hant":"更多鋤頭","en":""}</widget></div>
             </div>
             <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>
