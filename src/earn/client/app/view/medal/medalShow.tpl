@@ -19,10 +19,6 @@
                 <p w-class="medal-desc">{{it.condition}}</p>
             {{end}}
         </div>
-        {{if it.isHave}}
-            <widget on-tap="putoutMedal" w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"挂出去","zh_Hant":"掛出去","en":""}</widget>
-        {{else}}
-            <widget w-tag="pi-ui-lang">{"zh_Hans":"","zh_Hant":"","en":""}</widget>
-        {{end}}
+        <span></span>
     </div>
 </div>

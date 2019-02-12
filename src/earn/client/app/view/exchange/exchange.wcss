@@ -14,7 +14,7 @@
     scroll-behavior: smooth;
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
     background: #F9F9F9;
     padding: 20px;

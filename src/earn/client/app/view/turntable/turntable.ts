@@ -2,7 +2,6 @@
  * 大转盘 - 首页
  */
 
-import { watchAd } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
 import { popNew } from '../../../../../pi/ui/root';
@@ -11,6 +10,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
+import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
@@ -355,10 +355,7 @@ export class Turntable extends Widget {
      * 去看广告
      */
     public toWatchAd() {
-        watchAd(2,(err,res) => {
-            console.log('ad err = ',err);
-            console.log('ad res = ',res);
-        });
+        wathcAdGetAward();
     }
 
     /**

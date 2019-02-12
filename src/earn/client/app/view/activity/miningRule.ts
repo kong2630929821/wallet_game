@@ -1,11 +1,11 @@
 /**
  * digging rule
  */
-import { watchAd } from '../../../../../app/logic/native';
 import { getStore } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { wathcAdGetAward } from '../../utils/tools';
 
 export class MiningRule extends Widget {
     public ok:() => void;
@@ -54,10 +54,7 @@ export class MiningRule extends Widget {
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
         if (index === 5) {
-            watchAd(2,(err,res) => {
-                console.log('ad err = ',err);
-                console.log('ad res = ',res);
-            });
+            wathcAdGetAward();
 
             return;
         }

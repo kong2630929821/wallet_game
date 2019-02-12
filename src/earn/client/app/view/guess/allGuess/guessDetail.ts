@@ -2,7 +2,6 @@
  * 竞猜详情-下单
  */
 
-import { watchAd } from '../../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../../app/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
@@ -11,6 +10,7 @@ import { Widget } from '../../../../../../pi/widget/widget';
 import { Props } from '../../../components/guessItem/guessItem';
 import { betGuess, getOneGuessInfo, getSTbalance, queryBetGuess } from '../../../net/rpc';
 import { getStore, register } from '../../../store/memstore';
+import { wathcAdGetAward } from '../../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -121,10 +121,7 @@ export class GuessDetail extends Widget {
      * 去看广告
      */
     public toWatchAd() {
-        watchAd(2,(err,res) => {
-            console.log('ad err = ',err);
-            console.log('ad res = ',res);
-        });
+        wathcAdGetAward();
     }
 
     /**

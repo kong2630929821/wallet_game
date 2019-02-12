@@ -1,3 +1,7 @@
+import { chooseAdType, watchAd } from '../../../../app/logic/native';
+import { popNewMessage } from '../../../../app/utils/tools';
+import { Award } from '../../../server/data/db/item.s';
+import { getAdRewards } from '../net/rpc';
 import { CoinType } from '../xls/dataEnum.s';
 
 /**
@@ -98,4 +102,19 @@ export const coinUnitchange = (coinType:CoinType,count:number) => {
         default:
             return count;
     }
+};
+
+/**
+ * 观看广告并且获取奖励
+ */
+export const wathcAdGetAward = () => {
+    chooseAdType((adType) => {
+        watchAd(adType,(err,success) => {
+            if (!err) {
+                getAdRewards(adType).then((award:Award) => {
+                    popNewMessage('获取到广告奖励');
+                });
+            }
+        });
+    });
 };
