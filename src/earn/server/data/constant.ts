@@ -78,6 +78,8 @@ export const MAX_ONEDAY_MINING = 8;
 export const MAX_ONEDAY_ADAWARD = 20;
 // 激励视频广告最低间隔时间
 export const MIN_ADVERTISEMENT_SECONDS = 15;
+// 每天广告奖励转盘或宝箱最大次数
+export const MAX_FREEPLAY_ADAWARD = 10;
 
 // 连续登陆奖励循环天数
 export const SERIES_LOGIN_CIRCLE = 15;

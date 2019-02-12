@@ -57,6 +57,43 @@ export const get_main_competitions = (): Result => {
     return result;
 };
 
+// 获取所有比赛信息
+// #[rpc=rpcServer]
+export const get_allComps = (): Result => {
+    const result = new Result();
+    const mainPageList = [];
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const iter = <DBIter>bucket.iter(null, true);
+    do {
+        console.log('iterEle in!!!!!!!!!!!!');
+        const iterEle = iter.nextElem();
+        console.log('iterEle in!!!!!!!!!!!!', iterEle);
+        if (!iterEle) break;
+        const competition:Competition = iterEle[1];
+        const mainPageComp = new MainPageComp();
+        const jackpots:CompJackpots = jackpotBucket.get(competition.cid)[0];
+        console.log('jackpots in!!!!!!!!!!!!', jackpots);
+        if (!jackpots) {
+            result.reslutCode = DB_ERROR;
+
+            return result;
+        }
+        mainPageComp.comp = competition;
+        mainPageComp.team1num = jackpots.jackpot1;
+        mainPageComp.team2num = jackpots.jackpot2;
+        mainPageList.push(mainPageComp);
+    } while (iter);
+    const mainPageCompList = new MainPageCompList();
+    mainPageCompList.list = mainPageList;
+    result.msg = JSON.stringify(mainPageCompList);
+    result.reslutCode = RESULT_SUCCESS;
+    console.log('result in!!!!!!!!!!!!', result);
+
+    return result;
+};
+
 // 获取竞猜奖池信息
 // #[rpc=rpcServer]
 export const get_compJackpots = (cid: number): Result => {

@@ -91,7 +91,7 @@ export const orderQuery = () => {
 
 // 宝箱
 export const box_test = () => {
-    const itemType = 101101;
+    const itemType = 101001;
     clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
         console.log(r);
     });
@@ -307,7 +307,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 1, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 4, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -332,6 +332,13 @@ export const convert_info_test = () => {
     });
 };
 
+// 查询免费次数
+export const get_hasFree_test = ()  => {
+    clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -351,13 +358,21 @@ const props = {
             name: '登陆',
             func: () => { loginTest(); }
         },
+        // {
+        //     name: '聊天注册',
+        //     func: () => { chatRegister(); }
+        // },
+        // {
+        //     name: '聊天登录',
+        //     func: () => { chatLogin(); }
+        // },
         {
-            name: '聊天注册',
-            func: () => { chatRegister(); }
+            name: '广告奖励',
+            func: () => { ad_award_test(); }
         },
         {
-            name: '聊天登录',
-            func: () => { chatLogin(); }
+            name: '免费查询',
+            func: () => { get_hasFree_test(); }
         },
         // {
         //     name: '商品信息',
@@ -377,7 +392,7 @@ const props = {
         // },
         {
             name: '宝箱下单',
-            func: () => { rotary_test(); }
+            func: () => { box_test(); }
         },
         {
             name: '订单查询',
