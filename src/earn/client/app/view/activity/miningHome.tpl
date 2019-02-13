@@ -23,24 +23,26 @@
                 <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"累计挖矿","zh_Hant":"累計挖礦","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
-                    <div w-class="award-num">0</div>
+                    {{if it.miningNumber.KT }}
+                    <div w-class="award-num">{{ it.miningNumber.KT }}</div>
+                    {{end}}
                 </div>
                 <div w-class="award-item">
                     <img src="../../res/image/ST.png" w-class="award-icon" />
-                    {{if it.awardTypes[it.allAwardType.ST] }}
-                    <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ST] }}</span></div>
+                    {{if it.miningNumber.ST }}
+                    <div w-class="award-num">{{ it.miningNumber.ST }}</div>
                     {{end}}
                 </div>
                 <div w-class="award-item">
                     <img src="../../res/image/ETH.png" w-class="award-icon"/>
-                    {{if it.awardTypes[it.allAwardType.ETH] }}
-                    <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.ETH] }}</span></div>
+                    {{if it.miningNumber.ETH }}
+                    <div w-class="award-num">{{ it.miningNumber.ETH }}</div>
                     {{end}}
                 </div>
                 <div w-class="award-item">
                     <img src="../../res/image/BTC.png" w-class="award-icon"/>
-                    {{if it.awardTypes[it.allAwardType.BTC] }}
-                    <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.BTC] }}</span></div>
+                    {{if it.miningNumber.BTC }}
+                    <div w-class="award-num">{{ it.miningNumber.BTC }}</div>
                     {{end}}
                 </div>
                 <div w-class="mining-number-container">

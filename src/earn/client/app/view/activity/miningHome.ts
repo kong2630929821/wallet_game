@@ -6,8 +6,8 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
-import { getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
-import { getStore, register, setStore } from '../../store/memstore';
+import { getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
@@ -59,6 +59,12 @@ export class MiningHome extends Widget {
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
             miningedNumber:getStore('mine/miningedNumber'),  // 已挖矿山数目
+            miningNumber:{
+                KT:0,
+                ST:0,
+                ETH:0,
+                BTC:0
+            },     // 累计挖矿
             zIndex:-1            // z-index数值
         };
         this.mineLocationInit();   // 矿山位置初始化
@@ -211,9 +217,10 @@ export class MiningHome extends Widget {
     public initMiningState() {
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
-            getRankList();
             if (r.leftHp <= 0) {
+                getRankList();
                 getTodayMineNum();
+                getMiningCoinNum();
                 this.props.mineId = -1;
                 this.props.mineType = -1;
                 const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
@@ -264,8 +271,14 @@ export class MiningHome extends Widget {
     /**
      * 更新已挖矿山
      */
-    public updateMiningedNumber(miningedNumber:number) {
-        this.props.miningedNumber = miningedNumber;
+    public updateMining(mine:Mine) {
+        this.props.miningedNumber = mine.miningedNumber;
+        this.props.miningNumber = {
+            KT:mine.miningKTnum,
+            ST:mine.miningSTnum,
+            BTC:mine.miningBTCnum,
+            ETH:mine.miningETHnum
+        };
         this.paint();
     }
 
@@ -274,6 +287,7 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         popNew('earn-client-app-test-test');
+        if (this.props.countDownStart) return;
         wathcAdGetAward();
     }
 }
@@ -285,9 +299,9 @@ register('goods',(goods:Item[]) => {
     w && w.updateMine();
 });
 
-register('mine/miningedNumber',(miningedNumber:number) => {
+register('mine',(mine:Mine) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateMiningedNumber(miningedNumber);
+    w && w.updateMining(mine);
 });
 
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {

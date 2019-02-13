@@ -126,6 +126,9 @@ const store:Store = {
         miningedNumber:0,
         miningRank:0,
         miningKTnum:0,
+        miningSTnum:0,
+        miningETHnum:0,
+        miningBTCnum:0,
         miningMedalId:8001
     },
     goods:[],
@@ -144,7 +147,10 @@ const store:Store = {
 export interface Mine {
     miningedNumber:number;  // 今天已挖矿山数量
     miningRank:number; // 排名
-    miningKTnum:number; // KT数量
+    miningKTnum:number; // 累计挖矿KT数量
+    miningSTnum:number; // 累计挖矿ST数量
+    miningETHnum:number; // 累计挖矿ETH数量
+    miningBTCnum:number; // 累计挖矿BTC数量
     miningMedalId:number;  // 挂出的勋章id
 }
 

@@ -12,7 +12,7 @@ import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
-import { get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
+import { get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
@@ -48,8 +48,9 @@ export const goLoginActivity = (openId:number) => {
                 popNew('earn-client-app-view-activity-inviteAward');
             }
         });  // 获取邀请成功人数
-        getTodayMineNum();
-        getRankList();
+        getTodayMineNum();  // 获取今天已挖矿山数
+        getRankList();   // 获取挖矿排名
+        getMiningCoinNum(); // 获取累积挖矿
     });
 };
 
@@ -739,6 +740,29 @@ export const getAdRewards = (adType:number) => {
                 resolve(award);
             } else {
                 showActError(r.reslutCode);
+                reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取累计挖矿数
+ */
+export const getMiningCoinNum = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_miningCoinNum, null, (r: Result) => {
+            console.log('[活动]rpc-getMiningCoinNum---------------', r);
+            if (r.reslutCode === 1) {
+                const numbers = JSON.parse(r.msg);
+                const mine = getStore('mine');
+                mine.miningBTCnum = coinUnitchange(CoinType.BTC,numbers[0]);
+                mine.miningETHnum = coinUnitchange(CoinType.ETH,numbers[1]);
+                mine.miningSTnum = coinUnitchange(CoinType.ST,numbers[2]);
+                mine.miningKTnum = coinUnitchange(CoinType.KT,numbers[3]);
+                setStore('mine',mine);
+                resolve(numbers);
+            } else {
                 reject(r);
             }
         });
