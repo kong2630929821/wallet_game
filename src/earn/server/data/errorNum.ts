@@ -27,6 +27,8 @@ export const ONEDAY_ADAWARD_LIMIT = 1107;
 export const ADVERTISEMENT_NUM_ERROR = 1108;
 // 看广告时间间隔小于最低时间间隔
 export const ADVERTISEMENT_TIME_ERROR = 1109;
+// 广告奖励转盘或宝箱次数已达上限
+export const ADAWARD_FREEPLAY_LIMIT = 1110;
 
 // 邀请人数不足兑换奖励
 export const INVITE_NOT_ENOUGH = 2101;

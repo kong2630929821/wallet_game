@@ -224,8 +224,10 @@ struct MiningKTMapTab {
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
 struct FreePlay {
     uid: u32,
-    freeRotary: bool,
-    freeBox: bool
+    freeRotary: u8,
+    freeBox: u8,
+    adAwardRotary: u8,
+    adAwardBox: u8
 }
 
 /**

@@ -80,7 +80,7 @@ export const st_rotary = (rotaryType:number): Result => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     let stCount;
-    let hasfree = false;
+    let hasfree = 0;
     switch (rotaryType) {
         case LEVEL1_ROTARY_AWARD:
             stCount = LEVEL1_ROTARY_STCOST;
@@ -88,7 +88,7 @@ export const st_rotary = (rotaryType:number): Result => {
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
             hasfree = freePlay.freeRotary;
-            freePlay.freeRotary = false;
+            freePlay.freeRotary = hasfree - 1;
             bucket.put(uid, freePlay);
             break;
         case LEVEL2_ROTARY_AWARD:
@@ -102,7 +102,7 @@ export const st_rotary = (rotaryType:number): Result => {
 
             return result;
     }
-    if (hasfree === true) { // 如果有免费次数使用免费次数
+    if (hasfree >= 1) { // 如果有免费次数使用免费次数
         const randomAward = repeat_random_award(rotaryType);
         const newitemType = randomAward.awardType;
         const count = randomAward.count;
@@ -250,7 +250,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     let stCount;
-    let hasfree = false;
+    let hasfree = 0;
     switch (treasureboxType) {
         case LEVEL1_TREASUREBOX_AWARD:
             stCount = LEVEL1_TREASUREBOX_STCOST;
@@ -258,7 +258,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
             hasfree = freePlay.freeBox;
-            freePlay.freeBox = false;
+            freePlay.freeBox = hasfree - 1;
             bucket.put(uid, freePlay);
             break;
         case LEVEL2_TREASUREBOX_AWARD:
@@ -272,7 +272,8 @@ export const st_treasurebox = (treasureboxType:number): Result => {
 
             return result;
     }
-    if (hasfree === true) { // 如果有免费次数使用免费次数
+    if (hasfree >= 1) { // 如果有免费次数使用免费次数
+        console.log('freeBox in!!!!!!!!!!!!', hasfree);
         const randomAward = repeat_random_award(treasureboxType);
         const newitemType = randomAward.awardType;
         const count = randomAward.count;
@@ -682,13 +683,17 @@ export const get_hasFree = ():FreePlay => {
 
 // 每日首次登陆添加一次免费初级转盘和宝箱次数
 export const add_free_rotary = () => {
+    console.log('add_free_rotary in!!!!!!!!!');
     const uid = getUid();
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
     const freePlay = new FreePlay();
+    // 前一天的免费次数清零
     freePlay.uid = uid;
-    freePlay.freeRotary = true;
-    freePlay.freeBox = true;
+    freePlay.freeRotary = 1;
+    freePlay.freeBox = 1;
+    freePlay.adAwardRotary = 0;
+    freePlay.adAwardBox = 0;
     bucket.put(uid, freePlay);
 };
 

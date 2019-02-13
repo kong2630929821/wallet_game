@@ -6,7 +6,7 @@ import { getMap } from '../../client/app/store/cfgMap';
 import { timestampFormat } from '../../client/app/utils/tools';
 import { RESULT_SUCCESS } from '../../server/data/constant';
 import { AddCompetition, CompResult, MainPageCompList, Result } from '../../server/data/db/guessing.s';
-import { add_competitions, cancle_guessing, get_main_competitions, input_competition_result, settle_guessing_award } from '../../server/rpc/guessingCompetition.p';
+import { add_competitions, cancle_guessing, get_allComps, get_main_competitions, input_competition_result, settle_guessing_award } from '../../server/rpc/guessingCompetition.p';
 import { LOLTeamInfosCfg, LOLTypeCfg } from '../../xlsx/competition.s';
 
 /**
@@ -135,7 +135,7 @@ export class CompEditor extends Widget {
 // 获取比赛信息
 const getCompetitions = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(get_main_competitions, null, (r: Result) => {
+        clientRpcFunc(get_allComps, null, (r: Result) => {
             console.log(r);
             if (r.reslutCode === RESULT_SUCCESS) {
                 const compList: MainPageCompList = JSON.parse(r.msg);
