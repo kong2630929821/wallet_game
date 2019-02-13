@@ -23,9 +23,7 @@
                 <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"累计挖矿","zh_Hant":"累計挖礦","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
-                    {{if it.awardTypes[it.allAwardType.KT] }}
-                    <div w-class="award-num">+<span>{{ it.awardTypes[it.allAwardType.KT] }}</span></div>
-                    {{end}}
+                    <div w-class="award-num">0</div>
                 </div>
                 <div w-class="award-item">
                     <img src="../../res/image/ST.png" w-class="award-icon" />

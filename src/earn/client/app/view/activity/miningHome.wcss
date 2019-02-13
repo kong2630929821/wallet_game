@@ -63,20 +63,25 @@
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    border-radius:50%;
     font-size:32px;
     color:rgba(34,34,34,1);
-    width:60px;
-    height:60px;
-    background:rgba(252,220,60,1);
-    border:2px solid rgba(105,46,15,1);
 }
 .award-num{
-    margin: 0 10px;
+    margin-left: -30px;
+    padding-left: 40px;
+    padding-right: 20px;
+    height:45px;
+    background:rgba(252,220,60,1);
+    border-radius:22.5px;
+    border:2px solid rgba(255,178,0,1);
+    display: flex;
+    align-items: center;
 }
 .award-icon{
-    width: 100%;
-    height: 100%;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    z-index: 1;
 }
 .mining-number-container{
     margin-right: -5px;

@@ -128,7 +128,11 @@ export class MiningHome extends Widget {
         const itype = e.itype;
         const mineId = e.mineId;
 
-        if (this.props.miningedNumber >= MineMax) return;
+        if (this.props.miningedNumber >= MineMax) {
+            popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
+            
+            return;
+        }
 
         // 未开始挖矿前选择矿山
         if ((this.props.mineId !== mineId || this.props.mineType !== itype) && !this.props.countDownStart) {
@@ -197,21 +201,40 @@ export class MiningHome extends Widget {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
             this.props.countDown--;
+            this.paint();
             if (!this.props.countDown) {
                 this.initMiningState();
             }
-            this.paint();
         },1000);
     }
 
     public initMiningState() {
+        setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
             getRankList();
             if (r.leftHp <= 0) {
                 getTodayMineNum();
                 this.props.mineId = -1;
                 this.props.mineType = -1;
-                this.props.awardTypes[r.awards[0].enum_type] = coinUnitchange(r.awards[0].value.num,r.awards[0].value.count);
+                const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
+                const type0 = r.awards[0].value.num;   // 货币类型
+                const number0 = coinUnitchange(type0,r.awards[0].value.count);
+                this.props.awardTypes[awardType0] = number0;
+                // 常规奖励
+                const routineAward = {
+                    awardType:awardType0,
+                    type:type0,
+                    number:number0
+                };
+                let extraAward;
+                if (r.awards[1]) {
+                    extraAward = {
+                        awardType:r.awards[1].enum_type,
+                        type:r.awards[1].value.num,
+                        number:coinUnitchange(r.awards[1].value.num,r.awards[1].value.count)
+                    };
+                }
+                popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
                 this.paint();
             }
         });
@@ -250,7 +273,7 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
-        popNew('earn-client-app-components-mineModalBox-mineModalBox');
+        popNew('earn-client-app-test-test');
         wathcAdGetAward();
     }
 }

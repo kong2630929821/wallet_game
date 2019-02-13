@@ -24,3 +24,17 @@
     right: 0;
     top: 0;
 }
+.item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+}
+.item-text{
+    font-size:48px;
+    font-family:"Roboto-Bold";
+    font-weight:bold;
+    color:rgba(13,13,13,1);
+    line-height:57px;
+    margin-top: 10px;
+}

@@ -5,6 +5,7 @@
 
 import { popNew } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
+import { getStore, register } from '../store/memstore';
 import { MedalType } from '../view/medal/medalShow';
 import { subscribe } from './init';
 
@@ -14,11 +15,21 @@ export const initReceive = (uid: number) => {
         console.log('后端推送事件！！！！！！！！',r);
         switch (r.cmd) {
             case 'add_medal':   // 勋章提醒
-                popNew('earn-client-app-view-components-newMedalAlert', {
-                    // tslint:disable-next-line:radix
-                    medalId:parseInt(r.msg),
-                    medalType:MedalType.rankMedal
-                });
+                const func = ((res) => {
+                    return () => {
+                        popNew('earn-client-app-view-components-newMedalAlert', {
+                            // tslint:disable-next-line:radix
+                            medalId:parseInt(res.msg),
+                            medalType:MedalType.rankMedal
+                        });
+                    };
+                })(r);
+                const startMining = getStore('flags').startMining;
+                if (!startMining) {
+                    func();
+                } else {
+                    delayFun = func;
+                }
                 
                 break;
         
@@ -26,3 +37,13 @@ export const initReceive = (uid: number) => {
         }
     });
 };
+
+// 延迟弹框
+let delayFun;
+
+register('flags/startMining',(startMining:boolean) => {
+    if (!startMining) {
+        delayFun && delayFun();
+        delayFun = undefined;
+    }
+});

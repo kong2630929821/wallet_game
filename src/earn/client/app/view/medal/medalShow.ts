@@ -3,9 +3,7 @@
  */
 
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getRankList, showMedal } from '../../net/rpc';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 
 export enum MedalType {
