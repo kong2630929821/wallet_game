@@ -11,7 +11,7 @@ import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
-import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
@@ -74,6 +74,8 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
             specialAwardbucket.put(THE_ELDER_SCROLLS, specialAward);
         }
     }
+    // 推送奖励信息
+    send(uid, MESSAGE_TYPE_ADDAWARD, JSON.stringify(award));
 
     return award;
 };

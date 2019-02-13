@@ -14,7 +14,7 @@ import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
-import { get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
+import { get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
 import { bigint_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
@@ -91,7 +91,7 @@ export const orderQuery = () => {
 
 // 宝箱
 export const box_test = () => {
-    const itemType = 101101;
+    const itemType = 101001;
     clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
         console.log(r);
     });
@@ -121,7 +121,7 @@ export const item_test2 = () => {
 
 // 获取挖矿随机种子
 export const get_seed = () => {
-    const itemType = 2003;
+    const itemType = 2001;
     clientRpcFunc(mining, itemType, (r: SeedResponse) => {
         console.log(r);
     });
@@ -132,7 +132,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 100;
     miningResult.itemType = 1002;
-    miningResult.mineNum = 14;
+    miningResult.mineNum = 5;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -156,7 +156,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = '';
+    query.src = 'mine';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -307,7 +307,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 1, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 4, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -332,6 +332,21 @@ export const convert_info_test = () => {
     });
 };
 
+// 查询免费次数
+export const get_hasFree_test = ()  => {
+    clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 查询挖矿货币奖励
+export const get_miningCoin_test = ()  => {
+    const typeId = null;
+    clientRpcFunc(get_miningCoinNum, typeId, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -351,22 +366,34 @@ const props = {
             name: '登陆',
             func: () => { loginTest(); }
         },
+        // {
+        //     name: '聊天注册',
+        //     func: () => { chatRegister(); }
+        // },
+        // {
+        //     name: '聊天登录',
+        //     func: () => { chatLogin(); }
+        // },
         {
-            name: '聊天注册',
-            func: () => { chatRegister(); }
+            name: '广告奖励',
+            func: () => { ad_award_test(); }
         },
         {
-            name: '聊天登录',
-            func: () => { chatLogin(); }
+            name: '免费查询',
+            func: () => { get_hasFree_test(); }
         },
         // {
         //     name: '商品信息',
         //     func: () => { convert_info_test(); }
         // },
-        // {
-        //     name: '奖励查询',
-        //     func: () => { award_query_test(); }
-        // }
+        {
+            name: '奖励查询',
+            func: () => { award_query_test(); }
+        },
+        {
+            name: '挖矿货币奖励查询',
+            func: () => { get_miningCoin_test(); }
+        },
         // {
         //     name: '加ST',
         //     func: () => { bigInt_test(); }
@@ -377,32 +404,32 @@ const props = {
         // },
         {
             name: '宝箱下单',
-            func: () => { rotary_test(); }
+            func: () => { box_test(); }
         },
         {
             name: '订单查询',
             func: () => { orderQuery(); }
+        },
+        {
+            name: '所有物品',
+            func: () => { get_items(); }
+        },
+        {
+            name: '添加锄头',
+            func: () => { item_test2(); }
+        },
+        {
+            name: '添加矿山',
+            func: () => { test_add_mine(); }
+        },
+        {
+            name: '随机种子',
+            func: () => { get_seed(); }
+        },
+        {
+            name: '挖矿',
+            func: () => { mining_test(); }
         }
-        // {
-        //     name: '所有物品',
-        //     func: () => { get_items(); }
-        // },
-        // {
-        //     name: '添加锄头',
-        //     func: () => { item_test2(); }
-        // },
-        // {
-        //     name: '添加矿山',
-        //     func: () => { test_add_mine(); }
-        // },
-        // {
-        //     name: '随机种子',
-        //     func: () => { get_seed(); }
-        // },
-        // {
-        //     name: '挖矿',
-        //     func: () => { mining_test(); }
-        // },
         // {
         //     name: '兑换',
         //     func: () => { convert_test(); }
