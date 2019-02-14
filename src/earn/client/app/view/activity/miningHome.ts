@@ -32,7 +32,6 @@ export class MiningHome extends Widget {
         'right:22px;top:921px;',
         'left:259px;top:937px;'
     ];
-    public hoeSelectDefault:boolean = false;
     public create() {
         super.create();
         this.init();
@@ -40,6 +39,7 @@ export class MiningHome extends Widget {
 
     public init() {
         this.props = {
+            hoeSelectDefault:false,   // 默认选择锄头
             mineMax:MineMax,                     // 每天最多挖的矿山数
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
@@ -58,6 +58,7 @@ export class MiningHome extends Widget {
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
+            startMining:false, // 请求挖矿标识
             miningedNumber:getStore('mine/miningedNumber'),  // 已挖矿山数目
             miningNumber:{
                 KT:0,
@@ -99,7 +100,7 @@ export class MiningHome extends Widget {
      * 默认选择锄头
      */
     public hoeSelectedDefault() {
-        if (this.hoeSelectDefault) return;  // 只有第一次才默认选中锄头
+        if (this.props.hoeSelectDefault) return;  // 只有第一次才默认选中锄头
         if (this.props.diamondHoe > 0) {
             this.props.hoeSelected =  HoeType.DiamondHoe;
         } else if (this.props.goldHoe > 0) {
@@ -109,7 +110,7 @@ export class MiningHome extends Widget {
         } else {
             this.props.hoeSelected = -1;
         }
-        this.hoeSelectDefault = true;
+        this.props.hoeSelectDefault = true;
     }
 
     /**
@@ -133,7 +134,7 @@ export class MiningHome extends Widget {
     public mineClick(e:any) {
         const itype = e.itype;
         const mineId = e.mineId;
-
+        if (this.props.startMining) return;  // 如果正在通信  不响应
         if (this.props.miningedNumber >= MineMax) {
             popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
             
@@ -216,7 +217,9 @@ export class MiningHome extends Widget {
 
     public initMiningState() {
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
+        this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
+            this.props.startMining = false;
             if (r.leftHp <= 0) {
                 getRankList();
                 getTodayMineNum();
@@ -315,5 +318,11 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.props.zIndex = -1;
         w.paint();
     }
-   
+});
+
+register('flags/logout',(logout:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (logout) {
+        w && w.init();
+    }
 });

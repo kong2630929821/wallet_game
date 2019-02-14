@@ -50,7 +50,7 @@
                     <div w-class="mining-number">{{ it.miningedNumber }}/{{ it.mineMax }}</div>
                 </div>
             </div>
-            <div w-class="mine-area">
+            <div w-class="mine-area" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 {{for index,item of it.haveMines}}
                 <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                     <earn-client-app-components-mine-mine>{ 

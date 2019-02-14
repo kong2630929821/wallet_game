@@ -7,11 +7,12 @@ declare var pi_modules;
 
 // ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
-import { loginWallet } from '../../../../app/net/login';
+import { loginWallet, logoutWallet } from '../../../../app/net/login';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
 import { UserInfo } from '../../../server/data/db/user.s';
+import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { AutoLoginMgr, UserType } from './autologin';
 import { goLoginActivity } from './rpc';
 // import { initPush } from './receive';
@@ -29,6 +30,8 @@ export const initClient = (openId:number) => {
         rootClient = mqtt.connection(() => {
             goLoginActivity(openId);
         });
+    } else {
+        goLoginActivity(openId);
     }
     // initPush();
 };
@@ -143,4 +146,18 @@ let clientRpc: any;
 loginWallet('101',(openId:number) => {
     console.log('获取到openId ====',openId);
     initClient(openId);
+});
+
+// 登出
+logoutWallet(() => {
+    rootClient.disconnect();
+    initEarnStore();
+    setStore('flags/logout',true);
+    // setStore('userInfo',getStore('userInfo'));
+    // setStore('mine',getStore('mine'));
+    // setStore('invited',getStore('invited'));
+    // setStore('goods',getStore('goods'));
+    // setStore('balance',getStore('balance'));
+    // setStore('ACHVmedals',getStore('ACHVmedals'));
+    
 });
