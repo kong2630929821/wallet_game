@@ -17,7 +17,7 @@ import { getUid } from './user.r';
 // 添加矿山
 // #[rpc=rpcServer]
 export const add_mine = (): Mine => {
-    // if (get_mine_total(uid) >= MAX_ONEDAY_MINING) return;
+    if (get_mine_total() >= MAX_ONEDAY_MINING) return;
     const uid = getUid();
     const itemType = get_mine_type();
     const item = add_itemCount(uid, itemType, 1);
@@ -256,3 +256,13 @@ export const get_ad_award = (adType: number): Result => {
 
     return result;
 };
+
+// 完成任务奖励
+// #[rpc=rpcServer]
+// export const get_task_award = (taskID: number): Result => {
+//     const result = new Result();
+//     const dbMgr = getEnv().getDbMgr();
+//     const uid = getUid();
+//     // 从配置中读取任务信息
+
+// };

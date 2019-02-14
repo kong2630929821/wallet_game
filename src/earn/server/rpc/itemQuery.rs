@@ -35,3 +35,8 @@ struct RandomAward {
     awardType: u32,
     count: u32
 }
+
+//聊天ID
+struct ChatIDs {
+    chatIDs: &[u32]
+}

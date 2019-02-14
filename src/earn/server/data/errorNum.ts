@@ -84,6 +84,8 @@ export const CONVERT_ALREADY_EXIST = 7106;
 export const TOP_DATA_FAIL = 8101;
 // 向钱包服务器请求数据失败
 export const REQUEST_WALLET_FAIL = 8102;
+// 用户未注册聊天
+export const CHAT_NOT_REGISTER = 8103;
 
 // 默认错误代码
 export const DEFAULT_ERROR_NUMBER = -1;
