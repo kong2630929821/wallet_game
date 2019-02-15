@@ -30,8 +30,6 @@ export const initClient = (openId:number) => {
         rootClient = mqtt.connection(() => {
             goLoginActivity(openId);
         });
-    } else {
-        goLoginActivity(openId);
     }
     // initPush();
 };
@@ -151,8 +149,9 @@ loginWallet('101',(openId:number) => {
 // 登出
 logoutWallet(() => {
     rootClient.disconnect();
-    initEarnStore();
-    setStore('flags/logout',true);
+    rootClient = undefined;
+    // initEarnStore();
+    // setStore('flags/logout',true);
     // setStore('userInfo',getStore('userInfo'));
     // setStore('mine',getStore('mine'));
     // setStore('invited',getStore('invited'));

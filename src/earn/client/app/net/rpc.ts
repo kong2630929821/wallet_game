@@ -38,7 +38,7 @@ export const goLoginActivity = (openId:number) => {
     mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
         setStore('userInfo',{ ...res });
         if (res.loginCount === 0) {  // 新用户第一次登录
-            popNew('earn-client-app-components-newUserLogin-newUserLogin');
+            setStore('flags/firstLogin',true);
         }
         getSTbalance();  // 获取ST余额
         getKTbalance();  // 获取KT余额   
@@ -64,6 +64,8 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
     walletLoginReq.openid = userid;
     walletLoginReq.sign = sign;
     userType.value = walletLoginReq;
+    console.log('loginActivity --------- ',login);
+    console.log('loginActivity --------- ',userType);
     clientRpcFunc(login, userType,(res: UserInfo) => { // 活动登录
         setStore('userInfo',res);       
         console.log('[活动]登录成功！！--------------', res);

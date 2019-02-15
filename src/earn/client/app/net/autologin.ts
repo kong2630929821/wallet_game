@@ -145,6 +145,7 @@ export class AutoLoginMgr {
     }
     // 自动登录
     public autoLogin() {
+        console.log('autoLogin ------------ ');
         const login = new AutoLogin();
         login.token = this.token;
         login.uid = this.uid;
