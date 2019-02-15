@@ -3,6 +3,7 @@
  */
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { hasWallet } from '../../../../../app/utils/tools';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
@@ -211,4 +212,26 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 register('mine',(mine:Mine) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMiningInfo(mine);
+});
+
+let firstLoginDelay = false;
+// 监听活动第一次登录
+register('flags/firstLogin',(firstLogin:boolean) => {
+    console.log('firstLogin ===',firstLogin);
+    if (firstLogin) {
+        const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
+        if (level_2_page_loaded) {
+            popNew('earn-client-app-components-newUserLogin-newUserLogin');
+        } else {
+            firstLoginDelay = true;
+        }
+        
+    }
+});
+
+walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
+    if (firstLoginDelay) {
+        popNew('earn-client-app-components-newUserLogin-newUserLogin');
+        firstLoginDelay = false;
+    }
 });

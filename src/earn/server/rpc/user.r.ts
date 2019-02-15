@@ -2,7 +2,8 @@
  * 
  */
 import { read, write } from '../../../pi_pt/db';
-import { NetEvent } from '../../../pi_pt/event/event_server';
+
+import { getEnv as eventGetEnv, NetEvent } from '../../../pi_pt/event/event_server';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
@@ -227,12 +228,12 @@ export const isToday_firstLogin = ():boolean => {
 // #[event=net_connect_close]
 export const close_connect = (e: NetEvent) => {
     const sessionId = e.connect_id;
-    const dbMgr = getEnv().getDbMgr();
+    const dbMgr = eventGetEnv().getDbMgr();
 
     const onlineUsersBucket = new Bucket('memory', Online._$info.name, dbMgr);
     const onlineUsersMapBucket = new Bucket('memory', OnlineMap._$info.name, dbMgr);
     const r = onlineUsersMapBucket.get<number, [OnlineMap]>(sessionId)[0];
-    if (r.uid !== -1) {
+    if (r && r.uid !== -1) {
         onlineUsersMapBucket.delete(r.session_id);
         const onlineUser = onlineUsersBucket.get<number, [Online]>(r.uid)[0];
         if (onlineUser.session_id !== -1) {
