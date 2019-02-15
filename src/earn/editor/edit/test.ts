@@ -21,7 +21,7 @@ import { bigint_test, get_objStr, hit_test, item_add, item_addticket } from '../
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_task_award, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
 
 /**
  * 登录
@@ -354,6 +354,21 @@ export const get_friendTop_test = ()  => {
     });
 };
 
+// 获取任务列表
+export const get_task_test = ()  => {
+    clientRpcFunc(task_query, null, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 获取任务奖励
+export const get_taskAward_test = ()  => {
+    const taskID = 2;
+    clientRpcFunc(get_task_award, taskID, (r: Result) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -440,6 +455,14 @@ const props = {
         {
             name: '挖矿',
             func: () => { mining_test(); }
+        },
+        {
+            name: '任务列表',
+            func: () => { get_task_test(); }
+        },
+        {
+            name: '任务奖励',
+            func: () => { get_taskAward_test(); }
         }
         // {
         //     name: '好友排行',

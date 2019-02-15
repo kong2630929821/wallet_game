@@ -10,9 +10,11 @@ import { iterDb, read } from '../../../pi_pt/db';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
+import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
 import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
+import { Task, UserTaskTab } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
 import { get_miningKTNum } from '../rpc/mining.r';
@@ -385,8 +387,26 @@ export const items_init = (uid: number) => {
     itemInfo.item = items;
     const bucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
     bucket.put(uid, itemInfo);
-    // 添加初始奖章
-    // add_medal(uid, MEDAL_KT0);
+};
+
+// 初始化用户任务列表
+export const task_init = (uid: number) => {
+    console.log('!!!!!!!!!!!!!!task_init in');
+    const dbMgr = getEnv().getDbMgr();
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
+    const iter = <DBIter>taskCfgBucket.iter(null);
+    const taskList:Task[] = [];
+    do {
+        const iterEle = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterEle);
+        if (!iterEle) break;
+        const taskCfg: TaskAwardCfg = iterEle[1];
+        const task = new Task(taskCfg.id, taskCfg.prop, taskCfg.num, 0, taskCfg.name);
+        taskList.push(task);
+    } while (iter);
+    const userTask = new UserTaskTab(uid, taskList);
+    userTaskBucket.put(uid, userTask);
 };
 
 // 获取矿山总数

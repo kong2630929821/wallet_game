@@ -29,6 +29,8 @@ export const ADVERTISEMENT_NUM_ERROR = 1108;
 export const ADVERTISEMENT_TIME_ERROR = 1109;
 // 广告奖励转盘或宝箱次数已达上限
 export const ADAWARD_FREEPLAY_LIMIT = 1110;
+// 已领取过该任务奖励
+export const TASK_AWARD_REPEAT = 1111;
 
 // 邀请人数不足兑换奖励
 export const INVITE_NOT_ENOUGH = 2101;

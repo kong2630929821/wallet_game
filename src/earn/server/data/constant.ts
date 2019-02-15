@@ -111,6 +111,7 @@ export const AWARD_SRC_ROTARY = 'rotary';
 export const AWARD_SRC_TREASUREBOX = 'treasurebox';
 export const AWARD_SRC_CONVERT = 'convert';
 export const AWARD_SRC_ADVERTISEMENT = 'advertisement';
+export const AWARD_SRC_TASK = 'task';
 
 // ================ 概率奖励 ===================
 // 抽奖配置id

@@ -3,14 +3,14 @@
  */
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
-import { AdAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_ADVERTISEMENT, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, RESULT_SUCCESS, WARE_NAME } from '../data/constant';
+import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
+import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, SURPRISE_BRO, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
 import { Achievements, Medals, ShowMedal, ShowMedalRes } from '../data/db/medal.s';
-import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, DB_ERROR, ONEDAY_ADAWARD_LIMIT } from '../data/errorNum';
-import { addAward } from '../util/award.t';
-import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init } from '../util/item_util.r';
+import { Task, UserTaskTab } from '../data/db/user.s';
+import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
+import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, task_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { getUid } from './user.r';
 
@@ -259,10 +259,81 @@ export const get_ad_award = (adType: number): Result => {
 
 // 完成任务奖励
 // #[rpc=rpcServer]
-// export const get_task_award = (taskID: number): Result => {
-//     const result = new Result();
-//     const dbMgr = getEnv().getDbMgr();
-//     const uid = getUid();
-//     // 从配置中读取任务信息
+export const get_task_award = (taskID: number): Result => {
+    const result = new Result();
+    const dbMgr = getEnv().getDbMgr();
+    const uid = getUid();
+    // 从配置中读取任务信息
+    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
+    const taskCfg = taskCfgBucket.get<number, [TaskAwardCfg]>(taskID)[0];
+    if (!taskCfg) {
+        result.reslutCode = CONFIG_ERROR;
 
-// };
+        return result;
+    }
+    // const task = new Task(taskID, taskCfg.prop, taskCfg.num, 0, taskCfg.name);
+    // 查询用户对应的任务状态
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
+    if (!userTask) {
+        result.reslutCode = DB_ERROR;
+
+        return result;
+    }
+    let index;
+    const taskList = userTask.taskList;
+    for (let i = 0; i < taskList.length; i++) {
+        if (taskList[i].id === taskID) {
+            index = i;
+            break;
+        }
+    }
+    // 如果任务且状态为已完成则不予发放奖励
+    if (taskList[index].state === 1) {
+        result.reslutCode = TASK_AWARD_REPEAT;
+
+        return result;
+    }
+    // 发放任务奖励
+    if (taskCfg.prop === SURPRISE_BRO) { // 没有奖励的任务
+        const time = (new Date()).valueOf().toString();
+        const award = new Award(NO_AWARD_SORRY, taskCfg.prop, 1, uid, AWARD_SRC_TASK, time);
+        result.msg = JSON.stringify(award);
+    } else {
+        add_itemCount(uid, taskCfg.prop, taskCfg.num); // 不是可兑换奖品 作为普通物品添加
+        const award =  add_award(uid, taskCfg.prop, taskCfg.num, AWARD_SRC_TASK);
+        if (!award) {
+            result.reslutCode = DB_ERROR;
+            
+            return result;
+        }
+        result.msg = JSON.stringify(award);
+    }
+    // 更改任务状态为已完成
+    taskList[index].state = 1;
+    userTask.taskList = taskList;
+    userTaskBucket.put(uid, userTask);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 获取任务列表
+// #[rpc=rpcServer]
+export const task_query = (): Result => {
+    console.log('task_query in!!!!!!!!!!!!!!!!!');
+    const result = new Result();
+    const uid = getUid();
+    const dbMgr = getEnv().getDbMgr();
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
+    console.log('userTask!!!!!!!!!!!!!!!!!', userTask);
+    if (!userTask) {
+        task_init(uid);
+        task_query();
+    }
+    result.msg = JSON.stringify(userTask);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
