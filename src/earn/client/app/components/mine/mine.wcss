@@ -7,19 +7,19 @@
 }
 .hp-bg{
     position: absolute;
-    top: -35px;
+    top: -85px;
     left: 50%;
     transform: translateX(-50%);
     width:200px;
-    height:16px;
-    background:rgba(34,34,34,1);
+    height:14px;
+    background:rgba(255,255,255,1);
     border-radius:7px;
-    border:3px solid rgba(255,255,255,1);
+    border:2px solid rgba(255,255,255,1);
 }
 .hp{
     height: 10px;
-    background:rgba(252,220,60,1);
-    border-radius:7px;
+    border-radius:5px;
+    background:rgba(212,84,58,1);
 }
 .count-down{
     width: 56px;
@@ -42,8 +42,8 @@
 }
 .hoe{
     position: absolute;
-    top: 30px;
-    left: 50px;
+    top: -66px;
+    left: 100px;
     width: 150px;
     height: 150px;
 }

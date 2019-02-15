@@ -110,41 +110,50 @@ export const unregister = (keyName: string, cb: Function): void => {
  * 消息处理列表
  */
 const handlerMap: HandlerMap = new HandlerMap();
-
-// 全局内存数据库
-const store:Store = {
-    userInfo:{
-        uid:-1,
-        name:'',
-        avatar:'',
-        note:'',
-        sex:0,
-        tel:''
-    },
-    flags:{},
-    mine:{
-        miningedNumber:0,
-        miningRank:0,
-        miningKTnum:0,
-        miningMedalId:8001
-    },
-    goods:[],
-    balance:{
-        ST:0,
-        KT:0
-    },
-    ACHVmedals:[],
-    invited:{
-        invitedNumberOfPerson:0,
-        convertedInvitedAward:[]
-    }
-
+let store:Store;
+export const initEarnStore = () => {
+    // 全局内存数据库
+    store = {
+        userInfo:{
+            uid:-1,
+            name:'',
+            avatar:'',
+            note:'',
+            sex:0,
+            tel:''
+        },
+        flags:{},
+        mine:{
+            miningedNumber:0,
+            miningRank:0,
+            miningKTnum:0,
+            miningSTnum:0,
+            miningETHnum:0,
+            miningBTCnum:0,
+            miningMedalId:8001
+        },
+        goods:[],
+        balance:{
+            ST:0,
+            KT:0
+        },
+        ACHVmedals:[],
+        invited:{
+            invitedNumberOfPerson:0,
+            convertedInvitedAward:[]
+        }
+    };
 };
+
+initEarnStore();   // 立即执行
 
 export interface Mine {
     miningedNumber:number;  // 今天已挖矿山数量
     miningRank:number; // 排名
-    miningKTnum:number; // KT数量
+    miningKTnum:number; // 累计挖矿KT数量
+    miningSTnum:number; // 累计挖矿ST数量
+    miningETHnum:number; // 累计挖矿ETH数量
+    miningBTCnum:number; // 累计挖矿BTC数量
     miningMedalId:number;  // 挂出的勋章id
 }
 
