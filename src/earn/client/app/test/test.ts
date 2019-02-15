@@ -17,7 +17,7 @@ import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../.
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { add_convert, get_convert_list, get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
-import { award as awardR, bigint_test, db_test, get_objStr, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
+import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';

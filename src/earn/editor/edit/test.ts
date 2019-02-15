@@ -14,14 +14,14 @@ import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
-import { get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
+import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
-import { bigint_test, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
+import { bigint_test, get_objStr, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
-import { get_loginDays, login } from '../../server/rpc/user.p';
+import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, item_query, show_medal } from '../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_task_award, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
 
 /**
  * 登录
@@ -156,7 +156,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = 'mine';
+    query.src = '';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -347,6 +347,28 @@ export const get_miningCoin_test = ()  => {
     });
 };
 
+// 好友挖矿排行
+export const get_friendTop_test = ()  => {
+    clientRpcFunc(get_friends_KTTop, null, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 获取任务列表
+export const get_task_test = ()  => {
+    clientRpcFunc(task_query, null, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 获取任务奖励
+export const get_taskAward_test = ()  => {
+    const taskID = 2;
+    clientRpcFunc(get_task_award, taskID, (r: Result) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -366,6 +388,10 @@ const props = {
             name: '登陆',
             func: () => { loginTest(); }
         },
+        // {
+        //     name: '退出登陆',
+        //     func: () => { quit_test(); }
+        // },
         // {
         //     name: '聊天注册',
         //     func: () => { chatRegister(); }
@@ -390,10 +416,10 @@ const props = {
             name: '奖励查询',
             func: () => { award_query_test(); }
         },
-        {
-            name: '挖矿货币奖励查询',
-            func: () => { get_miningCoin_test(); }
-        },
+        // {
+        //     name: '挖矿货币奖励查询',
+        //     func: () => { get_miningCoin_test(); }
+        // },
         // {
         //     name: '加ST',
         //     func: () => { bigInt_test(); }
@@ -429,7 +455,19 @@ const props = {
         {
             name: '挖矿',
             func: () => { mining_test(); }
+        },
+        {
+            name: '任务列表',
+            func: () => { get_task_test(); }
+        },
+        {
+            name: '任务奖励',
+            func: () => { get_taskAward_test(); }
         }
+        // {
+        //     name: '好友排行',
+        //     func: () => { get_friendTop_test(); }
+        // }
         // {
         //     name: '兑换',
         //     func: () => { convert_test(); }

@@ -22,12 +22,22 @@ struct UserAccMap {
 #[primary=uid,db=file,dbMonitor=true,hasmgr=false]
 struct UserInfo {
     uid: u32,//用户id,自增,-1代表不存在
-    name: String,//用户自己设置的用户名
-    avatar: String,//头像
-    sex: u32,//性别
-    tel: String,//电话
-    note: String,//用户自己的备注信息
-    loginCount: u32 //登录次数
+    name: Option<String>,//用户自己设置的用户名
+    avatar: Option<String>,//头像
+    sex: Option<u32>,//性别
+    tel: Option<String>,//电话
+    note: Option<String>,//用户自己的备注信息
+    loginCount: u32, //登录次数
+    chatID: Option<u32>, //聊天ID
+}
+
+/**
+*聊天IDMap表
+*/
+#[primary=chatID,db=file,dbMonitor=true,hasmgr=false]
+struct ChatIDMap {
+    chatID: u32,
+    uid: u32
 }
 
 /**
@@ -109,4 +119,25 @@ struct InviteNumTab {
 struct InviteTab {
     uid: u32,
     fuid: Option<&[u32]>,
+}
+
+/**
+*用户任务结构
+*/
+#[constructor=true]
+struct Task {
+    id: u32, // 任务id
+    awardID: u32, // 奖励id
+    awardCount: u32, // 奖励数量
+    state: u8, // 任务完成状态 0:未完成, 1:已完成
+    desc: String // 任务描述
+}
+
+/**
+*用户任务表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct UserTaskTab {
+    uid: u32,
+    taskList: &[Task]
 }
