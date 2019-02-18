@@ -36,28 +36,42 @@
         <div w-class="card-container">
             <div w-class="card">
                 <div style="display: flex;align-items: center;">
-                    <span w-class="welfare"><pi-ui-lang>{"zh_Hans":"热门活动","zh_Hant":"熱門活動","en":""}</pi-ui-lang></span>
+                    <span w-class="welfare">
+                        <span w-class="left-span"></span>
+                        <pi-ui-lang>{"zh_Hans":"新手任务","zh_Hant":"新手任務","en":""}</pi-ui-lang>
+                    </span>
                 </div>
 
                 <div w-class="welfare-container">
-                    {{for i,item of it.hotActivities}}
-                    <div w-class="welfare-activities-item" on-tap="goHotActivity({{i}})" class="welfare-activities-item">
-                        <img src="../../res/image1/{{item.img}}"/>
-                        <div w-class="welfare-box">
-                            <div w-class="welfare-title">{{item.title}}</div>
-                            <div w-class="welfare-desc">{{item.desc}}</div>
+                    {{for i,item of it.noviceTask}}
+                        {{if !item.complete}}
+                        <div w-class="welfare-noviceTask-item" >
+                            <div>
+                                <div w-class="welfare-title" style="font-size:32px;">
+                                    {{item.title}}
+                                    <img src="../../res/image/{{item.img}}" style="width:50px;margin: 10px;"/>
+                                    {{if item.addOne}}
+                                    <span w-class="add-one">+1</span>
+                                    {{end}}
+                                </div>
+                                <div w-class="welfare-desc">{{item.desc}}</div>
+                            </div>
+                            <div w-class="welfare-btn" on-tap="goNoviceTask({{i}})">{{item.btn}}</div>
                         </div>
-                    </div>
+                        {{end}}
                     {{end}}
                 </div>
             </div>
             <div w-class="card">
-                <div style="display: flex;align-items: center;">
-                    <span w-class="welfare"><pi-ui-lang>{"zh_Hans":"应用福利","zh_Hant":"應用福利","en":""}</pi-ui-lang></span>
+                <div style="display: flex;align-items: center;margin-top: 50px;">
+                    <span w-class="welfare">
+                        <span w-class="left-span"></span>
+                        <pi-ui-lang>{"zh_Hans":"热门活动","zh_Hant":"熱門活動","en":""}</pi-ui-lang>
+                    </span>
                 </div>
                 <div w-class="welfare-container">
-                    {{for i,item of it.applicationWelfares}}
-                    <div w-class="welfare-activities-item" on-tap="goApplicationWelfares({{i}})" class="welfare-activities-item">
+                    {{for i,item of it.hotActivities}}
+                    <div w-class="welfare-activities-item" on-tap="goHotActivity({{i}})" class="welfare-activities-item">
                         <img src="../../res/image1/{{item.img}}"/>
                         <div w-class="welfare-box">
                             <div w-class="welfare-title">{{item.title}}</div>

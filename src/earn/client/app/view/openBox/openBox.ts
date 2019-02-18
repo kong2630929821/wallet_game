@@ -8,7 +8,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { addST, getSTbalance, isFirstFree, openChest, queryChestOrder } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
@@ -131,6 +131,7 @@ export class OpenBox extends Widget {
             } else {         // 免费机会开奖
                 this.props.isFirstPlay = false;
                 this.goLottery(e,boxIndex,order);
+                setStore('flags/firstOpenBox',true); // 每日首次开宝箱
             }
 
         }).catch((err) => {

@@ -4,11 +4,18 @@
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
-import { hasWallet } from '../../../../../app/utils/tools';
+import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
+import { backupMnemonic } from '../../../../../app/utils/walletTools';
+import { gotoChat } from '../../../../../app/view/base/app';
+import { register as ChatRegister } from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
+import { RESULT_SUCCESS } from '../../../../server/data/constant';
+import { Result } from '../../../../server/data/db/guessing.s';
+import { get_task_award } from '../../../../server/rpc/user_item.p';
+import { clientRpcFunc } from '../../net/init';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -27,10 +34,25 @@ export class EarnHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
+        const wallet = walletGetStore('wallet');
+        if (wallet) {
+            this.props.noviceTask[0].complete = true;
+            if (wallet.isBackup) {
+                this.props.noviceTask[1].complete = true;
+            }
+            if (wallet.sharePart) {
+                this.props.noviceTask[2].complete = true;                
+            }
+        }
+        const flags = getStore('flags');
+        if (flags && flags.firstChat) {
+            this.props.noviceTask[3].complete = true;
+        }
     }
     /**
      * 初始化数据
      */
+    // tslint:disable-next-line:max-func-body-length
     public init() {
         const mine = getStore('mine');
         const ktShow = getModulConfig('KT_SHOW');
@@ -42,28 +64,65 @@ export class EarnHome extends Widget {
             scrollHeight: 0,
             refresh: false,
             avatar: '../../res/image1/default_avatar.png',
-            hotActivities: [{
-                img: 'btn_yun_1.png',
-                title: '每日登录',
-                desc: '连续登录有大奖',
-                components:'earn-client-app-view-activity-signIn'
+            noviceTask:[{
+                img: 'iron_hoe.png',
+                title: '创建钱包',
+                desc: `登陆后可以玩更多游戏`,
+                btn:'创建钱包',
+                addOne:true,                
+                components:'app-view-wallet-create-home',
+                complete:false
             }, {
-                img: 'btn_yun_2.png',
-                title: '做任务',
-                desc: '可以抽奖兑换物品',
-                components:'app-view-earn-mining-addMine'
+                img: 'gold_hoe.png',
+                title: '去备份助记词',
+                desc: '助记词是您找回账号的唯一凭证',
+                btn:'去备份',
+                addOne:true,                
+                components:'backUp',
+                complete:false
             }, {
-                img: 'btn_yun_3.png',
-                title: '邀请好友',
-                desc: '累计邀请有好礼',
-                components:'earn-client-app-view-activity-inviteFriend'
+                img: 'diamond_hoe.png',
+                title: `去分享秘钥片段`,
+                desc: '分享使保存更安全',
+                btn:'分享片段',
+                addOne:true,                
+                components:'sharePart',
+                complete:false
             }, {
-                img: 'btn_yun_4.png',
-                title: '验证手机',
-                desc: '确认是真实用户',
-                components:'app-view-mine-setting-phone'
+                img: 'iron_hoe.png',
+                title: '参与聊天',
+                desc: '和大家聊一聊最近的热点',
+                btn:'去聊天',
+                addOne:true,                
+                components:'goChat',
+                complete:false
+            },{
+                img: 'task_gift.png',
+                title: '玩一把大转盘',
+                desc: '每天赠送初级大转盘一次抽奖机会',
+                btn:'去抽奖',
+                addOne:false,
+                components:'earn-client-app-view-turntable-turntable',
+                complete:false
+            },{
+                img: 'task_gift.png',
+                title: '开个初级宝箱',
+                desc: '每天免费开初级宝箱一次',
+                btn:'开个宝箱',
+                addOne:false,                
+                components:'app-view-earn-redEnvelope-openBox-openBox',
+                complete:false
+            },{
+                img: 'diamond_hoe.png',
+                title: '首次充值成功',
+                desc: '充值玩更多游戏',
+                btn:'去充值',
+                addOne:true,
+                components:'app-view-wallet-cloudWallet-rechargeKT',
+                complete:false
             }],
-            applicationWelfares:[{
+            // 热门活动
+            hotActivities: [{
                 img: 'btn_yun_5.png',
                 title: '领分红',
                 desc: `根据${ktShow}领分红`,
@@ -83,6 +142,16 @@ export class EarnHome extends Widget {
                 title: '兑换码',
                 desc: '兑换礼物和红包',
                 components:'app-view-earn-exchange-exchange'
+            },{
+                img: 'btn_yun_3.png',
+                title: '邀请好友',
+                desc: '累计邀请有好礼',
+                components:'earn-client-app-view-activity-inviteFriend'
+            },{
+                img: 'btn_yun_4.png',
+                title: '验证手机',
+                desc: '确认是真实用户',
+                components:'app-view-mine-setting-phone'
             }],
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
@@ -100,7 +169,7 @@ export class EarnHome extends Widget {
         this.paint();
         setTimeout(() => {
             this.scrollPage();
-        }, 17);
+        }, 100);
         // this.getMiningInfo();
         // console.log(this.props.hoeType);
     }
@@ -114,12 +183,31 @@ export class EarnHome extends Widget {
     }
 
     /**
-     * 应用福利
+     * 新手任务
      */
-    public goApplicationWelfares(ind:number) {
+    public async goNoviceTask(ind:number) {
         if (!hasWallet()) return;
-        const page = this.props.applicationWelfares[ind].components;
-        popNew(page);
+        const page = this.props.noviceTask[ind].components;
+        if (page === 'backUp') {  // 去备份
+            const psw = await popPswBox();
+            if (!psw) return;
+            const ret = await backupMnemonic(psw);
+            if (ret) {
+                popNew('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
+                // this.backPrePage();
+            }
+        } else if (page === 'sharePart') { // 分享片段
+            const psw = await popPswBox();
+            if (!psw) return;
+            const ret = await backupMnemonic(psw);
+            if (ret) {
+                popNew('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
+            }
+        } else if (page === 'goChat') { // 去聊天
+            gotoChat();
+        } else {
+            popNew(page);            
+        }
     }
 
     /**
@@ -228,10 +316,74 @@ register('flags/firstLogin',(firstLogin:boolean) => {
         
     }
 });
-
 walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
         popNew('earn-client-app-components-newUserLogin-newUserLogin');
         firstLoginDelay = false;
+    }
+});
+
+// ================================================新手活动奖励
+
+walletRegister('flags/createWallet',() => {
+    // 创建钱包
+    clientRpcFunc(get_task_award,1,(res:Result) => {
+        console.log('签到奖励',res);
+        if (res && res.reslutCode === RESULT_SUCCESS) {
+            popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                title:'签到奖励',
+                awardImg:'2001.jpg',
+                awardName:'铁镐',
+                awardNum:1
+            });
+        }
+    });
+    
+});
+walletRegister('wallet',(wallet) => {
+    // 备份
+    if (wallet.isBackup && !getStore('flags',{}).isBackUp) { 
+        clientRpcFunc(get_task_award,2,(res:Result) => {
+            console.log('备份成功',res);
+            if (res && res.reslutCode === RESULT_SUCCESS) {
+                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'备份成功',
+                    awardImg:'2002.jpg',
+                    awardName:'金镐',
+                    awardNum:1
+                });
+            }
+        });
+    }
+    // 分享密钥
+    if (wallet.sharePart && !getStore('flags',{}).sharePart) {  
+        clientRpcFunc(get_task_award,3,(res:Result) => {
+            console.log('成功分享片段',res);
+            if (res && res.reslutCode === RESULT_SUCCESS) {
+                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'成功分享片段',
+                    awardImg:'2003.jpg',
+                    awardName:'钻石镐',
+                    awardNum:1
+                });
+            }
+        });
+    }
+});
+ChatRegister('setting',(res) => {
+    // 首次聊天
+    if (res.firstChat && !getStore('flags',{}).firstChat) {
+        clientRpcFunc(get_task_award,4,(res:Result) => {
+            console.log('参与聊天',res);
+            if (res && res.reslutCode === RESULT_SUCCESS) {
+                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'参与聊天',
+                    awardImg:'2001.jpg',
+                    awardName:'铁镐',
+                    awardNum:1
+                });
+                setStore('flags/firstChat',true);
+            }
+        });
     }
 });
