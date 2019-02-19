@@ -8,13 +8,14 @@ import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_MINE, BTC_TYPE, ETH_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AwardMap, AwardQuery, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMap, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
+import { ChatIDMap, UserAccMap } from '../data/db/user.s';
 import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, add_medal, get_award_ids, get_mine_total, get_mine_type, get_today, mining_add_medal, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { seriesLogin_award } from '../util/regularAward';
-import { MiningResult, SeedResponse } from './itemQuery.s';
+import { ChatIDs, MiningResult, SeedResponse } from './itemQuery.s';
 import { get_loginDays, getOpenid, getUid } from './user.r';
 import { add_mine, award_query, get_item, get_showMedal } from './user_item.r';
 
@@ -66,11 +67,11 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     const uid = getUid();
     const todayMineNum = get_todayMineNum();
     // 当日已达最大挖矿数量
-    // if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
-    //     miningResponse.resultNum = MINENUM_OVER_LIMIT;
+    if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
+        miningResponse.resultNum = MINENUM_OVER_LIMIT;
 
-    //     return miningResponse;
-    // }
+        return miningResponse;
+    }
     const seedAndHoe = <MineSeed>seedBucket.get(uid)[0];
     if (!seedAndHoe) {
         miningResponse.resultNum = GET_RANDSEED_FAIL;
@@ -268,11 +269,14 @@ export const get_miningKTNum = (uid: number):MiningKTNum => {
     console.log('get_miningKTNum in!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, MiningKTNum._$info.name, dbMgr);
+    const accMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
     const miningKTNum = bucket.get<number, [MiningKTNum]>(uid)[0];
     if (!miningKTNum) {
         const blankMiningKTNum = new MiningKTNum();
         blankMiningKTNum.uid = uid;
-        const openid = getOpenid();
+        // const openid = getOpenid();
+        const userAccMap = accMapBucket.get<number, [UserAccMap]>(uid)[0];
+        const openid = userAccMap.openid;
         console.log('openid !!!!!!!!!!!!!!!!!', openid);
         blankMiningKTNum.openid = openid;
         blankMiningKTNum.total = 0;
@@ -320,39 +324,38 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
 
 // 好友挖矿排行
 // #[rpc=rpcServer]
-export const get_friends_KTTop = (): MineKTTop => {
+export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
     console.log('get_friends_KTTop in!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     const mineTop = new MineKTTop();
-    const fuid = get_friends_uid(uid);
-    fuid.push(uid);
+    const dbMgr = getEnv().getDbMgr();
+    const mapbucket = new Bucket(WARE_NAME, ChatIDMap._$info.name, dbMgr);
+    const fuids: [number] = [uid];
+    // 从数据库中绑定的聊天IDMap表中根据chatID关联到活动的uid
+    for (let i = 0; i < chatIDs.chatIDs.length; i ++) {
+        const chatIDMap = mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[0])[0];
+        if (!chatIDMap) continue;
+        fuids.push(chatIDMap.uid);
+    }
     const mineTopList = []; 
-    for (let i = 0; i < fuid.length; i ++) {
-        const miningKTNum = get_miningKTNum(fuid[i]);
+    for (let i = 0; i < fuids.length; i ++) {
+        const miningKTNum = get_miningKTNum(fuids[i]);
+        console.log('miningKTNum!!!!!!!!!!!!!!!!!', miningKTNum);
         const miningKTMap = new MiningKTMap();
         miningKTMap.ktNum = miningKTNum.total;
         miningKTMap.uid = miningKTNum.uid;
         const miningKTMapTab = new MiningKTMapTab();
         miningKTMapTab.miningKTMap = miningKTMap;
-        miningKTMapTab.medal = miningKTNum.medal;
+        if (miningKTNum.medal) {
+            console.log('medal!!!!!!!!!!!!!!!!!');
+            miningKTMapTab.medal = miningKTNum.medal;
+        }
         miningKTMapTab.openid = miningKTNum.openid;
         mineTopList.push(miningKTMapTab);
     }
-    // 按挖矿的KT数排行
-    let i = 0;
-    let j = mineTopList.length - 1;
-    const temp = mineTopList[i];
-    while (i < j) {
-        while (i < j && mineTopList[j].miningKTMap.ktNum >= temp.miningKTMap.ktNum) {
-            j --;
-            if (i < j) mineTopList[i] = mineTopList[j];
-        }
-        while (i < j && mineTopList[i].miningKTMap.ktNum <= temp.miningKTMap.ktNum) {
-            i ++;
-            if (i < j) mineTopList[j] = mineTopList[i];
-        }
-    }
-    mineTopList[i] = temp;
+    // 按挖矿的KT数从大到小排序
+    sort(mineTopList, 0, mineTopList.length - 1);
+    console.log('mineTopList!!!!!!!!!!!!!!!!!', mineTopList);
     let myMiningKTMapTab: MiningKTMapTab;
     let myNum: number;
     for (let i = 0; i < mineTopList.length; i ++) {
@@ -364,16 +367,32 @@ export const get_friends_KTTop = (): MineKTTop => {
     }
     mineTop.topList = mineTopList;
     mineTop.myNum = myNum;
-    mineTop.myMedal = myMiningKTMapTab.medal;
+    if (myMiningKTMapTab.medal) mineTop.myMedal = myMiningKTMapTab.medal;
     mineTop.myKTNum = myMiningKTMapTab.miningKTMap.ktNum;
     mineTop.resultNum = RESULT_SUCCESS;
 
     return mineTop;
 };
 
-export const get_friends_uid = (uid: number): [number] => {
-    // TODO 获取好友的uid
-    return;
+const sort = (list: any[], left: number, right: number) => {
+    console.log('sort in!!!!!!!!!!!!!!!!!', { left, right });
+    if (left > right) return;
+    let i = left;
+    let j = right;
+    const temp = list[i];
+    if (i < j) {
+        while (i < j && list[j].miningKTMap.ktNum < temp.miningKTMap.ktNum) {
+            j --;
+        }
+        list[i] = list[j];
+        while (i < j && list[i].miningKTMap.ktNum > temp.miningKTMap.ktNum) {
+            i ++;
+        }
+        list[j] = list[i];
+    }
+    list[i] = temp;
+    sort(list, left, i - 1);
+    sort(list, i + 1, right);
 };
 
 // 挖矿总数排行

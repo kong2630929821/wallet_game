@@ -8,6 +8,7 @@ import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { Award, ConvertTab, Hoe, Item, Items, Mine, SpecialAward } from '../data/db/item.s';
+import { UserAccMap } from '../data/db/user.s';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, get_mine_type, items_init } from '../util/item_util.r';
 import { doMining } from '../util/mining_util';
@@ -86,10 +87,14 @@ export const bigint_test = ():Test => {
 
 // #[rpc=rpcServer]
 export const get_objStr = ():Result => {
+    console.log('get_objStr in:!!!!!!!!!!!!!!!!!!');
     const result = new Result();
-    const items = item_query();
-    result.reslutCode = RESULT_SUCCESS;
-    result.msg = JSON.stringify(items);
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
+    const uids = [2,3,4,56,5,77];
+    const openids = bucket.get<number[], [UserAccMap]>(uids);
+    console.log('openids:!!!!!!!!!!!!!!!!!!', openids);
+    result.msg = JSON.stringify(openids);
 
     return result;
 };

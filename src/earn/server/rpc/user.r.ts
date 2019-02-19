@@ -10,8 +10,9 @@ import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import * as CONSTANT from '../data/constant';
-import { DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
-import { DB_ERROR } from '../data/errorNum';
+import { Result } from '../data/db/guessing.s';
+import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
+import { CHAT_NOT_REGISTER, DB_ERROR } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
@@ -94,6 +95,31 @@ export const login = (user: UserType): UserInfo => {
     console.log('userInfo!!!!!!!!!!!!!!!!!!!!!!!!', userInfo);
 
     return userInfo;
+};
+
+// 绑定聊天ID
+// #[rpc=rpcServer]
+export const bind_chatID = (chatID: number): Result => {
+    const result = new Result();
+    if (!chatID) {
+        result.reslutCode = CHAT_NOT_REGISTER;
+
+        return result;
+    }
+    const dbMgr = getEnv().getDbMgr();
+    const uid = getUid();
+    const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name, dbMgr);
+    const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name, dbMgr);
+    userInfoBucket.readAndWrite(uid, (v) => {
+        const userInfo: UserInfo = v[0];
+        userInfo.chatID = chatID;
+
+        return userInfo;
+    });
+    chatIDMapBucket.put(chatID, uid);
+    result.reslutCode = CONSTANT.RESULT_SUCCESS;
+
+    return result;  
 };
 
 // 本地方法
