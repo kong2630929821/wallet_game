@@ -42,11 +42,11 @@ export class Mine extends Widget {
         let hoeImgUrl = '../../res/image/';
 
         if (props.selectedHoe === HoeType.IronHoe) {
-            hoeImgUrl = `${hoeImgUrl}iron_hoe.png`;
+            hoeImgUrl = `${hoeImgUrl}2001.png`;
         } else if (props.selectedHoe === HoeType.GoldHoe) {
-            hoeImgUrl = `${hoeImgUrl}gold_hoe.png` ;
+            hoeImgUrl = `${hoeImgUrl}2002.png` ;
         } else {
-            hoeImgUrl = `${hoeImgUrl}diamond_hoe.png`;
+            hoeImgUrl = `${hoeImgUrl}2003.png`;
         }
 
         this.props = {
