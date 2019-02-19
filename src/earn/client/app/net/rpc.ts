@@ -18,7 +18,7 @@ import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
@@ -766,6 +766,23 @@ export const getMiningCoinNum = () => {
                 resolve(numbers);
             } else {
                 reject(r);
+            }
+        });
+    });
+};
+
+/**
+ * 获取用户已完成的任务
+ */
+export const getCompleteTask = () => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(task_query,null,(res:Result) => {
+            console.log('[活动]rpc-getCompleteTask---------------', res);
+            if (res && res.reslutCode === 1) {
+                const data = JSON.parse(res.msg);
+                resolve(data);
+            } else {
+                reject(res);
             }
         });
     });

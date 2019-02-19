@@ -11,7 +11,7 @@ import { subscribe } from './init';
 
 // 监听topic
 export const initReceive = (uid: number) => {
-    subscribe(`send/${uid}`, SendMsg, (r: any) => {
+    subscribe(`send/${uid}`, SendMsg, (r) => {
         console.log('后端推送事件！！！！！！！！',r);
         switch (r.cmd) {
             case 'add_medal':   // 勋章提醒
@@ -32,7 +32,18 @@ export const initReceive = (uid: number) => {
                 }
                 
                 break;
-        
+            case 'daily_first_login':
+                console.log('!!!!!!!!!!!!!!!!!!!!!!daily_first_login',r);
+                let name = '铁镐';
+                if (r.msg.props === 2002) name = '银镐';
+                if (r.msg.props === 2003) name = '金镐';
+                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'签到奖励',
+                    awardImg:`${r.msg.prop}.jpg`,
+                    awardName:name,
+                    awardNum:1
+                });
+                break;
             default:
         }
     });

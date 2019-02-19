@@ -9,7 +9,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -189,6 +189,7 @@ export class Turntable extends Widget {
                 this.props.isFirstPlay = false;
                 this.setChestTip(2);
                 this.changeDeg(order);
+                setStore('flags/firstTurnTable',true); // 每日首次大转盘
             }
             
         }).catch((err) => {
