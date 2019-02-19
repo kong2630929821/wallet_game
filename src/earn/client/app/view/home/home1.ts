@@ -3,6 +3,7 @@
  */
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { manualReconnect } from '../../../../../app/net/login';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { hasWallet } from '../../../../../app/utils/tools';
 import { Json } from '../../../../../pi/lang/type';
@@ -188,6 +189,14 @@ export class EarnHome extends Widget {
     public goMineRank() {
         if (!hasWallet()) return;
         popNew('earn-client-app-view-mineRank-mineRank');
+    }
+
+    /**
+     * 断线重连
+     */
+    public reConnect() {
+        console.log('reconnect');
+        manualReconnect();
     }
 }
 

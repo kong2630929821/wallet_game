@@ -137,7 +137,7 @@ export const unSubscribe = (platerTopic: string) => {
  * 主动断开mqtt连接
  */
 export const disconnect = () => {
-    rootClient.disconnect();
+    rootClient && rootClient.disconnect();
     rootClient = undefined;
     clientRpc = undefined;
 };
