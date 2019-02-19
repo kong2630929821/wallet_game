@@ -12,6 +12,7 @@ import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
 import { UserInfo } from '../../../server/data/db/user.s';
+import { initEarnStore, setStore } from '../store/memstore';
 import { AutoLoginMgr, UserType } from './autologin';
 import { goLoginActivity } from './rpc';
 // import { initPush } from './receive';
