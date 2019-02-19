@@ -2,31 +2,31 @@
  * 新用户登录
  */
 
+import { gotoEarn } from '../../../../../app/view/base/app';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getPrizeInfo, getRegularPrizeList } from '../../utils/util';
-import { ActivityType } from '../../xls/dataEnum.s';
+import { forelet,WIDGET_NAME } from '../../view/home/home1';
 
 export class NewUserLogin extends Widget {
     public ok: () => void;
     public props:any = {
         pi_norouter:true,
-        prizeList:[]
+        awardName:'铁镐',
+        awardNum:2
     };
 
     public create() {
         super.create();
         this.config = { value: { group: 'top' } };
-        const data = getRegularPrizeList(ActivityType.NewUserWelfare);
-        data.forEach(element => {
-            const prize = {
-                info:getPrizeInfo(element.prop),
-                count:element.count
-            };
-            this.props.prizeList.push(prize);
-        });
     }
 
-    public close(e: any) {
+    public close() {
         this.ok && this.ok();
+    }
+
+    public goMining() {
+        gotoEarn();
+        const w:any = forelet.getWidget(WIDGET_NAME);
+        w.miningClick();
+        this.close();
     }
 }

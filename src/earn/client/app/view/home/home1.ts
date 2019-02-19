@@ -12,12 +12,13 @@ import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { RESULT_SUCCESS } from '../../../../server/data/constant';
 import { Result } from '../../../../server/data/db/guessing.s';
+import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
+import { getCompleteTask, getLoginDays } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
-import { getHoeCount, getMaxMineType } from '../../utils/util';
+import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -31,23 +32,10 @@ export class EarnHome extends Widget {
     public language: any;
     public props: any;
     public config: any;
+
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
-        const wallet = walletGetStore('wallet');
-        if (wallet) {
-            this.props.noviceTask[0].complete = true;
-            if (wallet.isBackup) {
-                this.props.noviceTask[1].complete = true;
-            }
-            if (wallet.sharePart) {
-                this.props.noviceTask[2].complete = true;                
-            }
-        }
-        const flags = getStore('flags');
-        if (flags && flags.firstChat) {
-            this.props.noviceTask[3].complete = true;
-        }
     }
     /**
      * 初始化数据
@@ -65,7 +53,7 @@ export class EarnHome extends Widget {
             refresh: false,
             avatar: '../../res/image1/default_avatar.png',
             noviceTask:[{
-                img: 'iron_hoe.png',
+                img: '2001.png',
                 title: '创建钱包',
                 desc: `登陆后可以玩更多游戏`,
                 btn:'创建钱包',
@@ -73,7 +61,7 @@ export class EarnHome extends Widget {
                 components:'app-view-wallet-create-home',
                 complete:false
             }, {
-                img: 'gold_hoe.png',
+                img: '2002.png',
                 title: '去备份助记词',
                 desc: '助记词是您找回账号的唯一凭证',
                 btn:'去备份',
@@ -81,7 +69,7 @@ export class EarnHome extends Widget {
                 components:'backUp',
                 complete:false
             }, {
-                img: 'diamond_hoe.png',
+                img: '2003.png',
                 title: `去分享秘钥片段`,
                 desc: '分享使保存更安全',
                 btn:'分享片段',
@@ -89,7 +77,7 @@ export class EarnHome extends Widget {
                 components:'sharePart',
                 complete:false
             }, {
-                img: 'iron_hoe.png',
+                img: '2001.png',
                 title: '参与聊天',
                 desc: '和大家聊一聊最近的热点',
                 btn:'去聊天',
@@ -110,10 +98,10 @@ export class EarnHome extends Widget {
                 desc: '每天免费开初级宝箱一次',
                 btn:'开个宝箱',
                 addOne:false,                
-                components:'app-view-earn-redEnvelope-openBox-openBox',
+                components:'earn-client-app-view-openBox-openBox',
                 complete:false
             },{
-                img: 'diamond_hoe.png',
+                img: '2003.png',
                 title: '首次充值成功',
                 desc: '充值玩更多游戏',
                 btn:'去充值',
@@ -153,6 +141,7 @@ export class EarnHome extends Widget {
                 desc: '确认是真实用户',
                 components:'app-view-mine-setting-phone'
             }],
+            
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
             diamondHoe: getHoeCount(HoeType.DiamondHoe),
@@ -164,14 +153,36 @@ export class EarnHome extends Widget {
             animateStart:false,
             miningKTnum:mine.miningKTnum,
             miningRank:mine.miningRank,
-            miningMedalId:mine.miningMedalId
+            miningMedalId:mine.miningMedalId,
+            hasWallet:false,
+            signInDays:0,   // 签到总天数
+            awards:getSeriesLoginAwards(1)  // 签到奖励
         };
         this.paint();
         setTimeout(() => {
             this.scrollPage();
         }, 100);
-        // this.getMiningInfo();
-        // console.log(this.props.hoeType);
+
+    }
+
+    /**
+     * 刷新签到数据和任务数据
+     */
+    public updateSignIn() {
+        this.props.hasWallet = true;
+        getCompleteTask().then((data:any) => {
+            for (const v of data.taskList) {
+                if (v.state) {
+                    this.props.noviceTask[v.id - 1].complete = true;
+                }
+            }
+            this.paint();
+        });
+        getLoginDays().then((r:SeriesDaysRes) => {
+            this.props.signInDays = r.days;
+            this.props.awards = getSeriesLoginAwards(r.days);
+            this.paint();
+        });
     }
     /**
      * 热门活动进入
@@ -296,14 +307,19 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.paint();
     } 
 });
-
+register('userInfo',(userinfo) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (userinfo.uid > 0) {
+        w && w.updateSignIn();
+    }
+});
 register('mine',(mine:Mine) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMiningInfo(mine);
 });
 
 let firstLoginDelay = false;
-// 监听活动第一次登录
+// 监听活动第一次登录 创建钱包
 register('flags/firstLogin',(firstLogin:boolean) => {
     console.log('firstLogin ===',firstLogin);
     if (firstLogin) {
@@ -324,34 +340,31 @@ walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
 });
 
 // ================================================新手活动奖励
-
 walletRegister('flags/createWallet',() => {
-    // 创建钱包
-    clientRpcFunc(get_task_award,1,(res:Result) => {
-        console.log('签到奖励',res);
-        if (res && res.reslutCode === RESULT_SUCCESS) {
-            popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                title:'签到奖励',
-                awardImg:'2001.jpg',
-                awardName:'铁镐',
-                awardNum:1
-            });
-        }
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        title:'创建钱包成功',
+        awardImg:'2001.jpg',
+        awardName:'铁镐',
+        awardNum:1
     });
-    
+    w.paint();
 });
 walletRegister('wallet',(wallet) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
     if (wallet.isBackup && !getStore('flags',{}).isBackUp) { 
         clientRpcFunc(get_task_award,2,(res:Result) => {
             console.log('备份成功',res);
-            if (res && res.reslutCode === RESULT_SUCCESS) {
+            if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'备份成功',
                     awardImg:'2002.jpg',
-                    awardName:'金镐',
+                    awardName:'银镐',
                     awardNum:1
                 });
+                setStore('flags/isBackUp',true);
+                w.paint();
             }
         });
     }
@@ -359,23 +372,26 @@ walletRegister('wallet',(wallet) => {
     if (wallet.sharePart && !getStore('flags',{}).sharePart) {  
         clientRpcFunc(get_task_award,3,(res:Result) => {
             console.log('成功分享片段',res);
-            if (res && res.reslutCode === RESULT_SUCCESS) {
+            if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'成功分享片段',
                     awardImg:'2003.jpg',
-                    awardName:'钻石镐',
+                    awardName:'金镐',
                     awardNum:1
                 });
+                setStore('flags/sharePart',true);
+                w.paint();
             }
         });
     }
 });
 ChatRegister('setting',(res) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次聊天
     if (res.firstChat && !getStore('flags',{}).firstChat) {
         clientRpcFunc(get_task_award,4,(res:Result) => {
             console.log('参与聊天',res);
-            if (res && res.reslutCode === RESULT_SUCCESS) {
+            if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'参与聊天',
                     awardImg:'2001.jpg',
@@ -383,6 +399,26 @@ ChatRegister('setting',(res) => {
                     awardNum:1
                 });
                 setStore('flags/firstChat',true);
+                w.paint();
+            }
+        });
+    }
+});
+walletRegister('flags/firstRecharge',() => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    // 首次充值
+    if (!getStore('flags',{}).firstRecharge) {
+        clientRpcFunc(get_task_award,7,(res:Result) => {
+            console.log('首冲奖励',res);
+            if (res && res.reslutCode === 1) {
+                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'首冲奖励',
+                    awardImg:'2003.jpg',
+                    awardName:'金镐',
+                    awardNum:1
+                });
+                setStore('flags/firstRecharge',true);
+                w.paint();
             }
         });
     }

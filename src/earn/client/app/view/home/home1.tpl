@@ -34,6 +34,29 @@
             </div>
         </div>
         <div w-class="card-container">
+            {{if it.hasWallet}}
+            <div w-class="card">
+                <div style="display: flex;align-items: center;">
+                    <span w-class="welfare">
+                        <span w-class="left-span"></span>
+                        <pi-ui-lang>{"zh_Hans":"签到奖励","zh_Hant":"簽到獎勵","en":""}</pi-ui-lang>
+                    </span>
+                </div>
+
+                <div w-class="signIn-container">
+                    {{for i,v of it.awards}}
+                    {{: flag = it.signInDays >= v.days }}
+                    <div w-class="signIn-item">
+                        <div w-class="signIn-imgDiv" style="background:{{flag?'#CCCCCC':'#FCDC3C'}}">
+                            <img src="../../res/image/{{v.prop}}.png" w-class="signIn-img"/>
+                        </div>
+                        <div style="color:{{flag?'#CCCCCC':'#F39439'}}">{{flag?"已签":v.days+"天"}}</div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
             <div w-class="card">
                 <div style="display: flex;align-items: center;">
                     <span w-class="welfare">
@@ -47,9 +70,9 @@
                         {{if !item.complete}}
                         <div w-class="welfare-noviceTask-item" >
                             <div>
-                                <div w-class="welfare-title" style="font-size:32px;">
+                                <div w-class="noviceTask-title">
                                     {{item.title}}
-                                    <img src="../../res/image/{{item.img}}" style="width:50px;margin: 10px;"/>
+                                    <img src="../../res/image/{{item.img}}" style="width:50px;margin:0 10px;vertical-align: bottom"/>
                                     {{if item.addOne}}
                                     <span w-class="add-one">+1</span>
                                     {{end}}

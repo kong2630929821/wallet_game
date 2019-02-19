@@ -36,11 +36,11 @@ export class MineModalBox extends Widget {
         switch (award.awardType) {
             case Item_Enum.HOE:
                 if (award.type === HoeType.IronHoe) {
-                    imgUrl = `${imgUrl}iron_hoe.png`;
+                    imgUrl = `${imgUrl}2001.png`;
                 } else if (award.type === HoeType.GoldHoe) {
-                    imgUrl = `${imgUrl}gold_hoe.png`;
+                    imgUrl = `${imgUrl}2002.png`;
                 } else if (award.type === HoeType.DiamondHoe) {
-                    imgUrl = `${imgUrl}diamond_hoe.png`;
+                    imgUrl = `${imgUrl}2003.png`;
                 }
                 break;
             case Item_Enum.BTC:
