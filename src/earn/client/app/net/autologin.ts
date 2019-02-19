@@ -60,7 +60,7 @@ export class AutoLoginMgr {
             mqttVersion: 3,
             onSuccess: () => {
                 this.clientRpc = create(this.rootClient, (<any>self).__mgr);
-                console.log('[活动]reconnect 连接成功！！！！！！！');
+                console.log('[活动]connect 连接成功！！！！！！！');
                 // 连接成功
                 this.conState = true;
                 if (this.relogin === ReLoginState.START) {

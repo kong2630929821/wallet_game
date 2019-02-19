@@ -14,11 +14,11 @@ export class SignInAward extends Widget {
     public setProps(props:Props,oldProps:Props) {
         let imgUrl = '../../res/image/';
         if (props.hoeType === HoeType.IronHoe) {
-            imgUrl = `${imgUrl}iron_hoe.png`;
+            imgUrl = `${imgUrl}2001.png`;
         } else if (props.hoeType === HoeType.GoldHoe) {
-            imgUrl = `${imgUrl}gold_hoe.png`;
+            imgUrl = `${imgUrl}2002.png`;
         } else {
-            imgUrl = `${imgUrl}diamond_hoe.png`;
+            imgUrl = `${imgUrl}2003.png`;
         }
         this.props = {
             ...props,
