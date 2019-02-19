@@ -25,11 +25,12 @@ export const sourcePort = activeLogicPort;
  */
 export const initClient = (openId:number) => {
     if (!rootClient) {
+        console.log('initClient -----------');
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
         rootClient = mqtt.connection(() => {
             goLoginActivity(openId);
         });
-    }
+    } 
     // initPush();
 };
 
@@ -131,6 +132,15 @@ export const unSubscribe = (platerTopic: string) => {
     mqtt.subMgr.del(platerTopic);
 };
 
+/**
+ * 主动断开mqtt连接
+ */
+export const disconnect = () => {
+    rootClient.disconnect();
+    rootClient = undefined;
+    clientRpc = undefined;
+};
+
 // ================================================ 本地
 // MQTT管理
 let mqtt: any;
@@ -147,15 +157,7 @@ loginWallet('101',(openId:number) => {
 
 // 登出
 logoutWallet(() => {
-    rootClient.disconnect();
-    rootClient = undefined;
-    // initEarnStore();
-    // setStore('flags/logout',true);
-    // setStore('userInfo',getStore('userInfo'));
-    // setStore('mine',getStore('mine'));
-    // setStore('invited',getStore('invited'));
-    // setStore('goods',getStore('goods'));
-    // setStore('balance',getStore('balance'));
-    // setStore('ACHVmedals',getStore('ACHVmedals'));
-    
+    disconnect();
+    initEarnStore();
+    setStore('flags/logout',true);
 });
