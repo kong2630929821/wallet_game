@@ -10,7 +10,7 @@ import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT
 import { Result } from '../data/db/guessing.s';
 import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
 import { BoxOrder, ConvertOrder, RotaryOrder, UserBoxOrderTab, UserConvertOrderTab, UserRotaryOrderTab } from '../data/db/stParties.s';
-import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
+import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, NOT_LOGIN, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
 import { BILL_ALREADY_CHECK, BILL_ALREADY_PAY, NOT_PAY_YET } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
@@ -78,6 +78,11 @@ export const get_KTNum = (): CoinQueryRes => {
 export const st_rotary = (rotaryType:number): Result => {
     const result = new Result(); 
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = 0;
@@ -87,6 +92,7 @@ export const st_rotary = (rotaryType:number): Result => {
             const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
+            if (freePlay.freeRotary === 0) break;
             hasfree = freePlay.freeRotary;
             freePlay.freeRotary = hasfree - 1;
             bucket.put(uid, freePlay);
@@ -163,8 +169,13 @@ export const st_rotary = (rotaryType:number): Result => {
 // #[rpc=rpcServer]
 export const rotary_pay_query = (oid: string): Result => {
     console.log('guessing_pay_query in!!!!!!!!!!!!');
-    const uid = getUid();
     const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name, dbMgr);
     const order = orderBucket.get<string, [RotaryOrder]>(oid)[0];
@@ -248,6 +259,11 @@ export const st_treasurebox = (treasureboxType:number): Result => {
     console.log('st_treasurebox in!!!!!!!!!!!!', treasureboxType);
     const result = new Result();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = 0;
@@ -257,6 +273,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
             const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
+            if (freePlay.freeBox === 0) break;
             hasfree = freePlay.freeBox;
             freePlay.freeBox = hasfree - 1;
             bucket.put(uid, freePlay);
@@ -335,8 +352,13 @@ export const st_treasurebox = (treasureboxType:number): Result => {
 // #[rpc=rpcServer]
 export const box_pay_query = (oid: string): Result => {
     console.log('box_pay_query in!!!!!!!!!!!!', oid);
-    const uid = getUid();
     const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name, dbMgr);
     const order = orderBucket.get<string, [BoxOrder]>(oid)[0];
@@ -446,6 +468,11 @@ export const st_convert = (awardType:number):Result => {
     console.log('resultJst_convertson in!!!!!!!!!!');
     const result = new Result();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr(); 
     const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
     const productInfo = bucket.get<number, [ProductInfo]>(awardType)[0];
@@ -494,8 +521,13 @@ export const st_convert = (awardType:number):Result => {
 // #[rpc=rpcServer]
 export const convert_pay_query = (oid: string): Result => {
     console.log('convert_pay_query in!!!!!!!!!!!!');
-    const uid = getUid();
     const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
     const order = orderBucket.get<string, [ConvertOrder]>(oid)[0];
@@ -675,10 +707,21 @@ export const add_convert = (addConvertList: AddConvertList):Result => {
 // #[rpc=rpcServer]
 export const get_hasFree = ():FreePlay => {
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
-    
-    return bucket.get<number, [FreePlay]>(uid)[0];
+    let freePlay = bucket.get<number, [FreePlay]>(uid)[0];
+    if (!freePlay) {
+        freePlay = new FreePlay();
+        freePlay.uid = uid;
+        freePlay.freeBox = 0;
+        freePlay.freeRotary = 0;
+        freePlay.adAwardBox = 0;
+        freePlay.adAwardRotary = 0;
+        bucket.put(uid, freePlay);
+    }
+
+    return freePlay;
 };
 
 // 每日首次登陆添加一次免费初级转盘和宝箱次数

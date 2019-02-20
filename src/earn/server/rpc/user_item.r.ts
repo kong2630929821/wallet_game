@@ -4,12 +4,12 @@
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, SURPRISE_BRO, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
 import { Achievements, Medals, ShowMedal, ShowMedalRes } from '../data/db/medal.s';
 import { Task, UserTaskTab } from '../data/db/user.s';
-import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
+import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, NOT_LOGIN, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, task_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
 import { getUid } from './user.r';
@@ -29,7 +29,8 @@ export const add_mine = (): Mine => {
 // #[rpc=rpcServer]
 export const item_query = (): Items => {
     const uid = getUid();
-    console.log('item query in !!!!!!!!!!!!');
+    console.log('item query in !!!!!!!!!!!!', uid);
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const userItemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
     const items = <Items>userItemBucket.get(uid)[0];
@@ -64,6 +65,7 @@ export const get_item = (itemType: number): Item => {
 // #[rpc=rpcServer]
 export const award_query = (awardQuery:AwardQuery): AwardList => {
     const uid = getUid();
+    if (!uid) return;
     const src = awardQuery.src;
     const dbMgr = getEnv().getDbMgr();
     let pidList;
@@ -101,6 +103,7 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
 // #[rpc=rpcServer]
 export const get_medals = ():Medals => {
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);
     let medals = bucket.get<number, [Medals]>(uid)[0];
@@ -116,6 +119,7 @@ export const get_medals = ():Medals => {
 // 查看展示的奖章
 // #[rpc=rpcServer]
 export const get_showMedal = (uid: number):ShowMedalRes => {
+    if (!uid) return;
     const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
@@ -133,6 +137,7 @@ export const show_medal = (medalType: number):ShowMedalRes => {
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
     const uid = getUid();
+    if (!uid) return;
     const showMedal = new ShowMedal(uid, medalType);
     bucket.put(uid, showMedal);
 
@@ -143,6 +148,7 @@ export const show_medal = (medalType: number):ShowMedalRes => {
 // #[rpc=rpcServer]
 export const get_achievements = ():Achievements => {
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
     let achievements = bucket.get<number, [Achievements]>(uid)[0];
@@ -158,9 +164,13 @@ export const get_achievements = ():Achievements => {
 // 看广告获得奖励
 // #[rpc=rpcServer]
 export const get_ad_award = (adType: number): Result => {
-    console.log('get_ad_award!!!!!!!!!!!!');
-    const uid = getUid();
     const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, DailyWatchAdNum._$info.name, dbMgr);
     let dailyWatchAdNum :DailyWatchAdNum;
@@ -174,12 +184,6 @@ export const get_ad_award = (adType: number): Result => {
         dailyWatchAdNum.num = 0;
         dailyWatchAdNum.lastTime = 0;
     }
-    // 判断当天看广告获得奖励的次数是否达到上限
-    if (dailyWatchAdNum.num >= MAX_ONEDAY_ADAWARD) {
-        result.reslutCode = ONEDAY_ADAWARD_LIMIT;
-
-        return result;
-    }
     // 判断广告时间间隔是否达到最低时间间隔
     if (timestamps - dailyWatchAdNum.lastTime < MIN_ADVERTISEMENT_SECONDS) {
         result.reslutCode = ADVERTISEMENT_TIME_ERROR;
@@ -188,9 +192,7 @@ export const get_ad_award = (adType: number): Result => {
     }
     // 根据广告类型从配置中获取奖励
     const cfgBucket = new Bucket(MEMORY_NAME, AdAwardCfg._$info.name, dbMgr);
-    console.log('adType!!!!!!!!!!!!', adType);
     const adAward = cfgBucket.get<number, [AdAwardCfg]>(adType)[0];
-    console.log('adAward!!!!!!!!!!!!', adAward);
     if (!adAward) {
         result.reslutCode = ADVERTISEMENT_NUM_ERROR;
         
@@ -208,7 +210,6 @@ export const get_ad_award = (adType: number): Result => {
             freePlay.freeRotary += 1;
             freePlay.adAwardRotary += 1;
             freePlayBucket.put(uid, freePlay);
-            dailyWatchAdNum.num += 1;
             dailyWatchAdNum.lastTime = timestamps;
             bucket.put(pid, dailyWatchAdNum);
             result.msg = JSON.stringify(freePlay);
@@ -227,7 +228,6 @@ export const get_ad_award = (adType: number): Result => {
             freePlay.freeBox += 1;
             freePlay.adAwardBox += 1;
             freePlayBucket.put(uid, freePlay);
-            dailyWatchAdNum.num += 1;
             dailyWatchAdNum.lastTime = timestamps;
             bucket.put(pid, dailyWatchAdNum);
             result.msg = JSON.stringify(freePlay);
@@ -240,7 +240,14 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
     }
-    // 添加奖励
+    if (adAward.prop === ST_TYPE) {
+        if (dailyWatchAdNum.num >= MAX_ONEDAY_ADAWARD) {
+            result.reslutCode = ONEDAY_ADAWARD_LIMIT;
+
+            return result;
+        }
+        dailyWatchAdNum.num += 1;
+    }
     add_itemCount(uid, awardType, count);
     const award = add_award(uid, awardType, count, src, null, desc);
     if (!award) {
@@ -248,7 +255,6 @@ export const get_ad_award = (adType: number): Result => {
         
         return result;
     }
-    dailyWatchAdNum.num += 1;
     dailyWatchAdNum.lastTime = timestamps;
     bucket.put(pid, dailyWatchAdNum);
     result.msg = JSON.stringify(award);
@@ -263,6 +269,11 @@ export const get_task_award = (taskID: number): Result => {
     const result = new Result();
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     // 从配置中读取任务信息
     const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
     const taskCfg = taskCfgBucket.get<number, [TaskAwardCfg]>(taskID)[0];
@@ -324,13 +335,19 @@ export const task_query = (): Result => {
     console.log('task_query in!!!!!!!!!!!!!!!!!');
     const result = new Result();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
     const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
     console.log('userTask!!!!!!!!!!!!!!!!!', userTask);
     if (!userTask) {
-        task_init(uid);
-        task_query();
+        result.reslutCode = DB_ERROR;
+
+        return result;
     }
     result.msg = JSON.stringify(userTask);
     result.reslutCode = RESULT_SUCCESS;

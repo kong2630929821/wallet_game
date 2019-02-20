@@ -9,7 +9,7 @@ import { AWARD_SRC_MINE, BTC_TYPE, ETH_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT
 import { Result } from '../data/db/guessing.s';
 import { AwardMap, AwardQuery, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMap, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { ChatIDMap, UserAccMap } from '../data/db/user.s';
-import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, TOP_DATA_FAIL } from '../data/errorNum';
+import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, NOT_LOGIN, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, add_medal, get_award_ids, get_mine_total, get_mine_type, get_today, mining_add_medal, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
@@ -32,6 +32,11 @@ export const mining = (itemType:number):SeedResponse => {
     // 获取随机种子并写入内存表
     const seed = Math.floor(Math.random() * 233280 + 1);
     const uid = getUid();
+    if (!uid) {
+        seedResponse.resultNum = NOT_LOGIN;
+
+        return seedResponse;
+    }
     const hoeType = itemType;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
@@ -48,6 +53,8 @@ export const mining = (itemType:number):SeedResponse => {
 export const mining_result = (result:MiningResult):MiningResponse => {
     console.log('!!!!!!!!!!!!!!mining_result in');
     const miningResponse = new MiningResponse();
+    const uid = getUid();
+    if (!uid || !result) return;
     const count = result.hit;
     // 10s内点击次数超过设定上限
     if (count > MAX_HUMAN_HITS) {
@@ -64,7 +71,6 @@ export const mining_result = (result:MiningResult):MiningResponse => {
     const mineNum = result.mineNum;
     const dbMgr = getEnv().getDbMgr();
     const seedBucket = new Bucket(MEMORY_NAME, MineSeed._$info.name, dbMgr);
-    const uid = getUid();
     const todayMineNum = get_todayMineNum();
     // 当日已达最大挖矿数量
     if (todayMineNum.mineNum >= MAX_ONEDAY_MINING) {
@@ -173,6 +179,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 // #[rpc=rpcServer]
 export const get_todayMineNum = ():TodayMineNum => {
     const uid = getUid();
+    if (!uid) return;
     console.log('get_todayMineNum in!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, TodayMineNum._$info.name, dbMgr);
@@ -291,11 +298,12 @@ export const get_miningKTNum = (uid: number):MiningKTNum => {
 // #[rpc=rpcServer]
 export const get_miningKTTop = (topNum: number): MineKTTop => {
     console.log('get_miningTop in!!!!!!!!!!!!!!!!!');
+    const mineTop = new MineKTTop();
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const mapbucket = new Bucket(WARE_NAME, MiningKTMapTab._$info.name, dbMgr);
     const iter = <DBIter>mapbucket.iter(null, true);
-    const mineTop = new MineKTTop();
     mineTop.myKTNum = get_miningKTNum(uid).total;
     mineTop.myMedal = get_showMedal(uid).medalType;
     const mineTopList = [];
@@ -327,6 +335,7 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
 export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
     console.log('get_friends_KTTop in!!!!!!!!!!!!!!!!!');
     const uid = getUid();
+    if (!uid) return;
     const mineTop = new MineKTTop();
     const dbMgr = getEnv().getDbMgr();
     const mapbucket = new Bucket(WARE_NAME, ChatIDMap._$info.name, dbMgr);
@@ -400,6 +409,7 @@ const sort = (list: any[], left: number, right: number) => {
 export const get_miningTop = (topNum: number): MineTop => {
     console.log('get_miningTop in!!!!!!!!!!!!!!!!!');
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const mapbucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
     const iter = <DBIter>mapbucket.iter(null, true);

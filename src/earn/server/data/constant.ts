@@ -76,8 +76,8 @@ export const KT_UNIT_NUM:number = 10 ** 9;
 export const MAX_HUMAN_HITS = 200;
 // 一天最多挖矿数量
 export const MAX_ONEDAY_MINING = 8;
-// 每人每天看广告可获得奖励次数
-export const MAX_ONEDAY_ADAWARD = 20;
+// 每人每天看广告可获得ST奖励次数
+export const MAX_ONEDAY_ADAWARD = 10;
 // 激励视频广告最低间隔时间
 export const MIN_ADVERTISEMENT_SECONDS = 15;
 // 每天广告奖励转盘或宝箱最大次数

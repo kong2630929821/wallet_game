@@ -12,7 +12,7 @@ import { Bucket } from '../../utils/db';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
-import { CHAT_NOT_REGISTER, DB_ERROR } from '../data/errorNum';
+import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
@@ -92,7 +92,7 @@ export const login = (user: UserType): UserInfo => {
         // 添加到每日登陆表
         set_user_login(loginReq.uid);
         // 添加连续登陆奖励
-        const days = get_loginDays().days;
+        const days = getLoginDays().days;
         seriesLogin_award(days);
     }
     userInfo.uid = loginReq.uid;
@@ -100,6 +100,25 @@ export const login = (user: UserType): UserInfo => {
     console.log('userInfo!!!!!!!!!!!!!!!!!!!!!!!!', userInfo);
 
     return userInfo;
+};
+
+// 获取连续登陆天数
+export const getLoginDays = ():SeriesDaysRes => {
+    const uid = getUid();
+    if (!uid) return;
+    const seriesDaysRes = new SeriesDaysRes();
+    const dbMgr = getEnv().getDbMgr();
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
+    const seriesLogin = seriesLoginBucket.get<number, [SeriesLogin]>(uid)[0];
+    if (!seriesLogin) {
+        seriesDaysRes.resultNum = DB_ERROR;
+
+        return seriesDaysRes;
+    }
+    seriesDaysRes.days = seriesLogin.days;
+    seriesDaysRes.resultNum = CONSTANT.RESULT_SUCCESS;
+
+    return seriesDaysRes;
 };
 
 // 绑定聊天ID
@@ -113,6 +132,11 @@ export const bind_chatID = (chatID: number): Result => {
     }
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name, dbMgr);
     const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name, dbMgr);
     userInfoBucket.readAndWrite(uid, (v) => {
@@ -252,6 +276,7 @@ export const close_connect = (e: NetEvent) => {
 // #[rpc=rpcServer]
 export const get_loginDays = ():SeriesDaysRes => {
     const uid = getUid();
+    if (!uid) return;
     const seriesDaysRes = new SeriesDaysRes();
     const dbMgr = getEnv().getDbMgr();
     const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
