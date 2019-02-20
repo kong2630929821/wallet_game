@@ -8,7 +8,7 @@ import { Result } from '../data/db/guessing.s';
 import { Invite } from '../data/db/invite.s';
 import { InviteAwardRes } from '../data/db/item.s';
 import { InviteNumTab, InviteTab, UserAcc, UserAccMap } from '../data/db/user.s';
-import { DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_CONVERT_REPEAT, INVITE_NOT_ENOUGH, REQUEST_WALLET_FAIL } from '../data/errorNum';
+import { DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_CONVERT_REPEAT, INVITE_NOT_ENOUGH, NOT_LOGIN, REQUEST_WALLET_FAIL } from '../data/errorNum';
 import { getcdkey } from '../data/util';
 import { oauth_send } from '../util/oauth_lib';
 import { invite_award } from '../util/regularAward';
@@ -20,6 +20,7 @@ export const get_inviteNum = (): InviteNumTab => {
     console.log('get_inviteNum in !!!!!!!!!!!!!!!!!!!!!!!!');
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
+    if (!uid) return;
     // 获取openid
     const openid = Number(getOpenid());
     // 去钱包服务器获取已邀请人数
@@ -61,6 +62,7 @@ export const get_inviteNum = (): InviteNumTab => {
 export const get_invite_awards = (index:number):InviteAwardRes  => {
     console.log('get_invite_awards in !!!!!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
+    if (!uid) return;
     const dbMgr = getEnv().getDbMgr();
     const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
     const inviteNumTab = get_inviteNum();
@@ -103,6 +105,11 @@ export const cdkey = (code: string): Result => {
     const result = new Result();
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     // 获取openid
     const openid = Number(getOpenid());
     const cdkey = getcdkey(uid, code);

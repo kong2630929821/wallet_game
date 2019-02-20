@@ -156,7 +156,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = '';
+    query.src = 'rotary';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });
@@ -164,7 +164,7 @@ export const award_query_test = () => {
 
 // 转盘
 export const rotary_test = () => {
-    const itemType = 100801;
+    const itemType = 100701;
     clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
         console.log(r);
     });
@@ -307,7 +307,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 4, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 2, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -424,10 +424,14 @@ const props = {
         //     name: '加ST',
         //     func: () => { bigInt_test(); }
         // },
-        // {
-        //     name: '查ST',
-        //     func: () => { get_stNum_test(); }
-        // },
+        {
+            name: '查ST',
+            func: () => { get_stNum_test(); }
+        },
+        {
+            name: '转盘下单',
+            func: () => { rotary_test(); }
+        },
         {
             name: '宝箱下单',
             func: () => { box_test(); }

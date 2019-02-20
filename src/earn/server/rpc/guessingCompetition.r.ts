@@ -9,7 +9,7 @@ import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingOrder, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
 import { UserAcc, UserAccMap } from '../data/db/user.s';
-import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, GUESSING_ALREADY_SETTLED, GUESSING_NOT_EXIST, GUESSINGNUM_BEYOUND_LIMIT, ORDER_NOT_EXIST, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
+import { COMPETITION_ALREADY_CLOSE, COMPETITION_NOT_EXIST, COMPETITION_RESULT_EXIST, COMPETITION_RESULT_NOT_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, GUESSING_ALREADY_SETTLED, GUESSING_NOT_EXIST, GUESSINGNUM_BEYOUND_LIMIT, NOT_LOGIN, ORDER_NOT_EXIST, REQUEST_WALLET_FAIL, ST_NUM_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
 import { BILL_ALREADY_PAY, COMPETITION_HAS_CANCLED, EACH_COMPETITION_LIMIT, EACH_GUESSING_LIMIT, EACH_GUESSING_MIN, GUESSING_HAS_SETTLED, GUESSING_IS_SETTLING, GUEST_TEAM_NUM, HOST_TEAM_NUM, INIT_JACKPOTS_MAX, NOT_PAY_YET, NOT_SETTLE_YET, RESULT_NOT_EXIST, RESULT_TEAM1_WIN, RESULT_TEAM2_WIN } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { json_uri_sort, oauth_alter_balance, oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
@@ -129,6 +129,11 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     const teamSide = guessingReq.teamSide;
     const date = (new Date()).valueOf();
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr(); 
     const compBucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
     const competition = compBucket.get<number, [Competition]>(cid)[0];
@@ -201,6 +206,11 @@ export const guessing_pay_query = (oid: string):Result => {
     console.log('guessing_pay_query in!!!!!!!!!!!!');
     const uid = getUid();
     const result = new Result();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr();
     const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
     const guessingOrder = guessingOrderBucket.get<string, [GuessingOrder]>(oid)[0];
@@ -276,6 +286,11 @@ export const get_user_guessingInfo = ():Result => {
     const userGuessingList = new UserGuessingList();
     userGuessingList.list = [];
     const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
     const dbMgr = getEnv().getDbMgr(); 
     const compBucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
     const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
