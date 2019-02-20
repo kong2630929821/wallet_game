@@ -8,6 +8,8 @@ export const DB_ERROR = 600;
 export const ITEM_NUM_ERROR = 700;
 // 配置错误
 export const CONFIG_ERROR = 800;
+// 用户未登录
+export const NOT_LOGIN = 900;
 
 // 该类型矿山数量不足
 export const MINE_NOT_ENOUGH = 1101;
@@ -21,7 +23,7 @@ export const HOE_NOT_ENOUGH = 1104;
 export const ARE_YOU_SUPERMAN = 1105;
 // 这座矿山不存在
 export const MINE_NOT_EXIST = 1106;
-// 当日看广告次数已达上限
+// 当日看广告获得ST次数已达上限
 export const ONEDAY_ADAWARD_LIMIT = 1107;
 // 广告编号错误
 export const ADVERTISEMENT_NUM_ERROR = 1108;
