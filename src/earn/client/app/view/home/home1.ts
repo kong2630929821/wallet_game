@@ -8,13 +8,14 @@ import { getStore as walletGetStore,register as walletRegister } from '../../../
 import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
 import { backupMnemonic } from '../../../../../app/utils/walletTools';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { register as ChatRegister } from '../../../../../chat/client/app/data/store';
+import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
+import { bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -364,6 +365,16 @@ const firstloginAward = () => {
             });
         });
     });
+
+    // 绑定聊天UID
+    const uid = chatStore.getStore('uid',0);
+    if (uid > 0) {
+        clientRpcFunc(bind_chatID,uid,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',uid);
+            }
+        });
+    }
 };
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',(firstLogin:boolean) => {
@@ -430,7 +441,7 @@ walletRegister('wallet',(wallet) => {
         });
     }
 });
-ChatRegister('setting/firstChat',() => {
+chatStore.register('setting/firstChat',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次聊天
     if (!getStore('flags',{}).firstChat) {
@@ -464,6 +475,17 @@ walletRegister('flags/firstRecharge',() => {
                 });
                 setStore('flags/firstRecharge',true);
                 w.paint();
+            }
+        });
+    }
+});
+chatStore.register('uid',(r) => {
+    const user = getStore('userInfo');
+    if (user.uid > 0) {
+        // 绑定聊天UID
+        clientRpcFunc(bind_chatID,r,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',r);
             }
         });
     }

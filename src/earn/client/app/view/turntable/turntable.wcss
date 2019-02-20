@@ -108,7 +108,6 @@
     align-items: center;
 }
 
-
 .ticket{
     width: 100%;
     justify-content: space-between;
@@ -122,7 +121,6 @@
     background-position: center;
     background-size: 100% 100%;
 }
-
 .ticket-item{
     width: 220px;
     height: 120px;
@@ -148,14 +146,6 @@
     background-position: center;
     background-size: 100%;
 }
-
-
-
-
-
-
-
-
 .turntable-container{
     margin: 0 auto;
     position: relative;

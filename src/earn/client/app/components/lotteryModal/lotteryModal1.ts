@@ -11,7 +11,8 @@ interface Props {
 }
 
 export class LotteryModal extends Widget {
-    public ok: () => void;
+    public cancel: () => void;
+    public ok:(flag:number) => void;     // flag 点击某个按钮
     public props:Props;
     public setProps(props:any) {
         super.setProps(props);
@@ -19,6 +20,9 @@ export class LotteryModal extends Widget {
     } 
     
     public close(e: any) {
-        this.ok && this.ok();
+        this.cancel();
+    }
+    public btnClick(num:number) {
+        this.ok(num);
     }
 }

@@ -3,13 +3,16 @@
  */
 
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { getStore as getChatStore } from '../../../../../chat/client/app/data/store';
+import * as chatStore from '../../../../../chat/client/app/data/store';
+import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { TURNTABLE_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
+import { FreePlay } from '../../../../server/data/db/item.s';
 import { getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
-import { getStore, register, setStore } from '../../store/memstore';
+import { getStore, register } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -28,9 +31,10 @@ interface Props {
     STbalance:number;  // 账户余额(st)
     turntableList: any;   // 转盘列表
     showTip:any; // 转盘显示提醒
-    isFirstPlay: boolean; // 每日第一次免费
+    freeCount: number; // 免费次数
     LEDTimer:any; // LED计时器
     ledShow:boolean; // LED灯
+    watchAdAward:number; // 看广告已经获得的免费次数
 }
 export class Turntable extends Widget {
     public ok: () => void;
@@ -39,7 +43,7 @@ export class Turntable extends Widget {
         selectTurntable: {},
         turnNum: 0,
         isTurn: false,
-        STbalance:0,
+        STbalance:20,
         prizeList: [],
         turntableList: [
             {
@@ -62,9 +66,10 @@ export class Turntable extends Widget {
             }
         ],
         showTip:{ zh_Hans:'',zh_Hant:'',en:'' },
-        isFirstPlay:true,
+        freeCount:0,
         LEDTimer:{},
-        ledShow:false
+        ledShow:false,
+        watchAdAward:0
     };
 
     public create() {
@@ -75,12 +80,7 @@ export class Turntable extends Widget {
             this.initData();
             this.ledTimer();
         }
-        console.log('聊天uid',[getChatStore('uid')]);
         
-        // inviteUsersToGroup(10001,[getChatStore('uid')],(r) => {
-        //     console.log('加群回调---------------',r);
-            
-        // });
     }
 
     public attach() {
@@ -114,9 +114,13 @@ export class Turntable extends Widget {
     public initData() {
         this.props.STbalance = getStore('balance/ST');
         console.log(this.props.STbalance);
-        isFirstFree().then((res:any) => {
-            this.props.isFirstPlay = res.freeRotary;
+        isFirstFree().then((res:FreePlay) => {
+            this.props.freeCount = res.freeRotary;
+            this.props.watchAdAward = res.adAwardRotary;
             this.setChestTip(2);
+            if (this.props.STbalance < this.props.selectTurntable.needTicketNum && this.props.freeCount <= 0) {
+                this.popNextTips();
+            }
         });
         this.paint();
     }
@@ -125,9 +129,10 @@ export class Turntable extends Widget {
      * 开奖
      */
     public goLottery() {
-        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
-            if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+        if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余额不足
+            if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable && this.props.freeCount <= 0) { // 没有免费次数
+                // popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                this.popNextTips();
 
                 return;
 
@@ -140,15 +145,17 @@ export class Turntable extends Widget {
                 queryTurntableOrder(order.oid).then((res:any) => {
                     console.log('转盘开奖成功！',res);
                     popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
-                    this.props.isFirstPlay = false;
+                    this.props.freeCount = 0;
                     this.setChestTip(2);
                     this.changeDeg(res);
                 }).catch(err => {
 
                     console.log('查询转盘订单失败',err);
                 });
+                getSTbalance();  // 更新余额
+
             } else {         // 免费机会开奖
-                this.props.isFirstPlay = false;
+                this.props.freeCount--;
                 this.setChestTip(2);
                 this.changeDeg(order);
             }
@@ -159,6 +166,42 @@ export class Turntable extends Widget {
             this.props.isTurn = false;
         });
 
+    }
+
+    /**
+     * 弹窗提示看广告或聊天
+     */
+    public popNextTips() {
+        if (this.props.isTurn) return;
+
+        if (this.props.watchAdAward < 10) {
+            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'../../res/image/no_money.png',
+                btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
+                btn2:'去充值'// 按钮2
+            },(num) => {
+                if (num === 1) {
+                    wathcAdGetAward(4);
+                } else {
+                    popNew('app-view-wallet-cloudWallet-rechargeKT');
+                }
+            });
+        } else {
+            const group = chatStore.getStore('uid');// 是否已经入群
+            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'../../res/image/no_money.png',
+                btn1:`加入游戏聊天群组`,// 按钮1 
+                btn2:'去充值'// 按钮2
+            },(num) => {
+                if (num === 1) {
+                    inviteUsersToGroup(TURNTABLE_GROUP,[chatStore.getStore('uid')],(r) => {
+                        console.log('加群回调---------------',r);
+                    });
+                } else {
+                    popNew('app-view-wallet-cloudWallet-rechargeKT');
+                }
+            });
+        }
     }
 
     /**
@@ -283,7 +326,7 @@ export class Turntable extends Widget {
         const stShow = getModulConfig('ST_SHOW');
         switch (tipIndex) {
             case 0:
-                this.props.showTip = turntableTips[0];
+                this.props.showTip = { zh_Hans:`免费次数: ${this.props.freeCount}`,zh_Hant:`免費次數: ${this.props.freeCount}`,en:'' };
                 this.paint();
                 break;
             case 1:
@@ -295,10 +338,10 @@ export class Turntable extends Widget {
                 }, 2000);
                 break;
             case 2:
-                if (this.props.isFirstPlay && this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
+                if (this.props.freeCount > 0 && this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
                     this.setChestTip(0);
                 } else {
-                    this.props.showTip = { zh_Hans:`售价：${this.props.selectTurntable.needTicketNum}${stShow}/1个`,zh_Hant:`售價：${this.props.selectTurntable.needTicketNum}${stShow}/1個`,en:'' };
+                    this.props.showTip = { zh_Hans:`售价: ${this.props.selectTurntable.needTicketNum}${stShow}/个`,zh_Hant:`售價: ${this.props.selectTurntable.needTicketNum}${stShow}/個`,en:'' };
                 }
                 this.paint();
                 break;
@@ -311,7 +354,7 @@ export class Turntable extends Widget {
      * 去看广告
      */
     public toWatchAd() {
-        wathcAdGetAward();
+        wathcAdGetAward(3);
     }
 
     /**

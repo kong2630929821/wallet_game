@@ -56,7 +56,6 @@
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money" on-tap="btnClick(e,0)">
-                    <img w-class="AD-alert" src="../../res/image/AD_alert.png" alt="" />
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"广告","zh_Hant":"廣告","en":""}</widget>
                 </div>
             </div>
