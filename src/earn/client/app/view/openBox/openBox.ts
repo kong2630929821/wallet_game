@@ -112,10 +112,14 @@ export class OpenBox extends Widget {
         }
         if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
             if (!((this.props.selectChest.type === ActivityType.PrimaryChest) && this.props.isFirstPlay)) {
-                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+                // popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:`更多免费机会(${2}/${10})`,// 按钮1 
+                    btn2:'去充值'// 按钮2
+                });
 
                 return;
-
             }
         }
         this.startOpenChest(e);
@@ -131,7 +135,6 @@ export class OpenBox extends Widget {
             } else {         // 免费机会开奖
                 this.props.isFirstPlay = false;
                 this.goLottery(e,boxIndex,order);
-                setStore('flags/firstOpenBox',true); // 每日首次开宝箱
             }
 
         }).catch((err) => {

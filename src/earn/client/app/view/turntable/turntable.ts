@@ -113,6 +113,7 @@ export class Turntable extends Widget {
      */
     public initData() {
         this.props.STbalance = getStore('balance/ST');
+        console.log(this.props.STbalance);
         isFirstFree().then((res:any) => {
             this.props.isFirstPlay = res.freeRotary;
             this.setChestTip(2);
@@ -123,47 +124,7 @@ export class Turntable extends Widget {
     /**
      * 开奖
      */
-    // public goLottery(e:any) {
-    //     if (this.props.isTurn) {// 正在转
-
-    //         return;
-    //     }
-    //     const $turnTableBtn = getRealNode(e.node);
-    //     $turnTableBtn.className = 'startTurnTable';
-    //     setTimeout(() => {
-    //         $turnTableBtn.className = '';
-    //     }, 100);
-    //     if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
-    //         if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
-    //             popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
-    //             return;
-    //         }
-    //     }
-    //     this.props.isFirstPlay = false;
-    //     this.setChestTip(2);
-    //     this.startLottery();
-    //     openTurntable(this.props.selectTurntable.type).then((res) => {
-    //         this.changeDeg(res);
-    //     }).catch((err) => {
-    //         this.changeDeg(err);
-    //     });
-    // }
-
-    /**
-     * 开奖
-     */
     public goLottery() {
-        // if (this.props.isTurn) { // 正在转
-
-        //     return;
-        // }
-
-        // const $turnTableBtn = getRealNode(e.node);
-        // $turnTableBtn.className = 'startTurnTable';
-        // setTimeout(() => {
-        //     $turnTableBtn.className = '';
-        // }, 100);
-
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余票不足
             if (!((this.props.selectTurntable.type === ActivityType.PrimaryTurntable) && this.props.isFirstPlay)) {
                 popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
@@ -173,6 +134,7 @@ export class Turntable extends Widget {
             }
         }
 
+        this.props.isTurn = true;
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
             if (order.oid) { // 非免费机会开奖
                 queryTurntableOrder(order.oid).then((res:any) => {
@@ -189,12 +151,12 @@ export class Turntable extends Widget {
                 this.props.isFirstPlay = false;
                 this.setChestTip(2);
                 this.changeDeg(order);
-                setStore('flags/firstTurnTable',true); // 每日首次大转盘
             }
             
         }).catch((err) => {
             // this.changeDeg(err);
             console.log('转盘下单失败',err);
+            this.props.isTurn = false;
         });
 
     }
@@ -242,13 +204,6 @@ export class Turntable extends Widget {
         $turnStyle.transition = 'transform 7s ease-in-out';
         $turnStyle.transform = `rotate(${this.props.turnNum + 2880}deg)`;
 
-        // setTimeout(() => {
-        //     this.endLottery();
-        //     if (resData.resultNum === 1 && resData.award.awardType !== 9527) {
-        //         popNew('earn-client-app-components-lotteryModal-lotteryModal', resData.award);
-        //     }
-        //     this.paint();
-        // }, 4000);
         setTimeout(() => {
             this.endLottery();
             if (resData.awardType !== 9527) {

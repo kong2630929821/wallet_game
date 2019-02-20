@@ -17,8 +17,6 @@
     border-radius: 12px;
     position:relative;
 }
-
-
 .bg{
     height:100%;
     width:100%;
@@ -37,8 +35,6 @@
     border-radius:0px 0px 12px 12px;
     background-color:white;
 }
-
-
 .content{
     width:100%;
     height:100%;
@@ -78,4 +74,24 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.btn1{
+    width:500px;
+    height:80px;
+    background:#FCDC3C;
+    border-radius:40px;
+    font-size:32px;
+    color:#222222;
+    line-height:80px;
+    text-align: center;  
+}
+.btn2{
+    width:500px;
+    height:80px;
+    background:#CCCCCC;
+    border-radius:40px;
+    font-size:32px;
+    color:#222222;
+    line-height:80px;
+    text-align: center;  
 }
