@@ -187,20 +187,36 @@ export class Turntable extends Widget {
                 }
             });
         } else {
-            const group = chatStore.getStore('uid');// 是否已经入群
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                img:'../../res/image/no_money.png',
-                btn1:`加入游戏聊天群组`,// 按钮1 
-                btn2:'去充值'// 按钮2
-            },(num) => {
-                if (num === 1) {
-                    inviteUsersToGroup(TURNTABLE_GROUP,[chatStore.getStore('uid')],(r) => {
-                        console.log('加群回调---------------',r);
-                    });
-                } else {
-                    popNew('app-view-wallet-cloudWallet-rechargeKT');
-                }
-            });
+            const chatUid = chatStore.getStore('uid');
+            const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
+            if (group.indexOf(TURNTABLE_GROUP) > -1) {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'去聊天',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        // TODO 去聊天
+                        console.log('大转盘去聊天');
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            } else {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'加入游戏聊天群组',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        inviteUsersToGroup(TURNTABLE_GROUP,[chatUid],(r) => {
+                            console.log('加群回调TURNTABLE_GROUP---------------',r);
+                        });
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            }
         }
     }
 

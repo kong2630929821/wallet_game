@@ -3,6 +3,9 @@
  */
 
 import { getModulConfig } from '../../../../../app/modulConfig';
+import * as chatStore from '../../../../../chat/client/app/data/store';
+import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -154,7 +157,8 @@ export class OpenBox extends Widget {
      */
     public popNextTips() {
         if (this.props.isOpening) return;
-        
+        this.props.watchAdAward = 10;
+
         if (this.props.watchAdAward < 10) {
             popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_money.png',
@@ -168,17 +172,37 @@ export class OpenBox extends Widget {
                 }
             });
         } else {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                img:'../../res/image/no_money.png',
-                btn1:`加入游戏聊天群组`,// 按钮1 
-                btn2:'去充值'// 按钮2
-            },(num) => {
-                if (num === 1) {
-                    // TODO 加群
-                } else {
-                    popNew('app-view-wallet-cloudWallet-rechargeKT');
-                }
-            });
+            const chatUid = chatStore.getStore('uid');
+            const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
+            if (group.indexOf(OPENBOX_GROUP) > -1) {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'去聊天',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        // TODO 去聊天
+                        console.log('开宝箱去聊天');
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            } else {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'加入游戏聊天群组',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        inviteUsersToGroup(OPENBOX_GROUP,[chatUid],(r) => {
+                            console.log('加群回调OPENBOX_GROUP---------------',r);
+                        });
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            }
+           
         }
     }
 
