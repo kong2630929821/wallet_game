@@ -8,11 +8,12 @@ import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, SERIES_LOGIN_CIRCLE } from '../data/constant';
+import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, MESSAGE_TYPE_DAILY_FIREST_LOGIN, SERIES_LOGIN_CIRCLE } from '../data/constant';
 import { Award, Item, Items, Mine } from '../data/db/item.s';
 import { getUid } from '../rpc/user.r';
 import { add_mine } from '../rpc/user_item.r';
 import { add_award, add_itemCount, get_mine_total } from './item_util.r';
+import { send } from './sendMessage';
 
 // 首次登陆奖励
 export const firstLogin_award = ():Items => {
@@ -61,6 +62,8 @@ export const seriesLogin_award = (days:number):Item => {
 
     const item = add_itemCount(uid, awardCfg.prop, awardCfg.num);
     add_award(uid, awardCfg.prop, awardCfg.num, AWARD_SRC_LOGIN, null, awardCfg.desc);
+    // 推送奖励信息
+    send(uid, MESSAGE_TYPE_DAILY_FIREST_LOGIN, JSON.stringify(awardCfg));
 
     return item;
 };

@@ -60,6 +60,7 @@ export const MEDAL_BTC = 8018;
 // 消息推送类型编号
 export const MESSAGE_TYPE_ADDMEDAL = 'add_medal'; // 添加奖章
 export const MESSAGE_TYPE_ADDAWARD = 'add_award'; // 添加奖励
+export const MESSAGE_TYPE_DAILY_FIREST_LOGIN = 'daily_first_login'; // 当天首次登陆
 
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位

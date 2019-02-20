@@ -14,12 +14,13 @@ import { Result } from '../data/db/guessing.s';
 import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
 import { CHAT_NOT_REGISTER, DB_ERROR } from '../data/errorNum';
 import { get_index_id } from '../data/util';
-import { get_today } from '../util/item_util.r';
+import { get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { SeriesDaysRes } from './itemQuery.s';
 import { setSession } from './session.r';
 import { add_free_rotary } from './stParties.r';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
+import { get_task_award } from './user_item.r';
 
 // #[rpc=rpcServer]
 export const login = (user: UserType): UserInfo => {
@@ -75,6 +76,10 @@ export const login = (user: UserType): UserInfo => {
     if (userInfo.loginCount === 0) {
         // 添加首次登陆奖励
         firstLogin_award();
+        // 初始化任务
+        task_init(loginReq.uid);
+        // 添加创建钱包奖励
+        get_task_award(1);
     }
 
     // 判断是否当日首次登陆
