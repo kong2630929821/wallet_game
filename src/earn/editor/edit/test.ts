@@ -363,7 +363,7 @@ export const get_task_test = ()  => {
 
 // 获取任务奖励
 export const get_taskAward_test = ()  => {
-    const taskID = 2;
+    const taskID = 4;
     clientRpcFunc(get_task_award, taskID, (r: Result) => {
         console.log(r);
     });
@@ -387,6 +387,10 @@ const props = {
         {
             name: '登陆',
             func: () => { loginTest(); }
+        },
+        {
+            name: '登陆天数',
+            func: () => { get_series_days(); }
         },
         // {
         //     name: '退出登陆',

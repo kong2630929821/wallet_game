@@ -82,6 +82,7 @@ struct DayliLoginKey {
 struct DayliLogin {
     index: DayliLoginKey,
     state: bool,
+    sendCount: Option<u8>
 }
 
 /**

@@ -266,6 +266,7 @@ export const get_ad_award = (adType: number): Result => {
 // 完成任务奖励
 // #[rpc=rpcServer]
 export const get_task_award = (taskID: number): Result => {
+    console.log('get_task_award in!!!!!!!!!!!!!!!!!', taskID);
     const result = new Result();
     const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
@@ -277,6 +278,7 @@ export const get_task_award = (taskID: number): Result => {
     // 从配置中读取任务信息
     const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
     const taskCfg = taskCfgBucket.get<number, [TaskAwardCfg]>(taskID)[0];
+    console.log('taskCfg !!!!!!!!!!!!!!!!!', taskCfg);
     if (!taskCfg) {
         result.reslutCode = CONFIG_ERROR;
 

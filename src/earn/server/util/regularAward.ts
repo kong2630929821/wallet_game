@@ -62,8 +62,6 @@ export const seriesLogin_award = (days:number):Item => {
 
     const item = add_itemCount(uid, awardCfg.prop, awardCfg.num);
     add_award(uid, awardCfg.prop, awardCfg.num, AWARD_SRC_LOGIN, null, awardCfg.desc);
-    // 推送奖励信息
-    send(uid, MESSAGE_TYPE_DAILY_FIREST_LOGIN, JSON.stringify(awardCfg));
 
     return item;
 };
