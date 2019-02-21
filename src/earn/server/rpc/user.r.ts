@@ -9,6 +9,7 @@ import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
+import { SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
@@ -16,6 +17,7 @@ import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
+import { send } from '../util/sendMessage';
 import { SeriesDaysRes } from './itemQuery.s';
 import { setSession } from './session.r';
 import { add_free_rotary } from './stParties.r';
@@ -63,6 +65,7 @@ export const login = (user: UserType): UserInfo => {
     // save session
     setSession('uid', loginReq.uid.toString(), loginReq.uid.toString());
     const session = getEnv().getSession();
+    console.log('------session-------', session);
     write(dbMgr, (tr: Tr) => {
         session.set(tr, 'uid', loginReq.uid.toString());
         session.set(tr, 'openid', openid);
@@ -285,6 +288,22 @@ export const get_loginDays = ():SeriesDaysRes => {
         seriesDaysRes.resultNum = DB_ERROR;
 
         return seriesDaysRes;
+    }
+    const cfgBucket = new Bucket(CONSTANT.MEMORY_NAME, SeriesLoginAwardCfg._$info.name, dbMgr);
+    const awardCfg = cfgBucket.get<number, [SeriesLoginAwardCfg]>(seriesLogin.days)[0];
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
+    const today = get_today();
+    const dayliLoginKey = new DayliLoginKey();
+    dayliLoginKey.uid = uid;
+    dayliLoginKey.date = today;
+    const dayliLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
+    if (!dayliLogin.sendCount || dayliLogin.sendCount === 0) {
+        // 推送签到奖励信息
+        send(uid, CONSTANT.MESSAGE_TYPE_DAILY_FIREST_LOGIN, JSON.stringify(awardCfg));
+        console.log('send!!!!!!!!!!!!', dayliLogin);
+        
+        dayliLogin.sendCount = 1;
+        dayliLoginBucket.put(dayliLoginKey, dayliLogin);
     }
     seriesDaysRes.days = seriesLogin.days;
     seriesDaysRes.resultNum = CONSTANT.RESULT_SUCCESS;
