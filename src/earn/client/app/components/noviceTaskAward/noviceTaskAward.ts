@@ -2,7 +2,9 @@
  * 新手任务奖励弹窗
  */
 
+import { gotoEarn } from '../../../../../app/view/base/app';
 import { Widget } from '../../../../../pi/widget/widget';
+import { forelet,WIDGET_NAME } from '../../view/home/home1';
 
 export class NewUserLogin extends Widget {
     public ok: () => void;
@@ -18,7 +20,15 @@ export class NewUserLogin extends Widget {
         this.config = { value: { group: 'top' } };
     }
 
-    public close(e: any) {
+    public close() {
         this.ok && this.ok();
+    }
+
+    // 去挖矿
+    public goMining() {
+        gotoEarn();
+        const w:any = forelet.getWidget(WIDGET_NAME);
+        w.miningClick();
+        this.close();
     }
 }

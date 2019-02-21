@@ -37,6 +37,7 @@ export const initReceive = (uid: number) => {
                 let name = '铁镐';
                 if (r.msg.props === 2002) name = '银镐';
                 if (r.msg.props === 2003) name = '金镐';
+                
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'签到奖励',
                     awardImg:`${r.msg.prop}.jpg`,

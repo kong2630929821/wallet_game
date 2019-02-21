@@ -40,6 +40,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
     position: absolute;
 }
 .turntable-main-bg{
@@ -107,7 +108,6 @@
     align-items: center;
 }
 
-
 .ticket{
     width: 100%;
     justify-content: space-between;
@@ -121,7 +121,6 @@
     background-position: center;
     background-size: 100% 100%;
 }
-
 .ticket-item{
     width: 220px;
     height: 120px;
@@ -147,14 +146,6 @@
     background-position: center;
     background-size: 100%;
 }
-
-
-
-
-
-
-
-
 .turntable-container{
     margin: 0 auto;
     position: relative;
@@ -212,8 +203,6 @@
     margin: 10px auto 0px;
     text-align: center;
 }
-
-
 .turntable-btn{
     position: absolute;
     width: 200px;
@@ -226,15 +215,12 @@
     border: 2px solid #CCCCCC;
     border-radius: 50%;
 }
-
-
-
-
-
-
-
-
 .AD-alert{
     position: absolute;
     top: -60px;
+}
+.myMoney{
+    font-size:24px;
+    text-align: center;
+    color:rgba(255,255,255,1);
 }

@@ -291,7 +291,7 @@ export class MiningHome extends Widget {
     public watchAdClick() {
         // popNew('earn-client-app-test-test');
         if (this.props.countDownStart) return;
-        wathcAdGetAward();
+        wathcAdGetAward(1);
     }
 }
 

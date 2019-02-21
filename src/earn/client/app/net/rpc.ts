@@ -5,7 +5,7 @@ import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { walletPay } from '../../../../app/utils/pay';
 import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
-import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { Award, AwardQuery, FreePlay, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
@@ -527,11 +527,11 @@ export const converInviteAwards = (index:number) => {
 };
 
 /**
- * 活动是否能每日第一次免费
+ * 活动免费次数
  */
 export const isFirstFree = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(get_hasFree, null, (r: any) => {
+        clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
             console.log('[活动]rpc-isFirstFree---------------', r);
             // if (r.resultNum === 1) {
             resolve(r);
