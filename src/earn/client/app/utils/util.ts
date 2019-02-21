@@ -2,7 +2,6 @@
  * common util
  */
 import { popNew } from '../../../../pi/ui/root';
-import { Invite } from '../../../server/data/db/invite.s';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';

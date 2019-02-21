@@ -312,9 +312,9 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.paint();
     } 
 });
-register('userInfo',(userinfo) => {
+register('userInfo/uid',(uid) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
-    if (userinfo.uid > 0) {
+    if (uid > 0) {
         w && w.updateSignIn();
     }
 });
@@ -333,14 +333,12 @@ const firstloginAward = () => {
     },() => {
         popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
             title:'创建钱包成功',
-            awardImg:'2001.jpg',
-            awardName:'铁镐',
+            awardType:2001,
             awardNum:1
         },() => {
             popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                 title:'签到奖励',
-                awardImg:`2001.jpg`,
-                awardName:'铁镐',
+                awardType:2001,
                 awardNum:1
             });
         });
@@ -387,12 +385,11 @@ walletRegister('wallet',(wallet) => {
             if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'备份成功',
-                    awardImg:'2002.jpg',
-                    awardName:'银镐',
-                    awardNum:1
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/isBackUp',true);
-                w.paint();
+                w.updateSignIn();
             }
         });
     }
@@ -403,12 +400,11 @@ walletRegister('wallet',(wallet) => {
             if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'成功分享片段',
-                    awardImg:'2003.jpg',
-                    awardName:'金镐',
-                    awardNum:1
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/sharePart',true);
-                w.paint();
+                w.updateSignIn();
             }
         });
     }
@@ -422,12 +418,11 @@ chatStore.register('setting/firstChat',() => {
             if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'参与聊天',
-                    awardImg:'2001.jpg',
-                    awardName:'铁镐',
-                    awardNum:1
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/firstChat',true);
-                w.paint();
+                w.updateSignIn();
             }
         });
     }
@@ -441,12 +436,11 @@ walletRegister('flags/firstRecharge',() => {
             if (res && res.reslutCode === 1) {
                 popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'首冲奖励',
-                    awardImg:'2003.jpg',
-                    awardName:'金镐',
-                    awardNum:1
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/firstRecharge',true);
-                w.paint();
+                w.updateSignIn();
             }
         });
     }

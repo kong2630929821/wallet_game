@@ -34,16 +34,14 @@ export const initReceive = (uid: number) => {
                 break;
             case 'daily_first_login':
                 console.log('!!!!!!!!!!!!!!!!!!!!!!daily_first_login',r);
-                let name = '铁镐';
-                if (r.msg.props === 2002) name = '银镐';
-                if (r.msg.props === 2003) name = '金镐';
-                
-                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                    title:'签到奖励',
-                    awardImg:`${r.msg.prop}.jpg`,
-                    awardName:name,
-                    awardNum:1
-                });
+                const mess = JSON.parse(r.msg);
+                if (mess.days > 1) { // 第一天签到不从此处弹窗
+                    popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                        title:'签到奖励',
+                        awardType:mess.prop,
+                        awardNum:mess.count
+                    });
+                }
                 break;
             default:
         }
