@@ -35,9 +35,10 @@
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-btn" on-tap="btnClick(e,1)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费","zh_Hant":"更多免費","en":""}</widget>
                 </div>
             </div>
+            <div w-class="myMoney">我的碎银:&nbsp;{{it.STbalance}}</div>
 
             {{% 余票}}
             <div w-class="ticket">

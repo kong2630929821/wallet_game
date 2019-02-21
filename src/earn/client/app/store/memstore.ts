@@ -120,7 +120,9 @@ export const initEarnStore = () => {
             avatar:'',
             note:'',
             sex:0,
-            tel:''
+            tel:'',
+            isLogin:false,
+            offline:true
         },
         flags:{},
         mine:{
@@ -189,4 +191,6 @@ export interface UserInfo {
     note:string;  // user note
     sex:number; // user sex
     tel:string;  // user tel
+    isLogin:boolean;   // 登录
+    offline:boolean;   //  离线
 }

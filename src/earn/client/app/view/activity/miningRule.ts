@@ -54,7 +54,7 @@ export class MiningRule extends Widget {
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
         if (index === 5) {
-            wathcAdGetAward();
+            wathcAdGetAward(1);
 
             return;
         }

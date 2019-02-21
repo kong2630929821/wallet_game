@@ -9,9 +9,7 @@ import { UserInfo } from '../../../server/data/db/user.s';
 import { auto_login, getToken } from '../../../server/rpc/session.p';
 import { AutoLogin, GetToken, Token } from '../../../server/rpc/user.s';
 import { clientRpcFunc, subscribe } from '../net/init';
-import { initReceive } from '../net/receive';
 import { loginActivity } from './rpc';
-import { initSubscribeInfo } from './subscribedb';
 
 // 用户类型
 export enum UserType {
@@ -21,6 +19,7 @@ export enum UserType {
 
 // 重登录状态
 export enum ReLoginState {
+    INIT,
     START,
     ING,
     END,
@@ -37,7 +36,7 @@ export class AutoLoginMgr {
     private clientRpc: any;
     private server: string;
     private port: number;
-    private relogin: ReLoginState;
+    private relogin: ReLoginState = ReLoginState.INIT;
     private userType: UserType;
     private user: string;
     private pwd: string;
@@ -50,10 +49,10 @@ export class AutoLoginMgr {
     }
 
     // 连接服务器
-    public connection(success:Function) {
+    public connection(success:Function,fail:Function) {
         const options = {
             reconnect: true,
-            timeout: 30,
+            timeout: 10,
             keepAliveInterval: 30,
             cleanSession: false,
             useSSL: false,
@@ -73,8 +72,10 @@ export class AutoLoginMgr {
                 success && success();
             },
             onFailure: (r) => {
+                this.conState = false;
                 console.log('[活动]connect fail', r);
-                this.reconnect();
+                // this.reconnect();
+                fail && fail();
             }
         };
         // rootClient = new Client('127.0.0.1', 1234, 'clientId-wcd14PDgoZ', null, options);
@@ -86,6 +87,7 @@ export class AutoLoginMgr {
             // console.log(`连接断开！！！`);
             this.conState = false;
             this.relogin = ReLoginState.START;
+            fail && fail();
         });
 
         return client;
@@ -96,7 +98,19 @@ export class AutoLoginMgr {
         if (this.rootClient) {
             this.rootClient.reconnect();
         }
+    }
 
+    // 断开连接
+    public disconnect() {
+        if (this.rootClient) {
+            try {
+                this.rootClient.disconnect();
+            } catch (err) {
+                console.log(err);
+            }
+            
+            this.relogin = ReLoginState.INIT;
+        }
     }
 
     // 获取MATT客户端
@@ -123,10 +137,7 @@ export class AutoLoginMgr {
             // });
         } else if (userType === UserType.WALLET) {
             loginActivity(user, pwd, (r: UserInfo) => {
-
                 this.uid = r.uid.toString();
-                initReceive(r.uid);
-                initSubscribeInfo(); // 监听数据表变化  
                 // 获取自动登录凭证
                 this.getToken();
                 cb(r);
@@ -158,9 +169,9 @@ export class AutoLoginMgr {
             } else {
                 this.relogin = ReLoginState.ERROR;
                 // 登录
-                this.login(this.userType, this.user, this.pwd, this.loginCb);
+                // this.login(this.userType, this.user, this.pwd, this.loginCb);
                 // 重新订阅topic
-                this.subMgr.reSubs();
+                // this.subMgr.reSubs();
             }
 
         });

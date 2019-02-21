@@ -7,6 +7,7 @@
         </div>
         {{% 内容}}
         <div w-class="content">
+            
             <img src="../../res/image/trophies.png" width="260px" height="280px;" alt="" />
             <div w-class="prize-img">
                 <img src="../../res/image/virtualGoods/{{it.prizeType}}.jpg" width="200px" height="200px;"  alt="" />
@@ -17,6 +18,9 @@
                 <span w-class="prize-name">&nbsp;x&nbsp;{{it.prizeNum}}</span>
                 <widget w-class="prize-name" w-tag="pi-ui-lang">{{it.prizeUnit}}</widget>
             </div>
+            {{if it.btn}}
+            <div w-class="btn1">{{it.btn}}</div>
+            {{end}}
         </div>
 
     </div>

@@ -3,18 +3,18 @@
  */
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { manualReconnect } from '../../../../../app/net/login';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
 import { backupMnemonic } from '../../../../../app/utils/walletTools';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { register as ChatRegister } from '../../../../../chat/client/app/data/store';
+import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
+import { bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -37,6 +37,8 @@ export class EarnHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
+        this.updateSignIn();
+        
     }
     /**
      * 初始化数据
@@ -48,8 +50,6 @@ export class EarnHome extends Widget {
         const stShow = getModulConfig('ST_SHOW');
         this.props = {
             ...this.props,
-            isLogin:walletGetStore('user/id') ? walletGetStore('user/isLogin') : true,
-            reconnecting:false,  
             ktShow,
             scroll: false,
             scrollHeight: 0,
@@ -165,13 +165,15 @@ export class EarnHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 100);
-
     }
 
     /**
      * 刷新签到数据和任务数据
      */
     public updateSignIn() {
+        if (getStore('userInfo/uid',0) <= 0) {
+            return;
+        }
         this.props.hasWallet = true;
         getCompleteTask().then((data:any) => {
             for (const v of data.taskList) {
@@ -291,23 +293,6 @@ export class EarnHome extends Widget {
         if (!hasWallet()) return;
         popNew('earn-client-app-view-mineRank-mineRank');
     }
-
-    public updateLoginState(isLogin:boolean) {
-        this.props.isLogin = isLogin;
-        this.props.reconnecting = false;
-        this.paint();
-    }
-
-    /**
-     * 断线重连
-     */
-    public reConnect() {
-        if (this.props.reconnecting) return;
-        console.log('reconnect');
-        this.props.reconnecting = true;   // 正在连接
-        this.paint();
-        manualReconnect();
-    }
 }
 
 // ===================================================== 本地
@@ -339,13 +324,45 @@ register('mine',(mine:Mine) => {
 });
 
 let firstLoginDelay = false;
+// 首次登陆奖励
+const firstloginAward = () => {
+    popNew('earn-client-app-components-newUserLogin-newUserLogin',{
+        pi_norouter:true,
+        awardName:'铁镐',
+        awardNum:2
+    },() => {
+        popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+            title:'创建钱包成功',
+            awardImg:'2001.jpg',
+            awardName:'铁镐',
+            awardNum:1
+        },() => {
+            popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                title:'签到奖励',
+                awardImg:`2001.jpg`,
+                awardName:'铁镐',
+                awardNum:1
+            });
+        });
+    });
+
+    // 绑定聊天UID
+    const uid = chatStore.getStore('uid',0);
+    if (uid > 0) {
+        clientRpcFunc(bind_chatID,uid,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',uid);
+            }
+        });
+    }
+};
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',(firstLogin:boolean) => {
     console.log('firstLogin ===',firstLogin);
     if (firstLogin) {
         const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
         if (level_2_page_loaded) {
-            popNew('earn-client-app-components-newUserLogin-newUserLogin');
+            firstloginAward();
         } else {
             firstLoginDelay = true;
         }
@@ -354,30 +371,13 @@ register('flags/firstLogin',(firstLogin:boolean) => {
 });
 walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
-        popNew('earn-client-app-components-newUserLogin-newUserLogin');
+        firstloginAward();
         firstLoginDelay = false;
     }
 });
 
-walletRegister('user/isLogin',(isLogin:boolean) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    const id = walletGetStore('user/id');
-    if (id) {
-        w && w.updateLoginState(isLogin);
-    }
-});
-
 // ================================================新手活动奖励
-walletRegister('flags/createWallet',() => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-        title:'创建钱包成功',
-        awardImg:'2001.jpg',
-        awardName:'铁镐',
-        awardNum:1
-    });
-    w.paint();
-});
+
 walletRegister('wallet',(wallet) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
@@ -413,10 +413,10 @@ walletRegister('wallet',(wallet) => {
         });
     }
 });
-ChatRegister('setting',(res) => {
+chatStore.register('setting/firstChat',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次聊天
-    if (res.firstChat && !getStore('flags',{}).firstChat) {
+    if (!getStore('flags',{}).firstChat) {
         clientRpcFunc(get_task_award,4,(res:Result) => {
             console.log('参与聊天',res);
             if (res && res.reslutCode === 1) {
@@ -447,6 +447,17 @@ walletRegister('flags/firstRecharge',() => {
                 });
                 setStore('flags/firstRecharge',true);
                 w.paint();
+            }
+        });
+    }
+});
+chatStore.register('uid',(r) => {
+    const user = getStore('userInfo');
+    if (user.uid > 0) {
+        // 绑定聊天UID
+        clientRpcFunc(bind_chatID,r,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',r);
             }
         });
     }

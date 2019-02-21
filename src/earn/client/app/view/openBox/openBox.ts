@@ -3,12 +3,17 @@
  */
 
 import { getModulConfig } from '../../../../../app/modulConfig';
+import * as chatStore from '../../../../../chat/client/app/data/store';
+import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { addST, getSTbalance, isFirstFree, openChest, queryChestOrder } from '../../net/rpc';
-import { getStore, register, setStore } from '../../store/memstore';
+import { FreePlay } from '../../../../server/data/db/item.s';
+import { getSTbalance, isFirstFree, openChest, queryChestOrder } from '../../net/rpc';
+import { getStore, register } from '../../store/memstore';
+import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
@@ -25,9 +30,10 @@ interface Props {
     boxList: any; // 宝箱列表
     STbalance: number; // 账户余额(st)
     chestList: any; // 宝箱选择列表
-    isFirstPlay: boolean; // 每日第一次免费,
+    freeCount: number; // 免费次数
     ledShow:boolean;  // 彩灯状态
     LEDTimer:any;     // 彩灯控制器
+    watchAdAward:number; // 看广告已经获得的免费次数
 }
 
 enum BoxState {
@@ -61,21 +67,17 @@ export class OpenBox extends Widget {
             }
         ],
         selectChest: {},
-        isFirstPlay: true,
+        freeCount: 0,
         ledShow:false,
-        LEDTimer:{}
+        LEDTimer:{},
+        watchAdAward:0
     };
 
     public create() {
         super.create();
         if (isLogin()) {
-            isFirstFree().then((res: any) => {
-                this.props.isFirstPlay = res.freeBox;
-                this.setChestTip(2);
-            });
             this.initData();
             this.ledTimer();
-            
         }
         // inviteUsersToGroup();
     }
@@ -93,6 +95,16 @@ export class OpenBox extends Widget {
      */
     public initData() {
         this.props.STbalance = getStore('balance/ST');
+        console.log(this.props.STbalance);
+        isFirstFree().then((res: FreePlay) => {
+            this.props.freeCount = res.freeBox;
+            this.props.watchAdAward = res.adAwardBox;
+            this.setChestTip(2);
+            if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
+                this.popNextTips();
+            }            
+
+        });
         this.paint();
     }
 
@@ -110,12 +122,12 @@ export class OpenBox extends Widget {
 
             return;
         }
-        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 奖券不够
-            if (!((this.props.selectChest.type === ActivityType.PrimaryChest) && this.props.isFirstPlay)) {
-                popNew('app-components1-message-message', { content: this.config.value.tips[0] });
-
+        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 余额不足
+            if (this.props.selectChest.type === ActivityType.PrimaryChest && this.props.freeCount <= 0) { // 没有免费次数
+                // popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+                this.popNextTips();
+                
                 return;
-
             }
         }
         this.startOpenChest(e);
@@ -123,20 +135,75 @@ export class OpenBox extends Widget {
             if (order.oid) { // 非免费机会开奖
                 queryChestOrder(order.oid).then((res:any) => {
                     this.goLottery(e,boxIndex,res);
-                    
+                    this.props.freeCount = 0;
                 }).catch(err => {
                     this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
                     console.log('查询开宝箱订单失败',err);
                 });
+                getSTbalance();  // 更新余额
+
             } else {         // 免费机会开奖
-                this.props.isFirstPlay = false;
+                this.props.freeCount--;
                 this.goLottery(e,boxIndex,order);
-                setStore('flags/firstOpenBox',true); // 每日首次开宝箱
             }
 
         }).catch((err) => {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
+    }
+
+    /**
+     * 弹窗提示看广告或聊天
+     */
+    public popNextTips() {
+        if (this.props.isOpening) return;
+        this.props.watchAdAward = 10;
+
+        if (this.props.watchAdAward < 10) {
+            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'../../res/image/no_money.png',
+                btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
+                btn2:'去充值'// 按钮2
+            },(num) => {
+                if (num === 1) {
+                    wathcAdGetAward(4);
+                } else {
+                    popNew('app-view-wallet-cloudWallet-rechargeKT');
+                }
+            });
+        } else {
+            const chatUid = chatStore.getStore('uid');
+            const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
+            if (group.indexOf(OPENBOX_GROUP) > -1) {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'去聊天',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        // TODO 去聊天
+                        console.log('开宝箱去聊天');
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            } else {
+                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+                    img:'../../res/image/no_money.png',
+                    btn1:'加入游戏聊天群组',// 按钮1 
+                    btn2:'去充值'// 按钮2
+                },(num) => {
+                    if (num === 1) {
+                        inviteUsersToGroup(OPENBOX_GROUP,[chatUid],(r) => {
+                            console.log('加群回调OPENBOX_GROUP---------------',r);
+                        });
+                    } else {
+                        popNew('app-view-wallet-cloudWallet-rechargeKT');
+                    }
+                });
+            }
+           
+        }
     }
 
     /**
@@ -151,7 +218,7 @@ export class OpenBox extends Widget {
         const stShow = getModulConfig('ST_SHOW');
         switch (tipIndex) {
             case 0:
-                this.props.showTip = chestTips[0];
+                this.props.showTip = { zh_Hans:`免费次数: ${this.props.freeCount}`,zh_Hant:`免費次數: ${this.props.freeCount}`,en:'' };
                 this.paint();
                 break;
             case 1:
@@ -163,10 +230,10 @@ export class OpenBox extends Widget {
                 }, 1000);
                 break;
             case 2:
-                if (this.props.isFirstPlay && this.props.selectChest.type === ActivityType.PrimaryChest) {
+                if (this.props.freeCount > 0 && this.props.selectChest.type === ActivityType.PrimaryChest) {
                     this.setChestTip(0);
                 } else {
-                    this.props.showTip = { zh_Hans: `售价：${this.props.selectChest.needTicketNum}${stShow}/1个`, zh_Hant: `售價：${this.props.selectChest.needTicketNum}${stShow}/1個`, en: '' };
+                    this.props.showTip = { zh_Hans: `售价: ${this.props.selectChest.needTicketNum}${stShow}/个`, zh_Hant: `售價: ${this.props.selectChest.needTicketNum}${stShow}/個`, en: '' };
                 }
                 this.paint();
                 break;
@@ -278,8 +345,8 @@ export class OpenBox extends Widget {
             case 0:
                 this.resetBoxList();
                 break;
-            case 1:          // 充值
-                this.goRecharge();
+            case 1:          // 看广告
+                wathcAdGetAward(4);
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
@@ -287,16 +354,6 @@ export class OpenBox extends Widget {
             
             default:
         }
-    }
-
-    /**
-     * 去充值
-     */
-    public goRecharge() {
-        addST();
-        // popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-        //     this.refresh();
-        // });
     }
 
     /**
