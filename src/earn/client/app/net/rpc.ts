@@ -4,7 +4,6 @@
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { walletPay } from '../../../../app/utils/pay';
-import { popNew } from '../../../../pi/ui/root';
 import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, FreePlay, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
@@ -22,38 +21,11 @@ import { award_query, get_achievements, get_ad_award, get_showMedal, item_query,
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
-import { canInviteAward, getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
-import { UserType as LoginType } from './autologin';
-import { clientRpcFunc, login as mqttLogin } from './init';
-
-/**
- * 钱包用户登录活动
- */
-export const goLoginActivity = (openId:number) => {
-    console.log('goLoginActivity -----------------');
-    const openid = openId.toString();
-    mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
-        setStore('userInfo',{ ...res });
-        setStore('userInfo/uid',res.uid);
-        if (res.loginCount === 0) {  // 新用户第一次登录
-            setStore('flags/firstLogin',true);
-        }
-        getSTbalance();  // 获取ST余额
-        getKTbalance();  // 获取KT余额   
-        getUserInfo(parseInt(openid,10), 'self'); // 获取用户信息
-        getInvitedNumberOfPerson().then((invite:Invited) => {
-            if (canInviteAward(invite)) {
-                popNew('earn-client-app-view-activity-inviteAward');
-            }
-        });  // 获取邀请成功人数
-        getTodayMineNum();  // 获取今天已挖矿山数
-        getRankList();   // 获取挖矿排名
-        getMiningCoinNum(); // 获取累积挖矿
-    });
-};
+import { clientRpcFunc } from './init';
 
 /**
  * 用户登录
@@ -65,13 +37,8 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
     walletLoginReq.openid = userid;
     walletLoginReq.sign = sign;
     userType.value = walletLoginReq;
-    console.log('loginActivity --------- ',login);
-    console.log('loginActivity --------- ',userType);
     clientRpcFunc(login, userType,(res: UserInfo) => { // 活动登录
-        setStore('userInfo',res);       
-        console.log('[活动]登录成功！！--------------', res);
         cb(res);
-
     });
 };
 
