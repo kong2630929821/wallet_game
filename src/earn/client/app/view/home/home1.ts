@@ -3,7 +3,6 @@
  */
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { manualReconnect } from '../../../../../app/net/login';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
 import { backupMnemonic } from '../../../../../app/utils/walletTools';
@@ -48,8 +47,6 @@ export class EarnHome extends Widget {
         const stShow = getModulConfig('ST_SHOW');
         this.props = {
             ...this.props,
-            isLogin:walletGetStore('user/id') ? walletGetStore('user/isLogin') : true,
-            reconnecting:false,  
             ktShow,
             scroll: false,
             scrollHeight: 0,
@@ -291,23 +288,6 @@ export class EarnHome extends Widget {
         if (!hasWallet()) return;
         popNew('earn-client-app-view-mineRank-mineRank');
     }
-
-    public updateLoginState(isLogin:boolean) {
-        this.props.isLogin = isLogin;
-        this.props.reconnecting = false;
-        this.paint();
-    }
-
-    /**
-     * 断线重连
-     */
-    public reConnect() {
-        if (this.props.reconnecting) return;
-        console.log('reconnect');
-        this.props.reconnecting = true;   // 正在连接
-        this.paint();
-        manualReconnect();
-    }
 }
 
 // ===================================================== 本地
@@ -356,14 +336,6 @@ walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
         popNew('earn-client-app-components-newUserLogin-newUserLogin');
         firstLoginDelay = false;
-    }
-});
-
-walletRegister('user/isLogin',(isLogin:boolean) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    const id = walletGetStore('user/id');
-    if (id) {
-        w && w.updateLoginState(isLogin);
     }
 });
 

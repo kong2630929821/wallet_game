@@ -7,29 +7,42 @@ declare var pi_modules;
 
 // ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
-import { loginWallet, logoutWallet } from '../../../../app/net/login';
+import { setReconnectingState } from '../../../../app/net/reconnect';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { initEarnStore, setStore } from '../store/memstore';
-import { AutoLoginMgr, UserType } from './autologin';
-import { goLoginActivity } from './rpc';
-// import { initPush } from './receive';
+import { setStore } from '../store/memstore';
+import { AutoLoginMgr,UserType } from './autologin';
 
 // ================================================ 导出
 export const sourceIp = activeLogicIp;
 export const sourcePort = activeLogicPort;
 
+const reconnectinName = 'earn';
 /**
  * 客户端初始化
  */
-export const initClient = (openId:number) => {
+export const initClient = (openId:number,loginSuccess:Function) => {
     if (!rootClient) {
         console.log('initClient -----------');
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
         rootClient = mqtt.connection(() => {
-            goLoginActivity(openId);
+            console.log('connection success openId',openId);
+            const userType = UserType.WALLET;
+            const user = openId.toString();
+            const pwd = 'sign';
+            login(userType,user,pwd,(res:UserInfo) => {
+                loginSuccess(openId,res);
+            });
+            setStore('userInfo/offline',false);
+            setReconnectingState(reconnectinName,false);
+        },() => {
+            console.log('connection failed openId',openId);
+            setReconnectingState(reconnectinName,false);
+            setStore('userInfo/isLogin',false);
+            setStore('userInfo/offline',true);
+            
         });
     } 
     // initPush();
@@ -137,28 +150,23 @@ export const unSubscribe = (platerTopic: string) => {
  * 主动断开mqtt连接
  */
 export const disconnect = () => {
-    rootClient.disconnect();
+    mqtt && mqtt.disconnect();
+    mqtt = undefined;
     rootClient = undefined;
     clientRpc = undefined;
 };
 
+/**
+ * 赚钱手动重连
+ */
+export const earnManualReconnect = () => {
+    mqtt && mqtt.reconnect();
+};
+
 // ================================================ 本地
 // MQTT管理
-let mqtt: any;
+let mqtt: AutoLoginMgr;
 // 客户端
 let rootClient: Client;
 // root RPC
 let clientRpc: any;
-
-// 登录
-loginWallet('101',(openId:number) => {
-    console.log('获取到openId ====',openId);
-    initClient(openId);
-});
-
-// 登出
-logoutWallet(() => {
-    disconnect();
-    initEarnStore();
-    setStore('flags/logout',true);
-});
