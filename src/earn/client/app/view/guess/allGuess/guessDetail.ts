@@ -121,7 +121,7 @@ export class GuessDetail extends Widget {
      * 去看广告
      */
     public toWatchAd() {
-        wathcAdGetAward();
+        wathcAdGetAward(2);
     }
 
     /**

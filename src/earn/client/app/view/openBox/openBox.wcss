@@ -54,7 +54,6 @@
     height: 510px;
     width: 100%;
 }
-
 .box{
     display: flex;
     height: 30%;
@@ -68,7 +67,6 @@
 .chest-img{
     animation: resetChest 0.3s ease;
 }
-
 .sale{
     width: 100%;
     padding: 0 60px;
@@ -77,7 +75,6 @@
     display: flex;
     justify-content: space-between;
 }
-
 .sale-money{
     height:60px;
     width: 60%;
@@ -91,10 +88,9 @@
     border-radius:30px;
     border:4px solid #9A1C1C;
 }
-
 .sale-btn{
     height:60px;
-    width: 150px;
+    width: 180px;
     background:linear-gradient(180deg,#FFEB86 0%,#F78C18 100%);
     border-radius:30px;
     border:4px solid rgba(107, 8, 8, 0.2);
@@ -103,16 +99,14 @@
     line-height:50px;
     text-align: center;
 }
-
 .ticket{
     height: 150px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     padding: 0px 70px;
-    margin-top: 40px;
+    margin-top: 30px;
 }
-
 .ticket-item{
     width: 150px;
     height: 150px;
@@ -132,14 +126,15 @@
     padding-right: 5px;
     margin-top: -30px;
 }
-
 .select{
     border:6px solid #FFDE2D;
 }
-
-
 .isOpenbox{
     animation: openBox 0.3s ease infinite;
 }
-
-
+.myMoney{
+    font-size:24px;
+    text-align: center;
+    color:rgba(255,255,255,1);
+    margin-top: 10px;
+}

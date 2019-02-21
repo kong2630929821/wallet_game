@@ -9,7 +9,7 @@
         <div w-class="desc">
             {{it.awardName + " +" + it.awardNum}}
         </div>
-        <div w-class="btn">去试试挖矿</div>
+        <div w-class="btn" on-tap="close">知道了</div>
     </div>
     <div w-class="closeBtn" class="smallToBig" on-tap="close">
         <img src="../../res/image1/close-white.png" width="30px;" height="30px;" />
