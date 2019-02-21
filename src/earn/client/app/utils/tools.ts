@@ -109,13 +109,14 @@ export const coinUnitchange = (coinType:CoinType,count:number) => {
  * @param awardId 从哪个模块进入广告
  * 1 挖矿 2 竞猜 3 大转盘 4 宝箱
  */
-export const wathcAdGetAward = (awardId) => {
+export const wathcAdGetAward = (awardId,cb?:any) => {
     chooseAdType((adType) => {
         watchAd(adType,(err,success) => {
             if (!err) {
                 getAdRewards(awardId).then((award:Award) => {
                     popNewMessage('获取到广告奖励');
                     console.log('观看广告获取到的奖励',award);
+                    cb && cb(award);
                 });
             }
         });

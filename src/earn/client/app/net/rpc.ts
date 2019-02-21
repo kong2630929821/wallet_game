@@ -37,6 +37,7 @@ export const goLoginActivity = (openId:number) => {
     const openid = openId.toString();
     mqttLogin(LoginType.WALLET,openid,'sign',(res: UserInfo) => {
         setStore('userInfo',{ ...res });
+        setStore('userInfo/uid',res.uid);
         if (res.loginCount === 0) {  // 新用户第一次登录
             setStore('flags/firstLogin',true);
         }

@@ -181,7 +181,11 @@ export class Turntable extends Widget {
                 btn2:'去充值'// 按钮2
             },(num) => {
                 if (num === 1) {
-                    wathcAdGetAward(4);
+                    wathcAdGetAward(3,(award) => {
+                        this.props.freeCount = award.freeRotary;
+                        this.props.watchAdAward = award.adAwardRotary;
+                        this.setChestTip(2);
+                    });
                 } else {
                     popNew('app-view-wallet-cloudWallet-rechargeKT');
                 }
@@ -283,15 +287,6 @@ export class Turntable extends Widget {
     }
 
     /**
-     * 去充值
-     */
-    public goRecharge() {
-        popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-            this.refresh();
-        });
-    }
-
-    /**
      * 更改宝箱类型
      * @param index 序号
      */
@@ -317,10 +312,16 @@ export class Turntable extends Widget {
         }, 100);
         switch (eventType) { // 看广告
             case 0:
-                this.toWatchAd();
+                wathcAdGetAward(3,(award) => {
+                    this.props.freeCount = award.freeRotary;
+                    this.props.watchAdAward = award.adAwardRotary;
+                    this.setChestTip(2);
+                });
                 break;
             case 1:          // 充值
-                this.goRecharge();
+                popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
+                    this.refresh();
+                });
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
@@ -364,13 +365,6 @@ export class Turntable extends Widget {
 
             default:
         }  
-    }
-    
-    /**
-     * 去看广告
-     */
-    public toWatchAd() {
-        wathcAdGetAward(3);
     }
 
     /**

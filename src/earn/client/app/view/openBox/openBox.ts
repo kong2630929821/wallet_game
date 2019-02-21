@@ -157,7 +157,6 @@ export class OpenBox extends Widget {
      */
     public popNextTips() {
         if (this.props.isOpening) return;
-        this.props.watchAdAward = 10;
 
         if (this.props.watchAdAward < 10) {
             popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
@@ -166,7 +165,12 @@ export class OpenBox extends Widget {
                 btn2:'去充值'// 按钮2
             },(num) => {
                 if (num === 1) {
-                    wathcAdGetAward(4);
+                    wathcAdGetAward(4,(award) => {
+                        this.props.freeCount = award.freeBox;
+                        this.props.watchAdAward = award.adAwardBox;
+                        this.setChestTip(2);
+                    });
+                    this.initData();
                 } else {
                     popNew('app-view-wallet-cloudWallet-rechargeKT');
                 }
@@ -346,7 +350,11 @@ export class OpenBox extends Widget {
                 this.resetBoxList();
                 break;
             case 1:          // 看广告
-                wathcAdGetAward(4);
+                wathcAdGetAward(4,(award) => {
+                    this.props.freeCount = award.freeBox;
+                    this.props.watchAdAward = award.adAwardBox;
+                    this.setChestTip(2);
+                });
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
