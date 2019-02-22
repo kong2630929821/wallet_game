@@ -35,7 +35,7 @@
             </div>
         </div>
         <div w-class="card-container">
-            {{if it.hasWallet}}
+            {{if it.isLogin}}
             <div w-class="card">
                 <div style="display: flex;align-items: center;">
                     <span w-class="welfare">
