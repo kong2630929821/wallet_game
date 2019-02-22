@@ -157,7 +157,7 @@ export class EarnHome extends Widget {
             miningKTnum:mine.miningKTnum,
             miningRank:mine.miningRank,
             miningMedalId:mine.miningMedalId,
-            isLogin:getStore('userInfo/isLogin'),  // 活动是否登陆成功
+            isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
             signInDays: flags.signInDays || 0,   // 签到总天数
             awards: flags.loginAwards || getSeriesLoginAwards(1)  // 签到奖励
         };
