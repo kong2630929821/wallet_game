@@ -9,7 +9,7 @@ import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore, Invited } from '../store/memstore';
+import { getStore, Invited, setStore } from '../store/memstore';
 import { MallType } from '../view/exchange/exchange';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, CoinType } from '../xls/dataEnum.s';

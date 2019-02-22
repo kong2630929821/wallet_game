@@ -12,7 +12,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getSTbalance, isFirstFree, openChest, queryChestOrder } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -145,6 +145,7 @@ export class OpenBox extends Widget {
             } else {         // 免费机会开奖
                 this.props.freeCount--;
                 this.goLottery(e,boxIndex,order);
+                setStore('flags/firstOpenBox',true);
             }
 
         }).catch((err) => {
