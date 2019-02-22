@@ -121,8 +121,8 @@ export const initEarnStore = () => {
             note:'',
             sex:0,
             tel:'',
-            isLogin:false,
-            offline:true
+            isLogin:true,
+            offline:false
         },
         flags:{},
         mine:{

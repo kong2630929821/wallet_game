@@ -4,7 +4,7 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
@@ -290,8 +290,12 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popNew('earn-client-app-test-test');
+        // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
-        wathcAdGetAward(1);
+        wathcAdGetAward(1,null,(award:Award) => {
+            console.log('广告关闭  奖励内容 = ',award);
+            popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+        });
     }
 }
 
