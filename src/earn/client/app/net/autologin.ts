@@ -74,7 +74,10 @@ export class AutoLoginMgr {
             onFailure: (r) => {
                 this.conState = false;
                 console.log('[活动]connect fail', r);
-                // this.reconnect();
+                if (!(typeof r === 'string')) {
+                    this.reconnect();
+                }
+                
                 fail && fail();
             }
         };

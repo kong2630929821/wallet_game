@@ -50,7 +50,7 @@ export const initClient = (openId:number,loginSuccess:Function) => {
 
 // 登录
 export const login = (userType: UserType, user: string, pwd: string, cb: (r: UserInfo) => void) => {
-    mqtt.login(userType, user, pwd, cb);
+    mqtt && mqtt.login(userType, user, pwd, cb);
 };
 
 /**

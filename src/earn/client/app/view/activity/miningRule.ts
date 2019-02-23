@@ -5,6 +5,7 @@ import { getStore } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
+import { Award } from '../../../../server/data/db/item.s';
 import { wathcAdGetAward } from '../../utils/tools';
 
 export class MiningRule extends Widget {
@@ -54,7 +55,10 @@ export class MiningRule extends Widget {
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
         if (index === 5) {
-            wathcAdGetAward(1);
+            wathcAdGetAward(1,null,(award:Award) => {
+                console.log('广告关闭  奖励内容 = ',award);
+                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            });
 
             return;
         }

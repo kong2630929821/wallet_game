@@ -1,5 +1,5 @@
 import { chooseAdType, watchAd } from '../../../../app/logic/native';
-import { popNewMessage } from '../../../../app/utils/tools';
+import { popNewLoading, popNewMessage } from '../../../../app/utils/tools';
 import { Award } from '../../../server/data/db/item.s';
 import { getAdRewards } from '../net/rpc';
 import { CoinType } from '../xls/dataEnum.s';
@@ -109,15 +109,21 @@ export const coinUnitchange = (coinType:CoinType,count:number) => {
  * @param awardId 从哪个模块进入广告
  * 1 挖矿 2 竞猜 3 大转盘 4 宝箱
  */
-export const wathcAdGetAward = (awardId,cb?:any) => {
+export const wathcAdGetAward = (awardId:number,getAwardCB?:Function,closeCB?:Function) => {
+    const close = popNewLoading('加载中...');
+    let adAard:Award = null;
     chooseAdType((adType) => {
-        watchAd(adType,(err,success) => {
-            if (!err) {
+        watchAd(adType,(err,atype,success) => {
+            close.callback(close.widget);
+            if (!err && atype === 0) {// 发放奖励
                 getAdRewards(awardId).then((award:Award) => {
-                    popNewMessage('获取到广告奖励');
+                    adAard = award;
+                    // popNewMessage('获取到广告奖励');
                     console.log('观看广告获取到的奖励',award);
-                    cb && cb(award);
+                    getAwardCB && getAwardCB(award);
                 });
+            } else if (!err && atype === 1) { // 关闭广告 
+                adAard && closeCB && closeCB(adAard);
             }
         });
     });
