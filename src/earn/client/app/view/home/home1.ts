@@ -8,6 +8,7 @@ import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
 import { backupMnemonic } from '../../../../../app/utils/walletTools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
+import { rippleShow } from '../../../../../chat/client/app/logic/logic';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -299,6 +300,11 @@ export class EarnHome extends Widget {
     public goMineRank() {
         if (!hasWallet()) return;
         popNew('earn-client-app-view-mineRank-mineRank');
+    }
+    
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
     }
 }
 
