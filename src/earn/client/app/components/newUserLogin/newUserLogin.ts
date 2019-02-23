@@ -11,7 +11,8 @@ export class NewUserLogin extends Widget {
     public props:any = {
         pi_norouter:true,
         awardName:'铁镐',
-        awardNum:2
+        awardNum:2,
+        fadeOut:false
     };
 
     public create() {
@@ -20,7 +21,11 @@ export class NewUserLogin extends Widget {
     }
 
     public close() {
-        this.ok && this.ok();
+        this.props.fadeOut = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
     }
 
     public goMining() {

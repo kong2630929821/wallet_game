@@ -228,7 +228,7 @@ export class MiningHome extends Widget {
             if (this.props.countDown <= 0) {
                 this.initMiningState();
             }
-        },17);
+        },33);
     }
 
     public initMiningState() {
@@ -310,12 +310,16 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
+        // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test');
         // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {
             console.log('广告关闭  奖励内容 = ',award);
-            popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            setTimeout(() => {
+                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            },300);
+            
         });
     }
 }

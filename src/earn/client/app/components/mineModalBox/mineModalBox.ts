@@ -25,6 +25,7 @@ export class MineModalBox extends Widget {
         console.log(props);
         this.props = {
             ...props,
+            fadeOut: false,
             routineAwardImgUrl:this.parseAward(props.routineAward),
             extraAwardImgUrl:this.parseAward(props.extraAward)
         };
@@ -62,6 +63,13 @@ export class MineModalBox extends Widget {
     }
     public closeClick() {
         setStore('flags/startMining',false); // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
-        this.ok && this.ok();
+        this.close();
+    }
+    public close() {
+        this.props.fadeOut = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
     }
 }
