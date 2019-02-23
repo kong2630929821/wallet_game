@@ -361,6 +361,18 @@ const firstloginAward = () => {
         });
     }
 };
+
+chatStore.register('uid',(r) => {
+    const user = getStore('userInfo');
+    if (user.uid > 0) {
+        // 绑定聊天UID
+        clientRpcFunc(bind_chatID,r,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',r);
+            }
+        });
+    }
+});
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',(firstLogin:boolean) => {
     console.log('firstLogin ===',firstLogin);
@@ -438,6 +450,26 @@ chatStore.register('setting/firstChat',() => {
         });
     }
 });
+register('flags/firstTurntable',() => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    // 首次玩大转盘
+    clientRpcFunc(get_task_award,5,(res:Result) => {
+        console.log('大转盘',res);
+        if (res && res.reslutCode === 1) {
+            w.updateTasks();
+        }
+    });
+});
+register('flags/firstOpenBox',() => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    // 首次玩开宝箱
+    clientRpcFunc(get_task_award,6,(res:Result) => {
+        console.log('开宝箱',res);
+        if (res && res.reslutCode === 1) {
+            w.updateTasks();
+        }
+    });
+});
 walletRegister('flags/firstRecharge',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次充值
@@ -452,17 +484,6 @@ walletRegister('flags/firstRecharge',() => {
                 });
                 setStore('flags/firstRecharge',true);
                 w.updateTasks();
-            }
-        });
-    }
-});
-chatStore.register('uid',(r) => {
-    const user = getStore('userInfo');
-    if (user.uid > 0) {
-        // 绑定聊天UID
-        clientRpcFunc(bind_chatID,r,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',r);
             }
         });
     }
