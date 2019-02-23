@@ -6,7 +6,7 @@ export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
 
 // 锄头的使用持续时间
-export const hoeUseDuration = 10;
+export const hoeUseDuration = 10 * 1000;
 
 //  每天最多挖的矿山数
 export const MineMax = 8;

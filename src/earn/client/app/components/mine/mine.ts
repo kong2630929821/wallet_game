@@ -60,13 +60,14 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        // console.log(this.props);
+        
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {
             this.$imgContainer.className = `mine-animated`;
         });
         if (!this.props.selected || this.props.hp <= 0 || !this.props.beginMining) {
+            console.log('mine =========',this.props);
             notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
 
             return;

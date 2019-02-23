@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div w-class="count-down-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
-                <div w-class="stopwatch-container"><img src="../../res/image/stopwatch.png" w-class="stopwatch"/></div>
+                <div w-class="stopwatch-container"><img src="../../res/image/stopwatch.gif" w-class="stopwatch"/></div>
                 <div w-class="count-down-bg">
                     <div w-class="count-down" style="width:{{ (it.countDown / it.countDownMax * 100) + '%'}}; "></div>
                 </div>
