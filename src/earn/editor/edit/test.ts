@@ -17,7 +17,7 @@ import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../s
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
-import { bigint_test, get_objStr, hit_test, item_add, item_addticket } from '../../server/rpc/test.p';
+import { bigint_test, get_objStr, hit_test, item_add, item_addticket, reset_dayliTask_test } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
@@ -363,7 +363,7 @@ export const get_task_test = ()  => {
 
 // 获取任务奖励
 export const get_taskAward_test = ()  => {
-    const taskID = 4;
+    const taskID = 1;
     clientRpcFunc(get_task_award, taskID, (r: Result) => {
         console.log(r);
     });

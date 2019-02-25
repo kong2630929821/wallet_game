@@ -7,12 +7,13 @@ import { getEnv as eventGetEnv, NetEvent } from '../../../pi_pt/event/event_serv
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
+import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
-import { SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
+import { SeriesLoginAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, TotalLogin, UserAcc, UserAccMap, UserInfo } from '../data/db/user.s';
+import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
 import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today, task_init } from '../util/item_util.r';
@@ -92,6 +93,8 @@ export const login = (user: UserType): UserInfo => {
         login_add_mine();
         // 当日首次登陆赠送一次免费初级转盘
         add_free_rotary();
+        // 重置每日任务
+        reset_dayli_task();
         // 添加到每日登陆表
         set_user_login(loginReq.uid);
         // 添加连续登陆奖励
@@ -221,7 +224,9 @@ export const set_user_login = (uid: number) => {
         seriesLoginBucket.put(uid, blankSeriesLogin);
     } else {
         dayliLoginKey.date = today - 1;
-        if (!dayliLoginBucket.get(dayliLoginKey)) {
+        const yestodayLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
+        if (!yestodayLogin) {
+            // 如果昨天没有登陆 连续登陆天数重置为1
             seriesLogin.days = 1;
         } else {
             seriesLogin.days += 1;
@@ -309,6 +314,38 @@ export const get_loginDays = ():SeriesDaysRes => {
     seriesDaysRes.resultNum = CONSTANT.RESULT_SUCCESS;
 
     return seriesDaysRes;
+};
+
+// 本地方法
+// 重置每日任务
+export const reset_dayli_task = () => {
+    const uid = getUid();
+    const dbMgr = getEnv().getDbMgr();
+    const userTaskBucket = new Bucket(CONSTANT.WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const taskCfgBucket = new Bucket(CONSTANT.MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
+    const iter = <DBIter>taskCfgBucket.iter(null);
+    // 获取每日任务id
+    const taskList = [];
+    do {
+        const iterEle = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterEle);
+        if (!iterEle) break;
+        const taskCfg: TaskAwardCfg = iterEle[1];
+        if (taskCfg.isDayli === true) taskList.push(taskCfg.id);
+    } while (iter);
+    const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
+    console.log('-------------taskList!------------', taskList);
+    // 任务较少 算法比较暴力
+    for (let i = 0; i < taskList.length; i ++) {
+        for (let j = 0; j < userTask.taskList.length; j++) {
+            if (userTask.taskList[j].id === taskList[i]) {
+                // 重置任务状态
+                userTask.taskList[j].state = 0;
+                break;
+            }
+        } 
+    }
+    userTaskBucket.put(uid, userTask);
 };
 
 // 获取用户信息
