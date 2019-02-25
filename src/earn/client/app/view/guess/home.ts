@@ -50,21 +50,22 @@ export class GuessHome extends Widget {
         inviteUsersToGroup(LOLGUESS_GROUP,[chatStore.getStore('uid')],(r) => {
             console.log('加群回调LOLGUESS_GROUP---------------',r);
         });
-    }
-
-    /**
-     * 更多设置
-     */
-    public goSetting() {
         queryNoPWD('101', (res, msg) => {
             if (!res) {
                 this.props.noPassword = true;
             } else {
                 this.props.noPassword = false;
             }
-            this.props.showMoreSetting = !this.props.showMoreSetting;
-            this.paint();
         });
+    }
+
+    /**
+     * 更多设置
+     */
+    public showSetting() {
+        this.props.showMoreSetting = !this.props.showMoreSetting;
+        this.paint();
+        
     }
 
     /**

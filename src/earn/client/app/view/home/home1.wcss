@@ -221,6 +221,7 @@
     padding-left: 30px;
     align-items: center;
     margin-top: 15px;
+    border-bottom: 1px solid #DDDDDD;
 }
 .welfare-btn{
     width: 150px;

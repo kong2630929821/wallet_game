@@ -12,7 +12,7 @@ import { subscribe } from './init';
 // 监听topic
 export const initReceive = (uid: number) => {
     subscribe(`send/${uid}`, SendMsg, (r) => {
-        console.log('后端推送事件！！！！！！！！',r);
+        // console.log('后端推送事件！！！！！！！！',r);
         switch (r.cmd) {
             case 'add_medal':   // 勋章提醒
                 const func = ((res) => {
@@ -33,9 +33,8 @@ export const initReceive = (uid: number) => {
                 
                 break;
             case 'daily_first_login':
-                console.log('!!!!!!!!!!!!!!!!!!!!!!daily_first_login',r);
                 const mess = JSON.parse(r.msg);
-                if (mess.days > 1) { // 第一天签到不从此处弹窗
+                if (!getStore('flags').firstLogin) { // 注册账号第一天签到不从此处弹窗
                     popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                         title:'签到奖励',
                         awardType:mess.prop,
