@@ -23,14 +23,14 @@ export class MiningHome extends Widget {
     public props:any;
     public hits:number[] = [];
     public mineStyle:string[] = [
-        'right:305px;top:292px;',
-        'left:165px;top:462px;',
-        'right:118px;top:436px;',
-        'left:128px;top:645px;',
-        'right:197px;top:777px;',
-        'left:76px;top:853px;',
-        'right:22px;top:921px;',
-        'left:259px;top:937px;'
+        'top:377px;left:109px;',
+        'top:387px;left:478px;',
+        'top:590px;left:130px;',
+        'top:580px;left:402px;',
+        'top:800px;left:73px;',
+        'top:743px;left:319px;',
+        'top:873px;left:488px;',
+        'top:969px;left:251px;'
     ];
     public startTime:number;
     public create() {
@@ -70,6 +70,7 @@ export class MiningHome extends Widget {
             zIndex:-1            // z-index数值
         };
         this.mineLocationInit();   // 矿山位置初始化
+        console.log('miningHome ----------');
     }
 
     public closeClick() {
@@ -214,7 +215,7 @@ export class MiningHome extends Widget {
             this.props.haveMines = getAllMines();
             this.mineLocationInit();
         }
-        console.log('haveMines =',this.props.haveMines);
+        // console.log('haveMines =',this.props.haveMines);
     }
     /**
      * 倒计时
@@ -275,6 +276,7 @@ export class MiningHome extends Widget {
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
         clearTimeout(this.props.countDownTimer);
+        this.paint();
     }
 
     /**
@@ -311,16 +313,16 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test');
+        popNew('earn-client-app-test-test');
         // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
-        wathcAdGetAward(1,null,(award:Award) => {
-            console.log('广告关闭  奖励内容 = ',award);
-            setTimeout(() => {
-                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
-            },300);
+        // wathcAdGetAward(1,null,(award:Award) => {
+        //     console.log('广告关闭  奖励内容 = ',award);
+        //     setTimeout(() => {
+        //         popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+        //     },300);
             
-        });
+        // });
     }
 }
 

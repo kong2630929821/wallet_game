@@ -3,28 +3,33 @@
     display: flex;
     flex-direction: column;
     color: #fff;
-}
-.body{
     background-image: url(../../res/image/mining_bg.png);
     background-size: cover;
     background-repeat: no-repeat;
+}
+.body{
     display: flex;
     flex-direction: column;
     flex: 1 0 0;
+    
 }
 .container{
     position: relative;
     flex: 1 0 0;
     overflow: hidden;
     padding: 0 30px;
+    background-size: 380px 244px;
+    background-repeat: no-repeat;
+    background-position: 21px 30px;
 }
 .choose-tip{
     font-size: 36px;
     line-height: 50px;
 }
+
 .holded-hoes{
     display: flex;
-    margin: 30px 0;
+    margin: 52px 0 0 21px;
 }
 .digging-num{
     font-size: 28px;
@@ -49,7 +54,6 @@
 .award-title{
     width:170px;
     height:60px;
-    background:linear-gradient(90deg,rgba(254,157,58,1) 0%,rgba(252,104,49,1) 100%);
     border-radius:30px 0px 0px 30px;
     margin-bottom: 20px;
     font-size:28px;
@@ -62,28 +66,28 @@
 .award-item{
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    font-size:32px;
-    color:rgba(34,34,34,1);
+    margin-bottom: 10px;
+    font-size:28px;
+    color:#fff;
+    height:40px;
+    background-color:rgba(34,34,34,.5);
+    border-radius:25px;
+    padding: 4px;
 }
 .award-num{
-    margin-left: -30px;
-    padding-left: 40px;
-    padding-right: 20px;
-    height:45px;
-    background:rgba(252,220,60,1);
-    border-radius:22.5px;
-    border:2px solid rgba(255,178,0,1);
+    margin-left: 10px;
     display: flex;
     align-items: center;
+    margin-right: 6px;
 }
 .award-icon{
-    width:60px;
-    height:60px;
+    width:32px;
+    height:32px;
     border-radius:50%;
     z-index: 1;
 }
 .mining-number-container{
+    margin-top: 20px;
     margin-right: -5px;
     font-size:28px;
     color:rgba(255,255,255,1);
@@ -157,6 +161,7 @@
 .count-down-container{
     display: flex;
     align-items: center;
+    margin: 70px 21px;
 }
 .stopwatch-container{
     width:30px;
