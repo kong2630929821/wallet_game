@@ -12,7 +12,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getSTbalance, isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc';
-import { getStore, register } from '../../store/memstore';
+import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -158,6 +158,7 @@ export class Turntable extends Widget {
                 this.props.freeCount--;
                 this.setChestTip(2);
                 this.changeDeg(order);
+                setStore('flags/firstTurntable',true);
             }
             
         }).catch((err) => {

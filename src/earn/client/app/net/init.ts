@@ -50,7 +50,7 @@ export const initClient = (openId:number,loginSuccess:Function) => {
 
 // 登录
 export const login = (userType: UserType, user: string, pwd: string, cb: (r: UserInfo) => void) => {
-    mqtt.login(userType, user, pwd, cb);
+    mqtt && mqtt.login(userType, user, pwd, cb);
 };
 
 /**
@@ -62,13 +62,13 @@ export const login = (userType: UserType, user: string, pwd: string, cb: (r: Use
  */
 export const clientRpcFunc = (name: string, req: any, callback: Function, timeout: number = 2000) => {
     if (!clientRpc) {
-        if (mqtt.getState()) {
+        if (mqtt && mqtt.getState()) {
             clientRpc = mqtt.getRpc();
         } else {
             return;
         }
     }
-    if (!mqtt.getState()) {
+    if (mqtt && !mqtt.getState()) {
         console.log(`网络连接中！！！！`);
 
         return;
