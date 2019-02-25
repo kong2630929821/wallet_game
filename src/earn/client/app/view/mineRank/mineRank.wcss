@@ -2,14 +2,12 @@
     height:100%;
     margin-top: -88px;
     padding-top:120px;
-    background:linear-gradient(135deg,rgba(48,131,255,1) 0%,rgba(21,102,223,1) 100%);
 }
 
 
 .top-annunciate{
     width: 500px;
     height: 40px;
-    background: #155DC7;
     border-radius: 20px;
     font-size:24px;
     color:#FFFFFF;
@@ -29,13 +27,11 @@
 }
 
 
-
-
 .topbar{
     width:690px;
     height:80px;
-    margin: 40px 0px 30px;
-    background:rgba(21,93,199,1);
+    padding: 0 20px;
+    margin: 40px 0px 0px;
     border-radius:40px;
     font-size:28px;
     font-weight:500;
@@ -44,36 +40,86 @@
     position: relative;
 }
 .topbar-bg{
-    width: 50%;
-    height: 100%;
+    width: 300px;
+    height: 4px;
+    bottom: 0;
     position: absolute;
-    background: white;
-    border-radius: 40px;
+    background:rgba(21,93,199,1);
     transition: transform 0.5s ease;
 }
 .topbar-text{
-    position: absolute; 
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 .topbar-item{
-    width:50%;
+    width:300px;
     border-radius:40px;
     text-align: center;
     background: transparent;
     transition: color 0.5s ease;
 }
 .topbar-item-select{
-    color: #222222;
+    color: #fff;
 }
-
-
-
-
-
+.top3-container{
+    margin-top: 50px;
+    display: flex;
+    padding: 0 30px;
+}
+.top-item{
+    height: 100%;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top:100px;
+}
+.top2-avatar{
+    width: 150px;
+    height: 150px;
+}
+.top1-avatar{
+    width: 200px;
+    height: 200px;
+}
+.crown2{
+    position: absolute;
+    left: 0;
+    top: -55px;
+}
+.crown1{
+    position: absolute;
+    left: 0;
+    top: -60px;
+}
+.top-name{
+    height:40px;
+    font-size:28px;
+    font-family:"PingFangSC-Medium";
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    line-height:40px;
+    margin-top: 15px;
+}
+.kt-container{
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+.kt-img{
+    width: 40px;
+    height: 40px;
+}
+.kt-num{
+    height:33px;
+    font-size:24px;
+    font-family:"PingFangSC-Regular";
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height:33px;
+}
 .rank-list{
     height: 100%;
     width: 100%;
