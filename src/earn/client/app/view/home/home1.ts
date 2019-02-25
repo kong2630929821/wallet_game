@@ -380,18 +380,16 @@ chatStore.register('uid',(r) => {
     }
 });
 // 监听活动第一次登录 创建钱包
-register('flags/firstLogin',(firstLogin:boolean) => {
-    console.log('firstLogin ===',firstLogin);
-    if (firstLogin) {
-        const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
-        if (level_2_page_loaded) {
-            firstloginAward();
-        } else {
-            firstLoginDelay = true;
-        }
-        
+register('flags/firstLogin',() => {
+    const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
+    if (level_2_page_loaded) {
+        firstloginAward();
+    } else {
+        firstLoginDelay = true;
     }
+        
 });
+// 二级目录资源加载完成
 walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
         firstloginAward();

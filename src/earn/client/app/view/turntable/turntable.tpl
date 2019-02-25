@@ -1,12 +1,23 @@
-<div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-next-click="goHistory" ev-refresh-click="refresh">
+<div class="new-page" w-class="new-page" on-tap="closeSetting"  ev-back-click="backPrePage" ev-next-click="goHistory" ev-next1-click="showSetting">
     {{: topBarTitle = {"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""} }}
-    <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}},nextImg:"../../res/image/26_white.png" }</app-components1-topBar-topBar2>
+    <app-components1-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",nextImg1:"../../res/image/more_dot_white.png",background:"transparent" }</app-components1-topBar-topBar>
     <div w-class="content">
+    
         {{% 大转盘标题}}
         <div w-class="turntable-name">
             <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
             <div w-class="myMoney">我的碎银:&nbsp;{{it.STbalance}}</div>
         </div>
+
+        {{if it.showMoreSetting}}
+        <div w-class="moreSetting" on-tap="setting">
+            {{if it.noPassword}}
+                关闭免密支付
+            {{else}}
+                开启免密支付
+            {{end}}
+        </div>
+        {{end}}
         
         {{% 大转盘}}
         <div w-class="center">
