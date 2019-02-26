@@ -8,6 +8,7 @@ import { hasWallet, popPswBox } from '../../../../../app/utils/tools';
 import { backupMnemonic } from '../../../../../app/utils/walletTools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
+import { rippleShow } from '../../../../../chat/client/app/logic/logic';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -300,6 +301,11 @@ export class EarnHome extends Widget {
         if (!hasWallet()) return;
         popNew('earn-client-app-view-mineRank-mineRank');
     }
+    
+    // 动画效果执行
+    public onShow(e:any) {
+        rippleShow(e);
+    }
 }
 
 // ===================================================== 本地
@@ -361,19 +367,29 @@ const firstloginAward = () => {
         });
     }
 };
-// 监听活动第一次登录 创建钱包
-register('flags/firstLogin',(firstLogin:boolean) => {
-    console.log('firstLogin ===',firstLogin);
-    if (firstLogin) {
-        const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
-        if (level_2_page_loaded) {
-            firstloginAward();
-        } else {
-            firstLoginDelay = true;
-        }
-        
+
+chatStore.register('uid',(r) => {
+    const user = getStore('userInfo');
+    if (user.uid > 0) {
+        // 绑定聊天UID
+        clientRpcFunc(bind_chatID,r,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定聊天UID成功，聊天uid:',r);
+            }
+        });
     }
 });
+// 监听活动第一次登录 创建钱包
+register('flags/firstLogin',() => {
+    const level_2_page_loaded = walletGetStore('flags').level_2_page_loaded;
+    if (level_2_page_loaded) {
+        firstloginAward();
+    } else {
+        firstLoginDelay = true;
+    }
+        
+});
+// 二级目录资源加载完成
 walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
         firstloginAward();
@@ -438,6 +454,26 @@ chatStore.register('setting/firstChat',() => {
         });
     }
 });
+register('flags/firstTurntable',() => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    // 首次玩大转盘
+    clientRpcFunc(get_task_award,5,(res:Result) => {
+        console.log('大转盘',res);
+        if (res && res.reslutCode === 1) {
+            w.updateTasks();
+        }
+    });
+});
+register('flags/firstOpenBox',() => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    // 首次玩开宝箱
+    clientRpcFunc(get_task_award,6,(res:Result) => {
+        console.log('开宝箱',res);
+        if (res && res.reslutCode === 1) {
+            w.updateTasks();
+        }
+    });
+});
 walletRegister('flags/firstRecharge',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次充值
@@ -452,17 +488,6 @@ walletRegister('flags/firstRecharge',() => {
                 });
                 setStore('flags/firstRecharge',true);
                 w.updateTasks();
-            }
-        });
-    }
-});
-chatStore.register('uid',(r) => {
-    const user = getStore('userInfo');
-    if (user.uid > 0) {
-        // 绑定聊天UID
-        clientRpcFunc(bind_chatID,r,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',r);
             }
         });
     }

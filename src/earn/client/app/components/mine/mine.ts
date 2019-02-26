@@ -1,6 +1,7 @@
 /**
  * mine
  */
+import { RES_TYPE_BLOB, ResTab } from '../../../../../pi/util/res_mgr';
 import { notify } from '../../../../../pi/widget/event';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -60,13 +61,14 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        // console.log(this.props);
+        
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {
             this.$imgContainer.className = `mine-animated`;
         });
         if (!this.props.selected || this.props.hp <= 0 || !this.props.beginMining) {
+            console.log('mine =========',this.props);
             notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
 
             return;
@@ -84,16 +86,32 @@ export class Mine extends Widget {
         const style = `position:absolute;font-size:38px;left:${left}px`;
         $rock.setAttribute('style', style);
         // tslint:disable-next-line:no-inner-html
-        $rock.innerHTML = `${this.props.lossHp}`;
-        
-        this.$parent.appendChild($rock);
-        const v0 = Math.random() * 500 + 300;  // 初始加速度 300 --- 800
-        const deg = Math.random() * 120 + 30;  //  初始速度方向  30 --- 150
-        const rad = deg / 360 * 2 * Math.PI;   // 弧度
-        const g = Math.random() * 500 + 500;   // 重力加速度  500 --- 1000
-        const duration = Math.floor(Math.random() * 500 + 1500); // 动画持续时间  1500 --- 2000 ms
-        this.domMove($rock,v0,rad,g,duration,new Date().getTime());
-        notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
+        // $rock.innerHTML = `${this.props.lossHp}`;
+
+        // type:
+        // 取图片: RES_TYPE_BLOB: 返回BlobURL;
+        // 取二进制: RES_TYPE_RES_TYPE_FILE: 返回ArrayBuffer;
+        const imgSrc = 'earn/client/app/res/image/mining_gold.png';
+        const resTab = new ResTab();
+        resTab.load(`${RES_TYPE_BLOB}:${imgSrc}`, RES_TYPE_BLOB, imgSrc, undefined, (blobURL) => {
+            // console.log('resTab ====== success');
+            const $goldImg = document.createElement('img');
+            $goldImg.setAttribute('src',blobURL.link);
+            $goldImg.setAttribute('style','width:40px;height:40px;');
+            $rock.appendChild($goldImg);
+            
+            this.$parent.appendChild($rock);
+            const v0 = Math.random() * 500 + 300;  // 初始加速度 300 --- 800
+            const deg = Math.random() * 120 + 30;  //  初始速度方向  30 --- 150
+            const rad = deg / 360 * 2 * Math.PI;   // 弧度
+            const g = Math.random() * 500 + 500;   // 重力加速度  500 --- 1000
+            const duration = Math.floor(Math.random() * 500 + 1500); // 动画持续时间  1500 --- 2000 ms
+            this.domMove($rock,v0,rad,g,duration,new Date().getTime());
+            notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
+        },() => {
+            console.log('resTab ====== fail');
+        });
+    
     }
 
     /**

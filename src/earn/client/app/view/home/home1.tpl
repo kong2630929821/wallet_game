@@ -30,8 +30,8 @@
                 <div w-class="rank-num">{{it.miningRank}}名</div>
                 {{end}}
             </div>
-            <div w-class="explanation-box">
-                <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
+            <div w-class="explanation-box" >
+                <div w-class="explanation" on-down="onShow" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
             </div>
         </div>
         <div w-class="card-container">
@@ -95,7 +95,7 @@
                 </div>
                 <div w-class="welfare-container">
                     {{for i,item of it.hotActivities}}
-                    <div w-class="welfare-activities-item" on-tap="goHotActivity({{i}})" class="welfare-activities-item">
+                    <div w-class="welfare-activities-item" on-tap="goHotActivity({{i}})" class="welfare-activities-item" on-down="onShow">
                         <img src="../../res/image1/{{item.img}}"/>
                         <div w-class="welfare-box">
                             <div w-class="welfare-title">{{item.title}}</div>

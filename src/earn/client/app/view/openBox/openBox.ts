@@ -2,7 +2,9 @@
  * 开宝箱 - 首页
  */
 
+import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
 import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
@@ -34,6 +36,8 @@ interface Props {
     ledShow:boolean;  // 彩灯状态
     LEDTimer:any;     // 彩灯控制器
     watchAdAward:number; // 看广告已经获得的免费次数
+    showMoreSetting: boolean; // 展开设置免密支付
+    noPassword: boolean; // 免密支付是否打开
 }
 
 enum BoxState {
@@ -70,7 +74,9 @@ export class OpenBox extends Widget {
         freeCount: 0,
         ledShow:false,
         LEDTimer:{},
-        watchAdAward:0
+        watchAdAward:0,
+        showMoreSetting: false,
+        noPassword: false
     };
 
     public create() {
@@ -80,14 +86,59 @@ export class OpenBox extends Widget {
             this.ledTimer();
         }
         // inviteUsersToGroup();
+        queryNoPWD('101', (res, msg) => {
+            if (!res) {
+                this.props.noPassword = true;
+            } else {
+                this.props.noPassword = false;
+            }
+        });
     }
-
     public attach() {
         if (!isLogin()) {
             this.backPrePage();
         } else {
             this.change(0);
         }
+    }
+
+    /**
+     * 更多设置
+     */
+    public showSetting() {
+        this.props.showMoreSetting = !this.props.showMoreSetting;
+        this.paint();
+        
+    }
+    /**
+     * 设置免密支付
+     */
+    public async setting() {
+        let state = 0;
+        if (this.props.noPassword === false) {
+            state = 1;
+        } 
+
+        walletSetNoPSW('101', '15', state, (res, msg) => {
+            console.log(res, msg);
+            if (!res) {
+                this.props.noPassword = !this.props.noPassword; 
+                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
+                this.paint();
+            } else {
+                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
+            }
+
+        });
+        this.closeSetting();
+    }
+    
+    /**
+     * 关闭设置
+     */
+    public closeSetting() {
+        this.props.showMoreSetting = false;
+        this.paint();
     }
 
     /**
@@ -152,7 +203,7 @@ export class OpenBox extends Widget {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
     }
-
+    
     /**
      * 弹窗提示看广告或聊天
      */
