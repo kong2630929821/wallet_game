@@ -13,14 +13,14 @@ import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
 import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
-import { Achievements, AddMedal, Medals } from '../data/db/medal.s';
+import { Achievements, AddMedal, Medals, ShowMedal } from '../data/db/medal.s';
 import { Task, UserTaskTab } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
 import { mqtt_send } from '../rpc/dbWatcher.r';
 import { get_miningKTNum } from '../rpc/mining.r';
 import { IsOk } from '../rpc/test.s';
 import { getOpenid, getUid } from '../rpc/user.r';
-import { get_item, item_query } from '../rpc/user_item.r';
+import { get_item, item_query, show_medal } from '../rpc/user_item.r';
 import { doAward } from './award.t';
 import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
@@ -240,14 +240,15 @@ export const mining_add_medal = (uid:number, itemType:number) => {
             const iterCfg = iter.nextElem();
             console.log('elCfg----------------read---------------', iterCfg);
             if (!iterCfg) {
-                console.log('elCfg_no_next!!!!!!!!!!!!!!!!!!!!!');
                 break;
             }
             const medalCfg:MedalCfg = iterCfg[1];  
-            // if (medalCfg.coinType !== itemType) {
-            //     break;
-            // }
             if (medalCfg.coinType === itemType && ktNum >= medalCfg.coinNum) {
+                console.log('pushMsg!!!!!!!!!!!!!!!!!!!!!', pushMsg);
+                if (pushMsg === true) {
+                    showMedal(medalCfg.id); // 挂出用户最新的等级奖章
+                    console.log('do showMedal!!!!!!!!!!!!!!!!!!!!!');
+                }
                 add_medal(uid, medalCfg.id, pushMsg);
                 pushMsg = false;
             }
@@ -285,6 +286,19 @@ export const add_medal = (uid:number, medalType: number, pushMsg: boolean): bool
     bucket.put(uid, medals);
     // 推送获得奖章的信息
     if (pushMsg) send(uid, MESSAGE_TYPE_ADDMEDAL, medalType.toString());
+};
+
+// 挂奖章
+export const showMedal = (medalType: number) => {
+    console.log('showMedal in!!!!!!!!!!!!!!!!!', medalType);
+    const dbMgr = getEnv().getDbMgr();
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const uid = getUid();
+    if (!uid) return;
+    const showMedal = new ShowMedal();
+    showMedal.uid = uid;
+    showMedal.medal = medalType;
+    bucket.put(uid, showMedal);
 };
 
 // 添加成就
