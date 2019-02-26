@@ -162,7 +162,7 @@ export class EarnHome extends Widget {
             signInDays: flags.signInDays || 0,   // 签到总天数
             awards: flags.loginAwards || getSeriesLoginAwards(1)  // 签到奖励
         };
-        console.log(flags);
+        console.log('[活动]flags: ',flags);
         this.paint();
         setTimeout(() => {
             this.scrollPage();
@@ -188,11 +188,20 @@ export class EarnHome extends Widget {
             });
         }
         getCompleteTask().then((data:any) => {
+            const flags = getStore('flags');
             for (const v of data.taskList) {
                 if (v.state) {
                     this.props.noviceTask[v.id - 1].complete = true;
+                    if (v.id === 5) {
+                        flags.firstTurntable = true;
+                    } else if (v.id === 6) {
+                        flags.firstOpenBox = true;
+                    } else if (v.id === 7) {
+                        flags.firstRecharge = true;
+                    }
                 }
             }
+            setStore('flags',flags);
             this.paint();
         });
     }
