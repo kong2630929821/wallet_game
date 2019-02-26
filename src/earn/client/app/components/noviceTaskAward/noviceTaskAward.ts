@@ -10,6 +10,7 @@ import { forelet,WIDGET_NAME } from '../../view/home/home1';
 export class NewUserLogin extends Widget {
     public ok: () => void;
     public props:any = {
+        fadeOut:false,
         title:'签到奖励', // 获得奖品途径
         awardType:2001,  // 奖品编号
         awardName:'铁镐', // 奖品名字
@@ -25,7 +26,11 @@ export class NewUserLogin extends Widget {
     }
 
     public close() {
-        this.ok && this.ok();
+        this.props.fadeOut = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
     }
 
     // 去挖矿

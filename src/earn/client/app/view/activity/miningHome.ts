@@ -23,15 +23,16 @@ export class MiningHome extends Widget {
     public props:any;
     public hits:number[] = [];
     public mineStyle:string[] = [
-        'right:305px;top:292px;',
-        'left:165px;top:462px;',
-        'right:118px;top:436px;',
-        'left:128px;top:645px;',
-        'right:197px;top:777px;',
-        'left:76px;top:853px;',
-        'right:22px;top:921px;',
-        'left:259px;top:937px;'
+        'top:377px;left:109px;',
+        'top:387px;left:478px;',
+        'top:590px;left:130px;',
+        'top:580px;left:402px;',
+        'top:800px;left:73px;',
+        'top:743px;left:319px;',
+        'top:873px;left:488px;',
+        'top:969px;left:251px;'
     ];
+    public startTime:number;
     public create() {
         super.create();
         this.init();
@@ -69,6 +70,7 @@ export class MiningHome extends Widget {
             zIndex:-1            // z-index数值
         };
         this.mineLocationInit();   // 矿山位置初始化
+        console.log('miningHome ----------');
     }
 
     public closeClick() {
@@ -161,6 +163,7 @@ export class MiningHome extends Widget {
                 this.paint();
             });
             this.props.countDownStart = true;
+            this.startTime = new Date().getTime();
             this.countDown();
             this.paint();
 
@@ -172,7 +175,19 @@ export class MiningHome extends Widget {
 
         this.paint();
     }
+    /**
+     * 获取选中的矿山下标
+     */
+    public getSelectedMineIndex() {
+        for (let i = 0; i < this.props.haveMines.length; i++) {
+            const mine = this.props.haveMines[i];
+            if (mine.type === this.props.mineType && mine.id === this.props.mineId) {
+                return i;
+            }
+        }
 
+        return -1;
+    }
     // 矿山掉血
     public bloodLoss() {
         for (let i = 0; i < this.props.haveMines.length; i++) {
@@ -182,7 +197,7 @@ export class MiningHome extends Widget {
                 // console.log('lossHp  ==',this.props.lossHp);
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
-                    this.deleteBoomMine();
+                    this.initMiningState();
                 }
                 break;
             }
@@ -193,13 +208,14 @@ export class MiningHome extends Widget {
     public deleteBoomMine() {
         const mineType = this.props.mineType;
         const mineId = this.props.mineId;
-        requestAnimationFrame(() => {
-            this.props.haveMines = this.props.haveMines.filter(item => {
-                return item.type !== mineType || item.id !== mineId;
-            });
+        this.props.haveMines = this.props.haveMines.filter(item => {
+            return item.type !== mineType || item.id !== mineId;
         });
-        this.initMiningState();
-        this.paint();
+        if (this.props.haveMines.length === 0) {
+            this.props.haveMines = getAllMines();
+            this.mineLocationInit();
+        }
+        // console.log('haveMines =',this.props.haveMines);
     }
     /**
      * 倒计时
@@ -207,20 +223,25 @@ export class MiningHome extends Widget {
     public countDown() {
         this.props.countDownTimer = setTimeout(() => {
             this.countDown();
-            this.props.countDown--;
+            const intervel = new Date().getTime() - this.startTime;
+            this.props.countDown = this.props.countDownMax - intervel;
             this.paint();
-            if (!this.props.countDown) {
+            if (this.props.countDown <= 0) {
                 this.initMiningState();
             }
-        },1000);
+        },33);
     }
 
     public initMiningState() {
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
+            console.log('miningHome ==== ',this.props);
+            this.props.miningCount = 0;
             this.props.startMining = false;
+            if (r.resultNum !== 1) return;
             if (r.leftHp <= 0) {
+                this.deleteBoomMine();
                 getRankList();
                 getTodayMineNum();
                 getMiningCoinNum();
@@ -245,14 +266,17 @@ export class MiningHome extends Widget {
                     };
                 }
                 popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
-                this.paint();
+                
+            } else {
+                const mine = this.props.haveMines[this.getSelectedMineIndex()];
+                mine.hp = r.leftHp;
             }
+            this.paint();
         });
-        
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
-        this.props.miningCount = 0;
         clearTimeout(this.props.countDownTimer);
+        this.paint();
     }
 
     /**
@@ -268,7 +292,6 @@ export class MiningHome extends Widget {
             this.props.haveMines = getAllMines();
             this.mineLocationInit();
         }
-        console.log('haveMines =',this.props.haveMines);
         this.paint();
     }
     /**
@@ -289,12 +312,16 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
+        // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test');
         // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {
             console.log('广告关闭  奖励内容 = ',award);
-            popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            setTimeout(() => {
+                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            },300);
+            
         });
     }
 }

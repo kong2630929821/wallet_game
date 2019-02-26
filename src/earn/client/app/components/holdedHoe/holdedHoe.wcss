@@ -11,7 +11,7 @@
     background-size: contain;
 }
 .box-selected{
-    background-image: url(../../res/image/can_receive_bg.png);
+    background-color:rgba(34,34,34,1);
 }
 .box-noselected{
     background-image: none;

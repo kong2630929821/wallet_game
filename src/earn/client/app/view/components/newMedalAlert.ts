@@ -41,6 +41,7 @@ export class NewMedalAlert extends Widget {
         const ktShow = getModulConfig('KT_SHOW');
         this.props = {
             ...this.props,
+            fadeOut:false,
             medalImg: `medal${props.medalId}`,
             medalId: props.medalId,
             medalType: props.medalType,
@@ -69,6 +70,10 @@ export class NewMedalAlert extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok();
+        this.props.fadeOut = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
     }
 }

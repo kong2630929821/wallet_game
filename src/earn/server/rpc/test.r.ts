@@ -14,7 +14,7 @@ import { add_award, add_itemCount, get_mine_type, items_init } from '../util/ite
 import { doMining } from '../util/mining_util';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { Hits, Test } from './test.s';
-import { getUid } from './user.r';
+import { getUid, reset_dayli_task } from './user.r';
 import { item_query } from './user_item.r';
 
 // #[rpc=rpcServer]
@@ -98,3 +98,13 @@ export const get_objStr = ():Result => {
 
     return result;
 };
+
+// // #[rpc=rpcServer]
+// // 充值每日任务测试
+// export const reset_dayliTask_test = ():Result => {
+//     reset_dayli_task();
+//     const result = new Result();
+//     result.reslutCode = RESULT_SUCCESS;
+
+//     return result;
+// };

@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    <div w-class="content flex-col" class="fadein">
+    <div w-class="content flex-col" class="popBoxFadeIn {{it.fadeOut ? 'popBoxFadeOut' : ''}}">
         <div w-class="closeImg" on-tap="backPrePage">
             <img src="../../res/image1/close-white.png" style="    padding: 15px;border: 2px solid white;border-radius: 50%;" width="36px" height="36px" alt="" />
         </div>

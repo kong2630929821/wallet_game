@@ -7,6 +7,7 @@ import { coinUnitchange } from '../../utils/tools';
 import { getPrizeInfo } from '../../utils/util';
 
 interface Props {
+    fadeOut:boolean;
     prizeType:number;// 奖品编号
     prizeName:any;// 奖品名字
     prizeNum:number;// 奖品数量
@@ -24,6 +25,7 @@ export class LotteryModal extends Widget {
         
         this.props = {
             ...props,
+            fadeOut:false,
             prizeType:props.awardType,
             prizeName:{ zh_Hans:`${prize.zh_hans}`,zh_Hant:`${prize.zh_hant}`,en:'' },
             prizeNum: coinUnitchange(props.awardType,props.count),
@@ -31,7 +33,11 @@ export class LotteryModal extends Widget {
         };
         
     } 
-    public close(e: any) {
-        this.ok && this.ok();
+    public close() {
+        this.props.fadeOut = true;
+        this.paint();
+        setTimeout(() => {
+            this.ok && this.ok();
+        },300);
     }
 }
