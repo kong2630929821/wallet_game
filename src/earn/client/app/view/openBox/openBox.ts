@@ -6,7 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -82,18 +82,31 @@ export class OpenBox extends Widget {
     public create() {
         super.create();
         if (isLogin()) {
-            this.initData();
             this.ledTimer();
+            getSTbalance();
+            this.props.STbalance = getStore('balance/ST');
+            console.log(this.props.STbalance);
+
+            isFirstFree().then((res: FreePlay) => {
+                this.props.freeCount = res.freeBox;
+                this.props.watchAdAward = res.adAwardBox;
+                this.setChestTip(2);
+                if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
+                    this.popNextTips();
+                }            
+
+            });
+
+            queryNoPWD('101', (res, msg) => {
+                if (!res) {
+                    this.props.noPassword = true;
+                } else {
+                    this.props.noPassword = false;
+                }
+            });
         }
-        // inviteUsersToGroup();
-        queryNoPWD('101', (res, msg) => {
-            if (!res) {
-                this.props.noPassword = true;
-            } else {
-                this.props.noPassword = false;
-            }
-        });
     }
+
     public attach() {
         if (!isLogin()) {
             this.backPrePage();
@@ -123,10 +136,7 @@ export class OpenBox extends Widget {
             console.log(res, msg);
             if (!res) {
                 this.props.noPassword = !this.props.noPassword; 
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
                 this.paint();
-            } else {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
             }
 
         });
@@ -147,16 +157,12 @@ export class OpenBox extends Widget {
     public initData() {
         this.props.STbalance = getStore('balance/ST');
         console.log(this.props.STbalance);
+        this.paint();
         isFirstFree().then((res: FreePlay) => {
             this.props.freeCount = res.freeBox;
             this.props.watchAdAward = res.adAwardBox;
             this.setChestTip(2);
-            if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
-                this.popNextTips();
-            }            
-
         });
-        this.paint();
     }
 
     /**
@@ -191,13 +197,13 @@ export class OpenBox extends Widget {
                     this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
                     console.log('查询开宝箱订单失败',err);
                 });
-                getSTbalance();  // 更新余额
 
             } else {         // 免费机会开奖
                 this.props.freeCount--;
                 this.goLottery(e,boxIndex,order);
                 setStore('flags/firstOpenBox',true);
             }
+            getSTbalance();  // 更新余额
 
         }).catch((err) => {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
@@ -222,7 +228,6 @@ export class OpenBox extends Widget {
                         this.props.watchAdAward = award.adAwardBox;
                         this.setChestTip(2);
                     });
-                    this.initData();
                 } else {
                     popNew('app-view-wallet-cloudWallet-rechargeKT');
                 }
@@ -250,8 +255,13 @@ export class OpenBox extends Widget {
                     btn2:'去充值'// 按钮2
                 },(num) => {
                     if (num === 1) {
-                        inviteUsersToGroup(OPENBOX_GROUP,[chatUid],(r) => {
+                        inviteUserToGroup(OPENBOX_GROUP,(r) => {
                             console.log('加群回调OPENBOX_GROUP---------------',r);
+                            if (r && r.r === 1) {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+                            } else {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[4] });
+                            }
                         });
                     } else {
                         popNew('app-view-wallet-cloudWallet-rechargeKT');
@@ -414,13 +424,6 @@ export class OpenBox extends Widget {
             
             default:
         }
-    }
-
-    /**
-     * 刷新页面
-     */
-    public refresh() {
-        getSTbalance();
     }
 
     /**
