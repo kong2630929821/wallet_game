@@ -8,11 +8,7 @@ import { isString } from '../../../../pi/util/util';
 // 获取map
 export const getMap = (table: string | any, key?: string | number): Map<string | number, any> | any => {
     if (!isString(table)) {
-        if (key) {
-            table = tableNameAddKey(table._$info.name, table._$info.notes.get('primary'));
-        } else {
-            table = tableNameAddKey(table._$info.name);
-        }
+        table = tableNameAddKey(table._$info.name, table._$info.notes.get('primary'));
     }
     if (!initMap.has(table)) setMap(table);
     if (!initMap.has(table)) return;
@@ -60,7 +56,7 @@ export const clone = (obj) => {
 
 // 设置map
 const setMap = (key) => {
-    if (cfgMgr.map.has(key)) {
+    if (originCfg && originCfg.has(key)) {
         const tempMap = clone(originCfg.get(key));
        /*  const tempMap = new Map();
         for (const [k, v] of originCfg.get(key)) {

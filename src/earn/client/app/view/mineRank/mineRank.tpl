@@ -20,42 +20,49 @@
             </div>
         </div>
         <div w-class="top3-container">
+            {{:top2 = it.rankList[1]}}
+            {{if top2}}
             <div w-class="top-item">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
                     <img src="../../res/image1/default_head.png" w-class="top2-avatar"/>
                     <img src="../../res/image/crown2.png" w-class="crown2"/>
                 </div>
-                <div w-class="top-name">咸鱼</div>
-                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">1222</div></div>
+                <div w-class="top-name">{{top2.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top2.ktNum}}</div></div>
             </div>
+            {{end}}
+            {{:top1 = it.rankList[0]}}
+            {{if top1}}
             <div w-class="top-item" style="padding-top:50px;margin-top: 10px;">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
                     <img src="../../res/image1/default_head.png" w-class="top1-avatar"/>
                     <img src="../../res/image/crown1.png" w-class="crown1"/>
                 </div>
-                <div w-class="top-name">咸鱼</div>
-                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">1222</div></div>
+                <div w-class="top-name">{{top1.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top1.ktNum}}</div></div>
             </div>
+            {{end}}
+            {{:top3 = it.rankList[2]}}
+            {{if top3}}
             <div w-class="top-item">
-                    <div style="position:relative;width: 100%;display: flex;justify-content: center;">
-                        <img src="../../res/image1/default_head.png" w-class="top2-avatar"/>
-                        <img src="../../res/image/crown3.png" w-class="crown2"/>
-                    </div>
-                    <div w-class="top-name">咸鱼</div>
-                    <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">1222</div></div>
+                <div style="position:relative;width: 100%;display: flex;justify-content: center;">
+                    <img src="../../res/image1/default_head.png" w-class="top2-avatar"/>
+                    <img src="../../res/image/crown3.png" w-class="crown2"/>
                 </div>
+                <div w-class="top-name">{{top3.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top3.ktNum}}</div></div>
+            </div>
+            {{end}}
         </div>
     </div>
     <div w-class="rank-list" id="rankList">
-        <div w-class="self-rank">
-            <widget w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
-        </div>
-        
-        <div w-class="rank-otherlist">
-            {{for i,item of it.rankList}}
+        <div style="margin-bottom:150px;">
+            {{for i,item of it.rankList.slice(3)}}
                 <widget w-tag="earn-client-app-view-mineRank-rankItem">{{item}}</widget>
             {{end}}
         </div>
-        
+        <div w-class="self-rank">
+            <widget w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
+        </div>
     </div>
 </div>

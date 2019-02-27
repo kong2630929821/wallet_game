@@ -9,6 +9,7 @@ import { getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, register } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
+import { formateCurrency } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -16,7 +17,6 @@ import { CoinType } from '../../xls/dataEnum.s';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
-console.log('module-----------------', module);
 
 export class MineRank extends Widget {
     public ok: () => void;
@@ -93,7 +93,7 @@ export class MineRank extends Widget {
             this.props.myRank.avatar = getStore('userInfo/avatar');
             this.props.myRank.userName = getStore('userInfo/name');
             this.props.myRank.rank = res.myNum;
-            this.props.myRank.ktNum = res.myKTNum;
+            this.props.myRank.ktNum = formateCurrency(res.myKTNum);
             this.props.myRank.medal = res.myMedal;
             this.paint();
         });
@@ -116,7 +116,7 @@ export class MineRank extends Widget {
                     avatar: elementUser.avatar,
                     userName: elementUser.nickName,
                     rank: i + 1,
-                    ktNum: element.miningKTMap.ktNum,
+                    ktNum: formateCurrency(element.miningKTMap.ktNum),
                     medal: element.medal
                 };
                 resData.push(res);

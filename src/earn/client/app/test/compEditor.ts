@@ -299,7 +299,7 @@ export const getTeamCfg = (cfgName: string, teamNum?: number, teamName?: string)
  * @param teamNum 可选,队伍编号，不填返回所有
  */
 export const getTeamCfg1 = (teamNum?:number) => {
-    const cfgs = getMap(LOLTeamInfosCfg._$info.name);
+    const cfgs = getMap(LOLTeamInfosCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (teamNum && teamNum === cfg.pid) {
@@ -317,7 +317,7 @@ export const getTeamCfg1 = (teamNum?:number) => {
  * @param teamNum 可选,队伍编号，不填返回所有
  */
 export const getCompCfg = (compType?:number) => {
-    const cfgs = getMap(LOLTypeCfg._$info.name);
+    const cfgs = getMap(LOLTypeCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (compType && compType === cfg.pid) {

@@ -143,7 +143,7 @@ export const shuffle = (arr: any[]): any[] => {
 
 // 处理挖矿单次事件(一次点击)
 const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
-    const cfgs = getMap(WeightMiningCfg._$info.name);
+    const cfgs = getMap(WeightMiningCfg);
     const weights = [];
     const filterCfgs = [];
     let maxWeight = 0;
@@ -194,7 +194,7 @@ export const calcMiningArray = (hoeType: HoeType, seed: number) => {
  * @param mineType 矿山类型
  */
 export const getMiningMaxHp = (mineType: MineType) => {
-    const cfgs = getMap(MineHpCfg._$info.name);
+    const cfgs = getMap(MineHpCfg);
     for (const [k, v] of cfgs) {
         if (v.id === mineType) {
             return v.hp;
@@ -226,7 +226,7 @@ export const getTicketBalance = (ticketType) => {
  *  奖品编号
  */
 export const getTicketNum = (activityType: ActivityType): any => {
-    const cfgs = getMap(ActTicketNumCfg._$info.name);
+    const cfgs = getMap(ActTicketNumCfg);
     for (const [k, cfg] of cfgs) {
         if (cfg.actType === activityType) {
             return cfg.ticketNum;
@@ -241,7 +241,7 @@ export const getTicketNum = (activityType: ActivityType): any => {
  * @param prizeType 奖品编号
  */
 export const getPrizeInfo = (prizeType: number): any => {
-    const cfgs = getMap(PrizeCfg._$info.name);
+    const cfgs = getMap(PrizeCfg);
     const filterCfgs = '';
     for (const [k, cfg] of cfgs) {
         if (cfg.pid === prizeType) {
@@ -256,7 +256,7 @@ export const getPrizeInfo = (prizeType: number): any => {
  * 获取项目奖品列表
  */
 export const getPrizeList = (activityType: ActivityType): any => {
-    const cfgs = getMap(WeightAwardCfg._$info.name);
+    const cfgs = getMap(WeightAwardCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (cfg.id >= activityType && cfg.id <= (activityType + 99)) {
@@ -271,7 +271,7 @@ export const getPrizeList = (activityType: ActivityType): any => {
  * 获取固定项目奖品列表
  */
 export const getRegularPrizeList = (activityType: ActivityType): any => {
-    const cfgs = getMap(RegularAwardCfg._$info.name);
+    const cfgs = getMap(RegularAwardCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (cfg.id >= activityType  && cfg.id < (activityType + 99)) {
@@ -286,7 +286,7 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
  * 获取虚拟物品兑换列表
  */
 export const getVirtualExchangeList = (typeStr: string,exchangeType?:MallType): any => {
-    const cfgs = getMap(STConvertCfg._$info.name);
+    const cfgs = getMap(STConvertCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (exchangeType) {
@@ -307,7 +307,7 @@ export const getVirtualExchangeList = (typeStr: string,exchangeType?:MallType): 
  * @param typeStr 查询列名
  */
 export const getMedalList = (typeNum: string | number, typeStr: string): any => {
-    const cfgs = getMap(MedalCfg._$info.name);
+    const cfgs = getMap(MedalCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (typeNum === cfg[typeStr]) {
@@ -322,7 +322,7 @@ export const getMedalList = (typeNum: string | number, typeStr: string): any => 
  * 获取成就勋章列表
  */
 export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
-    const cfgs = getMap(AchievementMedalCfg._$info.name);
+    const cfgs = getMap(AchievementMedalCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (typeNum === cfg[typeStr]) {
@@ -370,7 +370,7 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
  * @param errorNum 错误编号
  */
 export const showActError = (errorNum: number) => {
-    const cfgs = getMap(ErrorNumCfg._$info.name);
+    const cfgs = getMap(ErrorNumCfg);
     for (const [k, cfg] of cfgs) {
         if (errorNum === cfg.id) {
             popNew('app-components1-message-message', { content: { zh_Hans: cfg.desc, zh_Hant: cfg.descHant, en: '' } });
@@ -387,11 +387,11 @@ export const getSeriesLoginAwards = (serielLoginDays: number) => {
     const showAwardsDays = 7; // 同时展示几天的奖励
     const multiple = Math.ceil(serielLoginDays / showAwardsDays);
     const showAwardsDaysStart = (multiple - 1) * showAwardsDays + 1 ;
-    const cfgs = getMap(SeriesLoginAwardCfg._$info.name);
+    const cfgs = getMap(SeriesLoginAwardCfg);
     const awards = [];
     for (let i = 0;i < showAwardsDays;i++) {
         const index = (showAwardsDaysStart + i - 1) % resetDays;
-        const cfg = JSON.parse(JSON.stringify(cfgs.get(index)));
+        const cfg = JSON.parse(JSON.stringify(cfgs.get(index + 1)));
         cfg.days = showAwardsDaysStart + i;
         awards[i] = cfg;
     }
@@ -404,7 +404,7 @@ export const getSeriesLoginAwards = (serielLoginDays: number) => {
   * @param teamNum 可选,队伍编号，不填返回所有
   */
 export const getTeamCfg = (teamNum?:number) => {
-    const cfgs = getMap(LOLTeamInfosCfg._$info.name);
+    const cfgs = getMap(LOLTeamInfosCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (teamNum && teamNum === cfg.pid) {
@@ -422,7 +422,7 @@ export const getTeamCfg = (teamNum?:number) => {
   * @param macthType 可选,赛事编号，不填返回所有
   */
 export const getMacthTypeCfg = (macthType?:number) => {
-    const cfgs = getMap(LOLTypeCfg._$info.name);
+    const cfgs = getMap(LOLTypeCfg);
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (macthType && macthType === cfg.pid) {
@@ -451,4 +451,11 @@ export const isLogin = () => {
     } else {
         return true;
     }
+};
+
+/**
+ * 货币逗号格式化处理
+ */
+export const formateCurrency = (value:number) => {
+    return `${value.toLocaleString()}.00`;
 };
