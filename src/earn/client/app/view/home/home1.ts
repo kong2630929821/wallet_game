@@ -192,7 +192,13 @@ export class EarnHome extends Widget {
             for (const v of data.taskList) {
                 if (v.state) {
                     this.props.noviceTask[v.id - 1].complete = true;
-                    if (v.id === 5) {
+                    if (v.id === 2) {
+                        flags.isBackup = true;
+                    } else if (v.id === 3) {
+                        flags.sharePart = true;
+                    } else if (v.id === 4) {
+                        flags.firstChat = true;
+                    } else if (v.id === 5) {
                         flags.firstTurntable = true;
                     } else if (v.id === 6) {
                         flags.firstOpenBox = true;
