@@ -3,9 +3,11 @@
  */
 
 import { getUserList } from '../../../../../app/net/pull';
+import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getRankList } from '../../net/rpc';
+import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
+import { getFriendsKTTop, getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, register } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
@@ -83,20 +85,31 @@ export class MineRank extends Widget {
      * 更新props数据
      */
     public initData() {
-        getRankList().then(async (res: any) => {
-            if (this.props.topbarSel === 0) {
+        if (this.props.topbarSel === 0) {
+            getRankList().then(async (res: any) => {
                 this.props.rankList = await this.processData(res.topList);
-            } else {
-                this.props.rankList = [];
-            }
-            // console.log('rankList------------------------',this.props.rankList);
-            this.props.myRank.avatar = getStore('userInfo/avatar');
-            this.props.myRank.userName = getStore('userInfo/name');
-            this.props.myRank.rank = res.myNum;
-            this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-            this.props.myRank.medal = res.myMedal;
-            this.paint();
-        });
+                this.props.myRank.avatar = getStore('userInfo/avatar');
+                this.props.myRank.userName = getStore('userInfo/name');
+                this.props.myRank.rank = res.myNum;
+                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                this.props.myRank.medal = res.myMedal;
+                this.paint();
+            });
+        } else {
+            const chatIds = new ChatIDs();
+            chatIds.chatIDs = getAllFriendIDs();
+            debugger;
+            getFriendsKTTop(chatIds).then(async (res: any) => {
+                this.props.rankList = await this.processData(res.topList);
+                this.props.myRank.avatar = getStore('userInfo/avatar');
+                this.props.myRank.userName = getStore('userInfo/name');
+                this.props.myRank.rank = res.myNum;
+                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                this.props.myRank.medal = res.myMedal;
+                this.paint();
+            });
+        }
+       
     }
 
     // 处理排行榜
@@ -153,8 +166,3 @@ export class MineRank extends Widget {
 }
 
 // ===================================================== 立即执行
-
-register('userInfo', (r: any) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.initData();
-});

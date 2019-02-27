@@ -1,7 +1,7 @@
 .rank-item{
     height: 140px;
     width: 100%;
-    padding: 20px;
+    padding: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -37,10 +37,11 @@
     line-height:40px;
 }
 .rank-kt{
-    height:33px;
     font-size:24px;
     color:#222222;
     line-height:33px;
+    display: flex;
+    align-items: center;
 }
 .no-rank{
     width: 60px;

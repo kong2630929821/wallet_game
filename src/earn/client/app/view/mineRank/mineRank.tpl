@@ -21,38 +21,32 @@
         </div>
         <div w-class="top3-container">
             {{:top2 = it.rankList[1]}}
-            {{if top2}}
-            <div w-class="top-item">
+            <div w-class="top-item" style="{{top2 ? '' : 'visibility: hidden;'}}">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
                     <img src="../../res/image1/default_head.png" w-class="top2-avatar"/>
                     <img src="../../res/image/crown2.png" w-class="crown2"/>
                 </div>
-                <div w-class="top-name">{{top2.userName}}</div>
-                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top2.ktNum}}</div></div>
+                <div w-class="top-name">{{top2 && top2.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top2 && top2.ktNum}}</div></div>
             </div>
-            {{end}}
             {{:top1 = it.rankList[0]}}
-            {{if top1}}
-            <div w-class="top-item" style="padding-top:50px;margin-top: 10px;">
+            <div w-class="top-item" style="{{top1 ? '' : 'visibility: hidden;'}}padding-top:50px;margin-top: 10px;">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
                     <img src="../../res/image1/default_head.png" w-class="top1-avatar"/>
                     <img src="../../res/image/crown1.png" w-class="crown1"/>
                 </div>
-                <div w-class="top-name">{{top1.userName}}</div>
-                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top1.ktNum}}</div></div>
+                <div w-class="top-name">{{top1 && top1.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top1 && top1.ktNum}}</div></div>
             </div>
-            {{end}}
             {{:top3 = it.rankList[2]}}
-            {{if top3}}
-            <div w-class="top-item">
+            <div w-class="top-item" style="{{top3 ? '' : 'visibility: hidden;'}}">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
                     <img src="../../res/image1/default_head.png" w-class="top2-avatar"/>
                     <img src="../../res/image/crown3.png" w-class="crown2"/>
                 </div>
-                <div w-class="top-name">{{top3.userName}}</div>
-                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top3.ktNum}}</div></div>
+                <div w-class="top-name">{{top3 && top3.userName}}</div>
+                <div w-class="kt-container"><img src="../../res/image/KT.png" w-class="kt-img"/><div w-class="kt-num">{{top3 && top3.ktNum}}</div></div>
             </div>
-            {{end}}
         </div>
     </div>
     <div w-class="rank-list" id="rankList">

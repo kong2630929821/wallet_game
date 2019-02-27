@@ -10,8 +10,8 @@ import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
-import { CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
-import { get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
+import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { Test } from '../../../server/rpc/test.s';
@@ -319,6 +319,22 @@ export const getRankList = () => {
     });
 };
 
+/**
+ * 获取挖矿排名
+ */
+export const getFriendsKTTop = (chatIDs:ChatIDs) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(get_friends_KTTop, chatIDs, (r: MineKTTop) => {
+            console.log('[活动]rpc-getFriendsKTTop-resData---------------', r);
+            if (r.resultNum === 1) {
+                resolve(r);
+            } else {
+                showActError(r.resultNum);
+                reject(r);
+            }
+        });
+    });
+};
 /**
  * 获取连续登录天数
  */

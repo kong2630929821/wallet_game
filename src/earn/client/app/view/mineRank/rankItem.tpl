@@ -2,18 +2,16 @@
     <div w-class="rank-left">
         {{if it.rank===0}}
             <widget w-class="no-rank" w-tag="pi-ui-lang">{"zh_Hans":"暂无排名","zh_Hant":"暫無排名","en":""}</widget>
-        {{elseif (it.rank < 4) && (it.rank > 0) }}
-            <img w-class="rank-img" src="../../res/image1/rank-NO{{it.rank}}.png" width="60px" height="70px;" />
         {{else}}
             <div w-class="rank-num">{{it.rank}}</div>
         {{end}}
         <img w-class="rank-headImg" src="{{it.avatar?it.avatar:'../../res/image1/default_head.png'}}" height="100%" />
         <div style="display: flex;justify-content: space-between;flex-direction: column;">
             <p w-class="rank-name">{{it.userName}}</p>
-            <p w-class="rank-kt">{{it.ktNum}}&nbsp;{{it.ktShow}}</p>
+            <p w-class="rank-kt"><img src="../../res/image/KT.png" style="width:40px;height:40px;"/>{{it.ktNum}}</p>
         </div>
     </div>
     {{if it.medal}}
-        <img w-class="medal-right" src="../../res/image/medals/medal{{it.medal}}.png" height="100%" />
+        <img w-class="medal-right" src="../../res/image/medals/medal{{it.medal}}.png" style="width:120px;height:120px;" />
     {{end}}
 </div>
