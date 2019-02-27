@@ -6,7 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { TURNTABLE_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -272,8 +272,13 @@ export class Turntable extends Widget {
                     btn2:'去充值'// 按钮2
                 },(num) => {
                     if (num === 1) {
-                        inviteUsersToGroup(TURNTABLE_GROUP,[chatUid],(r) => {
+                        inviteUserToGroup(TURNTABLE_GROUP,(r) => {
                             console.log('加群回调TURNTABLE_GROUP---------------',r);
+                            if (r && r.r === 1) {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[2] });
+                            } else {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+                            }
                         });
                     } else {
                         popNew('app-view-wallet-cloudWallet-rechargeKT');
@@ -380,7 +385,7 @@ export class Turntable extends Widget {
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-                    this.refresh();
+                    getSTbalance();
                 });
                 break;
             case 2:          // 更换宝箱类型

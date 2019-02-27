@@ -6,7 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -255,8 +255,13 @@ export class OpenBox extends Widget {
                     btn2:'去充值'// 按钮2
                 },(num) => {
                     if (num === 1) {
-                        inviteUsersToGroup(OPENBOX_GROUP,[chatUid],(r) => {
+                        inviteUserToGroup(OPENBOX_GROUP,(r) => {
                             console.log('加群回调OPENBOX_GROUP---------------',r);
+                            if (r && r.r === 1) {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+                            } else {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[4] });
+                            }
                         });
                     } else {
                         popNew('app-view-wallet-cloudWallet-rechargeKT');

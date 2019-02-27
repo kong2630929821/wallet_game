@@ -4,8 +4,7 @@
 
 import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
-import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { LOLGUESS_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -47,7 +46,7 @@ export class GuessHome extends Widget {
         //     }
         //     this.paint();
         // });
-        inviteUsersToGroup(LOLGUESS_GROUP,[chatStore.getStore('uid')],(r) => {
+        inviteUserToGroup(LOLGUESS_GROUP,(r) => {
             console.log('加群回调LOLGUESS_GROUP---------------',r);
         });
         queryNoPWD('101', (res, msg) => {
