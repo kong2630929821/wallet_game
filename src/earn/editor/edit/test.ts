@@ -252,7 +252,7 @@ export const get_convert_list_test = () => {
 
 // 挂奖章
 export const show_medal_test = () => {
-    const medal = 8001;
+    const medal = 8003;
     clientRpcFunc(show_medal, medal, (r: ShowMedalRes) => {
         console.log(r);
     });
@@ -260,8 +260,8 @@ export const show_medal_test = () => {
 
 // 查看挂出的奖章
 export const get_medal_test = () => {
-    const medal = 1;
-    clientRpcFunc(get_showMedal, medal, (r: ShowMedalRes) => {
+    const uid = 24;
+    clientRpcFunc(get_showMedal, uid, (r: ShowMedalRes) => {
         console.log(r);
     });
 };
@@ -471,6 +471,14 @@ const props = {
         {
             name: '任务奖励',
             func: () => { get_taskAward_test(); }
+        },
+        {
+            name: '所有奖章',
+            func: () => { get_medals_test(); }
+        },
+        {
+            name: '查看奖章',
+            func: () => { get_medal_test(); }
         }
         // {
         //     name: '好友排行',
