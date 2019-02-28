@@ -69,7 +69,7 @@ export const BTC_UNIT_NUM:number = 10 ** 4;
 export const ETH_UNIT_NUM:number = 10 ** 15;
 // ST 单位:10^4 精度为小数点后2位
 export const ST_UNIT_NUM:number = 10 ** 4;
-// KT 单位:10^8 即KT为整数
+// KT 单位:10^9 即KT为整数
 export const KT_UNIT_NUM:number = 10 ** 9;
 
 // 人类10秒最快手速

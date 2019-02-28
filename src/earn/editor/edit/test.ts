@@ -13,7 +13,7 @@ import { Achievements, Medals, ShowMedalRes } from '../../server/data/db/medal.s
 import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
-import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
+import { ChatIDs, CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
@@ -349,7 +349,9 @@ export const get_miningCoin_test = ()  => {
 
 // 好友挖矿排行
 export const get_friendTop_test = ()  => {
-    clientRpcFunc(get_friends_KTTop, null, (r: FreePlay) => {
+    const chatIDs = new ChatIDs();
+    chatIDs.chatIDs = [110, 111];
+    clientRpcFunc(get_friends_KTTop, chatIDs, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -480,9 +482,9 @@ const props = {
             name: '查看奖章',
             func: () => { get_medal_test(); }
         }
-        // {
-        //     name: '好友排行',
-        //     func: () => { get_friendTop_test(); }
+        {
+            name: '好友排行',
+            func: () => { get_friendTop_test(); }
         // }
         // {
         //     name: '兑换',
