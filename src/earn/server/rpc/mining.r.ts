@@ -333,7 +333,7 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
 // 好友挖矿排行
 // #[rpc=rpcServer]
 export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
-    console.log('get_friends_KTTop in!!!!!!!!!!!!!!!!!');
+    console.log('get_friends_KTTop in!!!!!!!!!!!!!!!!!', chatIDs);
     const uid = getUid();
     if (!uid) return;
     const mineTop = new MineKTTop();
@@ -342,8 +342,8 @@ export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
     const fuids: [number] = [uid];
     // 从数据库中绑定的聊天IDMap表中根据chatID关联到活动的uid
     for (let i = 0; i < chatIDs.chatIDs.length; i ++) {
-        const chatIDMap = mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[0])[0];
-        if (!chatIDMap) continue;
+        if (!mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[i])) continue;
+        const chatIDMap = mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[i])[0];
         fuids.push(chatIDMap.uid);
     }
     const mineTopList = []; 
