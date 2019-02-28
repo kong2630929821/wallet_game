@@ -103,6 +103,7 @@ export class OpenBox extends Widget {
                 } else {
                     this.props.noPassword = false;
                 }
+                this.paint();
             });
         }
     }

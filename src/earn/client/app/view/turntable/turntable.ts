@@ -102,6 +102,7 @@ export class Turntable extends Widget {
                 } else {
                     this.props.noPassword = false;
                 }
+                this.paint();
             });
         }
         
