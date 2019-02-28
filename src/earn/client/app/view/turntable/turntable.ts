@@ -217,7 +217,6 @@ export class Turntable extends Widget {
                 this.changeDeg(order);
                 setStore('flags/firstTurntable',true);
             }
-            getSTbalance();  // 更新余额
             
         }).catch((err) => {
             // this.changeDeg(err);
@@ -336,6 +335,7 @@ export class Turntable extends Widget {
             this.endLottery();
             if (resData.awardType !== 9527) {
                 popNew('earn-client-app-components-lotteryModal-lotteryModal', resData);
+                getSTbalance();  // 更新余额
             }
             this.paint();
         }, 7000);
@@ -385,7 +385,7 @@ export class Turntable extends Widget {
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-                    getSTbalance();
+                    getSTbalance();   // 更新余额
                 });
                 break;
             case 2:          // 更换宝箱类型
