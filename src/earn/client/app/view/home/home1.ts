@@ -38,7 +38,6 @@ export class EarnHome extends Widget {
     public setProps(props: Json, oldProps: Json) {
         super.setProps(props, oldProps);
         this.init();
-        this.updateTasks();
     }
     /**
      * 初始化数据
@@ -167,6 +166,8 @@ export class EarnHome extends Widget {
         setTimeout(() => {
             this.scrollPage();
         }, 100);
+        this.updateTasks();
+
     }
 
     /**
@@ -340,11 +341,15 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
         w.paint();
     } 
 });
-register('userInfo/uid',(uid) => {
+register('userInfo/uid',(uid) => {  // 活动登陆成功刷新页面
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (uid > 0) {
-        w && w.updateTasks();
+        w && w.init();
     }
+});
+register('flags/logout',() => {  // 退出钱包时刷新页面
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.init();
 });
 register('mine',(mine:Mine) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
@@ -451,7 +456,7 @@ walletRegister('wallet/sharePart',() => {
         });
     }
 });
-chatStore.register('setting/firstChat',() => {
+chatStore.register('flags/firstChat',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次聊天
     if (!getStore('flags',{}).firstChat) {

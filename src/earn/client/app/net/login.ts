@@ -17,6 +17,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     setStore('userInfo/isLogin',true);
     const userInfo = getStore('userInfo');
     setStore('userInfo',{ ...userInfo,...res });
+    setStore('userInfo/uid',res.uid);
     initReceive(res.uid);
     initSubscribeInfo(); // 监听数据表变化 
     if (res.loginCount === 0) {  // 新用户第一次登录
