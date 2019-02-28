@@ -103,6 +103,7 @@ export class OpenBox extends Widget {
                 } else {
                     this.props.noPassword = false;
                 }
+                this.paint();
             });
         }
     }
@@ -203,8 +204,7 @@ export class OpenBox extends Widget {
                 this.goLottery(e,boxIndex,order);
                 setStore('flags/firstOpenBox',true);
             }
-            getSTbalance();  // 更新余额
-
+            
         }).catch((err) => {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
@@ -315,6 +315,7 @@ export class OpenBox extends Widget {
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
             popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
+            getSTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);
         } else {
             this.endOpenChest(e,boxIndex,BoxState.emptyBox);

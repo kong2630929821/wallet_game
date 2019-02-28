@@ -71,7 +71,7 @@ export class EarnHome extends Widget {
                 btn:'去备份',
                 addOne:true,                
                 components:'backUp',
-                complete: !!flags.isBackup
+                complete: !!flags.helpWord
             }, {
                 img: '2003.png',
                 title: `去分享秘钥片段`,
@@ -193,7 +193,7 @@ export class EarnHome extends Widget {
                 if (v.state) {
                     this.props.noviceTask[v.id - 1].complete = true;
                     if (v.id === 2) {
-                        flags.isBackup = true;
+                        flags.helpWord = true;
                     } else if (v.id === 3) {
                         flags.sharePart = true;
                     } else if (v.id === 4) {
@@ -414,10 +414,10 @@ walletRegister('flags/level_2_page_loaded', (loaded: boolean) => {
 
 // ================================================新手活动奖励
 
-walletRegister('wallet/isBackup',() => {
+walletRegister('wallet/helpWord',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
-    if (!getStore('flags',{}).isBackup) { 
+    if (!getStore('flags',{}).helpWord) { 
         clientRpcFunc(get_task_award,2,(res:Result) => {
             console.log('备份成功',res);
             if (res && res.reslutCode === 1) {
@@ -426,7 +426,7 @@ walletRegister('wallet/isBackup',() => {
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
                 });
-                setStore('flags/isBackup',true);
+                setStore('flags/helpWord',true);
                 w.updateTasks();
             }
         });
