@@ -6,7 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUsersToGroup } from '../../../../../chat/client/app/net/rpc';
+import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { TURNTABLE_GROUP } from '../../../../../chat/server/data/constant';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -83,16 +83,28 @@ export class Turntable extends Widget {
         if (isLogin()) {
             this.change(0);
             this.initTurntable();
-            this.initData();
             this.ledTimer();
+            getSTbalance();
+            this.props.STbalance = getStore('balance/ST');
+            console.log(this.props.STbalance);
+
+            isFirstFree().then((res:FreePlay) => {
+                this.props.freeCount = res.freeRotary;
+                this.props.watchAdAward = res.adAwardRotary;
+                this.setChestTip(2);
+                if (this.props.STbalance < this.props.selectTurntable.needTicketNum && this.props.freeCount <= 0) {
+                    this.popNextTips();
+                }
+            });
+            queryNoPWD('101', (res, msg) => {
+                if (!res) {
+                    this.props.noPassword = true;
+                } else {
+                    this.props.noPassword = false;
+                }
+                this.paint();
+            });
         }
-        queryNoPWD('101', (res, msg) => {
-            if (!res) {
-                this.props.noPassword = true;
-            } else {
-                this.props.noPassword = false;
-            }
-        });
         
     }
 
@@ -123,11 +135,8 @@ export class Turntable extends Widget {
             console.log(res, msg);
             if (!res) {
                 this.props.noPassword = !this.props.noPassword; 
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
                 this.paint();
-            } else {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
-            }
+            } 
 
         });
         this.closeSetting();
@@ -166,37 +175,35 @@ export class Turntable extends Widget {
     public initData() {
         this.props.STbalance = getStore('balance/ST');
         console.log(this.props.STbalance);
+        this.paint();
         isFirstFree().then((res:FreePlay) => {
             this.props.freeCount = res.freeRotary;
             this.props.watchAdAward = res.adAwardRotary;
             this.setChestTip(2);
-            if (this.props.STbalance < this.props.selectTurntable.needTicketNum && this.props.freeCount <= 0) {
-                this.popNextTips();
-            }
         });
-        this.paint();
     }
 
     /**
      * 开奖
      */
     public goLottery() {
+        if (this.props.isTurn) return;
+
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余额不足
             if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable && this.props.freeCount <= 0) { // 没有免费次数
-                // popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
                 this.popNextTips();
 
                 return;
 
             }
         }
-
         this.props.isTurn = true;
+        // this.startLottery();
+
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
             if (order.oid) { // 非免费机会开奖
                 queryTurntableOrder(order.oid).then((res:any) => {
                     console.log('转盘开奖成功！',res);
-                    popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
                     this.props.freeCount = 0;
                     this.setChestTip(2);
                     this.changeDeg(res);
@@ -204,8 +211,7 @@ export class Turntable extends Widget {
 
                     console.log('查询转盘订单失败',err);
                 });
-                getSTbalance();  // 更新余额
-
+                
             } else {         // 免费机会开奖
                 this.props.freeCount--;
                 this.setChestTip(2);
@@ -266,8 +272,13 @@ export class Turntable extends Widget {
                     btn2:'去充值'// 按钮2
                 },(num) => {
                     if (num === 1) {
-                        inviteUsersToGroup(TURNTABLE_GROUP,[chatUid],(r) => {
+                        inviteUserToGroup(TURNTABLE_GROUP,(r) => {
                             console.log('加群回调TURNTABLE_GROUP---------------',r);
+                            if (r && r.r === 1) {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[2] });
+                            } else {
+                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+                            }
                         });
                     } else {
                         popNew('app-view-wallet-cloudWallet-rechargeKT');
@@ -283,8 +294,9 @@ export class Turntable extends Widget {
     public startLottery() {
         const $turnStyle = document.getElementById('turntable').style;
         this.props.isTurn = true;
-        $turnStyle.transition = 'transform 2s linear';
-        $turnStyle.transform = 'rotate(720deg)';
+        $turnStyle.transition = 'transform 2s ease-in';
+        $turnStyle.transform = 'rotate(180deg)';
+        popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
     }
 
     /**
@@ -324,6 +336,7 @@ export class Turntable extends Widget {
             this.endLottery();
             if (resData.awardType !== 9527) {
                 popNew('earn-client-app-components-lotteryModal-lotteryModal', resData);
+                getSTbalance();  // 更新余额
             }
             this.paint();
         }, 7000);
@@ -373,7 +386,7 @@ export class Turntable extends Widget {
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-                    this.refresh();
+                    getSTbalance();   // 更新余额
                 });
                 break;
             case 2:          // 更换宝箱类型
@@ -420,12 +433,6 @@ export class Turntable extends Widget {
         }  
     }
 
-    /**
-     * 刷新页面
-     */
-    public refresh() {
-        getSTbalance();
-    }
     /**
      * 查看历史记录
      */
