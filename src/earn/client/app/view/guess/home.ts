@@ -3,11 +3,18 @@
  */
 
 import { queryNoPWD } from '../../../../../app/api/JSAPI';
+import { register as walletRegister } from '../../../../../app/store/memstore';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { LOLGUESS_GROUP } from '../../../../../chat/server/data/constant';
-import { popNew } from '../../../../../pi/ui/root';
+import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
+import * as store from '../../store/memstore';
+
+// tslint:disable-next-line:no-reserved-keywords
+declare var module: any;
+export const forelet = new Forelet();
+export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class GuessHome extends Widget {
     public ok: () => void;
@@ -32,13 +39,14 @@ export class GuessHome extends Widget {
             }
         ],
         showMoreSetting: false,
-        noPassword: false
+        noPassword: store.getStore('flags').noPassword
     };
 
     public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
         queryNoPWD('101', (res, msg) => {
+            store.setStore('flags/noPassword',!!res);
             if (!res) {
                 this.props.noPassword = true;
             } else {
@@ -86,15 +94,12 @@ export class GuessHome extends Widget {
             state = 1;
         } 
 
-        walletSetNoPSW('101', '15', state, (res, msg) => {
-            console.log(res, msg);
+        walletSetNoPSW('101', '15', state, (res,msg) => {
+            console.log(res,msg);
             if (!res) {
                 this.props.noPassword = !this.props.noPassword; 
-                popNew('app-components1-message-message',{ content:this.config.value.tips[0] });
                 this.paint();
-            } else {
-                popNew('app-components1-message-message',{ content:this.config.value.tips[1] });
-            }
+            } 
 
         });
         this.closeSetting();
@@ -106,4 +111,20 @@ export class GuessHome extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+
+    /**
+     * 刷新免密支付设置状态
+     */
+    public initNoPsw(noPSW:boolean) {
+        this.props.noPassword = noPSW;
+        store.setStore('flags/noPassword',noPSW);
+        this.paint();
+    }
 }
+
+// ==============================================立即执行
+
+walletRegister('flags/noPassword',(r:any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w &&  w.initNoPsw(r);
+});
