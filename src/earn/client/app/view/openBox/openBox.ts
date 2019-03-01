@@ -4,6 +4,7 @@
 
 import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { register as walletRegister } from '../../../../../app/store/memstore';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
@@ -76,7 +77,7 @@ export class OpenBox extends Widget {
         LEDTimer:{},
         watchAdAward:0,
         showMoreSetting: false,
-        noPassword: false
+        noPassword: getStore('flags').noPassword
     };
 
     public create() {
@@ -98,6 +99,7 @@ export class OpenBox extends Widget {
             });
 
             queryNoPWD('101', (res, msg) => {
+                setStore('flags/noPassword',!!res);
                 if (!res) {
                     this.props.noPassword = true;
                 } else {
@@ -136,8 +138,11 @@ export class OpenBox extends Widget {
         walletSetNoPSW('101', '15', state, (res, msg) => {
             console.log(res, msg);
             if (!res) {
+                popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
                 this.props.noPassword = !this.props.noPassword; 
                 this.paint();
+            } else {
+                popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
             }
 
         });
@@ -446,6 +451,15 @@ export class OpenBox extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+
+    /**
+     * 刷新免密支付设置状态
+     */
+    public initNoPsw(noPSW:boolean) {
+        this.props.noPassword = noPSW;
+        setStore('flags/noPassword',noPSW);
+        this.paint();
+    }
 }
 
 // ===================================================== 立即执行
@@ -458,4 +472,8 @@ register('userInfo/uid', (r: any) => {
 register('balance/ST', (r: any) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w && w.initData();
+});
+walletRegister('flags/noPassword',(r:any) => {
+    const w: any = forelet.getWidget(WIDGET_NAME);
+    w &&  w.initNoPsw(r);
 });
