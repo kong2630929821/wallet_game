@@ -1,12 +1,9 @@
 /**
  * digging rule
  */
-import { getStore } from '../../../../../app/store/memstore';
-import { popNewMessage } from '../../../../../app/utils/tools';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Award } from '../../../../server/data/db/item.s';
-import { wathcAdGetAward } from '../../utils/tools';
+import { MineMax } from '../../utils/constants';
 
 export class MiningRule extends Widget {
     public ok:() => void;
@@ -14,12 +11,12 @@ export class MiningRule extends Widget {
     public create() {
         super.create();
         this.props = {
+            mineMax:MineMax,
             getMethod:[
                 {
                     title:{ zh_Hans:'注册：',zh_Hant:'註冊：',en:'' },
-                    desc:{ zh_Hans:'新用户注册即送两把铜镐',zh_Hant:'新用戶註冊即送兩把銅鎬',en:'' },
-                    action:{ zh_Hans:'去注册',zh_Hant:'去註冊',en:'' },
-                    page:'app-view-wallet-create-home'
+                    desc:{ zh_Hans:'新用户注册即送',zh_Hant:'新用戶註冊即送',en:'' },
+                    action:''
                 },{
                     title:{ zh_Hans:'连续登陆：',zh_Hant:'連續登陸：',en:'' },
                     desc:{ zh_Hans:'每日登陆赠送镐，连续登陆赠送更多镐。',zh_Hant:'每日登陸贈送鎬，連續登陸贈送更多鎬。',en:'' },
@@ -37,13 +34,11 @@ export class MiningRule extends Widget {
                 },{
                     title:{ zh_Hans:'提建议：',zh_Hant:'提建議：',en:'' },
                     desc:[{ zh_Hans:'5字以上的建议，即可获得铜镐1-5把',zh_Hant:'5字以上的建議，即可獲得銅鎬1-5把',en:'' },{ zh_Hans:'有效建议可获得银镐5把',zh_Hant:'有效建議可獲得銀鎬5把',en:'' },{ zh_Hans:'建议被采纳获得金镐5把',zh_Hant:'建議被採納獲得金鎬5把',en:'' }],
-                    action:{ zh_Hans:'去提意见',zh_Hant:'去提意見',en:'' },
-                    page:''
+                    action:''
                 },{
                     title:{ zh_Hans:'观看广告：',zh_Hant:'觀看廣告：',en:'' },
                     desc:{ zh_Hans:'每个广告奖励铜镐一把，但是有可能会遇上金银镐哦。',zh_Hant:'每個廣告獎勵銅鎬一把，但是有可能會遇上金銀鎬哦。',en:'' },
-                    action:{ zh_Hans:'看广告',zh_Hant:'看廣告',en:'' },
-                    page:''
+                    action:''
                 }
             ]
         };
@@ -54,19 +49,7 @@ export class MiningRule extends Widget {
 
     public actionClick(e:any,index:number) {
         const page = this.props.getMethod[index].page;
-        if (index === 5) {
-            wathcAdGetAward(1,null,(award:Award) => {
-                console.log('广告关闭  奖励内容 = ',award);
-                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
-            });
-
-            return;
-        }
-        if (index === 0 && getStore('user/id')) {
-            popNewMessage('已有账号');
-        } else {
-            page && popNew(page);
-        }
+        page && popNew(page);
     }
 
 }

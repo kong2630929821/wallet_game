@@ -3,6 +3,7 @@
  */
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
+import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
@@ -308,6 +309,13 @@ export class MiningHome extends Widget {
         this.paint();
     }
 
+    public watchAdAnimateClick(event:any) {
+        const adBillboard = getRealNode(event.node);
+        adBillboard.className = 'adBillboardClick';
+        setTimeout(() => {
+            adBillboard.className = ``;
+        },500);
+    }
     /**
      * 看广告
      */

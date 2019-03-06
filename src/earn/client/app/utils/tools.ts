@@ -1,5 +1,6 @@
 import { chooseAdType, watchAd } from '../../../../app/logic/native';
 import { popNewLoading, popNewMessage } from '../../../../app/utils/tools';
+import { PlayEvent } from '../../../../pi/browser/ad_unoin';
 import { Award } from '../../../server/data/db/item.s';
 import { getAdRewards } from '../net/rpc';
 import { CoinType } from '../xls/dataEnum.s';
@@ -113,16 +114,18 @@ export const wathcAdGetAward = (awardId:number,getAwardCB?:Function,closeCB?:Fun
     const close = popNewLoading('加载中...');
     let adAard:Award = null;
     chooseAdType((adType) => {
-        watchAd(adType,(err,atype,success) => {
+        watchAd(adType,(isSuccess,event,info) => {
+            console.log('ad isSuccess',isSuccess);
+            console.log('ad info',info);
             close.callback(close.widget);
-            if (!err && atype === 0) {// 发放奖励
+            if (event === PlayEvent.Reward) {// 发放奖励
                 getAdRewards(awardId).then((award:Award) => {
                     adAard = award;
                     // popNewMessage('获取到广告奖励');
                     console.log('观看广告获取到的奖励',award);
                     getAwardCB && getAwardCB(award);
                 });
-            } else if (!err && atype === 1) { // 关闭广告 
+            } else if (event === PlayEvent.Close) { // 关闭广告 
                 adAard && closeCB && closeCB(adAard);
             }
         });

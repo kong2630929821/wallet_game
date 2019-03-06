@@ -436,3 +436,23 @@
 .adAwardBgRotate{
     animation: adAwardBgRotate .5s linear infinite;
 }
+
+/* 点击广告牌效果*/
+@keyframes adBillboardClick {
+    from {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+    50%{
+        -webkit-transform: scale(.8);
+        transform: scale(.8); 
+    }
+    to {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+  }
+
+.adBillboardClick{
+    animation: adBillboardClick .5s ease forwards;
+}

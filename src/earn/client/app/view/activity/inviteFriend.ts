@@ -3,6 +3,7 @@
  */
 
 import { makeScreenShot } from '../../../../../app/logic/native';
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { getInviteCode } from '../../../../../app/net/pull';
 import { LuckyMoneyType } from '../../../../../app/store/interface';
 import { copyToClipboard, popNewMessage } from '../../../../../app/utils/tools';
@@ -27,6 +28,7 @@ export class InviteFriend extends Widget {
         super.create();
         const invited = getStore('invited');
         this.props = {
+            walletName:getModulConfig('WALLET_NAME'),
             showPage:'first',
             inviteCode:'******',
             welfareAwards : [],

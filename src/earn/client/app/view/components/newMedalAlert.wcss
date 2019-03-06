@@ -16,7 +16,11 @@
 .medal-bgimg{
 
 }
-
+.avatar{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
 .medal-img{
     position: absolute;
     left: 0px;

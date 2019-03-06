@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" style="z-index: {{it.zIndex}};">
     <div w-class="body">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
-        <div w-class="container" style="{{it.zIndex ? 'background-image:none;' : 'background-image: url(../../res/image/mining_hoe_bg.png);'}}">
+        <div w-class="container">
             <div w-class="holded-hoes" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                     <earn-client-app-components-holdedHoe-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components-holdedHoe-holdedHoe>
@@ -15,14 +15,14 @@
             </div>
             {{if it.countDownStart || (it.hoeSelected !== -1 && it.hoeSelectedLeft !== 0) }}
             <div w-class="count-down-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
-                <div w-class="stopwatch-container"><img src="../../res/image/stopwatch.gif" w-class="stopwatch"/></div>
+                <div w-class="stopwatch-container"><img src="../../res/image/{{it.countDownStart ? 'stopwatch.gif' : 'stopwatch.png'}}" w-class="stopwatch"/></div>
                 <div w-class="count-down-bg">
                     <div w-class="count-down" style="width:{{ (it.countDown / it.countDownMax * 100) + '%'}}; "></div>
                 </div>
             </div>
             {{else}}
             <div style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
-                <img src="../../res/image/select_hoe_tip.png" style="margin: 40px 0 0 21px;"/>
+                <img src="../../res/image/select_hoe_tip.png" style="margin: 20px 0 0 21px;"/>
             </div>
             {{end}}
             <div w-class="award-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
@@ -73,7 +73,7 @@
                 </div>
                 {{end}}
             </div>
-            <div w-class="ad-item" on-tap="watchAdClick">
+            <div w-class="ad-item" on-tap="watchAdClick" on-down="watchAdAnimateClick">
             </div>
             <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>

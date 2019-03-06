@@ -4,10 +4,10 @@
 
 import { makeScreenShot } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { getUserInfo } from '../../../../../app/utils/tools';
 import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getStore } from '../../store/memstore';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 
 interface Props {
@@ -23,7 +23,7 @@ export class NewMedalAlert extends Widget {
         medalImg: '',
         condition: 0, // 勋章获得条件
         medalTitle: {}, // 勋章称号,
-        userInfo:getStore('userInfo')
+        userInfo:getUserInfo()
     };
 
     public setProps(props: Props) {
