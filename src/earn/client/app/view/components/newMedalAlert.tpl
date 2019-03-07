@@ -13,7 +13,7 @@
             {{if it.medalType===0}}
                 <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}{{it.ktShow}}","zh_Hant":"挖礦達到{{it.condition}}{{it.ktShow}}","en":""}</widget>
             {{else}}
-                <p w-class="medal-desc">{{it.condition}}</p>
+                <p w-class="medal-desc">{{it.coinShow}}</p>
             {{end}}
 
             <div w-class="other">

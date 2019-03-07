@@ -6,7 +6,6 @@
 import { popNew } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { getStore, register } from '../store/memstore';
-import { MedalType } from '../view/medal/medalShow';
 import { subscribe } from './init';
 
 // 监听topic
@@ -17,10 +16,10 @@ export const initReceive = (uid: number) => {
             case 'add_medal':   // 勋章提醒
                 const func = ((res) => {
                     return () => {
+                        // tslint:disable-next-line:radix
+                        const medalId = parseInt(res.msg);
                         popNew('earn-client-app-view-components-newMedalAlert', {
-                            // tslint:disable-next-line:radix
-                            medalId:parseInt(res.msg),
-                            medalType:MedalType.rankMedal
+                            medalId
                         });
                     };
                 })(r);
@@ -30,7 +29,7 @@ export const initReceive = (uid: number) => {
                 } else {
                     delayFun = func;
                 }
-                
+                console.log('勋章成就',r);
                 break;
             case 'daily_first_login':
                 const mess = JSON.parse(r.msg);

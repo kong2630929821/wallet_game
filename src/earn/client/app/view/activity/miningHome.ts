@@ -41,7 +41,6 @@ export class MiningHome extends Widget {
 
     public init() {
         this.props = {
-            hoeSelectDefault:false,   // 默认选择锄头
             mineMax:MineMax,                     // 每天最多挖的矿山数
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
             goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
@@ -103,7 +102,7 @@ export class MiningHome extends Widget {
      * 默认选择锄头
      */
     public hoeSelectedDefault() {
-        if (this.props.hoeSelectDefault) return;  // 只有第一次才默认选中锄头
+        if (this.props.hoeSelected !== -1) return;  // 只有第一次才默认选中锄头
         if (this.props.diamondHoe > 0) {
             this.props.hoeSelected =  HoeType.DiamondHoe;
         } else if (this.props.goldHoe > 0) {
@@ -113,7 +112,6 @@ export class MiningHome extends Widget {
         } else {
             this.props.hoeSelected = -1;
         }
-        this.props.hoeSelectDefault = true;
     }
 
     /**
