@@ -4,11 +4,10 @@
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
-import { getUserInfo, hasWallet, popPswBox } from '../../../../../app/utils/tools';
-import { backupMnemonic } from '../../../../../app/utils/walletTools';
+import { getWalletTools, piRequire } from '../../../../../app/utils/commonjsTools';
+import { getUserInfo, hasWallet, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { rippleShow } from '../../../../../chat/client/app/logic/logic';
 import { Json } from '../../../../../pi/lang/type';
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -18,7 +17,6 @@ import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
-import { getCompleteTask, getLoginDays } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -181,13 +179,14 @@ export class EarnHome extends Widget {
     /**
      * 刷新任务数据
      */
-    public updateTasks() {
+    public async updateTasks() {
         if (getStore('userInfo/uid',0) <= 0) {
             return;
         }
-
+        const mods = await piRequire([]);
+        const rpcMod = mods[0];
         if (!getStore('flags').loginAwards) {
-            getLoginDays().then((r:SeriesDaysRes) => {
+            rpcMod.getLoginDays().then((r:SeriesDaysRes) => {
                 this.props.signInDays = r.days;
                 this.props.awards = getSeriesLoginAwards(r.days);
                 setStore('flags/loginAwards',this.props.awards);
@@ -196,7 +195,7 @@ export class EarnHome extends Widget {
                 this.paint();
             });
         }
-        getCompleteTask().then((data:any) => {
+        rpcMod.getCompleteTask().then((data:any) => {
             console.log('home1 getCompleteTask');
             const flags = getStore('flags');
             for (const v of data.taskList) {
@@ -240,7 +239,8 @@ export class EarnHome extends Widget {
         if (page === 'backUp') {  // 去备份
             const psw = await popPswBox();
             if (!psw) return;
-            const ret = await backupMnemonic(psw);
+            const walletToolsMod = await getWalletTools();
+            const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
                 popNew('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
                 // this.backPrePage();
@@ -248,7 +248,8 @@ export class EarnHome extends Widget {
         } else if (page === 'sharePart') { // 分享片段
             const psw = await popPswBox();
             if (!psw) return;
-            const ret = await backupMnemonic(psw);
+            const walletToolsMod = await getWalletTools();
+            const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
                 popNew('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
             }

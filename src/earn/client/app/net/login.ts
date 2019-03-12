@@ -2,14 +2,12 @@
  * 登录
  */
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
+import { piRequire } from '../../../../app/utils/commonjsTools';
 import { popNew } from '../../../../pi/ui/root';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { getStore, initEarnStore, Invited, setStore } from '../store/memstore';
-import { canInviteAward } from '../utils/util';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo } from './rpc';
-import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
 const loginSuccess = (openId:number,res:UserInfo) => {
@@ -18,22 +16,35 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     const userInfo = getStore('userInfo');
     setStore('userInfo',{ ...userInfo,...res });
     setStore('userInfo/uid',res.uid);
-    initReceive(res.uid);
-    initSubscribeInfo(); // 监听数据表变化 
     if (res.loginCount === 0) {  // 新用户第一次登录
         setStore('flags/firstLogin',true);
     }
-    getSTbalance();  // 获取ST余额
-    getKTbalance();  // 获取KT余额   
-    getUserInfo(openId, 'self'); // 获取用户信息
-    getInvitedNumberOfPerson().then((invite:Invited) => {
-        if (canInviteAward(invite)) {
-            popNew('earn-client-app-view-activity-inviteAward');
-        }
-    });  // 获取邀请成功人数
-    getTodayMineNum();  // 获取今天已挖矿山数
-    getRankList();   // 获取挖矿排名
-    getMiningCoinNum(); // 获取累积挖矿
+
+    initReceive(res.uid);
+
+    // 监听数据表变化 
+    piRequire(['earn/client/app/net/subscribedb']).then(mods => {
+        mods[0].initSubscribeInfo(); 
+    });
+    
+    piRequire(['earn/client/app/net/rpc']).then(mods => {
+        const rpcMod = mods[0];
+        rpcMod.getSTbalance();  // 获取ST余额
+        rpcMod.getKTbalance();  // 获取KT余额   
+        rpcMod.getUserInfo(openId, 'self'); // 获取用户信息
+        rpcMod.getInvitedNumberOfPerson().then((invite:Invited) => {
+            piRequire(['earn/client/app/utils/util']).then(mods => {
+                if (mods[0].canInviteAward(invite)) {
+                    popNew('earn-client-app-view-activity-inviteAward');
+                }
+            });
+            
+        });  // 获取邀请成功人数
+        rpcMod.getTodayMineNum();  // 获取今天已挖矿山数
+        rpcMod.getRankList();   // 获取挖矿排名
+        rpcMod.getMiningCoinNum(); // 获取累积挖矿
+    });
+    
 };
 
 // 登录

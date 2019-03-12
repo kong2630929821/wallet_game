@@ -3,13 +3,13 @@
  */
 
 // =====================================导入
+import { piRequire } from '../../../../app/utils/commonjsTools';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { create } from '../../../../pi/net/rpc';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { auto_login, getToken } from '../../../server/rpc/session.p';
 import { AutoLogin, GetToken, Token } from '../../../server/rpc/user.s';
 import { clientRpcFunc, subscribe } from '../net/init';
-import { loginActivity } from './rpc';
 
 // 用户类型
 export enum UserType {
@@ -139,11 +139,13 @@ export class AutoLoginMgr {
             //     cb(r);
             // });
         } else if (userType === UserType.WALLET) {
-            loginActivity(user, pwd, (r: UserInfo) => {
-                this.uid = r.uid.toString();
-                // 获取自动登录凭证
-                this.getToken();
-                cb(r);
+            piRequire(['earn/client/app/net/rpc']).then(mods => {
+                mods[0].loginActivity(user, pwd, (r: UserInfo) => {
+                    this.uid = r.uid.toString();
+                    // 获取自动登录凭证
+                    this.getToken();
+                    cb(r);
+                });
             });
         }
     }

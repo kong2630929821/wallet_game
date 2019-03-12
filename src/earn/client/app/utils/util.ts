@@ -4,13 +4,12 @@
 import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { RegularAwardCfg, SeriesLoginAwardCfg, STConvertCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
-import { getStore, Invited, setStore } from '../store/memstore';
-import { MallType } from '../view/exchange/exchange';
+import { getStore, Invited } from '../store/memstore';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
 import { ActivityType, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
@@ -275,25 +274,6 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (cfg.id >= activityType  && cfg.id < (activityType + 99)) {
-            filterCfgs.push(cfg);
-        }
-    }
-
-    return filterCfgs;
-};
-
-/**
- * 获取虚拟物品兑换列表
- */
-export const getVirtualExchangeList = (typeStr: string,exchangeType?:MallType): any => {
-    const cfgs = getMap(STConvertCfg);
-    const filterCfgs = [];
-    for (const [k, cfg] of cfgs) {
-        if (exchangeType) {
-            if (cfg[typeStr] === exchangeType) {
-                filterCfgs.push(cfg);
-            }
-        } else {
             filterCfgs.push(cfg);
         }
     }

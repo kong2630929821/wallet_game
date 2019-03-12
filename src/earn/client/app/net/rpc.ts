@@ -3,6 +3,7 @@
  */
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
+import { piRequire } from '../../../../app/utils/commonjsTools';
 import { walletPay } from '../../../../app/utils/pay';
 import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, FreePlay, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';

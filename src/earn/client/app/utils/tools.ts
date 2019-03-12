@@ -1,5 +1,5 @@
 import { chooseAdType, watchAd } from '../../../../app/logic/native';
-import { popNewLoading, popNewMessage } from '../../../../app/utils/tools';
+import { popNewLoading } from '../../../../app/utils/tools';
 import { PlayEvent } from '../../../../pi/browser/ad_unoin';
 import { Award } from '../../../server/data/db/item.s';
 import { getAdRewards } from '../net/rpc';
