@@ -13,7 +13,6 @@ import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
-import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
@@ -186,7 +185,7 @@ export class EarnHome extends Widget {
         const mods = await piRequire([]);
         const rpcMod = mods[0];
         if (!getStore('flags').loginAwards) {
-            rpcMod.getLoginDays().then((r:SeriesDaysRes) => {
+            rpcMod.getLoginDays().then((r) => {
                 this.props.signInDays = r.days;
                 this.props.awards = getSeriesLoginAwards(r.days);
                 setStore('flags/loginAwards',this.props.awards);

@@ -3,7 +3,6 @@
  */
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
-import { piRequire } from '../../../../app/utils/commonjsTools';
 import { walletPay } from '../../../../app/utils/pay';
 import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, FreePlay, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
@@ -15,7 +14,6 @@ import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../ser
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
-import { Test } from '../../../server/rpc/test.s';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
@@ -507,7 +505,7 @@ export const getConvertInfo = (id:number) => {
 };
 
 export const addST = () => {
-    clientRpcFunc(bigint_test, null, (r: Test) => {
+    clientRpcFunc(bigint_test, null, (r) => {
         console.log('[活动]rpc-bigint_test---------------', r);
         getSTbalance();
     });
