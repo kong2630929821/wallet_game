@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
     {{: topBarTitle = {"zh_Hans":"验证手机号","zh_Hant":"驗證手機號","en":""} }}	
-    <div style="background:rgb(44, 110, 234);"><app-components1-topBar-topBar2>{text:{{topBarTitle}} }</app-components1-topBar-topBar2></div>
+    <div style="background:rgb(44, 110, 234);"><app-components-topBar-topBar2>{text:{{topBarTitle}} }</app-components-topBar-topBar2></div>
     <div w-class="content" on-scroll="getMoreList">
         <div w-class="main">
             {{: rule = [

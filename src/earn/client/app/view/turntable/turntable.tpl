@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" on-tap="closeSetting"  ev-back-click="backPrePage" ev-next-click="goHistory" ev-next1-click="showSetting">
     {{: topBarTitle = {"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""} }}
-    <app-components1-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",nextImg1:"../../res/image/more_dot_white.png",background:"transparent" }</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",nextImg1:"../../res/image/more_dot_white.png",background:"transparent" }</app-components-topBar-topBar>
     <div w-class="content">
     
         {{% 大转盘标题}}

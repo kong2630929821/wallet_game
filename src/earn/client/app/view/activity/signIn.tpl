@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="closeClick">
-    <app-components1-topBar-topBar>{"title":{zh_Hans:"每日登录",zh_Hant:"每日登錄",en:""},background:"rgba(0,0,0,0)"}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{zh_Hans:"每日登录",zh_Hant:"每日登錄",en:""},background:"rgba(0,0,0,0)"}</app-components-topBar-topBar>
     <div w-class="body">
         <div w-class="head">
             <div w-class="continued"><widget w-tag="pi-ui-lang">{"zh_Hans":"第","zh_Hant":"第","en":""}</widget><span w-class="days">{{ it.signInDays }}</span><widget w-tag="pi-ui-lang">{"zh_Hans":"天","zh_Hant":"天","en":""}</widget></div>

@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
     {{: topBarTitle = {"zh_Hans":"邀请好友","zh_Hant":"邀請好友","en":""} }}
-    <div style="background:#2C6EEA;"><app-components1-topBar-topBar2>{text:{{topBarTitle}} }</app-components1-topBar-topBar2></div>
+    <div style="background:#2C6EEA;"><app-components-topBar-topBar2>{text:{{topBarTitle}} }</app-components-topBar-topBar2></div>
     <div w-class="content" on-scroll="getMoreList">
         <div w-class="share_main">
             <div w-class="share_out">

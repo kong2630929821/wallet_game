@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" on-tap="closeSetting" ev-back-click="backPrePage" ev-next-click="showSetting">
     <div style="background:black;">
         {{: topBarTitle = {"zh_Hans":"LOL赛事竞猜","zh_Hant":"LOL賽事競猜","en":""} }}
-        <widget w-tag="app-components1-topBar-topBar">{title:{{topBarTitle}},nextImg:"../../res/image/more_dot_white.png",background:"transparent"}</widget>
+        <widget w-tag="app-components-topBar-topBar">{title:{{topBarTitle}},nextImg:"../../res/image/more_dot_white.png",background:"transparent"}</widget>
     </div>
 
 

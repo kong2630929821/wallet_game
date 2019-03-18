@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"勋章","zh_Hant":"勳章","en":""} }}
-    <widget w-tag="app-components1-topBar-topBar2">{scrollHeight:0,text:{{topBarTitle}} }</widget>
+    <widget w-tag="app-components-topBar-topBar2">{scrollHeight:0,text:{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col" class="fadein">
         <div class="{{it.isHave?'':'grayscale'}}" id="medalShow" w-class="medal" style="transform:translate( {{it.moveX}}px , {{it.moveY}}px ) scale({{it.imgScale}});transition:{{it.imgScale !== 1?'none':'transform 0.5s ease'}};" >

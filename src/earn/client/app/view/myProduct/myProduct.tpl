@@ -4,7 +4,7 @@
     {{else}}
         {{: topBarTitle = {"zh_Hans":"中奖记录","zh_Hant":"中獎記錄","en":""} }}
     {{end}}
-    <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
+    <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col">
         {{if it.history.length !==0}}

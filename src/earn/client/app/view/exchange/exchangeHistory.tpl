@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":"兑换记录","zh_Hant":"兌換記錄","en":""} }}
-    <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
+    <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col">
         {{if it.historyList.length !==0}}

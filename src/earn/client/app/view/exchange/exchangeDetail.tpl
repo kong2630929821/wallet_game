@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     {{: topBarTitle = {"zh_Hans":it.name,"zh_Hant":it.name,"en":""} }}
-    <widget w-tag="app-components1-topBar-topBar">{"title":{{topBarTitle}} }</widget>
+    <widget w-tag="app-components-topBar-topBar">{"title":{{topBarTitle}} }</widget>
 
     <div w-class="content">
         {{% 顶部图片}}

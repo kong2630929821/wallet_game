@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"嗨豆排名","zh_Hant":"嗨豆排名","en":""} }}
     <div style="background:#110140;padding-bottom: 30px;">
-        <app-components1-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}} }</app-components1-topBar-topBar2>
+        <app-components-topBar-topBar2>{scrollHeight:0,text:{{topBarTitle}} }</app-components-topBar-topBar2>
         <div w-class="content flex-col">
             <div w-class="top-annunciate">
                 <div w-class="notice">

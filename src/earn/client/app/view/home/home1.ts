@@ -5,11 +5,11 @@
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { getWalletTools, piRequire } from '../../../../../app/utils/commonjsTools';
-import { getUserInfo, hasWallet, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
-import { popNew } from '../../../../../pi/ui/root';
+import { popNew3 } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
@@ -226,7 +226,7 @@ export class EarnHome extends Widget {
     public goHotActivity(ind: number) {
         if (!hasWallet()) return;
         const page = this.props.hotActivities[ind].components;
-        popNew(page);
+        popNew3(page);
     }
 
     /**
@@ -241,7 +241,7 @@ export class EarnHome extends Widget {
             const walletToolsMod = await getWalletTools();
             const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
-                popNew('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
+                popNew3('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
                 // this.backPrePage();
             }
         } else if (page === 'sharePart') { // 分享片段
@@ -250,12 +250,12 @@ export class EarnHome extends Widget {
             const walletToolsMod = await getWalletTools();
             const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
-                popNew('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
+                popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
             }
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            popNew(page);            
+            popNew3(page);            
         }
     }
 
@@ -301,12 +301,12 @@ export class EarnHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew('earn-client-app-view-activity-miningRule');
+        popNew3('earn-client-app-view-activity-miningRule');
     }
 
     public goMineRank() {
         if (!hasWallet()) return;
-        popNew('earn-client-app-view-mineRank-mineRank');
+        popNew3('earn-client-app-view-mineRank-mineRank');
     }
     
     /**
@@ -355,17 +355,17 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popNew('earn-client-app-components-newUserLogin-newUserLogin',{
+    popNew3('earn-client-app-components-newUserLogin-newUserLogin',{
         pi_norouter:true,
         awardName:'铁镐',
         awardNum:2
     },() => {
-        popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
             title:'创建钱包成功',
             awardType:2001,
             awardNum:1
         },() => {
-            popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+            popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                 title:'签到奖励',
                 awardType:2001,
                 awardNum:1
@@ -422,7 +422,7 @@ walletRegister('wallet/helpWord',() => {
         clientRpcFunc(get_task_award,2,(res:Result) => {
             console.log('备份成功',res);
             if (res && res.reslutCode === 1) {
-                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'备份成功',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -441,7 +441,7 @@ walletRegister('wallet/sharePart',() => {
         clientRpcFunc(get_task_award,3,(res:Result) => {
             console.log('成功分享片段',res);
             if (res && res.reslutCode === 1) {
-                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'成功分享片段',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -459,7 +459,7 @@ chatStore.register('flags/firstChat',() => {
         clientRpcFunc(get_task_award,4,(res:Result) => {
             console.log('参与聊天',res);
             if (res && res.reslutCode === 1) {
-                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'参与聊天',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -497,7 +497,7 @@ walletRegister('flags/firstRecharge',() => {
         clientRpcFunc(get_task_award,7,(res:Result) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
-                popNew('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'首冲奖励',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count

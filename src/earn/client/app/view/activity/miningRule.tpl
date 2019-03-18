@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backClick">
-    <app-components1-topBar-topBar>{"title":{zh_Hans:"采矿说明",zh_Hant:"採礦說明",en:""}}</app-components1-topBar-topBar>
+    <app-components-topBar-topBar>{"title":{zh_Hans:"采矿说明",zh_Hant:"採礦說明",en:""}}</app-components-topBar-topBar>
     <div w-class="body">
         <div w-class="rule-container">
             <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"矿镐的使用","zh_Hant":"礦鎬的使用","en":""}</widget></div>
