@@ -2,12 +2,11 @@
  * 活动-邀请好友
  */
 
-import { makeScreenShot } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getInviteCode } from '../../../../../app/net/pull';
 import { LuckyMoneyType } from '../../../../../app/store/interface';
 import { copyToClipboard, popNewMessage } from '../../../../../app/utils/tools';
-import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
+import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -92,19 +91,19 @@ export class InviteFriend extends Widget {
         this.paint();
     }
     public shareToWechat() {
-        this.baseShare(ShareToPlatforms.PLATFORM_WEBCHAT);
+        this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
     }
 
     public shareToFriends() {
-        this.baseShare(ShareToPlatforms.PLATFORM_MOMENTS);
+        this.baseShare(SharePlatform.PLATFORM_MOMENTS);
     }
 
     public shareToQQ() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QQ);
+        this.baseShare(SharePlatform.PLATFORM_QQ);
     }
 
     public shareToQQSpace() {
-        this.baseShare(ShareToPlatforms.PLATFORM_QZONE);
+        this.baseShare(SharePlatform.PLATFORM_QZONE);
     }
 
     public copyClick() {
@@ -121,22 +120,23 @@ export class InviteFriend extends Widget {
     
     public baseShare(platform: number) {
         const stp = new ShareToPlatforms();
-
         stp.init();
-        makeScreenShot(() => {
-            stp.shareScreenShot({
-                success: (result) => { 
-                    // console.log();
-                },
-                fail: (result) => { 
-                    // console.log();
-                },
-                platform: platform
-            });
-        },() => {
-            // popNew('app-components-message-message',{ content:this.language.tips[0] });
+        stp.makeScreenShot({
+            success: (result) => { 
+                stp.shareScreenShot({
+                    success: (result) => { 
+                        popNewMessage('分享成功');
+                    },
+                    fail: (result) => { 
+                        // console.log();
+                    },
+                    platform: platform
+                });
+            },
+            fail: (result) => { 
+                // errCB && errCB(result);
+            }
         });
-
     }
     public updateInvited(invited:Invited) {
         this.props.invitedNumberOfPerson = invited.invitedNumberOfPerson;
