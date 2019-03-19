@@ -6,7 +6,7 @@ import { getModulConfig } from '../../../../../app/modulConfig';
 import { copyToClipboard } from '../../../../../app/utils/tools';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getConvertInfo } from '../../net/rpc';
+import { getConvertInfo } from '../../net/rpc_order';
 
 interface Props {
     orderDetail:{        // 订单信息

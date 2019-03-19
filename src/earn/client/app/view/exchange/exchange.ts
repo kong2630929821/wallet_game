@@ -5,7 +5,7 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getExchangeVirtualList } from '../../net/rpc';
+import { getExchangeVirtualList } from '../../net/rpc_order';
 import { isLogin } from '../../utils/util';
 
 // ================================ 导出

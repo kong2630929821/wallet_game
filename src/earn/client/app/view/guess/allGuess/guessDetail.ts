@@ -8,7 +8,8 @@ import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { Props } from '../../../components/guessItem/guessItem';
-import { betGuess, getOneGuessInfo, getSTbalance, queryBetGuess } from '../../../net/rpc';
+import { getOneGuessInfo, getSTbalance, queryBetGuess } from '../../../net/rpc';
+import { betGuess } from '../../../net/rpc_order';
 import { getStore, register } from '../../../store/memstore';
 import { wathcAdGetAward } from '../../../utils/tools';
 

@@ -68,7 +68,7 @@
 
                 <div w-class="welfare-container">
                     {{for i,item of it.noviceTask}}
-                        {{if !item.complete}}
+                        {{if !item.complete && item.show}}
                         <div w-class="welfare-noviceTask-item" >
                             <div>
                                 <div w-class="noviceTask-title">

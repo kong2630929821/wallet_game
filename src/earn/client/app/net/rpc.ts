@@ -3,25 +3,24 @@
  */
 import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
-import { walletPay } from '../../../../app/utils/pay';
-import {  GuessingReq, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
-import { Award, AwardQuery, FreePlay, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
+import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
+import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
-import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query, start_guessing } from '../../../server/rpc/guessingCompetition.p';
+import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, rotary_pay_query, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
+import { get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
-import { coinUnitchange, st2ST, ST2st, timestampFormat, timestampFormatWeek } from '../utils/tools';
+import { coinUnitchange, st2ST, timestampFormat, timestampFormatWeek } from '../utils/tools';
 import { getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
-import { ActivityType, AwardSrcNum, CoinType } from '../xls/dataEnum.s';
+import { AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { clientRpcFunc } from './init';
@@ -148,123 +147,6 @@ export const getTodayMineNum = () => {
     clientRpcFunc(get_todayMineNum, uid, (r: TodayMineNum) => {
         console.log('getTodayMineNum TodayMineNum = ',r);
         setStore('mine/miningedNumber',r.mineNum);
-    });
-};
-
-/**
- * 开宝箱下单
- */
-export const openChest = (activityType: ActivityType) => {
-    return new Promise((resolve, reject) => {
-        const itemType = activityType;
-        clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
-            console.log('[活动]rpc-openChest-resData-------------', r);
-            // if (r.resultNum === 1) {
-            //     getSTbalance();
-            //     resolve(r);
-            // } else {
-            //     // showActError(r.resultNum);
-            //     reject(r);
-            // }
-            if (r.reslutCode === 1) {
-                const order = JSON.parse(r.msg);
-                if (order.oid) { 
-                    walletPay(order,'101','15',(res,msg) => {
-                        console.log('chest PAY',res,order);
-                        
-                        if (!res) {
-                            resolve(order);
-                        } else {
-                            showActError(res);
-                            reject(res);
-                        }
-                    });
-                } else { // 免费机会返回
-                    resolve(order);
-                }
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 开宝箱订单查询
- */
-export const queryChestOrder = (oid:string) => {
-    console.log(oid);
-    
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(box_pay_query, oid, (r: Result) => {
-            console.log('[活动]rpc-queryChestOrder---------------', r);
-            if (r.reslutCode === 1) {
-                const msg = JSON.parse(r.msg);
-                resolve(msg);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 转转盘
- */
-export const openTurntable = (activityType: ActivityType) => {
-    return new Promise((resolve, reject) => {
-        const itemType = activityType;
-
-        clientRpcFunc(st_rotary, itemType, (r: Result) => {
-            console.log('[活动]rpc-openTurntable-resData---------------', r);
-            // if (r.resultNum === 1) {
-            //     getSTbalance();
-            //     resolve(r);
-            // } else {
-            //     showActError(r.resultNum);
-            //     reject(r);
-            // }
-            if (r.reslutCode === 1) {
-                const order = JSON.parse(r.msg);
-                if (order.oid) { 
-                    walletPay(order,'101','15',(res,msg) => {
-                        console.log('chest PAY',res,order);
-                        
-                        if (!res) {
-                            resolve(order);
-                        } else {
-                            showActError(res);
-                            reject(res);
-                        }
-                    });
-                } else { // 免费机会返回
-                    resolve(order);
-                }
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 大转盘订单查询
- */
-export const queryTurntableOrder = (oid:string) => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(rotary_pay_query, oid, (r: Result) => {
-            console.log('[活动]rpc-queryChestOrder---------------', r);
-            if (r.reslutCode === 1) {
-                const msg = JSON.parse(r.msg);
-                resolve(msg);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
     });
 };
 
@@ -405,70 +287,6 @@ export const getShowMedal = () => {
 };
 
 /**
- * 获取虚拟物品兑换列表
- */
-export const getExchangeVirtualList = () => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(get_convert_list, null, (r: Result) => {
-            console.log('[活动]rpc-getExchangeVirtualList--虚拟物品兑换列表---------------', r);
-            if (r.reslutCode === 1) {
-                const list = JSON.parse(r.msg);
-                resolve(list);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 兑换虚拟物品下单
- * @param VirtualId 虚拟物品ID
- */
-export const exchangeVirtual = (VirtualId:number) => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(st_convert, VirtualId, (r: Result) => {
-            console.log('[活动]rpc-exchangeVirtual---------------', r);
-            if (r.reslutCode === 1) {
-                const order = JSON.parse(r.msg);
-                walletPay(order,'101','15',(res,msg) => {
-                    console.log('exchangeVirtual',res,order);
-                        
-                    if (!res) {
-                        resolve(order);
-                    } else {
-                        showActError(res);
-                        reject(res);
-                    }
-                });
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 兑换订单查询
- */
-export const queryExchangeOrder = (oid:string) => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(convert_pay_query, oid, (r: Result) => {
-            console.log('[活动]rpc-queryExchangeOrder---------------', r);
-            if (r.reslutCode === 1) {
-                const msg = JSON.parse(r.msg);
-                resolve(msg);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
  * 获取兑换记录列表
  */
 export const getExchangeHistory = () => {    // TODO
@@ -479,27 +297,6 @@ export const getExchangeHistory = () => {    // TODO
         clientRpcFunc(award_query, awardQuery, (r: any) => {
             console.log('[活动]rpc-getExchangeHistory-resData---------------', r);
             resolve(r);
-        });
-    });
-};
-
-/**
- * 获取虚拟兑换物品信息
- */
-export const getConvertInfo = (id:number) => {
-    
-    return new Promise((resolve, reject) => {
-        
-        clientRpcFunc(get_convert_info, id, (r: any) => {
-            // console.log('[活动]rpc-getConvertInfo-resData---------------', r);
-            if (r.reslutCode === 1) {
-                const msg = JSON.parse(r.msg);
-                console.log('[活动]rpc-getConvertInfo-resData---------------', msg);
-                resolve(msg);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
         });
     });
 };
@@ -541,23 +338,6 @@ export const converInviteAwards = (index:number) => {
     });
 };
 
-/**
- * 活动免费次数
- */
-export const isFirstFree = () => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
-            console.log('[活动]rpc-isFirstFree---------------', r);
-            // if (r.resultNum === 1) {
-            resolve(r);
-            // } else {
-            //     showActError(r.resultNum);
-            //     reject(r);
-            // }
-        });
-    });
-};
-
 // ----------------------------------------------------------------------------------------------------------------------------------------
 // 竞猜rpc通信;
 
@@ -589,35 +369,6 @@ export const getAllGuess = () => {
                 });
                 console.log('比赛信息!!!!!!!!：', resData);
                 resolve(resData);
-            } else {
-                showActError(r.reslutCode);
-                reject(r);
-            }
-        });
-    });
-};
-
-/**
- * 下注竞猜
- */
-export const betGuess = (cid:number,num:number,teamSide:number) => {
-    return new Promise((resolve, reject) => {
-        const guessingReq = new GuessingReq();
-        guessingReq.cid = cid;
-        guessingReq.num = ST2st(num);
-        guessingReq.teamSide = teamSide;
-        clientRpcFunc(start_guessing, guessingReq, (r: Result) => {
-            console.log('[活动]rpc-betGuess---------------', r);
-            if (r.reslutCode === 1) {
-                const order = JSON.parse(r.msg);
-                walletPay(order,'101','15',(res,msg) => {
-                    if (!res) {
-                        resolve(order);
-                    } else {
-                        showActError(res);
-                        reject(res);
-                    }
-                });
             } else {
                 showActError(r.reslutCode);
                 reject(r);

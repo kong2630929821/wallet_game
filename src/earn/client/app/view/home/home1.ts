@@ -4,18 +4,19 @@
 // ================================ 导入
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
-import { getWalletTools, piRequire } from '../../../../../app/utils/commonjsTools';
+import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
-import { popNew3 } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
+import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
+import { getCompleteTask, getLoginDays } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
@@ -43,6 +44,9 @@ export class EarnHome extends Widget {
             ...props
         };
         super.setProps(this.props, oldProps);
+        if (props.isActive) {
+            this.updateTasks();
+        }
     }
 
     /**
@@ -108,31 +112,25 @@ export class EarnHome extends Widget {
             signInDays: flags.signInDays || 0,   // 签到总天数
             awards: flags.loginAwards || getSeriesLoginAwards(1)  // 签到奖励
         };
-        this.initPropsNoviceTask(flags);
-        this.updateTasks();
+        this.initPropsNoviceTask();
     }
 
     /**
      * 初始化任务列表
      */
-    public initPropsNoviceTask(flags:any) {
+    public initPropsNoviceTask() {
+        const wallet = walletGetStore('wallet');
+        const flags = getStore('flags');
         // tslint:disable-next-line:ban-comma-operator
         this.props.noviceTask = [{
-            img: '2001.png',
-            title: '创建钱包',
-            desc: `登陆后可以玩更多游戏`,
-            btn:'创建钱包',
-            addOne:true,                
-            components:'app-view-wallet-create-home',
-            complete: !!walletGetStore('wallet')
-        }, {
             img: '2002.png',
             title: '去备份助记词',
             desc: '助记词是您找回账号的唯一凭证',
             btn:'去备份',
             addOne:true,                
             components:'backUp',
-            complete: !!flags.helpWord
+            complete: !!flags.helpWord,
+            show:wallet && wallet.setPsw
         }, {
             img: '2003.png',
             title: `去分享秘钥片段`,
@@ -140,7 +138,8 @@ export class EarnHome extends Widget {
             btn:'分享片段',
             addOne:true,                
             components:'sharePart',
-            complete: !!flags.sharePart
+            complete: !!flags.sharePart,
+            show:wallet && wallet.setPsw
         }, {
             img: '2001.png',
             title: '参与聊天',
@@ -148,7 +147,8 @@ export class EarnHome extends Widget {
             btn:'去聊天',
             addOne:true,                
             components:'goChat',
-            complete:!!flags.firstChat
+            complete:!!flags.firstChat,
+            show:true
         },{
             img: 'task_gift.png',
             title: '玩一把大转盘',
@@ -156,7 +156,8 @@ export class EarnHome extends Widget {
             btn:'去抽奖',
             addOne:false,
             components:'earn-client-app-view-turntable-turntable',
-            complete: !!flags.firstTurntable
+            complete: !!flags.firstTurntable,
+            show:true
         },{
             img: 'task_gift.png',
             title: '开个初级宝箱',
@@ -164,7 +165,8 @@ export class EarnHome extends Widget {
             btn:'开个宝箱',
             addOne:false,                
             components:'earn-client-app-view-openBox-openBox',
-            complete: !!flags.firstOpenBox
+            complete: !!flags.firstOpenBox,
+            show:true
         },{
             img: '2003.png',
             title: '首次充值成功',
@@ -172,7 +174,8 @@ export class EarnHome extends Widget {
             btn:'去充值',
             addOne:true,
             components:'app-view-wallet-cloudWallet-rechargeKT',
-            complete: !!flags.firstRecharge
+            complete: !!flags.firstRecharge,
+            show:true
         }];
     }
     /**
@@ -182,10 +185,8 @@ export class EarnHome extends Widget {
         if (getStore('userInfo/uid',0) <= 0) {
             return;
         }
-        const mods = await piRequire([]);
-        const rpcMod = mods[0];
         if (!getStore('flags').loginAwards) {
-            rpcMod.getLoginDays().then((r) => {
+            getLoginDays().then((r:SeriesDaysRes) => {
                 this.props.signInDays = r.days;
                 this.props.awards = getSeriesLoginAwards(r.days);
                 setStore('flags/loginAwards',this.props.awards);
@@ -194,7 +195,7 @@ export class EarnHome extends Widget {
                 this.paint();
             });
         }
-        rpcMod.getCompleteTask().then((data:any) => {
+        getCompleteTask().then((data:any) => {
             console.log('home1 getCompleteTask');
             const flags = getStore('flags');
             for (const v of data.taskList) {
@@ -216,6 +217,7 @@ export class EarnHome extends Widget {
                 }
             }
             setStore('flags',flags);
+            this.initPropsNoviceTask();
             this.paint();
         });
     }
@@ -238,7 +240,7 @@ export class EarnHome extends Widget {
         if (page === 'backUp') {  // 去备份
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletTools();
+            const walletToolsMod = await getWalletToolsMod();
             const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
                 popNew3('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
@@ -247,7 +249,7 @@ export class EarnHome extends Widget {
         } else if (page === 'sharePart') { // 分享片段
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletTools();
+            const walletToolsMod = await getWalletToolsMod();
             const ret = await walletToolsMod.backupMnemonic(psw);
             if (ret) {
                 popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
@@ -361,15 +363,9 @@ const firstloginAward = () => {
         awardNum:2
     },() => {
         popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            title:'创建钱包成功',
+            title:'签到奖励',
             awardType:2001,
             awardNum:1
-        },() => {
-            popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                title:'签到奖励',
-                awardType:2001,
-                awardNum:1
-            });
         });
     });
 
@@ -405,6 +401,13 @@ register('flags/firstLogin',() => {
     }
         
 });
+
+walletRegister('wallet', () => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    w && w.initPropsNoviceTask();
+    w && w.paint();
+});
+
 // 二级目录资源加载完成
 walletRegister('flags/level_3_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {

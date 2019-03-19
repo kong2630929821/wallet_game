@@ -5,7 +5,7 @@
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
-import { exchangeVirtual, queryExchangeOrder } from '../../net/rpc';
+import { exchangeVirtual, queryExchangeOrder } from '../../net/rpc_order';
 
 interface Props {
     STcout:number;
