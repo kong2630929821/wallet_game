@@ -2,7 +2,9 @@
  * 挖矿排名
  */
 
+import { uploadFileUrlPrefix } from '../../../../../app/config';
 import { getUserList } from '../../../../../app/net/pull';
+import { getUserInfo } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -23,21 +25,10 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class MineRank extends Widget {
     public ok: () => void;
     public props: any = {
-        notice: [
-            // '一颗大蒜苗挖到了0.1ETH',
-            // '二颗大蒜苗挖到了0.2ETH',
-            // '三颗大蒜苗挖到了0.3ETH',
-            // '四颗大蒜苗挖到了0.4ETH',
-            // '五颗大蒜苗挖到了0.5ETH'
-        ],
+        notice: [],
         noticeShow: 0,
         myRank: { rank: 0, avatar: '', userName: '......', ktNum: 0, medal: null },
-        rankList: [
-            // { rank: 1,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
-            // { rank: 2,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
-            // { rank: 3,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null},
-            // { rank: 4,avatar: '', userName: "啊实打实的", ktNum: 500 , medal: null}
-        ],
+        rankList: [],
         topbarList: [
             {
                 name: 'allRankList',
@@ -85,11 +76,12 @@ export class MineRank extends Widget {
      * 更新props数据
      */
     public initData() {
+        const userInfo = getUserInfo();
         if (this.props.topbarSel === 0) {
             getRankList().then(async (res: any) => {
                 this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = getStore('userInfo/avatar');
-                this.props.myRank.userName = getStore('userInfo/name');
+                this.props.myRank.avatar = userInfo.avatar;
+                this.props.myRank.userName = userInfo.nickName;
                 this.props.myRank.rank = res.myNum;
                 this.props.myRank.ktNum = formateCurrency(res.myKTNum);
                 this.props.myRank.medal = res.myMedal;
@@ -98,11 +90,10 @@ export class MineRank extends Widget {
         } else {
             const chatIds = new ChatIDs();
             chatIds.chatIDs = getAllFriendIDs();
-            debugger;
             getFriendsKTTop(chatIds).then(async (res: any) => {
                 this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = getStore('userInfo/avatar');
-                this.props.myRank.userName = getStore('userInfo/name');
+                this.props.myRank.avatar = userInfo.avatar;
+                this.props.myRank.userName = userInfo.nickName;
                 this.props.myRank.rank = res.myNum;
                 this.props.myRank.ktNum = formateCurrency(res.myKTNum);
                 this.props.myRank.medal = res.myMedal;
@@ -126,7 +117,7 @@ export class MineRank extends Widget {
                 const element = data[i];
                 const elementUser = userInfoList[i];
                 const res = {
-                    avatar: elementUser.avatar,
+                    avatar: elementUser.avatar ? `${uploadFileUrlPrefix}${elementUser.avatar}` : 'earn/client/app/res/image1/default_head.png',
                     userName: elementUser.nickName,
                     rank: i + 1,
                     ktNum: formateCurrency(element.miningKTMap.ktNum),

@@ -319,16 +319,16 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test');
+        popNew('earn-client-app-test-test');
         // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
-        wathcAdGetAward(1,null,(award:Award) => {
-            console.log('广告关闭  奖励内容 = ',award);
-            setTimeout(() => {
-                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
-            },300);
+        // wathcAdGetAward(1,null,(award:Award) => {
+        //     console.log('广告关闭  奖励内容 = ',award);
+        //     setTimeout(() => {
+        //         popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+        //     },300);
             
-        });
+        // });
     }
 }
 

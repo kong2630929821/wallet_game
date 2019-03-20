@@ -80,10 +80,12 @@
 .top2-avatar{
     width: 150px;
     height: 150px;
+    border-radius: 50%;
 }
 .top1-avatar{
     width: 200px;
     height: 200px;
+    border-radius: 50%;
 }
 .crown2{
     position: absolute;
