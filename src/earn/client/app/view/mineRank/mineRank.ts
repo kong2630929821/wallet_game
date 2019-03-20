@@ -11,7 +11,6 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
 import { getFriendsKTTop, getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
-import { getStore, register } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
 import { formateCurrency } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
