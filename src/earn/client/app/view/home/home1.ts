@@ -181,6 +181,7 @@ export class EarnHome extends Widget {
     /**
      * 刷新任务数据
      */
+
     public async updateTasks() {
         if (getStore('userInfo/uid',0) <= 0) {
             return;
