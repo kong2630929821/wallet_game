@@ -331,7 +331,7 @@ export class Turntable extends Widget {
             }
         });
 
-        $turnStyle.transition = 'transform 7s ease-in-out';
+        $turnStyle.transition = 'transform 2.5s ease-in-out';
         $turnStyle.transform = `rotate(${this.props.turnNum + 2880}deg)`;
 
         setTimeout(() => {
@@ -341,7 +341,7 @@ export class Turntable extends Widget {
                 getSTbalance();  // 更新余额
             }
             this.paint();
-        }, 7000);
+        }, 2500);
     }
 
     /**

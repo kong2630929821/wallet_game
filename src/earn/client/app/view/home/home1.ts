@@ -110,7 +110,8 @@ export class EarnHome extends Widget {
             miningMedalId:mine.miningMedalId,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
             signInDays: flags.signInDays || 0,   // 签到总天数
-            awards: flags.loginAwards || getSeriesLoginAwards(1)  // 签到奖励
+            awards: flags.loginAwards || getSeriesLoginAwards(1),  // 签到奖励
+            animationed:true // 动画完成
         };
         this.initPropsNoviceTask();
     }
@@ -181,6 +182,7 @@ export class EarnHome extends Widget {
     /**
      * 刷新任务数据
      */
+
     public async updateTasks() {
         if (getStore('userInfo/uid',0) <= 0) {
             return;
@@ -265,6 +267,7 @@ export class EarnHome extends Widget {
      * 挖矿点击展开
      */
     public miningClick() {
+        if (!this.props.animationed) return;  // 如果没完成就禁用打开挖矿
         if (!hasWallet()) return;
         this.props.upAnimate = 'put-out-up';
         this.props.downAnimate = 'put-out-down';
@@ -332,12 +335,14 @@ export class EarnHome extends Widget {
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (!earnHomeHidden) {
+        w.props.animationed = false;  // 当它在执行时把开关关掉挖矿
         w.props.upAnimate = 'reset-put-out';
         w.props.downAnimate = 'reset-put-out';
         setTimeout(() => {
             w.props.upAnimate = '';
             w.props.downAnimate = '';
             w.props.animateStart = false;
+            w.props.animationed = true; // 执行完了在打开挖矿
             w.paint();
         },500);
         w.paint();
