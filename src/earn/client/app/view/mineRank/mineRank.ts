@@ -79,7 +79,7 @@ export class MineRank extends Widget {
         if (this.props.topbarSel === 0) {
             getRankList().then(async (res: any) => {
                 this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = userInfo.avatar;
+                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                 this.props.myRank.userName = userInfo.nickName;
                 this.props.myRank.rank = res.myNum;
                 this.props.myRank.ktNum = formateCurrency(res.myKTNum);
@@ -91,7 +91,7 @@ export class MineRank extends Widget {
             chatIds.chatIDs = getAllFriendIDs();
             getFriendsKTTop(chatIds).then(async (res: any) => {
                 this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = userInfo.avatar;
+                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                 this.props.myRank.userName = userInfo.nickName;
                 this.props.myRank.rank = res.myNum;
                 this.props.myRank.ktNum = formateCurrency(res.myKTNum);
