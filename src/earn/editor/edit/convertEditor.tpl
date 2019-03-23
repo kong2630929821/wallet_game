@@ -44,6 +44,7 @@
         </div>
         <button on-tap="addProduct" w-class="btn">添加商品</button>
         <button on-tap="doModify" w-class="btn">修改商品</button>
+        <button on-tap="addProducts" w-class="btn">批量添加商品</button>
     </div>
     <div>
         添加兑换码：
