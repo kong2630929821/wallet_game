@@ -98,15 +98,15 @@ export const oauth_alter_balance = (itemType:number, oid:string, count:number) =
 };
 
 // 第三方应用生成订单
-export const wallet_unifiedorder = (oid:string, stNum: number, body: string) => {
+export const wallet_unifiedorder = (oid:string, coinNum: number, body: string, coin_type: number) => {
     const appid = WALLET_APPID;
     const mch_id = WALLET_MCH_ID;
-    const total_fee = (stNum * ST_UNIT_NUM);
+    const total_fee = coin_unit_transform(coin_type, coinNum);
     const out_trade_no = oid;
     const nonce_str = `${randomInt(100000, 999999)}`;
-    const signBody = { appid: appid, mch_id: mch_id, body: body, out_trade_no: out_trade_no, total_fee: total_fee, nonce_str: nonce_str };
+    const signBody = { appid: appid, mch_id: mch_id, body: body, out_trade_no: out_trade_no, fee_type: coin_type, total_fee: total_fee, nonce_str: nonce_str };
     const signStr = sign(json_uri_sort(signBody), WALLET_SERVER_KEY);
-    const requestBody:any = { appid: appid, mch_id: mch_id, sign: signStr, body: body, out_trade_no: out_trade_no, total_fee: total_fee, nonce_str: nonce_str };
+    const requestBody:any = { appid: appid, mch_id: mch_id, sign: signStr, body: body, out_trade_no: out_trade_no, fee_type: coin_type, total_fee: total_fee, nonce_str: nonce_str };
     const url = `${WALLET_SERVER_URL}${WALLET_API_UNIFIEDORDER}`;
     const client = http.createClient();
     http.addHeader(client, 'content-type', 'application/json');
@@ -149,4 +149,26 @@ export const wallet_order_query = (oid:string) => {
     } else {
         return;
     }
+};
+
+// 平台到钱包的币种单位转换
+export const coin_unit_transform = (coin_type: number, coin_num: number): string => {
+    let coinNum: string;
+    switch (coin_type) {
+        case ST_WALLET_TYPE:
+            coinNum = (coin_num * ST_UNIT_NUM).toString();
+            break;
+        case KT_WALLET_TYPE:
+            coinNum = (coin_num * KT_UNIT_NUM).toString();
+            break;
+        case BTC_WALLET_TYPE:
+            coinNum = (coin_num * BTC_UNIT_NUM).toString();
+            break;
+        case ETH_WALLET_TYPE:
+            coinNum = (coin_num * ETH_UNIT_NUM).toString();
+        default:
+            coinNum = coin_num.toString();
+    }
+
+    return coinNum;
 };

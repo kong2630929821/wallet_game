@@ -2,7 +2,7 @@ import { Widget } from '../../../pi/widget/widget';
 
 import { clientRpcFunc } from '../../client/app/net/init';
 
-import { add_convert, add_convert_info, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
+import { add_convert, add_convert_info, add_convert_infos, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
 
 import { Result } from '../../server/data/db/guessing.s';
 
@@ -70,6 +70,12 @@ export class ConvertEditor extends Widget {
 
     public addProduct() {
         add_product(this.props.productId, this.props.stNum, this.props.productName, this.props.value, this.props.desc, this.props.progress, this.props.tips, this.props.level, this.props.pic);
+        this.initData();
+        this.paint();
+    }
+
+    public addProducts() {
+        add_products();
         this.initData();
         this.paint();
     }
@@ -283,9 +289,9 @@ const add_converts = (convert: string, productNum: number, deadTime: string) => 
 };
 
 // 批量添加商品
-const add_products = (addProductList: ConvertAwardList) => {
+const add_products = () => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(add_convert_info, addProductList, (r: Result) => {
+        clientRpcFunc(add_convert_infos, null, (r: Result) => {
             console.log(r);
             if (r.reslutCode === RESULT_SUCCESS) {
                 alert('添加商品成功');

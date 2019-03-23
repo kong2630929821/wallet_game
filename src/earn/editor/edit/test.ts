@@ -307,7 +307,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 2, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 3, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -481,11 +481,11 @@ const props = {
         {
             name: '查看奖章',
             func: () => { get_medal_test(); }
-        }
+        },
         {
             name: '好友排行',
             func: () => { get_friendTop_test(); }
-        // }
+        }
         // {
         //     name: '兑换',
         //     func: () => { convert_test(); }
