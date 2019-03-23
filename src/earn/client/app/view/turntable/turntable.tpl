@@ -67,7 +67,7 @@
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money1" on-tap="btnClick(e,0)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会","zh_Hant":"更多機會","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
                 </div>
             </div>
 

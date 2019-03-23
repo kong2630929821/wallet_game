@@ -242,44 +242,45 @@ export class OpenBox extends Widget {
                     popNew('app-view-wallet-cloudWallet-rechargeKT');
                 }
             });
-        } else {
-            const chatUid = chatStore.getStore('uid');
-            const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
-            if (group.indexOf(OPENBOX_GROUP) > -1) {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                    img:'../../res/image/no_money.png',
-                    btn1:'去聊天',// 按钮1 
-                    btn2:'去充值'// 按钮2
-                },(num) => {
-                    if (num === 1) {
-                        // TODO 去聊天
-                        console.log('开宝箱去聊天');
-                    } else {
-                        popNew('app-view-wallet-cloudWallet-rechargeKT');
-                    }
-                });
-            } else {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                    img:'../../res/image/no_money.png',
-                    btn1:'加入游戏聊天群组',// 按钮1 
-                    btn2:'去充值'// 按钮2
-                },(num) => {
-                    if (num === 1) {
-                        inviteUserToGroup(OPENBOX_GROUP,(r) => {
-                            console.log('加群回调OPENBOX_GROUP---------------',r);
-                            if (r && r.r === 1) {
-                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
-                            } else {
-                                popNew('app-components1-message-message',{ content:this.config.value.tips[4] });
-                            }
-                        });
-                    } else {
-                        popNew('app-view-wallet-cloudWallet-rechargeKT');
-                    }
-                });
-            }
+        } 
+        // else {
+        //     const chatUid = chatStore.getStore('uid');
+        //     const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
+        //     if (group.indexOf(OPENBOX_GROUP) > -1) {
+        //         popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+        //             img:'../../res/image/no_money.png',
+        //             btn1:'去聊天',// 按钮1 
+        //             btn2:'去充值'// 按钮2
+        //         },(num) => {
+        //             if (num === 1) {
+        //                 // TODO 去聊天
+        //                 console.log('开宝箱去聊天');
+        //             } else {
+        //                 popNew('app-view-wallet-cloudWallet-rechargeKT');
+        //             }
+        //         });
+        //     } else {
+        //         popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+        //             img:'../../res/image/no_money.png',
+        //             btn1:'加入游戏聊天群组',// 按钮1 
+        //             btn2:'去充值'// 按钮2
+        //         },(num) => {
+        //             if (num === 1) {
+        //                 inviteUserToGroup(OPENBOX_GROUP,(r) => {
+        //                     console.log('加群回调OPENBOX_GROUP---------------',r);
+        //                     if (r && r.r === 1) {
+        //                         popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+        //                     } else {
+        //                         popNew('app-components1-message-message',{ content:this.config.value.tips[4] });
+        //                     }
+        //                 });
+        //             } else {
+        //                 popNew('app-view-wallet-cloudWallet-rechargeKT');
+        //             }
+        //         });
+        //     }
            
-        }
+        // }
     }
 
     /**
@@ -426,9 +427,9 @@ export class OpenBox extends Widget {
                 wathcAdGetAward(4,(award) => {
                     this.props.freeCount = award.freeBox;
                     this.props.watchAdAward = award.adAwardBox;
+                    popNewMessage(this.config.value.chestTips[2]);
                     this.setChestTip(2);
-                });
-                popNewMessage(this.config.value.chestTips[2]);
+                }); 
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
