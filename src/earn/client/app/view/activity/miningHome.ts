@@ -319,7 +319,7 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test');
+        // popNew('earn-client-app-test-test'); //测试锄头
         // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {

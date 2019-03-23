@@ -48,6 +48,7 @@ export class MineRank extends Widget {
             if (r) {
                 console.log('[活动]挖矿特殊奖励公告----------------', r);
                 const userInfo:any = await getUserList([r.openid],1);
+                console.log('=====================',userInfo);
                 const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
                 this.props.notice.push(dataStr);
                 // this.props.notice.shift();
@@ -116,6 +117,7 @@ export class MineRank extends Widget {
                 const element = data[i];
                 const elementUser = userInfoList[i];
                 const res = {
+                    // tslint:disable-next-line:max-line-length
                     avatar: elementUser.avatar ? `${uploadFileUrlPrefix}${elementUser.avatar}` : 'earn/client/app/res/image1/default_head.png',
                     userName: elementUser.nickName,
                     rank: i + 1,

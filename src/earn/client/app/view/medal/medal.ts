@@ -70,7 +70,6 @@ export class Medal extends Widget {
         const medalList = getMedalList(CoinType.KT, 'coinType');
         // this.props.mineMedal = computeRankMedal();
         const ktNum = getStore('balance/KT'); 
-        
         for (const element1 of this.props.medalList) {
             element1.medal = [];
             medalList.forEach((element,i) => {

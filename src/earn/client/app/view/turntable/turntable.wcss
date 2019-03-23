@@ -236,3 +236,16 @@
     justify-content: center;
     font-size: 32px;
 }
+.sale-money1{
+    height:60px;
+    width: 234px;
+    padding: 0px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:32px;
+    color:#FFFFFF;
+    background:#222222;
+    border-radius:30px;
+    border:7px solid #FFFFFF;
+}

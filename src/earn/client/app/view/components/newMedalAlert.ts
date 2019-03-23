@@ -4,7 +4,7 @@
 
 import { makeScreenShot } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { getUserInfo } from '../../../../../app/utils/tools';
+import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
 import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -51,18 +51,40 @@ export class NewMedalAlert extends Widget {
     }
 
     public shareWX() {
-        makeScreenShot(() => {
-            const stp = new ShareToPlatforms();
-            stp.init();
-            stp.shareScreenShot({
-                success: (result) => { console.log('share success callback'); },
-                fail: (result) => { console.log('share fail callback'); },
-                platform: ShareToPlatforms.PLATFORM_WEBCHAT
-            });
-        }, () => {
-            popNew('app-components1-message-message', { content: this.config.value.tips });
-        });
+        this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
+        // makeScreenShot(() => {
+        //     const stp = new ShareToPlatforms();
+        //     stp.init();
+        //     stp.shareScreenShot({
+        //         success: (result) => { console.log('share success callback'); },
+        //         fail: (result) => { console.log('share fail callback'); },
+        //         platform: ShareToPlatforms.PLATFORM_WEBCHAT
+        //     });
+        // }, () => {
+        //     popNew('app-components1-message-message', { content: this.config.value.tips });
+        // });
         
+    }
+
+    public baseShare(platform: number) {
+        const stp = new ShareToPlatforms();
+        stp.init();
+        stp.makeScreenShot({
+            success: (result) => { 
+                stp.shareScreenShot({
+                    success: (result) => { 
+                        popNewMessage('分享成功');
+                    },
+                    fail: (result) => { 
+                        // console.log();
+                    },
+                    platform: platform
+                });
+            },
+            fail: (result) => { 
+                popNew('app-components1-message-message', { content: this.config.value.tips });
+            }
+        });
     }
 
     /**
