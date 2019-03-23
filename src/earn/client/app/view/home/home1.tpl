@@ -95,6 +95,7 @@
                 </div>
                 <div w-class="welfare-container">
                     {{for i,item of it.hotActivities}}
+                    {{if !item.hidden}}
                     <div w-class="welfare-activities-item" on-tap="goHotActivity({{i}})" class="welfare-activities-item" on-down="onShow">
                         <img src="../../res/image1/{{item.img}}"/>
                         <div w-class="welfare-box">
@@ -102,6 +103,7 @@
                             <div w-class="welfare-desc">{{item.desc}}</div>
                         </div>
                     </div>
+                    {{end}}
                     {{end}}
                 </div>
             </div>

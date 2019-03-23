@@ -56,7 +56,6 @@ export class EarnHome extends Widget {
         console.log('hom1 init called');
         const mine = getStore('mine');
         const ktShow = getModulConfig('KT_SHOW');
-        const stShow = getModulConfig('ST_SHOW');
         const flags = getStore('flags');
         this.props = {
             ...this.props,
@@ -65,37 +64,6 @@ export class EarnHome extends Widget {
             refresh: false,
             avatar: getUserInfo().avatar ||  '../../res/image1/default_avatar.png',
             // 热门活动
-            hotActivities: [{
-                img: 'btn_yun_5.png',
-                title: '领分红',
-                desc: `根据${ktShow}领分红`,
-                components:'app-view-earn-mining-dividend'
-            }, {
-                img: 'btn_yun_6.png',
-                title: '发红包',
-                desc: '试试朋友的手气',
-                components:'app-view-earn-redEnvelope-writeRedEnv'
-            }, {
-                img: 'btn_yun_7.png',
-                title: `充${ktShow}送${stShow}`,
-                desc: '赠品可以玩游戏',
-                components:'app-view-wallet-cloudWallet-rechargeKT'
-            }, {
-                img: 'btn_yun_8.png',
-                title: '兑换码',
-                desc: '兑换礼物和红包',
-                components:'app-view-earn-exchange-exchange'
-            },{
-                img: 'btn_yun_3.png',
-                title: '邀请好友',
-                desc: '累计邀请有好礼',
-                components:'earn-client-app-view-activity-inviteFriend'
-            },{
-                img: 'btn_yun_4.png',
-                title: '验证手机',
-                desc: '确认是真实用户',
-                components:'app-view-mine-setting-phone'
-            }],
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
             diamondHoe: getHoeCount(HoeType.DiamondHoe),
@@ -113,9 +81,46 @@ export class EarnHome extends Widget {
             awards: flags.loginAwards || getSeriesLoginAwards(1),  // 签到奖励
             animationed:true // 动画完成
         };
+        this.initHotActivities();
         this.initPropsNoviceTask();
     }
 
+    public initHotActivities() {
+        const ktShow = getModulConfig('KT_SHOW');
+        const stShow = getModulConfig('ST_SHOW');
+        this.props.hotActivities =  [{
+            img: 'btn_yun_5.png',
+            title: '领分红',
+            desc: `根据${ktShow}领分红`,
+            components:'app-view-earn-mining-dividend'
+        }, {
+            img: 'btn_yun_6.png',
+            title: '发红包',
+            desc: '试试朋友的手气',
+            components:'app-view-earn-redEnvelope-writeRedEnv'
+        }, {
+            img: 'btn_yun_7.png',
+            title: `充${ktShow}送${stShow}`,
+            desc: '赠品可以玩游戏',
+            components:'app-view-wallet-cloudWallet-rechargeKT'
+        }, {
+            img: 'btn_yun_8.png',
+            title: '兑换码',
+            desc: '兑换礼物和红包',
+            components:'app-view-earn-exchange-exchange'
+        },{
+            img: 'btn_yun_3.png',
+            title: '邀请好友',
+            desc: '累计邀请有好礼',
+            components:'earn-client-app-view-activity-inviteFriend'
+        },{
+            img: 'btn_yun_4.png',
+            title: '验证手机',
+            desc: '确认是真实用户',
+            components:'app-view-mine-setting-phone',
+            hidden:!!getUserInfo().phoneNumber
+        }];
+    }
     /**
      * 初始化任务列表
      */
@@ -528,6 +533,7 @@ walletRegister('user/info',() => {
     if (w) {
         // tslint:disable-next-line:ban-comma-operator
         w.props.avatar = getUserInfo().avatar ||  '../../res/image1/default_avatar.png';
+        w.initHotActivities();
         w.paint();
     }
 });
