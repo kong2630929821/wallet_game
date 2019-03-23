@@ -336,6 +336,13 @@ export class EarnHome extends Widget {
 
 // ===================================================== 本地
 // ===================================================== 立即执行
+register('userInfo/isLogin',(isLogin:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (isLogin && w) {
+        w.props.isLogin = true;
+        w.paint();
+    }
+});
 
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
