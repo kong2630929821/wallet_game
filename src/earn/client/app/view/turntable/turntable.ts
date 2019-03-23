@@ -6,6 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { register as walletRegister } from '../../../../../app/store/memstore';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
+import { popNewMessage } from '../../../../../app/utils/tools';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { TURNTABLE_GROUP } from '../../../../../chat/server/data/constant';
@@ -42,6 +43,7 @@ interface Props {
     showMoreSetting: boolean; // 展开设置免密支付
     noPassword: boolean; // 免密支付是否打开
 }
+// tslint:disable-next-line:completed-docs
 export class Turntable extends Widget {
     public ok: () => void;
 
@@ -94,9 +96,10 @@ export class Turntable extends Widget {
                 this.props.freeCount = res.freeRotary;
                 this.props.watchAdAward = res.adAwardRotary;
                 this.setChestTip(2);
-                if (this.props.STbalance < this.props.selectTurntable.needTicketNum && this.props.freeCount <= 0) {
-                    this.popNextTips();
-                }
+                // 首次进入不需要判断
+                // if (this.props.STbalance < this.props.selectTurntable.needTicketNum && this.props.freeCount <= 0) {
+                //     this.popNextTips();
+                // }
             });
             queryNoPWD('101', (res, msg) => {
                 setStore('flags/noPassword',!!res);
@@ -190,9 +193,8 @@ export class Turntable extends Widget {
      */
     public goLottery() {
         if (this.props.isTurn) return;
-
         if (this.props.STbalance < this.props.selectTurntable.needTicketNum) {    // 余额不足
-            if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable && this.props.freeCount <= 0) { // 没有免费次数
+            if (this.props.freeCount <= 0) { // 没有免费次数
                 this.popNextTips();
 
                 return;
@@ -201,7 +203,6 @@ export class Turntable extends Widget {
         }
         this.props.isTurn = true;
         // this.startLottery();
-
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
             if (order.oid) { // 非免费机会开奖
                 queryTurntableOrder(order.oid).then((res:any) => {
@@ -209,6 +210,7 @@ export class Turntable extends Widget {
                     this.props.freeCount = 0;
                     this.setChestTip(2);
                     this.changeDeg(res);
+                    this.paint();
                 }).catch(err => {
 
                     console.log('查询转盘订单失败',err);
@@ -385,6 +387,7 @@ export class Turntable extends Widget {
                     this.props.watchAdAward = award.adAwardRotary;
                     this.setChestTip(2);
                 });
+                popNewMessage(this.config.value.turntableTips[2]);
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
@@ -426,6 +429,7 @@ export class Turntable extends Widget {
                 if (this.props.freeCount > 0 && this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
                     this.setChestTip(0);
                 } else {
+                    // tslint:disable-next-line:max-line-length
                     this.props.showTip = { zh_Hans:`售价: ${this.props.selectTurntable.needTicketNum}${stShow}/个`,zh_Hant:`售價: ${this.props.selectTurntable.needTicketNum}${stShow}/個`,en:'' };
                 }
                 this.paint();

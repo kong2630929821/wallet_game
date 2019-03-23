@@ -69,7 +69,7 @@
                 <div w-class="welfare-container">
                     {{for i,item of it.noviceTask}}
                         {{if !item.complete && item.show}}
-                        <div w-class="welfare-noviceTask-item" >
+                        <div w-class="welfare-noviceTask-item"  on-tap="goNoviceTask({{i}})">
                             <div>
                                 <div w-class="noviceTask-title">
                                     {{item.title}}
@@ -80,7 +80,7 @@
                                 </div>
                                 <div w-class="welfare-desc">{{item.desc}}</div>
                             </div>
-                            <div w-class="welfare-btn" on-tap="goNoviceTask({{i}})">{{item.btn}}</div>
+                            <div w-class="welfare-btn">{{item.btn}}</div>
                         </div>
                         {{end}}
                     {{end}}

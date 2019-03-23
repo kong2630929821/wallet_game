@@ -6,6 +6,7 @@ import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { register as walletRegister } from '../../../../../app/store/memstore';
 import { walletSetNoPSW } from '../../../../../app/utils/pay';
+import { popNewMessage } from '../../../../../app/utils/tools';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
 import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
@@ -40,6 +41,7 @@ interface Props {
     watchAdAward:number; // 看广告已经获得的免费次数
     showMoreSetting: boolean; // 展开设置免密支付
     noPassword: boolean; // 免密支付是否打开
+    adCount:number;// 看广告次数
 }
 
 enum BoxState {
@@ -78,7 +80,8 @@ export class OpenBox extends Widget {
         LEDTimer:{},
         watchAdAward:0,
         showMoreSetting: false,
-        noPassword: getStore('flags').noPassword
+        noPassword: getStore('flags').noPassword,
+        adCount:10
     };
 
     public create() {
@@ -93,9 +96,10 @@ export class OpenBox extends Widget {
                 this.props.freeCount = res.freeBox;
                 this.props.watchAdAward = res.adAwardBox;
                 this.setChestTip(2);
-                if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
-                    this.popNextTips();
-                }            
+                // 首次进入不需要判断
+                // if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
+                //     this.popNextTips();
+                // }            
 
             });
 
@@ -187,7 +191,7 @@ export class OpenBox extends Widget {
             return;
         }
         if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 余额不足
-            if (this.props.selectChest.type === ActivityType.PrimaryChest && this.props.freeCount <= 0) { // 没有免费次数
+            if (this.props.freeCount <= 0) { // 没有免费次数
                 // popNew('app-components1-message-message', { content: this.config.value.tips[0] });
                 this.popNextTips();
                 
@@ -424,6 +428,7 @@ export class OpenBox extends Widget {
                     this.props.watchAdAward = award.adAwardBox;
                     this.setChestTip(2);
                 });
+                popNewMessage(this.config.value.chestTips[2]);
                 break;
             case 2:          // 更换宝箱类型
                 this.change(eventValue);
