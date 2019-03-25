@@ -6,6 +6,7 @@ import { randomInt } from '../../../pi/util/math';
 import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
+import { STConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
@@ -142,7 +143,7 @@ export const st_rotary = (rotaryType:number): Result => {
         const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name, dbMgr);
         const order = new RotaryOrder(oid, uid, rotaryType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
-        const resultJson = wallet_unifiedorder(oid, stCount, 'Rotary');
+        const resultJson = wallet_unifiedorder(oid, stCount, 'Rotary', ST_WALLET_TYPE);
         if (!resultJson) {
             result.reslutCode = UNIFIEDORDER_API_FAILD;
 
@@ -324,7 +325,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
         const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name, dbMgr);
         const order = new BoxOrder(oid, uid, treasureboxType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
-        const resultJson = wallet_unifiedorder(oid, stCount, 'TreasureBox');
+        const resultJson = wallet_unifiedorder(oid, stCount, 'TreasureBox', ST_WALLET_TYPE);
         if (!resultJson) {
             result.reslutCode = UNIFIEDORDER_API_FAILD;
 
@@ -462,7 +463,7 @@ export const get_convert_list = (): Result => {
     return result;
 };
 
-// ST兑换
+// ST兑换(已经改成KT了)
 // #[rpc=rpcServer]
 export const st_convert = (awardType:number):Result => {
     console.log('resultJst_convertson in!!!!!!!!!!');
@@ -495,7 +496,7 @@ export const st_convert = (awardType:number):Result => {
     const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
     const order = new ConvertOrder(oid, uid, awardType, stCount, time.toString(), NOT_PAY_YET);
     orderBucket.put(oid, order);
-    const resultJson = wallet_unifiedorder(oid, stCount, 'Convert');
+    const resultJson = wallet_unifiedorder(oid, stCount, 'Convert', KT_WALLET_TYPE);
     if (!resultJson) {
         result.reslutCode = UNIFIEDORDER_API_FAILD;
 
@@ -622,6 +623,34 @@ export const add_convert_info = (convertAwardList :ConvertAwardList): Result => 
         productInfoList[i].convertCount = 0;
         bucket.put(pid, productInfoList[i]);
     }
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 从excel批量添加商品信息
+// #[rpc=rpcServer]
+export const add_convert_infos = (): Result => {
+    console.log('add_convert_infos in !!!!!!!!!!!!!!!!!!!!!!!');
+    const result = new Result();
+    const dbMgr = getEnv().getDbMgr();
+    const excelBucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const iter = <DBIter>excelBucket.iter(null);
+    do {
+        const iterEle = iter.nextElem();
+        console.log('elCfg----------------read---------------', iterEle);
+        if (!iterEle) {
+            break;
+        }
+        const convertCfg:STConvertCfg = iterEle[1];
+        // 数据库已存在该条记录则忽略
+        if (bucket.get(convertCfg.id)[0]) continue;
+        const productInfo = new ProductInfo(convertCfg.id, convertCfg.count, convertCfg.name, convertCfg.value, convertCfg.desc, convertCfg.progress, convertCfg.tips, convertCfg.level, convertCfg.pic, 0, 0);
+        bucket.put(convertCfg.id, productInfo);
+        
+    } while (iter);
+    
     result.reslutCode = RESULT_SUCCESS;
 
     return result;

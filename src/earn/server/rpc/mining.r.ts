@@ -119,19 +119,19 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
         if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount); // 奖品为KT时添加挖矿获取KT总数
         // 挖开第一个矿山额外奖励
-        const totalMiningNum = get_totalminingNum(uid);
-        if (totalMiningNum.total === 0) {
-            const regularBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
-            const firstAwardCfg = regularBucket.get<number, [RegularAwardCfg]>(FIRST_MINING_AWARD)[0];
-            if (!firstAwardCfg) {
-                miningResponse.resultNum = CONFIG_ERROR;
+        // const totalMiningNum = get_totalminingNum(uid);
+        // if (totalMiningNum.total === 0) {
+        //     const regularBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
+        //     const firstAwardCfg = regularBucket.get<number, [RegularAwardCfg]>(FIRST_MINING_AWARD)[0];
+        //     if (!firstAwardCfg) {
+        //         miningResponse.resultNum = CONFIG_ERROR;
 
-                return miningResponse;
-            }
-            const firstAward = add_itemCount(uid, firstAwardCfg.prop, firstAwardCfg.num);
-            add_award(uid, firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
-            awards.push(firstAward);
-        }
+        //         return miningResponse;
+        //     }
+        //     const firstAward = add_itemCount(uid, firstAwardCfg.prop, firstAwardCfg.num);
+        //     add_award(uid, firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
+        //     awards.push(firstAward);
+        // }
         miningResponse.awards = awards;
         // 添加奖章
         mining_add_medal(uid, itemNum);
