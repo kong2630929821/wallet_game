@@ -3,11 +3,13 @@
  */
 
 import { BonBuffer } from '../../../pi/util/bon';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { mqttPublish, QoS } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Logger } from '../../utils/logger';
 import { SendMsg } from '../rpc/send_message.s';
+import { Env } from '../../../pi/lang/env';
+
+declare var env: Env;
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module;
@@ -16,7 +18,7 @@ const logger = new Logger(WIDGET_NAME);
 
 export const send = (uid: number, cmd: string, msg: string) => {
     const topic = `send/${uid}`;
-    const mqttServer = getEnv().getNativeObject<ServerNode>('mqttServer');
+    const mqttServer = env.get('mqttServer');
     const sendMsg = new SendMsg();
     sendMsg.cmd = cmd;
     sendMsg.msg = msg;

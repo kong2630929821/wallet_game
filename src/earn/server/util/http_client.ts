@@ -1,4 +1,3 @@
-import { Atom } from '../../../pi_pt/rust/atom';
 import { HttpClient } from '../../../pi_pt/rust/httpc';
 import { createHttpClient, HttpClientBody, HttpClientOptions, postString } from '../../../pi_pt/rust/pi_serv/js_httpc';
 
@@ -14,7 +13,7 @@ export const createClient = () => {
  * 'content-type':'application/json'
  */
 export const addHeader = (client: HttpClient, key: string, value: string) => {
-    HttpClient.addHeaderSharedHttpc(client, Atom.fromFrom(key), Atom.fromFrom(value));
+    HttpClient.addHeaderSharedHttpc(client, key, value);
 };
 
 /**
@@ -27,7 +26,7 @@ export const post = (client: HttpClient, url: string, param: JSON) => {
     const body = HttpClientBody.bodyString(JSON.stringify(param));
     const result = { ok: null, err: null };
     try {
-        const r = postString(client, Atom.fromFrom(url), body);
+        const r = postString(client, url, body);
         if (((typeof r[1] === 'string' && (<any>r[1]).endsWith('Result is Err')) || (typeof r[1].self === 'string' && (<any>r[1].self).endsWith('Result is Err')))) {
             result.err = r[1];
 

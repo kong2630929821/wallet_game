@@ -3,14 +3,16 @@
  */
 import { Struct } from '../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../pi/util/bon';
-import { getEnv, getNativeObj } from '../../pi_pt/init/init';
 import { DBToMqttMonitor, registerDbToMqttMonitor } from '../../pi_pt/rust/pi_serv/js_db';
 import { cloneServerNode, setMqttTopic } from '../../pi_pt/rust/pi_serv/js_net';
 import { WARE_NAME } from './data/constant';
+import { Env } from '../../pi/lang/env';
+
+declare var env: Env;
 
 declare var pi_modules;
 
-const dbMgr = getEnv().getDbMgr();
+const dbMgr = env.dbMgr;
 
 const init = () => {
     addDbMonitor();
@@ -18,7 +20,7 @@ const init = () => {
 
 // 数据库监听器， 需要初始化配置， 启动mqtt服务， rpc服务
 const addDbMonitor = () => {
-    const mqttServer = cloneServerNode(getNativeObj('mqttServer'));
+    const mqttServer = env.get('mqttServer');
     const buf = new BonBuffer();
     const roster = createRoster();
     console.log(roster);
@@ -29,8 +31,8 @@ const addDbMonitor = () => {
             buf.writeBool(flag);
         });
     });
-    const monitor = DBToMqttMonitor.new(cloneServerNode(mqttServer), buf.getBuffer());
-    registerDbToMqttMonitor(dbMgr, monitor);
+    const monitor = DBToMqttMonitor.new(mqttServer, buf.getBuffer());
+    registerDbToMqttMonitor((<any>dbMgr).inner, monitor);
 };
 
 // 创建一个监听名单

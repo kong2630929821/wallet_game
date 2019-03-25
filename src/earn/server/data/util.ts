@@ -1,14 +1,12 @@
 /**
  * 只有后端可以用的util
  */
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { IDIndex } from './db/user.s';
 
 // 获取唯一ID
 export const get_index_id = (index: string) => {
-    const dbMgr = getEnv().getDbMgr();
-    const IndexIDBucket = new Bucket('file', IDIndex._$info.name, dbMgr);
+    const IndexIDBucket = new Bucket('file', IDIndex._$info.name);
     const r = new IDIndex();
     IndexIDBucket.readAndWrite(index, (v) => {
         r.index = index;

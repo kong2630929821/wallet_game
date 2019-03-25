@@ -1,9 +1,9 @@
 /**
  * 前端主动监听后端数据库的变化
  */
+import { Env } from '../../../pi/lang/env';
 import { BonBuffer } from '../../../pi/util/bon';
 import { ab2hex } from '../../../pi/util/util';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { mqttPublish, QoS, setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
@@ -11,6 +11,8 @@ import { Logger } from '../../utils/logger';
 import { WARE_NAME } from '../data/constant';
 import { Items, MiningKTNum, SpecialAward } from '../data/db/item.s';
 import { SendMessage } from './user.s';
+
+declare var env: Env;
 
 // ================================================================= 导入
 
@@ -65,7 +67,7 @@ const logger = new Logger(WIDGET_NAME);
  * 获取mqttServer
  */
 const getMqttServer = () => {
-    return  getEnv().getNativeObject('mqttServer');
+    return  env.get('mqttServer');
 };
 
 /**
@@ -82,9 +84,8 @@ const watchInfo = (keyName:string, keyValue:any, tableStruct:any, keyDefaultValu
     console.log('setMqttTopic ==== ',`${WARE_NAME}.${tableStruct._$info.name}.${bonKeyValue}`);
     setMqttTopic(<any>mqttServer, `${WARE_NAME}.${tableStruct._$info.name}.${bonKeyValue}`, true, true); 
     // 返回当前值
-    const dbMgr = getEnv().getDbMgr();
     
-    const infoBucket = new Bucket(WARE_NAME, tableStruct._$info.name, dbMgr); 
+    const infoBucket = new Bucket(WARE_NAME, tableStruct._$info.name); 
     console.log('infoBucket  ==== ',infoBucket);
     logger.debug(`${tableStruct._$info.name} iter`);
     logger.debug(`keyName is : ${keyName}, keyValue is : ${keyValue}, info is : ${infoBucket.get(keyValue)[0]}`);  

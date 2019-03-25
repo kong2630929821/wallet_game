@@ -1,9 +1,6 @@
 /**
  * 
  */
-import { iterDb, read } from '../../../pi_pt/db';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { Bucket } from '../../utils/db';
 import { WeightMiningCfg } from '../../xlsx/awardCfg.s';
 import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, GOLD_TICKET_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, RAINBOW_TICKET_TYPE, SILVER_TICKET_TYPE, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
@@ -12,19 +9,23 @@ import { get_miningKTNum, get_totalminingNum } from '../rpc/mining.r';
 import { get_showMedal } from '../rpc/user_item.r';
 import { getWeightIndex } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
+import { Env } from '../../../pi/lang/env';
+import { Tr } from '../../../pi/db/mgr';
+
+declare var env: Env;
 
 // 处理挖矿单次事件(一次点击)
 export const doMining = (hoeType:number, seedMgr: RandomSeedMgr):number => {
-    const dbMgr = getEnv().getDbMgr();
+    const dbMgr = env.dbMgr;
     const cfgs: WeightMiningCfg[] = [];
     const weights = [];
     let maxWeights = 0;
-    read(dbMgr, (tr: Tr) => {
+    dbMgr.read((tr: Tr) => {
         let maxCount = 0;
         const pid = hoeType * 100 + 1;
-        const iterCfg = iterDb(tr, MEMORY_NAME, WeightMiningCfg._$info.name, pid, false, null);
+        const iterCfg = tr.iter_raw(MEMORY_NAME, WeightMiningCfg._$info.name, pid, false, null);
         do {
-            const elCfg = iterCfg.nextElem();
+            const elCfg = iterCfg.next();
             // console.log('elCfg----------------read---------------', elCfg);
             if (!elCfg) return;
             const cfg: WeightMiningCfg = elCfg[1];
@@ -52,10 +53,9 @@ export const add_miningTotal = (uid: number) => {
     miningMap.uid = uid;
     console.log('miningMap !!!!!!!!!!!!!!!!!!!!!!!', miningMap);
     miningtotal.total = miningtotal.total + 1;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, TotalMiningNum._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, TotalMiningNum._$info.name);
     bucket.put(uid, miningtotal);
-    const mapBucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name, dbMgr);
+    const mapBucket = new Bucket(WARE_NAME, TotalMiningMap._$info.name);
     console.log('miningtotal !!!!!!!!!!!!!!!!!!!!!!!', miningtotal);
     const totalMiningMap = mapBucket.get<MiningMap, [TotalMiningMap]>(miningMap)[0];
     if (!totalMiningMap) {
@@ -85,10 +85,9 @@ export const add_miningKTTotal = (uid: number, ktNum: number) => {
     miningKTMap.ktNum = miningKTTotal.total;
     miningKTTotal.total = miningKTTotal.total + ktNum;
     miningKTTotal.medal = get_showMedal(uid).medalType;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, MiningKTNum._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, MiningKTNum._$info.name);
     bucket.put(uid, miningKTTotal);
-    const mapBucket = new Bucket(WARE_NAME, MiningKTMapTab._$info.name, dbMgr);
+    const mapBucket = new Bucket(WARE_NAME, MiningKTMapTab._$info.name);
     console.log('miningKTTotal !!!!!!!!!!!!!!!!!!!!!!!', miningKTTotal);
     const miningKTMapTab = mapBucket.get<MiningKTMap, [MiningKTMapTab]>(miningKTMap)[0];
     if (!miningKTMapTab) {

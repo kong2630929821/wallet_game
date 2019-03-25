@@ -1,7 +1,6 @@
 /**
  * 用户物品接口
  */
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
@@ -31,8 +30,7 @@ export const item_query = (): Items => {
     const uid = getUid();
     console.log('item query in !!!!!!!!!!!!', uid);
     if (!uid) return;
-    const dbMgr = getEnv().getDbMgr();
-    const userItemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    const userItemBucket = new Bucket(WARE_NAME, Items._$info.name);
     const items = <Items>userItemBucket.get(uid)[0];
     if (!items) {
         items_init(uid);
@@ -67,7 +65,6 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
     const uid = getUid();
     if (!uid) return;
     const src = awardQuery.src;
-    const dbMgr = getEnv().getDbMgr();
     let pidList;
     const awardMap = get_award_ids(uid);
     const awardList = new AwardList();
@@ -76,7 +73,7 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
         return awardList;
     } else {
         pidList = awardMap.awards;
-        const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
+        const bucket = new Bucket(WARE_NAME, Award._$info.name);
         const awards = bucket.get<[string],[Award]>(pidList);
         if (!awardQuery.src) {
             console.log('awards:!!!!!!!!!!!!!!!!!!!', awards);
@@ -104,8 +101,7 @@ export const award_query = (awardQuery:AwardQuery): AwardList => {
 export const get_medals = ():Medals => {
     const uid = getUid();
     if (!uid) return;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Medals._$info.name);
     let medals = bucket.get<number, [Medals]>(uid)[0];
     if (!medals) {
         medals = new Medals();
@@ -121,8 +117,7 @@ export const get_medals = ():Medals => {
 export const get_showMedal = (uid: number):ShowMedalRes => {
     if (!uid) return;
     const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name);
     const showMedal = bucket.get<number, [ShowMedal]>(uid)[0];
     if (!showMedal) return showMedalRes;
     showMedalRes.medalType = showMedal.medal;
@@ -134,8 +129,7 @@ export const get_showMedal = (uid: number):ShowMedalRes => {
 // #[rpc=rpcServer]
 export const show_medal = (medalType: number):ShowMedalRes => {
     console.log('show_medal in!!!!!!!!!!!!!!!!!', medalType);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name);
     const uid = getUid();
     if (!uid) return;
     const showMedal = new ShowMedal(uid, medalType);
@@ -149,8 +143,7 @@ export const show_medal = (medalType: number):ShowMedalRes => {
 export const get_achievements = ():Achievements => {
     const uid = getUid();
     if (!uid) return;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Achievements._$info.name);
     let achievements = bucket.get<number, [Achievements]>(uid)[0];
     if (!achievements) {
         achievements = new Achievements();
@@ -171,8 +164,7 @@ export const get_ad_award = (adType: number): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, DailyWatchAdNum._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, DailyWatchAdNum._$info.name);
     let dailyWatchAdNum :DailyWatchAdNum;
     const date = get_today();
     const pid = `${uid}:${date}`;
@@ -191,7 +183,7 @@ export const get_ad_award = (adType: number): Result => {
         return result;
     }
     // 根据广告类型从配置中获取奖励
-    const cfgBucket = new Bucket(MEMORY_NAME, AdAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, AdAwardCfg._$info.name);
     const adAward = cfgBucket.get<number, [AdAwardCfg]>(adType)[0];
     if (!adAward) {
         result.reslutCode = ADVERTISEMENT_NUM_ERROR;
@@ -203,7 +195,7 @@ export const get_ad_award = (adType: number): Result => {
     const desc = adAward.desc;
     const src = AWARD_SRC_ADVERTISEMENT;
     // 奖励为免费转盘和宝箱次数
-    const freePlayBucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+    const freePlayBucket = new Bucket(WARE_NAME, FreePlay._$info.name);
     if (adAward.prop === LEVEL1_ROTARY_AWARD) {
         const freePlay = freePlayBucket.get<number, [FreePlay]>(uid)[0];
         if (freePlay.adAwardRotary < MAX_FREEPLAY_ADAWARD) {
@@ -268,7 +260,6 @@ export const get_ad_award = (adType: number): Result => {
 export const get_task_award = (taskID: number): Result => {
     console.log('get_task_award in!!!!!!!!!!!!!!!!!', taskID);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
     if (!uid) {
         result.reslutCode = NOT_LOGIN;
@@ -276,7 +267,7 @@ export const get_task_award = (taskID: number): Result => {
         return result;
     }
     // 从配置中读取任务信息
-    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
+    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name);
     const taskCfg = taskCfgBucket.get<number, [TaskAwardCfg]>(taskID)[0];
     console.log('taskCfg !!!!!!!!!!!!!!!!!', taskCfg);
     if (!taskCfg) {
@@ -286,7 +277,7 @@ export const get_task_award = (taskID: number): Result => {
     }
     // const task = new Task(taskID, taskCfg.prop, taskCfg.num, 0, taskCfg.name);
     // 查询用户对应的任务状态
-    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name);
     const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
     if (!userTask) {
         result.reslutCode = DB_ERROR;
@@ -342,8 +333,7 @@ export const task_query = (): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name);
     const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
     console.log('userTask!!!!!!!!!!!!!!!!!', userTask);
     if (!userTask) {

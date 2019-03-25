@@ -47,7 +47,9 @@ export const oauth_send = (uri: string, body) => {
     const url = `${WALLET_SERVER_URL}${uri}`;
     console.log('!!!!!!!!!url:', url);
     const client = http.createClient();
+    console.log('11111111111111111111');
     http.addHeader(client, 'content-type', 'application/json');
+    console.log('2222222222222222');
 
     return http.post(client, url, body);
 };

@@ -3,8 +3,6 @@
  */
 
 import { randomInt } from '../../../pi/util/math';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
@@ -84,13 +82,12 @@ export const st_rotary = (rotaryType:number): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = 0;
     switch (rotaryType) {
         case LEVEL1_ROTARY_AWARD:
             stCount = LEVEL1_ROTARY_STCOST;
-            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
             if (freePlay.freeRotary === 0) break;
@@ -140,7 +137,7 @@ export const st_rotary = (rotaryType:number): Result => {
         // 生成订单
         const time = (new Date()).valueOf();
         const oid = `${time}${uid}${randomInt(10000, 99999)}`;
-        const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name, dbMgr);
+        const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name);
         const order = new RotaryOrder(oid, uid, rotaryType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
         const resultJson = wallet_unifiedorder(oid, stCount, 'Rotary', ST_WALLET_TYPE);
@@ -150,7 +147,7 @@ export const st_rotary = (rotaryType:number): Result => {
             return result;
         }
         // 是否是第一次购买
-        const userOrderBucket = new Bucket(WARE_NAME, UserRotaryOrderTab._$info.name, dbMgr);
+        const userOrderBucket = new Bucket(WARE_NAME, UserRotaryOrderTab._$info.name);
         const userRotaryOrderTab = userOrderBucket.get<number, [UserRotaryOrderTab]>(uid)[0];
         if (!userRotaryOrderTab) {
             resultJson.isFirst = 1;
@@ -177,8 +174,7 @@ export const rotary_pay_query = (oid: string): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name, dbMgr);
+    const orderBucket = new Bucket(WARE_NAME, RotaryOrder._$info.name);
     const order = orderBucket.get<string, [RotaryOrder]>(oid)[0];
     if (!order) {
         result.reslutCode = ORDER_NOT_EXIST;
@@ -201,7 +197,7 @@ export const rotary_pay_query = (oid: string): Result => {
     }
     order.state = BILL_ALREADY_PAY;
     orderBucket.put(oid, order);
-    const userOrderBucket = new Bucket(WARE_NAME, UserRotaryOrderTab._$info.name, dbMgr);
+    const userOrderBucket = new Bucket(WARE_NAME, UserRotaryOrderTab._$info.name);
     let userRotaryOrderTab = userOrderBucket.get<number, [UserRotaryOrderTab]>(uid)[0];
     if (!userRotaryOrderTab) {
         userRotaryOrderTab = new UserRotaryOrderTab(uid, []);
@@ -265,13 +261,12 @@ export const st_treasurebox = (treasureboxType:number): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
     let stCount;
     let hasfree = 0;
     switch (treasureboxType) {
         case LEVEL1_TREASUREBOX_AWARD:
             stCount = LEVEL1_TREASUREBOX_STCOST;
-            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
             const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
             if (!freePlay) break;
             if (freePlay.freeBox === 0) break;
@@ -322,7 +317,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
         // 生成订单
         const time = (new Date()).valueOf();
         const oid = `${time}${uid}${randomInt(10000, 99999)}`;
-        const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name, dbMgr);
+        const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name);
         const order = new BoxOrder(oid, uid, treasureboxType, newitemType, count, stCount, time.toString(), NOT_PAY_YET);
         orderBucket.put(oid, order);
         const resultJson = wallet_unifiedorder(oid, stCount, 'TreasureBox', ST_WALLET_TYPE);
@@ -332,7 +327,7 @@ export const st_treasurebox = (treasureboxType:number): Result => {
             return result;
         }
         // 是否是第一次购买
-        const userOrderBucket = new Bucket(WARE_NAME, UserBoxOrderTab._$info.name, dbMgr);
+        const userOrderBucket = new Bucket(WARE_NAME, UserBoxOrderTab._$info.name);
         const userBoxOrderTab = userOrderBucket.get<number, [UserBoxOrderTab]>(uid)[0];
         if (!userBoxOrderTab) {
             resultJson.isFirst = 1;
@@ -360,8 +355,7 @@ export const box_pay_query = (oid: string): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name, dbMgr);
+    const orderBucket = new Bucket(WARE_NAME, BoxOrder._$info.name);
     const order = orderBucket.get<string, [BoxOrder]>(oid)[0];
     if (!order) {
         result.reslutCode = ORDER_NOT_EXIST;
@@ -385,7 +379,7 @@ export const box_pay_query = (oid: string): Result => {
     }
     order.state = BILL_ALREADY_PAY;
     orderBucket.put(oid, order);
-    const userOrderBucket = new Bucket(WARE_NAME, UserBoxOrderTab._$info.name, dbMgr);
+    const userOrderBucket = new Bucket(WARE_NAME, UserBoxOrderTab._$info.name);
     let userBoxOrderTab = userOrderBucket.get<number, [UserBoxOrderTab]>(uid)[0];
     if (!userBoxOrderTab) {
         userBoxOrderTab = new UserBoxOrderTab(uid, []);
@@ -442,12 +436,11 @@ export const box_pay_query = (oid: string): Result => {
 export const get_convert_list = (): Result => {
     const result = new Result();
     const convertAwardList = new ConvertAwardList();
-    const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
-    const iter = <DBIter>bucket.iter(null);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
+    const iter = bucket.iter(null);
     const list = [];
     do {
-        const iterConvert = iter.nextElem();
+        const iterConvert = iter.next();
         console.log('elCfg----------------read---------------', iterConvert);
         if (!iterConvert) {
             break;
@@ -474,8 +467,7 @@ export const st_convert = (awardType:number):Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     const productInfo = bucket.get<number, [ProductInfo]>(awardType)[0];
     if (!productInfo) {
         result.reslutCode = DB_ERROR;
@@ -493,7 +485,7 @@ export const st_convert = (awardType:number):Result => {
     // 生成订单
     const time = (new Date()).valueOf();
     const oid = `${time}${uid}${randomInt(10000, 99999)}`;
-    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
+    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name);
     const order = new ConvertOrder(oid, uid, awardType, stCount, time.toString(), NOT_PAY_YET);
     orderBucket.put(oid, order);
     const resultJson = wallet_unifiedorder(oid, stCount, 'Convert', KT_WALLET_TYPE);
@@ -503,7 +495,7 @@ export const st_convert = (awardType:number):Result => {
         return result;
     }
     // 是否是第一次购买
-    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name, dbMgr);
+    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name);
     const userConvertOrderTab = userOrderBucket.get<number, [UserConvertOrderTab]>(uid)[0];
     if (!userConvertOrderTab) {
         resultJson.isFirst = 1;
@@ -529,8 +521,7 @@ export const convert_pay_query = (oid: string): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name, dbMgr);
+    const orderBucket = new Bucket(WARE_NAME, ConvertOrder._$info.name);
     const order = orderBucket.get<string, [ConvertOrder]>(oid)[0];
     if (!order) {
         result.reslutCode = ORDER_NOT_EXIST;
@@ -548,7 +539,7 @@ export const convert_pay_query = (oid: string): Result => {
     // 支付成功 更新订单信息
     order.state = BILL_ALREADY_PAY;
     orderBucket.put(oid, order);
-    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name, dbMgr);
+    const userOrderBucket = new Bucket(WARE_NAME, UserConvertOrderTab._$info.name);
     let userConvertOrderTab = userOrderBucket.get<number, [UserConvertOrderTab]>(uid)[0];
     if (!userConvertOrderTab) {
         userConvertOrderTab = new UserConvertOrderTab(uid, []);
@@ -557,7 +548,7 @@ export const convert_pay_query = (oid: string): Result => {
     userOrderBucket.put(uid, userConvertOrderTab);
     // 从数据库获取兑换码
     const awardType = order.awardType;
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     const productInfo = bucket.get<number, [ProductInfo]>(awardType)[0];
     if (!productInfo) {
         result.reslutCode = DB_ERROR;
@@ -588,8 +579,7 @@ export const convert_pay_query = (oid: string): Result => {
 export const get_convert_info = (id:number):Result => {
     console.log('get_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', id);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     const productInfo = bucket.get<number, [ProductInfo]>(id)[0];
     if (!productInfo) {
         result.reslutCode = PRODUCT_NOT_EXIST;
@@ -608,8 +598,7 @@ export const add_convert_info = (convertAwardList :ConvertAwardList): Result => 
     console.log('add_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', convertAwardList);
     const result = new Result();
     const productInfoList = convertAwardList.list;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     for (let i = 0 ; i < productInfoList.length; i ++) {
         const pid = productInfoList[i].id;
         console.log('pid !!!!!!!!!!!!!!!!!!!!!!!', pid);
@@ -633,12 +622,11 @@ export const add_convert_info = (convertAwardList :ConvertAwardList): Result => 
 export const add_convert_infos = (): Result => {
     console.log('add_convert_infos in !!!!!!!!!!!!!!!!!!!!!!!');
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const excelBucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name, dbMgr);
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
-    const iter = <DBIter>excelBucket.iter(null);
+    const excelBucket = new Bucket(MEMORY_NAME, STConvertCfg._$info.name);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
+    const iter = excelBucket.iter(null);
     do {
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         console.log('elCfg----------------read---------------', iterEle);
         if (!iterEle) {
             break;
@@ -661,8 +649,7 @@ export const add_convert_infos = (): Result => {
 export const modify_convert_info = (product: ProductInfo): Result => {
     console.log('modify_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', product);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     const pid = product.id;
     console.log('pid !!!!!!!!!!!!!!!!!!!!!!!', pid);
     if (!bucket.get(pid)[0]) {
@@ -683,8 +670,7 @@ export const modify_convert_info = (product: ProductInfo): Result => {
 export const delete_convert_info = (id: number): Result => {
     console.log('delete_convert_info in !!!!!!!!!!!!!!!!!!!!!!!', id);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     console.log('pid !!!!!!!!!!!!!!!!!!!!!!!', id);
     if (!bucket.get(id)[0]) {
         result.reslutCode = PRODUCT_NOT_EXIST;
@@ -703,9 +689,8 @@ export const add_convert = (addConvertList: AddConvertList):Result => {
     console.log('add_convert in !!!!!!!!!!!!!!!!!!!!!!!', addConvertList);
     const result = new Result();
     const addList = addConvertList.list;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
-    const tabBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
+    const tabBucket = new Bucket(WARE_NAME, ConvertTab._$info.name);
     for (let i = 0; i < addList.length; i ++) {
         const productInfo = bucket.get<number, [ProductInfo]>(addList[i].typeNum)[0];
         if (!productInfo) {
@@ -737,8 +722,7 @@ export const add_convert = (addConvertList: AddConvertList):Result => {
 export const get_hasFree = ():FreePlay => {
     const uid = getUid();
     if (!uid) return;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
     let freePlay = bucket.get<number, [FreePlay]>(uid)[0];
     if (!freePlay) {
         freePlay = new FreePlay();
@@ -757,8 +741,7 @@ export const get_hasFree = ():FreePlay => {
 export const add_free_rotary = () => {
     console.log('add_free_rotary in!!!!!!!!!');
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
     const freePlay = new FreePlay();
     // 前一天的免费次数清零
     freePlay.uid = uid;
@@ -771,16 +754,15 @@ export const add_free_rotary = () => {
 
 // 从数据库获取兑换码
 export const get_convert = (id: number): ConvertTab => {
-    const dbMgr = getEnv().getDbMgr(); 
-    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
-    const productInfoBucket = new Bucket(WARE_NAME, ProductInfo._$info.name, dbMgr);
+    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name);
+    const productInfoBucket = new Bucket(WARE_NAME, ProductInfo._$info.name);
     const productInfo = productInfoBucket.get<number, [ProductInfo]>(id)[0];
     if (!productInfo) return;
     // 从数据库获取兑换码
-    const iter = <DBIter>convertBucket.iter(null);
+    const iter = convertBucket.iter(null);
     let convertAward:ConvertTab;
     do {
-        const iterConvert = iter.nextElem();
+        const iterConvert = iter.next();
         console.log('elCfg----------------read---------------', iterConvert);
         if (!iterConvert) {
             return ;
