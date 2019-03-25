@@ -73,7 +73,7 @@
 
 .sale{
     width: 100%;
-    padding: 0 60px;
+    padding: 0 28px;
     height: 60px;
     margin-top: 42px;
     display: flex;
@@ -238,7 +238,7 @@
 }
 .sale-money1{
     height:60px;
-    width: 234px;
+    width: 413px;
     padding: 0px 15px;
     display: flex;
     justify-content: center;

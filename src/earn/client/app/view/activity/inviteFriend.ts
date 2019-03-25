@@ -32,10 +32,21 @@ export class InviteFriend extends Widget {
             inviteCode:'******',
             welfareAwards : [],
             invitedNumberOfPerson:invited.invitedNumberOfPerson,
-            inviteAwardsMultiple
+            inviteAwardsMultiple,
+            topBarTitle:'',
+            quickInvitation:'',
+            meQrcode:''
         };
         this.initWelfareAwards(invited.receiveAwards);
         this.initData();
+    }
+
+    public setProps(props:any,oldProps:any) {
+        this.props = {
+            ...this.props,
+            ...props
+        };
+        super.setProps(this.props,oldProps);
     }
 
     public async initData() {
@@ -43,6 +54,8 @@ export class InviteFriend extends Widget {
         const inviteCodeInfo = await getInviteCode();
         if (inviteCodeInfo.result !== 1) return;
         this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+        this.props.topBarTitle = this.props.topBarTitle || { zh_Hans:'邀请好友',zh_Hant:'邀請好友',en:'' };
+        this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'一键快速邀请',zh_Hant:'一鍵快速邀請',en:'' };
         this.paint();
     }
 
