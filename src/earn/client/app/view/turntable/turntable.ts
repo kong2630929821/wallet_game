@@ -253,43 +253,44 @@ export class Turntable extends Widget {
                     popNew('app-view-wallet-cloudWallet-rechargeKT');
                 }
             });
-        } else {
-            const chatUid = chatStore.getStore('uid');
-            const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
-            if (group.indexOf(TURNTABLE_GROUP) > -1) {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                    img:'../../res/image/no_money.png',
-                    btn1:'去聊天',// 按钮1 
-                    btn2:'去充值'// 按钮2
-                },(num) => {
-                    if (num === 1) {
-                        // TODO 去聊天
-                        console.log('大转盘去聊天');
-                    } else {
-                        popNew('app-view-wallet-cloudWallet-rechargeKT');
-                    }
-                });
-            } else {
-                popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                    img:'../../res/image/no_money.png',
-                    btn1:'加入游戏聊天群组',// 按钮1 
-                    btn2:'去充值'// 按钮2
-                },(num) => {
-                    if (num === 1) {
-                        inviteUserToGroup(TURNTABLE_GROUP,(r) => {
-                            console.log('加群回调TURNTABLE_GROUP---------------',r);
-                            if (r && r.r === 1) {
-                                popNew('app-components1-message-message',{ content:this.config.value.tips[2] });
-                            } else {
-                                popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
-                            }
-                        });
-                    } else {
-                        popNew('app-view-wallet-cloudWallet-rechargeKT');
-                    }
-                });
-            }
-        }
+        } 
+        // else {
+        //     const chatUid = chatStore.getStore('uid');
+        //     const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
+            // if (group.indexOf(TURNTABLE_GROUP) > -1) {
+            //     popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+            //         img:'../../res/image/no_money.png',
+            //         btn1:'去聊天',// 按钮1 
+            //         btn2:'去充值'// 按钮2
+            //     },(num) => {
+            //         if (num === 1) {
+            //             // TODO 去聊天
+            //             console.log('大转盘去聊天');
+            //         } else {
+            //             popNew('app-view-wallet-cloudWallet-rechargeKT');
+            //         }
+            //     });
+            // } else {
+            //     popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+            //         img:'../../res/image/no_money.png',
+            //         btn1:'加入游戏聊天群组',// 按钮1 
+            //         btn2:'去充值'// 按钮2
+            //     },(num) => {
+            //         if (num === 1) {
+            //             inviteUserToGroup(TURNTABLE_GROUP,(r) => {
+            //                 console.log('加群回调TURNTABLE_GROUP---------------',r);
+            //                 if (r && r.r === 1) {
+            //                     popNew('app-components1-message-message',{ content:this.config.value.tips[2] });
+            //                 } else {
+            //                     popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
+            //                 }
+            //             });
+            //         } else {
+            //             popNew('app-view-wallet-cloudWallet-rechargeKT');
+            //         }
+            //     });
+            // }
+        // }
     }
 
     /**
@@ -385,9 +386,9 @@ export class Turntable extends Widget {
                 wathcAdGetAward(3,(award) => {
                     this.props.freeCount = award.freeRotary;
                     this.props.watchAdAward = award.adAwardRotary;
+                    popNewMessage(this.config.value.turntableTips[2]);
                     this.setChestTip(2);
                 });
-                popNewMessage(this.config.value.turntableTips[2]);
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
