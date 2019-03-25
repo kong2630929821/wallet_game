@@ -330,6 +330,10 @@ export class MiningHome extends Widget {
             
         });
     }
+
+    public exit(e:any) {
+        console.log(e);
+    }
 }
 
 // ===================================================== 立即执行
