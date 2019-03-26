@@ -49,7 +49,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '5010';
+    walletLoginReq.openid = '2';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -156,7 +156,7 @@ export const test_hits = () => {
 // 奖励查询
 export const award_query_test = () => {
     const query = new AwardQuery();
-    query.src = 'rotary';
+    query.src = '';
     clientRpcFunc(award_query, query, (r:AwardList) => {
         console.log(r);
     });

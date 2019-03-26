@@ -173,7 +173,7 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
     const guessingOrder = new GuessingOrder(oid, guessingKey, NOT_PAY_YET);
     guessingOrderBucket.put(oid, guessingOrder);
-    const resultJson = wallet_unifiedorder(oid, num, 'LOL Guessing');
+    const resultJson = wallet_unifiedorder(oid, num, 'LOL Guessing', ST_WALLET_TYPE);
     if (!resultJson) {
         result.reslutCode = UNIFIEDORDER_API_FAILD;
 
