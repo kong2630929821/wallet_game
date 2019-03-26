@@ -87,7 +87,7 @@ export class EarnHome extends Widget {
 
     public initHotActivities() {
         const ktShow = getModulConfig('KT_SHOW');
-        const stShow = getModulConfig('ST_SHOW');
+        const scShow = getModulConfig('SC_SHOW');
         this.props.hotActivities =  [{
             img: 'btn_yun_5.png',
             title: '领分红',
@@ -100,9 +100,9 @@ export class EarnHome extends Widget {
             components:'app-view-earn-redEnvelope-writeRedEnv'
         }, {
             img: 'btn_yun_7.png',
-            title: `充${ktShow}送${stShow}`,
+            title: `充${scShow}送${ktShow}`,
             desc: '赠品可以玩游戏',
-            components:'app-view-wallet-cloudWallet-rechargeKT'
+            components:'app-view-wallet-cloudWalletSC-rechargeSC'
         }, {
             img: 'btn_yun_8.png',
             title: '兑换码',
