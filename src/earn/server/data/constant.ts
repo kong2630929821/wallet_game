@@ -151,6 +151,19 @@ export const LEVEL2_TREASUREBOX_STCOST = 100;
 // 高级宝箱消耗ST数
 export const LEVEL3_TREASUREBOX_STCOST = 1000;
 
+// 初级转盘消耗KT数
+export const LEVEL1_ROTARY_KTCOST = 10;
+// 中级转盘消耗KT数
+export const LEVEL2_ROTARY_KTCOST = 50;
+// 高级转盘消耗KT数
+export const LEVEL3_ROTARY_KTCOST = 500;
+// 初级宝箱消耗KT数
+export const LEVEL1_TREASUREBOX_KTCOST = 10;
+// 中级宝箱消耗KT数
+export const LEVEL2_TREASUREBOX_KTCOST = 50;
+// 高级宝箱消耗KT数
+export const LEVEL3_TREASUREBOX_KTCOST = 500;
+
 // 没有奖品
 export const SURPRISE_BRO = 9527;
 export const NO_AWARD_SORRY = 'noaward';

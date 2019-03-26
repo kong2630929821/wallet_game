@@ -50,6 +50,8 @@ export const ST_NOT_ENOUGH = 3101;
 export const ROTARY_TYPE_ERROR = 3102;
 // 宝箱类型错误
 export const TREASUREBOX_TYPE_ERROR = 3103;
+// 扣除KT失败
+export const REDUCE_KT_ERROR = 3104;
 
 // ST数量错误
 export const ST_NUM_ERROR = 4101;

@@ -5,16 +5,16 @@
 import { randomInt } from '../../../pi/util/math';
 import { Bucket } from '../../utils/db';
 import { STConvertCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, LEVEL1_ROTARY_AWARD, LEVEL1_ROTARY_KTCOST, LEVEL1_ROTARY_STCOST, LEVEL1_TREASUREBOX_AWARD, LEVEL1_TREASUREBOX_KTCOST, LEVEL1_TREASUREBOX_STCOST, LEVEL2_ROTARY_AWARD, LEVEL2_ROTARY_KTCOST, LEVEL2_ROTARY_STCOST, LEVEL2_TREASUREBOX_AWARD, LEVEL2_TREASUREBOX_KTCOST, LEVEL2_TREASUREBOX_STCOST, LEVEL3_ROTARY_AWARD, LEVEL3_ROTARY_KTCOST, LEVEL3_ROTARY_STCOST, LEVEL3_TREASUREBOX_AWARD, LEVEL3_TREASUREBOX_KTCOST, LEVEL3_TREASUREBOX_STCOST, MEMORY_NAME, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AddConvertList, Award, AwardResponse, ConvertAwardList, ConvertTab, FreePlay, ProductInfo } from '../data/db/item.s';
 import { BoxOrder, ConvertOrder, RotaryOrder, UserBoxOrderTab, UserConvertOrderTab, UserRotaryOrderTab } from '../data/db/stParties.s';
-import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, NOT_LOGIN, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
+import { AWARD_NOT_ENOUGH, CONVERT_ALREADY_EXIST, DB_ERROR, GET_ORDERINFO_FAILD, NOT_LOGIN, ORDER_NOT_EXIST, PRODUCT_ALREADY_EXIST, PRODUCT_NOT_EXIST, REDUCE_KT_ERROR, REQUEST_WALLET_FAIL, ROTARY_TYPE_ERROR, ST_NOT_ENOUGH, TREASUREBOX_TYPE_ERROR, UNIFIEDORDER_API_FAILD } from '../data/errorNum';
 import { BILL_ALREADY_CHECK, BILL_ALREADY_PAY, NOT_PAY_YET } from '../data/guessingConstant';
 import { get_index_id } from '../data/util';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, reduce_itemCount } from '../util/item_util.r';
-import { oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
+import { oauth_alter_balance, oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
 import { RandomSeedMgr } from '../util/randomSeedMgr';
 import { CoinQueryRes, RandomAward } from './itemQuery.s';
 import { getOpenid, getUid } from './user.r';
@@ -70,6 +70,95 @@ export const get_KTNum = (): CoinQueryRes => {
     coinQueryRes.resultNum = RESULT_SUCCESS;
 
     return coinQueryRes;
+};
+
+// KT转盘
+// #[rpc=rpcServer]
+export const kt_rotary = (rotaryType:number): Result => {
+    const result = new Result(); 
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
+    let ktCount;
+    let hasfree = 0;
+    switch (rotaryType) {
+        case LEVEL1_ROTARY_AWARD:
+            ktCount = LEVEL1_ROTARY_KTCOST;
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
+            const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
+            if (!freePlay) break;
+            if (freePlay.freeRotary === 0) break;
+            hasfree = freePlay.freeRotary;
+            freePlay.freeRotary = hasfree - 1;
+            bucket.put(uid, freePlay);
+            break;
+        case LEVEL2_ROTARY_AWARD:
+            ktCount = LEVEL2_ROTARY_KTCOST;
+            break;
+        case LEVEL3_ROTARY_AWARD:
+            ktCount = LEVEL3_ROTARY_KTCOST;
+            break;
+        default:
+            result.reslutCode = ROTARY_TYPE_ERROR;
+
+            return result;
+    }
+    const randomAward = repeat_random_award(rotaryType);
+    const newitemType = randomAward.awardType;
+    const count = randomAward.count;
+    if (hasfree >= 1) { // 如果有免费次数使用免费次数
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+            result.msg = JSON.stringify(award);
+            result.reslutCode = RESULT_SUCCESS;
+    
+            return result;
+        }
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
+        if (!award) {
+            result.reslutCode = DB_ERROR;
+
+            return result;
+        }
+        result.msg = JSON.stringify(award);
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    } else {
+        // 直接从钱包扣除KT
+        const time = (new Date()).valueOf();
+        const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+        if (!oauth_alter_balance(KT_TYPE, oid, -ktCount)) {
+            result.reslutCode = REDUCE_KT_ERROR;
+
+            return result;
+        }
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_ROTARY, time);
+            result.msg = JSON.stringify(award);
+            result.reslutCode = RESULT_SUCCESS;
+        
+            return result;
+        }
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
+        if (!award) {
+            result.reslutCode = DB_ERROR;
+    
+            return result;
+        }
+        result.msg = JSON.stringify(award);
+        result.reslutCode = RESULT_SUCCESS;
+    
+        return result;
+        
+    }
 };
 
 // ST转盘
@@ -337,6 +426,95 @@ export const st_treasurebox = (treasureboxType:number): Result => {
         resultJson.oid = oid;
         console.log('resultJson!!!!!!!!!!', resultJson);
         result.msg = JSON.stringify(resultJson);
+        result.reslutCode = RESULT_SUCCESS;
+    
+        return result;
+        
+    }
+};
+
+// KT宝箱
+// #[rpc=rpcServer]
+export const kt_treasurebox = (boxType:number): Result => {
+    const result = new Result(); 
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
+    let ktCount;
+    let hasfree = 0;
+    switch (boxType) {
+        case LEVEL1_TREASUREBOX_AWARD:
+            ktCount = LEVEL1_TREASUREBOX_KTCOST;
+            const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
+            const freePlay = bucket.get<number, [FreePlay]>(uid)[0];  // 获取是否还有免费的初级转盘次数
+            if (!freePlay) break;
+            if (freePlay.freeBox === 0) break;
+            hasfree = freePlay.freeBox;
+            freePlay.freeBox = hasfree - 1;
+            bucket.put(uid, freePlay);
+            break;
+        case LEVEL2_TREASUREBOX_AWARD:
+            ktCount = LEVEL2_TREASUREBOX_KTCOST;
+            break;
+        case LEVEL3_TREASUREBOX_AWARD:
+            ktCount = LEVEL3_TREASUREBOX_KTCOST;
+            break;
+        default:
+            result.reslutCode = TREASUREBOX_TYPE_ERROR;
+
+            return result;
+    }
+    const randomAward = repeat_random_award(boxType);
+    const newitemType = randomAward.awardType;
+    const count = randomAward.count;
+    if (hasfree >= 1) { // 如果有免费次数使用免费次数
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
+            result.msg = JSON.stringify(award);
+            result.reslutCode = RESULT_SUCCESS;
+    
+            return result;
+        }
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
+        if (!award) {
+            result.reslutCode = DB_ERROR;
+
+            return result;
+        }
+        result.msg = JSON.stringify(award);
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    } else {
+        // 直接从钱包扣除KT
+        const time = (new Date()).valueOf();
+        const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+        if (!oauth_alter_balance(KT_TYPE, oid, -ktCount)) {
+            result.reslutCode = REDUCE_KT_ERROR;
+
+            return result;
+        }
+        if (newitemType === SURPRISE_BRO) {    // 没有抽中奖品
+            const time = (new Date()).valueOf().toString();
+            const award = new Award(NO_AWARD_SORRY, newitemType, 1, uid, AWARD_SRC_TREASUREBOX, time);
+            result.msg = JSON.stringify(award);
+            result.reslutCode = RESULT_SUCCESS;
+        
+            return result;
+        }
+        add_itemCount(uid, newitemType, count);
+        const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
+        if (!award) {
+            result.reslutCode = DB_ERROR;
+    
+            return result;
+        }
+        result.msg = JSON.stringify(award);
         result.reslutCode = RESULT_SUCCESS;
     
         return result;
