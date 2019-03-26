@@ -2,32 +2,28 @@
  * 日常奖励
  */
 
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, MESSAGE_TYPE_DAILY_FIREST_LOGIN, SERIES_LOGIN_CIRCLE, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, MESSAGE_TYPE_DAILY_FIREST_LOGIN, SERIES_LOGIN_CIRCLE } from '../data/constant';
 import { Award, Item, Items, Mine } from '../data/db/item.s';
-import { DayliLogin, DayliLoginKey } from '../data/db/user.s';
 import { getUid } from '../rpc/user.r';
 import { add_mine } from '../rpc/user_item.r';
-import { add_award, add_itemCount, get_mine_total, get_today } from './item_util.r';
+import { add_award, add_itemCount, get_mine_total } from './item_util.r';
 import { send } from './sendMessage';
 
 // 首次登陆奖励
 export const firstLogin_award = ():Items => {
     console.log('firstLogin_award in !!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const cfgBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name);
     const cfgs:RegularAwardCfg[] = [];
     const items:Item[] = [];
-    const iter:DBIter = cfgBucket.iter(FIRST_LOGIN_AWARD);
+    const iter = cfgBucket.iter(FIRST_LOGIN_AWARD);
     let maxCount = 0;
     do {
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         if (!iterEle) return;
         console.log('elCfg----------------read---------------', iterEle);
         const regularCfg:RegularAwardCfg = iterEle[1];
@@ -60,7 +56,7 @@ export const seriesLogin_award = (days:number):Item => {
     const dayliLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
     // 如果当天登陆记录不存在或者状态不为true，则不发放登陆奖励
     if (!dayliLogin || (dayliLogin.state !== true)) return;
-    const cfgBucket = new Bucket(MEMORY_NAME, SeriesLoginAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, SeriesLoginAwardCfg._$info.name);
     let id;
     if (days <= SERIES_LOGIN_CIRCLE) {
         id = days;
@@ -86,8 +82,7 @@ export const seriesLogin_award = (days:number):Item => {
  */
 export const invite_award = (uid:number, num:number):Award => {
     console.log('invite_award in !!!!!!!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name);
     let id;
     if (num <= INVITE_AWARD_CIRCLE) {
         id = num;

@@ -3,8 +3,6 @@
  */
 
 import { randomInt } from '../../../pi/util/math';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { TicketConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, COMPOSE_GOLD_TICKET, COMPOSE_RAINBOW_TICKET, GOLD_HOE_TYPE, GOLD_TICKET_ROTARY, GOLD_TICKET_TREASUREBOX, GOLD_TICKET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MEMORY_NAME, RAINBOW_TICKET_ROTARY, RAINBOW_TICKET_TREASUREBOX, RAINBOW_TICKET_TYPE, RESULT_SUCCESS, SILVER_TICKET_ROTARY, SILVER_TICKET_TREASUREBOX, SILVER_TICKET_TYPE, TICKET_COMPOSE_COUNT, TICKET_ROTARY_COUNT, TICKET_TREASUREBOX_COUNT, WALLET_API_QUERY, WARE_NAME } from '../data/constant';

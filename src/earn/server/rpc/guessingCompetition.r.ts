@@ -2,9 +2,8 @@
  * 竞猜
  */
 
+import { Env } from '../../../pi/lang/env';
 import { randomInt } from '../../../pi/util/math';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { AddCompetition, Competition, CompetitionList, CompJackpots, CompResult, Guessing, GuessingKey, GuessingKeyList, GuessingOrder, GuessingReq, MainPageComp, MainPageCompList, PreCompetitionList, Result, UserGuessing, UserGuessingInfo, UserGuessingList } from '../data/db/guessing.s';
@@ -15,20 +14,21 @@ import { get_index_id } from '../data/util';
 import { json_uri_sort, oauth_alter_balance, oauth_send, wallet_order_query, wallet_unifiedorder } from '../util/oauth_lib';
 import { getUid } from './user.r';
 
+declare var env: Env;
+
 // 获取主页面比赛信息
 // #[rpc=rpcServer]
 export const get_main_competitions = (): Result => {
     console.log('get_main_competitions in!!!!!!!!!!!!');
     const result = new Result();
     const mainPageList = [];
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const date = (new Date()).valueOf();
-    const iter = <DBIter>bucket.iter(null, true);
+    const iter = bucket.iter(null, true);
     do {
         console.log('iterEle in!!!!!!!!!!!!');
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         console.log('iterEle in!!!!!!!!!!!!', iterEle);
         if (!iterEle) break;
         const competition:Competition = iterEle[1];
@@ -62,13 +62,12 @@ export const get_main_competitions = (): Result => {
 export const get_allComps = (): Result => {
     const result = new Result();
     const mainPageList = [];
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
-    const iter = <DBIter>bucket.iter(null, true);
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
+    const iter = bucket.iter(null, true);
     do {
         console.log('iterEle in!!!!!!!!!!!!');
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         console.log('iterEle in!!!!!!!!!!!!', iterEle);
         if (!iterEle) break;
         const competition:Competition = iterEle[1];
@@ -99,8 +98,7 @@ export const get_allComps = (): Result => {
 export const get_compJackpots = (cid: number): Result => {
     console.log('get_compJackpots in!!!!!!!!!!!!');
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const jackpots:CompJackpots = bucket.get(cid)[0];
     if (!jackpots) {
         result.reslutCode = DB_ERROR;
@@ -134,8 +132,7 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr(); 
-    const compBucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const compBucket = new Bucket(WARE_NAME, Competition._$info.name);
     const competition = compBucket.get<number, [Competition]>(cid)[0];
     if (!competition) {
         result.reslutCode = COMPETITION_NOT_EXIST;
@@ -152,7 +149,7 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     guessingKey.uid = uid;
     guessingKey.cid = cid;
     // 验证用户单场比赛的竞猜金额是否达到上限
-    const userGuessBucket = new Bucket(WARE_NAME, UserGuessing._$info.name, dbMgr);
+    const userGuessBucket = new Bucket(WARE_NAME, UserGuessing._$info.name);
     let userGuessing = userGuessBucket.get<GuessingKey, [UserGuessing]>(guessingKey)[0];
     if (!userGuessing) userGuessing = new UserGuessing(guessingKey, 0);
     userGuessing.total += num;
@@ -164,13 +161,13 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
     userGuessBucket.put(guessingKey, userGuessing);
     guessingKey.index = get_index_id(`${uid}${cid}`);
     // 生成竞猜对象
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name);
     const guessing = new Guessing(guessingKey, teamSide, null, num, null, date.toString());
     guessingBucket.put(guessingKey, guessing);
     // 生成订单
     const time = (new Date()).valueOf();
     const oid = `${time}${uid}${randomInt(10000, 99999)}`;
-    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
+    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name);
     const guessingOrder = new GuessingOrder(oid, guessingKey, NOT_PAY_YET);
     guessingOrderBucket.put(oid, guessingOrder);
     const resultJson = wallet_unifiedorder(oid, num, 'LOL Guessing', ST_WALLET_TYPE);
@@ -180,7 +177,7 @@ export const start_guessing = (guessingReq: GuessingReq): Result => {
         return result;
     }
     // 是否是第一次购买
-    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name, dbMgr);
+    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name);
     const guessingKeyList = guessingKeyListBucket.get<number, [GuessingKeyList]>(uid)[0];
     if (!guessingKeyList) {
         resultJson.isFirst = 1;
@@ -211,8 +208,7 @@ export const guessing_pay_query = (oid: string):Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
-    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name, dbMgr);
+    const guessingOrderBucket = new Bucket(WARE_NAME, GuessingOrder._$info.name);
     const guessingOrder = guessingOrderBucket.get<string, [GuessingOrder]>(oid)[0];
     if (!guessingOrder) {
         result.reslutCode = ORDER_NOT_EXIST;
@@ -220,7 +216,7 @@ export const guessing_pay_query = (oid: string):Result => {
         return result;
     }
     const guessingKey = guessingOrder.gid;
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name);
     const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
     if (!guessing) {
         result.reslutCode = GUESSING_NOT_EXIST;
@@ -239,7 +235,7 @@ export const guessing_pay_query = (oid: string):Result => {
     guessingOrderBucket.put(oid, guessingOrder);
     const num = guessing.num;
     // 获取该场比赛奖金池信息
-    const jackpotsBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const jackpotsBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const jackpots:CompJackpots = jackpotsBucket.get(guessingKey.cid)[0];
     if (!jackpots) {
         result.reslutCode = DB_ERROR;
@@ -262,7 +258,7 @@ export const guessing_pay_query = (oid: string):Result => {
         jackpots.guessings2.push(guessingKey);
     }
     jackpotsBucket.put(guessingKey.cid, jackpots);
-    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name, dbMgr);
+    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name);
     let guessingKeyList = guessingKeyListBucket.get<number, [GuessingKeyList]>(uid)[0];
     if (!guessingKeyList) guessingKeyList = new GuessingKeyList(uid, []);
     guessingKeyList.list.push(guessingKey);
@@ -291,11 +287,10 @@ export const get_user_guessingInfo = ():Result => {
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr(); 
-    const compBucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
-    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name, dbMgr);
+    const compBucket = new Bucket(WARE_NAME, Competition._$info.name);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name);
+    const guessingKeyListBucket = new Bucket(WARE_NAME, GuessingKeyList._$info.name);
     const guessingKeyList = guessingKeyListBucket.get<number, [GuessingKeyList]>(uid)[0];
     if (!guessingKeyList) {
         result.reslutCode = RESULT_SUCCESS;
@@ -328,8 +323,7 @@ export const get_user_guessingInfo = ():Result => {
 // #[rpc=rpcServer]
 export const get_competitions = (compType: number): CompetitionList => {
     const competitionList = new CompetitionList();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, PreCompetitionList._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, PreCompetitionList._$info.name);
     const preCompetitionList = bucket.get<number, [PreCompetitionList]>(compType)[0];
     if (!preCompetitionList) {
         competitionList.list = [];
@@ -337,7 +331,7 @@ export const get_competitions = (compType: number): CompetitionList => {
         return competitionList;
     }
     const keyList = preCompetitionList.list;
-    const CompetitionBucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const CompetitionBucket = new Bucket(WARE_NAME, Competition._$info.name);
     const list = CompetitionBucket.get<number[], [Competition]>(keyList);
     competitionList.list = list;
 
@@ -349,8 +343,7 @@ export const get_competitions = (compType: number): CompetitionList => {
 export const add_competitions = (addComp: AddCompetition): Result => {
     console.log('add_competitions in !!!!!!!!!!!!!!', addComp);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name);
     const cid = get_index_id(`competiton`);
     const time = get_timestamps(addComp.time).toString();
     console.log('time in !!!!!!!!!!!!!!', time);
@@ -360,7 +353,7 @@ export const add_competitions = (addComp: AddCompetition): Result => {
 
         return result;
     }
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const jackpots = new CompJackpots(cid, addComp.team1num, addComp.team2num, [], []);
     if (bucket.put(cid, competition) && jackpotBucket.put(cid, jackpots)) {
         result.reslutCode = RESULT_SUCCESS;
@@ -376,8 +369,7 @@ export const add_competitions = (addComp: AddCompetition): Result => {
 export const input_competition_result = (compResult:CompResult): Result => {
     console.log('input_competition_result in !!!!!!!!!!!!!!', compResult);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr); 
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name); 
     const competition = bucket.get<number, [Competition]>(compResult.cid)[0];
     if (!competition) {
         result.reslutCode = COMPETITION_NOT_EXIST;
@@ -401,8 +393,7 @@ export const input_competition_result = (compResult:CompResult): Result => {
 export const settle_guessing_award = (cid: number): Result => {
     console.log('settle_guessing_award in', cid);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name);
     const competition = bucket.get<number, [Competition]>(cid)[0];
     if (!competition) {
         result.reslutCode = COMPETITION_NOT_EXIST;
@@ -422,7 +413,7 @@ export const settle_guessing_award = (cid: number): Result => {
     // 开始结算 竞猜结算状态更新为结算中
     competition.state = GUESSING_IS_SETTLING;
     bucket.put(cid, competition);
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const jackpots = jackpotBucket.get<number, [CompJackpots]>(cid)[0];
     if (!jackpots) {
         result.reslutCode = DB_ERROR;
@@ -445,14 +436,14 @@ export const settle_guessing_award = (cid: number): Result => {
         winnersJackpots = jackpots.jackpot2;
         losersJackpot = jackpots.jackpot1;
     }
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name);
     for (const guessingKey of guessings) {
         const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
         if (!guessing) continue;
         // 竞猜获胜的一方根据投注比例瓜分对方的奖金池
         const awardNum = Math.floor((guessing.num / winnersJackpots) * losersJackpot + guessing.num);
         const uid = guessingKey.uid;
-        const accountMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
+        const accountMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name);
         const accountMap: UserAccMap = accountMapBucket.get(uid)[0];
         if (!accountMap) continue;
         const openid = Number(accountMap.openid);
@@ -482,8 +473,7 @@ export const settle_guessing_award = (cid: number): Result => {
 export const cancle_guessing = (cid: number): Result => {
     console.log('settle_guessing_award in', cid);
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Competition._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Competition._$info.name);
     const competition = bucket.get<number, [Competition]>(cid)[0];
     if (!competition) {
         result.reslutCode = COMPETITION_NOT_EXIST;
@@ -499,7 +489,7 @@ export const cancle_guessing = (cid: number): Result => {
     // 开始退还下注额 竞猜结算状态更新为结算中
     competition.state = GUESSING_IS_SETTLING;
     bucket.put(cid, competition);
-    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name, dbMgr);
+    const jackpotBucket = new Bucket(WARE_NAME, CompJackpots._$info.name);
     const jackpots = jackpotBucket.get<number, [CompJackpots]>(cid)[0];
     if (!jackpots) {
         result.reslutCode = DB_ERROR;
@@ -508,12 +498,12 @@ export const cancle_guessing = (cid: number): Result => {
     }
     const guessings: GuessingKey[] = jackpots.guessings1.concat(jackpots.guessings2);
     // 退还下注额
-    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name, dbMgr);
+    const guessingBucket = new Bucket(WARE_NAME, Guessing._$info.name);
     for (const guessingKey of guessings) {
         const guessing = guessingBucket.get<GuessingKey, [Guessing]>(guessingKey)[0];
         if (!guessing) continue;
         const uid = guessingKey.uid;
-        const accountMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
+        const accountMapBucket = new Bucket(WARE_NAME, UserAccMap._$info.name);
         const accountMap: UserAccMap = accountMapBucket.get(uid)[0];
         if (!accountMap) continue;
         const openid = Number(accountMap.openid);

@@ -3,7 +3,6 @@
  */
 import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
@@ -30,8 +29,7 @@ export const award = (award: number): Test => {
 
 // #[rpc=rpcServer]
 export const db_test = (pid: number): Award => {
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Award._$info.name);
 
     return bucket.get(pid)[0];
 };
@@ -89,8 +87,7 @@ export const bigint_test = ():Test => {
 export const get_objStr = ():Result => {
     console.log('get_objStr in:!!!!!!!!!!!!!!!!!!');
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, UserAccMap._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, UserAccMap._$info.name);
     const uids = [2,3,4,56,5,77];
     const openids = bucket.get<number[], [UserAccMap]>(uids);
     console.log('openids:!!!!!!!!!!!!!!!!!!', openids);

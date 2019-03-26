@@ -1,7 +1,6 @@
 /**
  * 邀请用户
  */
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { Bucket } from '../../utils/db';
 import { MIN_INVITE_NUM, RESULT_SUCCESS, WALLET_API_CDKEY, WALLET_API_INVITENUM, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
@@ -18,7 +17,6 @@ import { getOpenid, getUid } from './user.r';
 // #[rpc=rpcServer]
 export const get_inviteNum = (): InviteNumTab => {
     console.log('get_inviteNum in !!!!!!!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
     if (!uid) return;
     // 获取openid
@@ -33,7 +31,7 @@ export const get_inviteNum = (): InviteNumTab => {
         }
     }
 
-    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
     let inviteNumTab = bucket.get<number, [InviteNumTab]>(uid)[0];
     if (!inviteNumTab) {
         inviteNumTab = new InviteNumTab();
@@ -63,8 +61,7 @@ export const get_invite_awards = (index:number):InviteAwardRes  => {
     console.log('get_invite_awards in !!!!!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     if (!uid) return;
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
     const inviteNumTab = get_inviteNum();
     const awardResponse = new InviteAwardRes();
     const inviteNumStart = index * MIN_INVITE_NUM + 1;
@@ -103,7 +100,6 @@ export const get_invite_awards = (index:number):InviteAwardRes  => {
 // #[rpc=rpcServer]
 export const cdkey = (code: string): Result => {
     const result = new Result();
-    const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
     if (!uid) {
         result.reslutCode = NOT_LOGIN;
@@ -113,7 +109,7 @@ export const cdkey = (code: string): Result => {
     // 获取openid
     const openid = Number(getOpenid());
     const cdkey = getcdkey(uid, code);
-    const InviteBucket = new Bucket('file', Invite._$info.name, dbMgr);
+    const InviteBucket = new Bucket('file', Invite._$info.name);
     const v = InviteBucket.get(cdkey)[0];
     const invite = new Invite();
     if (!v) {
@@ -125,7 +121,7 @@ export const cdkey = (code: string): Result => {
                 // 增加邀请奖励
                 const inviteOpenid = <string>json.openid; // 邀请人openid
                 // 获取邀请人uid
-                const bucket = new Bucket(WARE_NAME, UserAcc._$info.name, dbMgr);
+                const bucket = new Bucket(WARE_NAME, UserAcc._$info.name);
                 const iuser = bucket.get<string, [UserAcc]>(inviteOpenid)[0];
                 let iuid; // 邀请人uid
                 let friendsNum; // 邀请人已邀请人数
@@ -139,7 +135,7 @@ export const cdkey = (code: string): Result => {
                     invites.inviteNum += 1;
                     friendsNum = invites.inviteNum;
                     // 添加邀请人邀请记录
-                    const inviteBucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
+                    const inviteBucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
                     inviteBucket.put(iuid, invites);
                 }
                 invite.code = cdkey;
@@ -170,7 +166,6 @@ export const cdkey = (code: string): Result => {
 
 // 获取已邀请的好友
 export const get_invite_friends = (openid: string, uid: number): InviteNumTab => {
-    const dbMgr = getEnv().getDbMgr();
     // 去钱包服务器获取已邀请人数
     let inviteNum = 0;
     const r = oauth_send(WALLET_API_INVITENUM, { openid: openid });
@@ -180,7 +175,7 @@ export const get_invite_friends = (openid: string, uid: number): InviteNumTab =>
             inviteNum = <number>json.num;
         }
     }
-    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
     let inviteNumTab = bucket.get<number, [InviteNumTab]>(uid)[0];
     if (!inviteNumTab) {
         inviteNumTab = new InviteNumTab();

@@ -1,6 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
-    {{: topBarTitle = {"zh_Hans":"邀请好友","zh_Hant":"邀請好友","en":""} }}
-    <div style="background:#2C6EEA;"><app-components-topBar-topBar2>{text:{{topBarTitle}} }</app-components-topBar-topBar2></div>
+    <div style="background:#2C6EEA;"><app-components-topBar-topBar2>{text:{{it.topBarTitle}} }</app-components-topBar-topBar2></div>
     <div w-class="content" on-scroll="getMoreList">
         <div w-class="share_main">
             <div w-class="share_out">
@@ -45,20 +44,24 @@
                     <div w-class="ticket_center"></div>
                     {{% 邀请票下部}}
                     <div w-class="ticket_bottom">
-                        {{if it.showPage ==='first'}}
-                        <img src="app/res/image/wechat_pn.jpg" height="400px" width="400px" />
-                        <div w-class="ticket_bottom-text">
-                            <widget w-tag="pi-ui-lang">{"zh_Hans":"成功邀请后双方均可获得奖励","zh_Hant":"成功邀請後雙方均可獲得獎勵","en":""}</widget>
-                            <img on-tap="change('second')" src="app/res/image/change-blue.png" height="48px" w-class="change_icon" />
-                        </div>
+                        {{if it.meQrcode}}
+                            <div w-class="meQrcode"><app-components-qrcode-qrcode>{value:{{it.meQrcode}},size:"350"}</app-components-qrcode-qrcode></div>
                         {{else}}
-                        <div w-class="rule">
-                            <widget w-class="rule_title" w-tag="pi-ui-lang">{"zh_Hans":"活动说明","zh_Hant":"活動說明","en":""}</widget>
-                            <widget w-class="rule_context" w-tag="pi-ui-lang">{"zh_Hans":"成功邀请好友下载{{ it.walletName }}，在赚-兑换中输入邀请码，你就可以获得奖励哦。 注意~好友验证了手机即视为成功邀请。快去邀请小伙伴一起挖矿吧~","zh_Hant":"成功邀請好友下載{{it.walletName}}，在賺-兌換中輸入邀請碼，你就可以獲得獎勵哦。注意~好友驗證了手機即視為成功邀請。快去邀請小伙伴一起挖礦吧~","en":""}</widget>
-                        </div>
-                        <div w-class="ticket_bottom-text">
-                            <img on-tap="change('first')" src="app/res/image/change-blue.png" height="48px" w-class="change_icon" />
-                        </div>
+                            {{if it.showPage ==='first'}}
+                            <img src="app/res/image/wechat_pn.jpg" height="400px" width="400px" />
+                            <div w-class="ticket_bottom-text">
+                                <widget w-tag="pi-ui-lang">{"zh_Hans":"成功邀请后双方均可获得奖励","zh_Hant":"成功邀請後雙方均可獲得獎勵","en":""}</widget>
+                                <img on-tap="change('second')" src="app/res/image/change-blue.png" height="48px" w-class="change_icon" />
+                            </div>
+                            {{else}}
+                            <div w-class="rule">
+                                <widget w-class="rule_title" w-tag="pi-ui-lang">{"zh_Hans":"活动说明","zh_Hant":"活動說明","en":""}</widget>
+                                <widget w-class="rule_context" w-tag="pi-ui-lang">{"zh_Hans":"成功邀请好友下载{{ it.walletName }}，在赚-兑换中输入邀请码，你就可以获得奖励哦。 注意~好友验证了手机即视为成功邀请。快去邀请小伙伴一起挖矿吧~","zh_Hant":"成功邀請好友下載{{it.walletName}}，在賺-兌換中輸入邀請碼，你就可以獲得獎勵哦。注意~好友驗證了手機即視為成功邀請。快去邀請小伙伴一起挖礦吧~","en":""}</widget>
+                            </div>
+                            <div w-class="ticket_bottom-text">
+                                <img on-tap="change('first')" src="app/res/image/change-blue.png" height="48px" w-class="change_icon" />
+                            </div>
+                            {{end}}
                         {{end}}
                     </div>
                 </div>
@@ -66,7 +69,7 @@
         </div>
         {{if it.showPage ==='first'}}
         <div w-class="share_text">
-            <widget w-tag="pi-ui-lang">{"zh_Hans":"一键快速邀请","zh_Hant":"一鍵快速邀請","en":""}</widget>
+            <widget w-tag="pi-ui-lang">{{it.quickInvitation}}</widget>
         </div>
         <div w-class="share_icon">
             <div w-class="img-box" on-tap="shareToWechat">

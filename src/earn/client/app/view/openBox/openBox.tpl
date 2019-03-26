@@ -45,8 +45,8 @@
                 <div w-class="sale-money">
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
-                <div w-class="sale-btn" on-tap="btnClick(e,1)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费","zh_Hant":"更多免費","en":""}</widget>
+                <div w-class="sale-btn1" on-tap="btnClick(e,1)">
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
                 </div>
             </div>
             <div w-class="myMoney">我的碎银:&nbsp;{{it.STbalance}}</div>

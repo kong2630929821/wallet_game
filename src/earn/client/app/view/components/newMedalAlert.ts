@@ -5,7 +5,7 @@
 import { makeScreenShot } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
-import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
+import { ShareToPlatforms, SharePlatform } from '../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { coinUnitchange } from '../../utils/tools';
@@ -52,18 +52,6 @@ export class NewMedalAlert extends Widget {
 
     public shareWX() {
         this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
-        // makeScreenShot(() => {
-        //     const stp = new ShareToPlatforms();
-        //     stp.init();
-        //     stp.shareScreenShot({
-        //         success: (result) => { console.log('share success callback'); },
-        //         fail: (result) => { console.log('share fail callback'); },
-        //         platform: ShareToPlatforms.PLATFORM_WEBCHAT
-        //     });
-        // }, () => {
-        //     popNew('app-components1-message-message', { content: this.config.value.tips });
-        // });
-        
     }
 
     public baseShare(platform: number) {
