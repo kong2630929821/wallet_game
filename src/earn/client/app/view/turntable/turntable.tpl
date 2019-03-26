@@ -6,7 +6,7 @@
         {{% 大转盘标题}}
         <div w-class="turntable-name">
             <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            <div w-class="myMoney">我的碎银:&nbsp;{{it.STbalance}}</div>
+            <div w-class="myMoney">我的嗨豆:&nbsp;{{it.STbalance}}</div>
         </div>
 
         {{if it.showMoreSetting}}
@@ -60,14 +60,11 @@
 
             {{% 售价}}
             <div w-class="sale">
-                <div w-class="sale-money" on-tap="btnClick(e,1)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"充值","zh_Hant":"充值","en":""}</widget>
-                </div>
                 <div w-class="sale-btn">
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
                 <div w-class="sale-money1" on-tap="btnClick(e,0)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
+                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费 {{it.watchAdAward}}/10","zh_Hant":"更多免費 {{it.watchAdAward}}/10","en":""}</widget>
                 </div>
             </div>
 

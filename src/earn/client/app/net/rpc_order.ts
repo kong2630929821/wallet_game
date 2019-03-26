@@ -98,8 +98,7 @@ export const exchangeVirtual = (VirtualId:number) => {
                     }
                 });
             } else {
-                showActError(r.reslutCode);
-                reject(r);
+                reject(showActError(r.reslutCode));
             }
         });
     });

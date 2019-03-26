@@ -49,7 +49,7 @@
                     <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
                 </div>
             </div>
-            <div w-class="myMoney">我的碎银:&nbsp;{{it.STbalance}}</div>
+            <div w-class="myMoney">我的银两:&nbsp;{{it.STbalance}}</div>
 
             {{% 余票}}
             <div w-class="ticket">
