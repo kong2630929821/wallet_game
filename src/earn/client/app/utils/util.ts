@@ -15,6 +15,7 @@ import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
 import { popNewMessage } from '../../../../app/utils/tools';
+import { popNew } from '../../../../pi/ui/root';
 
 /**
  * 获取用户单个物品数量  kt/st等

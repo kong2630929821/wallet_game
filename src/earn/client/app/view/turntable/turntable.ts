@@ -33,7 +33,7 @@ interface Props {
     prizeList: any;    // 奖品列表
     turnNum: number;   // 旋转角度
     isTurn: boolean;   // 正在转
-    STbalance:number;  // 账户余额(st)
+    STbalance:number;  // 账户余额(kt)
     turntableList: any;   // 转盘列表
     showTip:any; // 转盘显示提醒
     freeCount: number; // 免费次数
@@ -81,15 +81,15 @@ export class Turntable extends Widget {
         showMoreSetting: false,
         noPassword: getStore('flags').noPassword
     };
-
     public create() {
         super.create();
         if (isLogin()) {
+            alert(1);
             this.change(0);
             this.initTurntable();
             this.ledTimer();
             getSTbalance();
-            this.props.STbalance = getStore('balance/ST');
+            this.props.STbalance = getStore('balance/KT') || 0;
             console.log('我的余额',this.props.STbalance);
 
             isFirstFree().then((res:FreePlay) => {
@@ -110,10 +110,10 @@ export class Turntable extends Widget {
                 }
                 this.paint();
             });
+            
         }
-        
+        this.paint();
     }
-
     public attach() {
         if (!isLogin()) {
             this.backPrePage();
@@ -178,8 +178,7 @@ export class Turntable extends Widget {
      * 初始数据
      */
     public initData() {
-        this.props.STbalance = getStore('balance/KT');
-        console.log('111111111',this.props.STbalance);
+        this.props.STbalance = getStore('balance/KT') || 0;
         this.paint();
         isFirstFree().then((res:FreePlay) => {
             this.props.freeCount = res.freeRotary;
@@ -199,11 +198,14 @@ export class Turntable extends Widget {
                 return;
             }
         }else if(this.props.STbalance < this.props.selectTurntable.needTicketNum){
+            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
             return;
         }
         this.props.isTurn = true;
         // this.startLottery();
+        
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
+            console.log(order)
             if (order.oid) { // 非免费机会开奖
                 queryTurntableOrder(order.oid).then((res:any) => {
                     console.log('转盘开奖成功！',res);
@@ -242,7 +244,7 @@ export class Turntable extends Widget {
         }else if(this.props.selectTurntable.type===ActivityType.PrimaryTurntable){
             popNewMessage({ zh_Hans: '免费次数用完', zh_Hant: '免費次數用完', en: '' })
         }else{
-            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
+           
         }
     }
 
@@ -365,7 +367,7 @@ export class Turntable extends Widget {
      */
     public setChestTip(tipIndex:number = 1) {
         const turntableTips = this.config.value.turntableTips;
-        const stShow = getModulConfig('ST_SHOW');
+        const stShow = getModulConfig('KT_SHOW');
         switch (tipIndex) {
             case 0:
                 this.props.showTip = { zh_Hans:`免费次数: ${this.props.freeCount}`,zh_Hant:`免費次數: ${this.props.freeCount}`,en:'' };
@@ -380,7 +382,7 @@ export class Turntable extends Widget {
                 }, 2000);
                 break;
             case 2:
-                if (this.props.freeCount > 0 || this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
+                if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
                     this.setChestTip(0);
                 } else {
                     // tslint:disable-next-line:max-line-length

@@ -63,9 +63,11 @@
                 <div w-class="sale-btn">
                     <widget w-tag="pi-ui-lang">{{it.showTip}}</widget>
                 </div>
-                <div w-class="sale-money1" on-tap="btnClick(e,0)">
-                    <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费 {{it.watchAdAward}}/10","zh_Hant":"更多免費 {{it.watchAdAward}}/10","en":""}</widget>
-                </div>
+                {{if it.selectTurntable.type===100701}}
+                    <div w-class="sale-money1" on-tap="btnClick(e,0)">
+                        <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费 {{it.watchAdAward}}/10","zh_Hant":"更多免費 {{it.watchAdAward}}/10","en":""}</widget>
+                    </div>
+                {{end}}  
             </div>
 
             {{% 余票}}
