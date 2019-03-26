@@ -374,9 +374,9 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popNew3('earn-client-app-components-newUserLogin-newUserLogin',{
-        pi_norouter:true,
-        awardName:'铁镐',
+    popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        title:'新用户',
+        awardType:2001,
         awardNum:2
     },() => {
         popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{

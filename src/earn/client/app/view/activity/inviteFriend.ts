@@ -28,14 +28,14 @@ export class InviteFriend extends Widget {
         const invited = getStore('invited');
         this.props = {
             walletName:getModulConfig('WALLET_NAME'),
-            showPage:'first',
             inviteCode:'******',
             welfareAwards : [],
             invitedNumberOfPerson:invited.invitedNumberOfPerson,
             inviteAwardsMultiple,
             topBarTitle:'',
             quickInvitation:'',
-            meQrcode:''
+            meQrcode:'',
+            background:''
         };
         this.initWelfareAwards(invited.receiveAwards);
         this.initData();
@@ -54,8 +54,9 @@ export class InviteFriend extends Widget {
         const inviteCodeInfo = await getInviteCode();
         if (inviteCodeInfo.result !== 1) return;
         this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
-        this.props.topBarTitle = this.props.topBarTitle || { zh_Hans:'邀请好友',zh_Hant:'邀請好友',en:'' };
+        this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'一键快速邀请',zh_Hant:'一鍵快速邀請',en:'' };
+        this.props.background = this.props.background || 'app/res/image/bg_open.png';
         this.paint();
     }
 
@@ -94,7 +95,10 @@ export class InviteFriend extends Widget {
     public refreshPage() {
         this.initData();
     }
-
+    public copyAddr() {
+        copyToClipboard(this.props.address);
+        popNewMessage(this.language.tips[0]);
+    }
     /**
      * 切换显示页面
      * @param page 显示页面标识

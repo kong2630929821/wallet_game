@@ -1,0 +1,31 @@
+.amount{
+    height:140px;
+    font-size:100px;
+    color:rgba(34,34,34,1);
+    line-height:140px;
+    text-align: center;
+    margin-top: 30px;
+}
+.inviteNum{
+    height:40px;
+    font-size:28px;
+    color:rgba(136,136,136,1);
+    line-height:40px;
+    text-align: center;
+}
+.describe{
+    margin: 30px;
+    height:136px;
+    background:rgba(212,237,255,1);
+    border-radius:6px;
+    font-size:28px;
+    color:rgba(34,34,34,1);
+    line-height:48px;
+    padding: 20px;
+}
+.userList{
+    height:28px;
+    font-size:28px;
+    font-weight:500;
+    line-height:28px;
+}
