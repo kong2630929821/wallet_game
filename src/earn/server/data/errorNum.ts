@@ -11,6 +11,9 @@ export const CONFIG_ERROR = 800;
 // 用户未登录
 export const NOT_LOGIN = 900;
 
+// 用户信息为空
+export const NOT_USER_INFO = 901;
+
 // 该类型矿山数量不足
 export const MINE_NOT_ENOUGH = 1101;
 // 挖矿数量已达限制

@@ -1,34 +1,31 @@
 /**
  * 
  */
-import { read, write } from '../../../pi_pt/db';
-
-import { getEnv as eventGetEnv, NetEvent } from '../../../pi_pt/event/event_server';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
-import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
+import { NetEvent } from '../../../pi_pt/event/event_server';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { SeriesLoginAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
-import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN } from '../data/errorNum';
+import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN, NOT_USER_INFO } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { send } from '../util/sendMessage';
 import { SeriesDaysRes } from './itemQuery.s';
-import { setSession } from './session.r';
+import { setSession, getSession } from './session.r';
 import { add_free_rotary } from './stParties.r';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 import { get_task_award } from './user_item.r';
+import { Env } from '../../../pi/lang/env';
+import { Session } from '../../../pi/net/session';
+
+declare var env: Env;
 
 // #[rpc=rpcServer]
 export const login = (user: UserType): UserInfo => {
     console.log('new login!!!!!!!!!!!!!!!!!!!!!!user:', user);
-    const dbMgr = getEnv().getDbMgr();
     const userInfo = new UserInfo();
     const loginReq = new LoginReq();
     let openid;
@@ -37,8 +34,8 @@ export const login = (user: UserType): UserInfo => {
         openid = walletLoginReq.openid;
         const sign = walletLoginReq.sign;
         // TODO 验证签名
-        const userAccountBucket = new Bucket(CONSTANT.WARE_NAME, UserAcc._$info.name, dbMgr);
-        const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name, dbMgr);
+        const userAccountBucket = new Bucket(CONSTANT.WARE_NAME, UserAcc._$info.name);
+        const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name);
         console.log('------login-------', userAccountBucket.get(openid));
         const v = userAccountBucket.get(openid)[0];
         if (!v) {
@@ -60,18 +57,13 @@ export const login = (user: UserType): UserInfo => {
 
         return userInfo;
     }
-    const mqttServer = getEnv().getNativeObject<ServerNode>('mqttServer');
+    const mqttServer = env.get('mqttServer');
     setMqttTopic(mqttServer, `send/${loginReq.uid.toString()}`, true, true);
 
     // save session
     setSession('uid', loginReq.uid.toString(), loginReq.uid.toString());
-    const session = getEnv().getSession();
-    console.log('------session-------', session);
-    write(dbMgr, (tr: Tr) => {
-        session.set(tr, 'uid', loginReq.uid.toString());
-        session.set(tr, 'openid', openid);
-    });
-
+    setSession('openid', openid, loginReq.uid.toString());
+    const session: Session = env.get('session');
     // 添加到在线表
     set_user_online(loginReq.uid, session.getId());
 
@@ -109,12 +101,11 @@ export const login = (user: UserType): UserInfo => {
 };
 
 // 获取连续登陆天数
-export const getLoginDays = ():SeriesDaysRes => {
+export const getLoginDays = (): SeriesDaysRes => {
     const uid = getUid();
     if (!uid) return;
     const seriesDaysRes = new SeriesDaysRes();
-    const dbMgr = getEnv().getDbMgr();
-    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name);
     const seriesLogin = seriesLoginBucket.get<number, [SeriesLogin]>(uid)[0];
     if (!seriesLogin) {
         seriesDaysRes.resultNum = DB_ERROR;
@@ -130,39 +121,47 @@ export const getLoginDays = ():SeriesDaysRes => {
 // 绑定聊天ID
 // #[rpc=rpcServer]
 export const bind_chatID = (chatID: number): Result => {
+    console.log('bind_chatID:', chatID);
     const result = new Result();
     if (!chatID) {
+        console.log('!!!!!!!!!!!!!!!!1111111111111111111111111');
         result.reslutCode = CHAT_NOT_REGISTER;
 
         return result;
     }
-    const dbMgr = getEnv().getDbMgr();
     const uid = getUid();
+    console.log('!!!!!!!!!!!!!!!!222222222222222222', uid);
     if (!uid) {
+        console.log('!!!!!!!!!!!!!!!!33333333333333333333333333');
         result.reslutCode = NOT_LOGIN;
 
         return result;
     }
-    const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name, dbMgr);
-    const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name, dbMgr);
-    userInfoBucket.readAndWrite(uid, (v) => {
-        const userInfo: UserInfo = v[0];
-        userInfo.chatID = chatID;
+    const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
+    const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name);
+    console.log('!!!!!!!!!!!!!!!!4444444444444444444444');
+    let userInfo = userInfoBucket.get<number, UserInfo>(uid)[0];
+    console.log('userInfo:', userInfo);
+    if (!userInfo) {
+        result.reslutCode = NOT_USER_INFO;
 
-        return userInfo;
-    });
+        return result;
+    }
+    userInfo.chatID = chatID;
+    userInfoBucket.put(uid, userInfo);
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!566666666666666666666666');
     chatIDMapBucket.put(chatID, uid);
     result.reslutCode = CONSTANT.RESULT_SUCCESS;
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!7777777777777777777777result:', result);
 
-    return result;  
+    return result;
 };
 
 // 本地方法
 // 设置在线信息
 export const set_user_online = (uid: number, sessionId: number) => {
-    const dbMgr = getEnv().getDbMgr();
-    const onlineUsersBucket = new Bucket('memory', Online._$info.name, dbMgr);
-    const onlineUsersMapBucket = new Bucket('memory', Online._$info.name, dbMgr);
+    const onlineUsersBucket = new Bucket('memory', Online._$info.name);
+    const onlineUsersMapBucket = new Bucket('memory', Online._$info.name);
 
     const online = new Online();
     online.uid = uid;
@@ -177,11 +176,10 @@ export const set_user_online = (uid: number, sessionId: number) => {
 
 // 本地方法
 // 获取用户登陆总天数
-export const get_totalLoginDays = ():number => {
+export const get_totalLoginDays = (): number => {
     console.log('get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
+    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name);
     let totalLogin = totalLoginBucket.get<number, [TotalLogin]>(uid)[0];
     if (!totalLogin) {
         console.log('blank get_totalLoginDays in!!!!!!!!!!!!!!!!!!!!');
@@ -198,10 +196,9 @@ export const get_totalLoginDays = ():number => {
 // 设置每日登陆信息
 export const set_user_login = (uid: number) => {
     console.log('set_user_login in !!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
-    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
-    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name, dbMgr);
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name);
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name);
+    const totalLoginBucket = new Bucket(CONSTANT.WARE_NAME, TotalLogin._$info.name);
 
     const today = get_today();
     const dayliLoginKey = new DayliLoginKey();
@@ -237,7 +234,7 @@ export const set_user_login = (uid: number) => {
 
 // 本地方法
 // 验证是否当日首次登陆
-export const isToday_firstLogin = ():boolean => {
+export const isToday_firstLogin = (): boolean => {
     console.log('isToday_firstLogin in!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     const today = get_today();
@@ -246,8 +243,7 @@ export const isToday_firstLogin = ():boolean => {
     dayliLoginKey.uid = uid;
     dayliLoginKey.date = today;
 
-    const dbMgr = getEnv().getDbMgr();
-    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name);
     let dayliLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
     if (!dayliLogin) {
         dayliLogin = new DayliLogin();
@@ -265,10 +261,9 @@ export const isToday_firstLogin = ():boolean => {
 // #[event=net_connect_close]
 export const close_connect = (e: NetEvent) => {
     const sessionId = e.connect_id;
-    const dbMgr = eventGetEnv().getDbMgr();
 
-    const onlineUsersBucket = new Bucket('memory', Online._$info.name, dbMgr);
-    const onlineUsersMapBucket = new Bucket('memory', OnlineMap._$info.name, dbMgr);
+    const onlineUsersBucket = new Bucket('memory', Online._$info.name);
+    const onlineUsersMapBucket = new Bucket('memory', OnlineMap._$info.name);
     const r = onlineUsersMapBucket.get<number, [OnlineMap]>(sessionId)[0];
     if (r && r.uid !== -1) {
         onlineUsersMapBucket.delete(r.session_id);
@@ -282,21 +277,20 @@ export const close_connect = (e: NetEvent) => {
 
 // 获取连续登陆天数
 // #[rpc=rpcServer]
-export const get_loginDays = ():SeriesDaysRes => {
+export const get_loginDays = (): SeriesDaysRes => {
     const uid = getUid();
     if (!uid) return;
     const seriesDaysRes = new SeriesDaysRes();
-    const dbMgr = getEnv().getDbMgr();
-    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name, dbMgr);
+    const seriesLoginBucket = new Bucket(CONSTANT.WARE_NAME, SeriesLogin._$info.name);
     const seriesLogin = seriesLoginBucket.get<number, [SeriesLogin]>(uid)[0];
     if (!seriesLogin) {
         seriesDaysRes.resultNum = DB_ERROR;
 
         return seriesDaysRes;
     }
-    const cfgBucket = new Bucket(CONSTANT.MEMORY_NAME, SeriesLoginAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(CONSTANT.MEMORY_NAME, SeriesLoginAwardCfg._$info.name);
     const awardCfg = cfgBucket.get<number, [SeriesLoginAwardCfg]>(seriesLogin.days)[0];
-    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name, dbMgr);
+    const dayliLoginBucket = new Bucket(CONSTANT.WARE_NAME, DayliLogin._$info.name);
     const today = get_today();
     const dayliLoginKey = new DayliLoginKey();
     dayliLoginKey.uid = uid;
@@ -306,7 +300,7 @@ export const get_loginDays = ():SeriesDaysRes => {
         // 推送签到奖励信息
         send(uid, CONSTANT.MESSAGE_TYPE_DAILY_FIREST_LOGIN, JSON.stringify(awardCfg));
         console.log('send!!!!!!!!!!!!', dayliLogin);
-        
+
         dayliLogin.sendCount = 1;
         dayliLoginBucket.put(dayliLoginKey, dayliLogin);
     }
@@ -320,14 +314,13 @@ export const get_loginDays = ():SeriesDaysRes => {
 // 重置每日任务
 export const reset_dayli_task = () => {
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const userTaskBucket = new Bucket(CONSTANT.WARE_NAME, UserTaskTab._$info.name, dbMgr);
-    const taskCfgBucket = new Bucket(CONSTANT.MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
-    const iter = <DBIter>taskCfgBucket.iter(null);
+    const userTaskBucket = new Bucket(CONSTANT.WARE_NAME, UserTaskTab._$info.name);
+    const taskCfgBucket = new Bucket(CONSTANT.MEMORY_NAME, TaskAwardCfg._$info.name);
+    const iter = taskCfgBucket.iter(null);
     // 获取每日任务id
     const taskList = [];
     do {
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         console.log('elCfg----------------read---------------', iterEle);
         if (!iterEle) break;
         const taskCfg: TaskAwardCfg = iterEle[1];
@@ -336,47 +329,34 @@ export const reset_dayli_task = () => {
     const userTask = userTaskBucket.get<number, [UserTaskTab]>(uid)[0];
     console.log('-------------taskList!------------', taskList);
     // 任务较少 算法比较暴力
-    for (let i = 0; i < taskList.length; i ++) {
+    for (let i = 0; i < taskList.length; i++) {
         for (let j = 0; j < userTask.taskList.length; j++) {
             if (userTask.taskList[j].id === taskList[i]) {
                 // 重置任务状态
                 userTask.taskList[j].state = 0;
                 break;
             }
-        } 
+        }
     }
     userTaskBucket.put(uid, userTask);
 };
 
 // 获取用户信息
-export const get_userInfo = (uid:number):UserInfo => {
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name, dbMgr);
+export const get_userInfo = (uid: number): UserInfo => {
+    const bucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
     console.log('before get_uname!!!!!!!!!!!!!!!!!');
-    
+
     return bucket.get<number, [UserInfo]>(uid)[0];
 };
 
 // 获取uid
 export const getUid = () => {
-    const dbMgr = getEnv().getDbMgr();
-    const session = getEnv().getSession();
-    let uid;
-    read(dbMgr, (tr: Tr) => {
-        uid = session.get(tr, 'uid');
-    });
 
-    return parseInt(uid, 10);
+    return parseInt(getSession('uid'), 10);
 };
 
 // 获取openid
 export const getOpenid = () => {
-    const dbMgr = getEnv().getDbMgr();
-    const session = getEnv().getSession();
-    let openid;
-    read(dbMgr, (tr: Tr) => {
-        openid = session.get(tr, 'openid');
-    });
 
-    return openid;
+    return getSession('openid');
 };

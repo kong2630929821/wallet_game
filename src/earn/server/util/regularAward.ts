@@ -2,9 +2,7 @@
  * 日常奖励
  */
 
-import { getEnv } from '../../../pi_pt/net/rpc_server';
 import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
@@ -19,14 +17,13 @@ import { send } from './sendMessage';
 export const firstLogin_award = ():Items => {
     console.log('firstLogin_award in !!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const cfgBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name);
     const cfgs:RegularAwardCfg[] = [];
     const items:Item[] = [];
-    const iter:DBIter = cfgBucket.iter(FIRST_LOGIN_AWARD);
+    const iter = cfgBucket.iter(FIRST_LOGIN_AWARD);
     let maxCount = 0;
     do {
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         if (!iterEle) return;
         console.log('elCfg----------------read---------------', iterEle);
         const regularCfg:RegularAwardCfg = iterEle[1];
@@ -49,8 +46,7 @@ export const firstLogin_award = ():Items => {
 // 连续登陆奖励
 export const seriesLogin_award = (days:number):Item => {
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
-    const cfgBucket = new Bucket(MEMORY_NAME, SeriesLoginAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, SeriesLoginAwardCfg._$info.name);
     let id;
     if (days <= SERIES_LOGIN_CIRCLE) {
         id = days;
@@ -73,8 +69,7 @@ export const seriesLogin_award = (days:number):Item => {
  */
 export const invite_award = (uid:number, num:number):Award => {
     console.log('invite_award in !!!!!!!!!!!!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name, dbMgr);
+    const cfgBucket = new Bucket(MEMORY_NAME, InviteAwardCfg._$info.name);
     let id;
     if (num <= INVITE_AWARD_CIRCLE) {
         id = num;

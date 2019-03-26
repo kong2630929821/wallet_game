@@ -6,10 +6,6 @@ import { Award, AwardMap, BTC, ConvertTab, ETH, Hoe, Item, Items, KT, Mine, Mine
 import { Bucket } from '../../utils/db';
 
 import { randomInt } from '../../../pi/util/math';
-import { iterDb, read } from '../../../pi_pt/db';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
 import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
@@ -26,13 +22,16 @@ import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 import { send } from './sendMessage';
+import { Env } from '../../../pi/lang/env';
+import { Tr } from '../../../pi/db/mgr';
+
+declare var env: Env;
 
 // 添加奖品
 export const add_award = (uid:number, itemType:number, count:number, src:string, convert?:string, desc?:string, deadTime?:string):Award => {
     const time = (new Date()).valueOf();
     console.log('time!!!!!!!!!!!!!!!!!:', time);
     const awardid = `${time}${uid}${randomInt(10000, 99999)}`;
-    const dbMgr = getEnv().getDbMgr();
     const award = new Award();
     award.id = awardid;
     award.awardType = itemType;
@@ -45,7 +44,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     if (deadTime) award.deadTime = deadTime;
     console.log('award!!!!!!!!!!!!!!!!!:', award);
     // 写入奖励表
-    const bucket = new Bucket(WARE_NAME, Award._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Award._$info.name);
     bucket.put(awardid, award);
     // 写入奖励MAP表
     const awardMap = <AwardMap>get_award_ids(uid);
@@ -54,7 +53,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     awardList = awardMap.awards;
     awardList.push(awardid);
     console.log('awardList!!!!!!!!!!!!!!!!!:', awardList);
-    const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
+    const mapBucket = new Bucket(WARE_NAME, AwardMap._$info.name);
     awardMap.awards = awardList;
     mapBucket.put(uid, awardMap);
     // 向钱包添加奖励相应的货币
@@ -72,7 +71,7 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
             specialAward.uid = uid;
             specialAward.openid = getOpenid();
             specialAward.time = time.toString();
-            const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name, dbMgr);
+            const specialAwardbucket = new Bucket(WARE_NAME, SpecialAward._$info.name);
             specialAwardbucket.put(THE_ELDER_SCROLLS, specialAward);
         }
     }
@@ -103,8 +102,7 @@ export const add_itemCount = (uid:number, itemType:number, count: number): Item 
             break;
         }
     }
-    const dbMgr = getEnv().getDbMgr();
-    const itemBucket = new Bucket('file', Items._$info.name, dbMgr);
+    const itemBucket = new Bucket('file', Items._$info.name);
     if (enumNum === 1) {
         if (count > 1) return;
         const mineHp = new MineHp();
@@ -158,8 +156,7 @@ export const reduce_itemCount = (itemType: number, count: number): Item => {
             break;
         }
     }
-    const dbMgr = getEnv().getDbMgr();
-    const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    const itemBucket = new Bucket(WARE_NAME, Items._$info.name);
     if (enumNum === 1) {
         return;
     } else {
@@ -193,8 +190,7 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
             console.log('mineHp!!!!!!!!!!!!!!', hps[i]);
             // 获取Item对象在数组中的下标
             const items = itemInfo.item;
-            const dbMgr = getEnv().getDbMgr();
-            const itemBucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+            const itemBucket = new Bucket(WARE_NAME, Items._$info.name);
             let itemIndex;
             for (const item1 of items) {
                 if (item1.value.num === typeNum) {
@@ -229,15 +225,14 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
 // 挖矿添加奖章
 export const mining_add_medal = (uid:number, itemType:number) => {
     console.log('Mining_add_medal!!!!!!!!!!!!!!!!', itemType);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(MEMORY_NAME, MedalCfg._$info.name, dbMgr);
+    const bucket = new Bucket(MEMORY_NAME, MedalCfg._$info.name);
     if (itemType === KT_TYPE) {
         const ktNum = get_miningKTNum(uid).total;
         console.log('KTnum!!!!!!!!!!!!!!!!', ktNum);
-        const iter = <DBIter>bucket.iter(null, true);
+        const iter = bucket.iter(null, true);
         let pushMsg = true;
         do {
-            const iterCfg = iter.nextElem();
+            const iterCfg = iter.next();
             console.log('elCfg----------------read---------------', iterCfg);
             if (!iterCfg) {
                 break;
@@ -268,8 +263,7 @@ export const mining_add_medal = (uid:number, itemType:number) => {
 // 添加奖章
 export const add_medal = (uid:number, medalType: number, pushMsg: boolean): boolean => {
     console.log('add_medal in!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Medals._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Medals._$info.name);
     let medals = bucket.get<number, [Medals]>(uid)[0];
     if (!medals) {
         medals = new Medals();
@@ -291,8 +285,7 @@ export const add_medal = (uid:number, medalType: number, pushMsg: boolean): bool
 // 挂奖章
 export const showMedal = (medalType: number) => {
     console.log('showMedal in!!!!!!!!!!!!!!!!!', medalType);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name);
     const uid = getUid();
     if (!uid) return;
     const showMedal = new ShowMedal();
@@ -304,8 +297,7 @@ export const showMedal = (medalType: number) => {
 // 添加成就
 export const add_achievement = (uid:number, achievementType: number): boolean => {
     add_medal(uid, achievementType, true);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, Achievements._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Achievements._$info.name);
     let achievements = bucket.get<number, [Achievements]>(uid)[0];
     if (!achievements) {
         achievements = new Achievements();
@@ -325,15 +317,15 @@ export const add_achievement = (uid:number, achievementType: number): boolean =>
 // 用户物品数据库根据配置初始化
 export const items_init = (uid: number) => {
     console.log('item init in!!!!!!!!!!!!!');
-    const dbMgr = getEnv().getDbMgr();
+    const dbMgr = env.dbMgr;
     const itemInfo = new Items();
     const items = [];
-    read(dbMgr, (tr: Tr) => {
-        const iterCfg = iterDb(tr, MEMORY_NAME, ItemInitCfg._$info.name, 0, false, null); // 取from表的迭代器
+    dbMgr.read((tr: Tr) => {
+        const iterCfg = tr.iter_raw(MEMORY_NAME, ItemInitCfg._$info.name, 0, false, null); // 取from表的迭代器
         console.log('!!!!!!!!!!!!!!iterCfg:', iterCfg);
         let maxid = MAX_TYPE_NUM;
         do {
-            const elCfg = iterCfg.nextElem();
+            const elCfg = iterCfg.next();
             if (!elCfg) return;
             console.log('elCfg----------------read---------------', elCfg);
             const cfg:ItemInitCfg = elCfg[1];
@@ -399,20 +391,19 @@ export const items_init = (uid: number) => {
     });
     itemInfo.uid = uid;
     itemInfo.item = items;
-    const bucket = new Bucket(WARE_NAME, Items._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, Items._$info.name);
     bucket.put(uid, itemInfo);
 };
 
 // 初始化用户任务列表
 export const task_init = (uid: number) => {
     console.log('!!!!!!!!!!!!!!task_init in');
-    const dbMgr = getEnv().getDbMgr();
-    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name, dbMgr);
-    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name, dbMgr);
-    const iter = <DBIter>taskCfgBucket.iter(null);
+    const userTaskBucket = new Bucket(WARE_NAME, UserTaskTab._$info.name);
+    const taskCfgBucket = new Bucket(MEMORY_NAME, TaskAwardCfg._$info.name);
+    const iter = taskCfgBucket.iter(null);
     const taskList:Task[] = [];
     do {
-        const iterEle = iter.nextElem();
+        const iterEle = iter.next();
         console.log('elCfg----------------read---------------', iterEle);
         if (!iterEle) break;
         const taskCfg: TaskAwardCfg = iterEle[1];
@@ -452,8 +443,7 @@ export const get_mine_type = ():number => {
 
 // 根据配置返回指定类型矿山的血量
 export const get_mine_hp = (mineType: number): number => {
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(MEMORY_NAME, MineHpCfg._$info.name, dbMgr);
+    const bucket = new Bucket(MEMORY_NAME, MineHpCfg._$info.name);
     console.log('doAward v:!!!!!!!!!!!!!', bucket.get(mineType)[0]);
 
     return bucket.get(mineType)[0].hp;
@@ -462,8 +452,7 @@ export const get_mine_hp = (mineType: number): number => {
 // 获取用户获奖id列表
 export const get_award_ids = (uid: number): AwardMap => {
     console.log('get_award_ids in !!!!!!!!!!!!!!!', uid);
-    const dbMgr = getEnv().getDbMgr();
-    const bucket = new Bucket(WARE_NAME, AwardMap._$info.name, dbMgr);
+    const bucket = new Bucket(WARE_NAME, AwardMap._$info.name);
     const awardMap = bucket.get<number, [AwardMap]>(uid)[0];
     if (!awardMap) {
         const blankAwardMap = new AwardMap();

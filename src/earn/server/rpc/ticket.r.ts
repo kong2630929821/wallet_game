@@ -3,8 +3,6 @@
  */
 
 import { randomInt } from '../../../pi/util/math';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { DBIter } from '../../../pi_pt/rust/pi_serv/js_db';
 import { Bucket } from '../../utils/db';
 import { TicketConvertCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_CONVERT, AWARD_SRC_ROTARY, AWARD_SRC_TREASUREBOX, COMPOSE_GOLD_TICKET, COMPOSE_RAINBOW_TICKET, GOLD_HOE_TYPE, GOLD_TICKET_ROTARY, GOLD_TICKET_TREASUREBOX, GOLD_TICKET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MEMORY_NAME, RAINBOW_TICKET_ROTARY, RAINBOW_TICKET_TREASUREBOX, RAINBOW_TICKET_TYPE, RESULT_SUCCESS, SILVER_TICKET_ROTARY, SILVER_TICKET_TREASUREBOX, SILVER_TICKET_TYPE, TICKET_COMPOSE_COUNT, TICKET_ROTARY_COUNT, TICKET_TREASUREBOX_COUNT, WALLET_API_QUERY, WARE_NAME } from '../data/constant';
@@ -36,8 +34,7 @@ export const get_ticket_KTNum = ():CoinQueryRes => {
             // 根据平台数据库存储的单位进行转换
             walletKT = json.balance * KT_UNIT_NUM;
             console.log('http success walletKT!!!!!!!!!!!!!!!!!!!!', json.balance);
-            const dbMgr = getEnv().getDbMgr();
-            const bucket = new Bucket(WARE_NAME, UsedKT._$info.name, dbMgr);
+            const bucket = new Bucket(WARE_NAME, UsedKT._$info.name);
             let usedKT = bucket.get<number, [UsedKT]>(uid)[0];
             if (!usedKT) {
                 const blank = new UsedKT();
@@ -187,8 +184,7 @@ export const ticket_treasurebox = (itemType:number):AwardResponse => {
 export const ticket_convert = (awardType:number):AwardResponse => {
     const uid = getUid();
     const awardResponse = new AwardResponse();
-    const dbMgr = getEnv().getDbMgr(); 
-    const bucket = new Bucket(MEMORY_NAME, TicketConvertCfg._$info.name, dbMgr);
+    const bucket = new Bucket(MEMORY_NAME, TicketConvertCfg._$info.name);
     const convertCfg = bucket.get<number, [TicketConvertCfg]>(awardType)[0];
     // 从配置中获取具体兑换信息
     if (!convertCfg) {
@@ -221,12 +217,12 @@ export const ticket_convert = (awardType:number):AwardResponse => {
             return awardResponse;
         }
     }
-    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name, dbMgr);
+    const convertBucket = new Bucket(WARE_NAME, ConvertTab._$info.name);
     // 从数据库获取兑换码
-    const iter = <DBIter>convertBucket.iter(null);
+    const iter = convertBucket.iter(null);
     let convertAward:ConvertTab;
     do {
-        const iterConvert = iter.nextElem();
+        const iterConvert = iter.next();
         console.log('elCfg----------------read---------------', iterConvert);
         if (!iterConvert) {
             awardResponse.resultNum = AWARD_NOT_ENOUGH;

@@ -2,13 +2,14 @@
  * 这里处理冒险奖励逻辑
  */
 // ===================================================== 导入
-import { iterDb, read } from '../../../pi_pt/db';
-import { getEnv } from '../../../pi_pt/net/rpc_server';
-import { Tr } from '../../../pi_pt/rust/pi_db/mgr';
 import { AverageAwardCfg, isAverageAward, isRateAward, isWeightAward, RateAwardCfg, WeightAwardCfg } from '../../xlsx/awardCfg.s';
 import { MEMORY_NAME } from '../data/constant';
 import { getWeightIndex, isSpecialAward } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
+import { Env } from '../../../pi/lang/env';
+import { Tr } from '../../../pi/db/mgr';
+
+declare var env: Env;
 // ===================================================== 导出
 // 处理奖励
 export const doAward = (awardId: number, seedMgr: RandomSeedMgr, awards: [number, number][]) => {
@@ -37,14 +38,14 @@ export const addAward = (itemId: number, count: number, allAwards: [number, numb
 // ===================================================== 本地
 // 处理几率奖励---万分率
 const doRateAward = (awardId: number, seedMgr: RandomSeedMgr, awards: [number, number][]) => {
-    const dbMgr = getEnv().getDbMgr();
+    const dbMgr = env.dbMgr;
     const specialAwards = [];
-    read(dbMgr, (tr: Tr) => {
+    dbMgr.read((tr: Tr) => {
         let maxCount = 0;
         // 取几率奖励配置
-        const iterCfg = iterDb(tr, MEMORY_NAME, RateAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
+        const iterCfg = tr.iter_raw(MEMORY_NAME, RateAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
         do {
-            const elCfg = iterCfg.nextElem();
+            const elCfg = iterCfg.next();
             console.log('elCfg----------------read---------------', elCfg);
             if (!elCfg) return;
             const cfg: RateAwardCfg = elCfg[1];
@@ -82,16 +83,16 @@ const doRateAward = (awardId: number, seedMgr: RandomSeedMgr, awards: [number, n
  * @param upBox 宝箱品质提升
  */
 const doWeightAward = (awards: [number, number][], awardId: number, seedMgr: RandomSeedMgr) => {
-    const dbMgr = getEnv().getDbMgr();
+    let dbMgr = env.dbMgr;
     const cfgs: WeightAwardCfg[] = [];
     const weights = [];
     let maxWeights = 0;
-    read(dbMgr, (tr: Tr) => {
+    dbMgr.read((tr: Tr) => {
         let maxCount = 0;
         // 取权重奖励配置
-        const iterCfg = iterDb(tr, MEMORY_NAME, WeightAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
+        const iterCfg = tr.iter_raw(MEMORY_NAME, WeightAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
         do {
-            const elCfg = iterCfg.nextElem();
+            const elCfg = iterCfg.next();
             console.log('elCfg----------------read---------------', elCfg);
             if (!elCfg) return;
             const cfg: WeightAwardCfg = elCfg[1];
@@ -117,12 +118,12 @@ const doWeightAward = (awards: [number, number][], awardId: number, seedMgr: Ran
 
 // 处理平均奖励
 const doAverageAward = (awards: [number, number][], awardId: number, seedMgr: RandomSeedMgr) => {
-    const dbMgr = getEnv().getDbMgr();
+    let dbMgr = env.dbMgr;
     let cfg: AverageAwardCfg;
-    read(dbMgr, (tr: Tr) => {
+    dbMgr.read((tr: Tr) => {
         // 取平均奖励配置
-        const iterCfg = iterDb(tr, MEMORY_NAME, AverageAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
-        const elCfg = iterCfg.nextElem();
+        const iterCfg = tr.iter_raw(MEMORY_NAME, AverageAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
+        const elCfg = iterCfg.next();
         console.log('elCfg----------------read---------------', elCfg);
         if (!elCfg) return;
         const iCfg: AverageAwardCfg = elCfg[1];
@@ -131,8 +132,8 @@ const doAverageAward = (awards: [number, number][], awardId: number, seedMgr: Ra
             cfg = iCfg;
         } else {
             awardId = Math.floor(awardId / 100) * 100 + index;
-            const iterCfg = iterDb(tr, MEMORY_NAME, AverageAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
-            const elCfg = iterCfg.nextElem();
+            const iterCfg = tr.iter_raw(MEMORY_NAME, AverageAwardCfg._$info.name, awardId, false, null); // 取from表的迭代器
+            const elCfg = iterCfg.next();
             console.log('elCfg----------------read---------------', elCfg);
             if (!elCfg) return;
             cfg = elCfg[1];
