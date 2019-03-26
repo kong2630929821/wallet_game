@@ -1,0 +1,26 @@
+.user{
+    display: flex;
+    align-items: center;
+    height: 120px;
+    padding: 20px;
+}
+.userHead{
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+}
+.userName{
+    flex: 1 0 0;
+    margin:0 20px;
+}
+.addUser{
+    width:160px;
+    height:60px;
+    background:rgba(42,86,198,1);
+    font-size:28px;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    line-height:60px;
+    text-align: center;
+    border-radius: 6px;
+}
