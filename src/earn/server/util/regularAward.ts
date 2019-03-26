@@ -6,11 +6,12 @@ import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, MESSAGE_TYPE_DAILY_FIREST_LOGIN, SERIES_LOGIN_CIRCLE } from '../data/constant';
+import { AWARD_SRC_INVITE, AWARD_SRC_LOGIN, FIRST_LOGIN_AWARD, INVITE_AWARD_CIRCLE, INVITE_AWARD_CIRCLE_LENGTH, INVITE_AWARD_CIRCLE_LEVEL1, INVITE_AWARD_CIRCLE_LEVEL2, INVITE_AWARD_CIRCLE_LEVEL3, MAX_ONEDAY_MINING, MEMORY_NAME, MESSAGE_TYPE_DAILY_FIREST_LOGIN, SERIES_LOGIN_CIRCLE, WARE_NAME } from '../data/constant';
 import { Award, Item, Items, Mine } from '../data/db/item.s';
+import { DayliLogin, DayliLoginKey } from '../data/db/user.s';
 import { getUid } from '../rpc/user.r';
 import { add_mine } from '../rpc/user_item.r';
-import { add_award, add_itemCount, get_mine_total } from './item_util.r';
+import { add_award, add_itemCount, get_mine_total, get_today } from './item_util.r';
 import { send } from './sendMessage';
 
 // 首次登陆奖励
@@ -47,12 +48,11 @@ export const firstLogin_award = ():Items => {
 export const seriesLogin_award = (days:number):Item => {
     console.log('--------------seriesLogin_award in-----------------');
     const uid = getUid();
-    const dbMgr = getEnv().getDbMgr();
     const date = get_today();
     const dayliLoginKey = new DayliLoginKey();
     dayliLoginKey.uid = uid;
     dayliLoginKey.date = date;
-    const dayliLoginBucket = new Bucket(WARE_NAME, DayliLogin._$info.name, dbMgr);
+    const dayliLoginBucket = new Bucket(WARE_NAME, DayliLogin._$info.name);
     const dayliLogin = dayliLoginBucket.get<DayliLoginKey, [DayliLogin]>(dayliLoginKey)[0];
     // 如果当天登陆记录不存在或者状态不为true，则不发放登陆奖励
     if (!dayliLogin || (dayliLogin.state !== true)) return;

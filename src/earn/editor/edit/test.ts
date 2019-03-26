@@ -16,7 +16,7 @@ import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
-import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
+import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, kt_rotary, kt_treasurebox, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
 import { bigint_test, get_objStr, hit_test, item_add, item_addticket, reset_dayliTask_test } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
@@ -91,8 +91,8 @@ export const orderQuery = () => {
 
 // 宝箱
 export const box_test = () => {
-    const itemType = 101001;
-    clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
+    const itemType = 101101;
+    clientRpcFunc(kt_treasurebox, itemType, (r: Result) => {
         console.log(r);
     });
 };
@@ -164,8 +164,8 @@ export const award_query_test = () => {
 
 // 转盘
 export const rotary_test = () => {
-    const itemType = 100701;
-    clientRpcFunc(st_rotary, itemType, (r: AwardResponse) => {
+    const itemType = 100801;
+    clientRpcFunc(kt_rotary, itemType, (r: AwardResponse) => {
         console.log(r);
     });
 };
@@ -294,6 +294,13 @@ export const guessing_test = () => {
 export const get_jackpots_test = () => {
     const cid = 4;
     clientRpcFunc(get_compJackpots, cid, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
+// 查KT
+export const get_KT_test = () => {
+    clientRpcFunc(get_KTNum, null, (r: FreePlay) => {
         console.log(r);
     });
 };
@@ -485,6 +492,10 @@ const props = {
         {
             name: '好友排行',
             func: () => { get_friendTop_test(); }
+        },
+        {
+            name: '查KT',
+            func: () => { get_KT_test(); }
         }
         // {
         //     name: '兑换',
