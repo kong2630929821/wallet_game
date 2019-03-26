@@ -12,7 +12,7 @@
             <widget w-class="product-name" w-tag="pi-ui-lang">{"zh_Hans":{{it.name}},"zh_Hant":{{it.name}},"en":""}</widget>
             <div w-class="product-money">
                 <div w-class="money-one">
-                    <span w-class="money-num">{{it.stCount / 100}}</span>
+                    <span w-class="money-num">{{it.stCount}}</span>
                     <span w-class="money-num" style="color:#888888;font-size:24px;">{{it.stShow}}</span>
                 </div>
             </div>
@@ -43,8 +43,7 @@
     </div>
 
     <div w-class="exchange-btn" ev-btn-tap="comfirmExchange">
-        {{: btnName = {"zh_Hans":"马上兑换","zh_Hant":"馬上兌換","en":""} }}
-        <app-components1-btn-btn>{"name":{{btnName}},"type":"big","color":"blue" }</app-components1-btn-btn>
+        <app-components1-btn-btn>{"name":{{it.btnName}},"type":"big","color":"{{it.isClick?'gray':'blue'}}" }</app-components1-btn-btn>
     </div>
 
 </div>

@@ -1,7 +1,6 @@
 /**
  * common util
  */
-import { popNew } from '../../../../pi/ui/root';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
@@ -15,6 +14,8 @@ import { ActivityType, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { popNewMessage } from '../../../../app/utils/tools';
+import { popNew } from '../../../../pi/ui/root';
 
 /**
  * 获取用户单个物品数量  kt/st等
@@ -352,8 +353,8 @@ export const getACHVmedalList = (typeNum: string | number, typeStr: string) => {
 export const showActError = (errorNum: number) => {
     const cfgs = getMap(ErrorNumCfg);
     for (const [k, cfg] of cfgs) {
-        if (errorNum === cfg.id) {
-            popNew('app-components1-message-message', { content: { zh_Hans: cfg.desc, zh_Hant: cfg.descHant, en: '' } });
+        if (errorNum === k){
+            return { zh_Hans: cfg.desc, zh_Hant: cfg.descHant, en: '' }
         }
     }
 
