@@ -7,7 +7,7 @@ import { ST2st } from '../../../../app/utils/unitTools';
 import { GuessingReq, Result } from '../../../server/data/db/guessing.s';
 import { FreePlay } from '../../../server/data/db/item.s';
 import { start_guessing } from '../../../server/rpc/guessingCompetition.p';
-import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, rotary_pay_query, st_convert, st_treasurebox, kt_rotary} from '../../../server/rpc/stParties.p';
+import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, rotary_pay_query, st_convert, st_treasurebox, kt_rotary, kt_treasurebox} from '../../../server/rpc/stParties.p';
 import { showActError } from '../utils/util';
 import { ActivityType } from '../xls/dataEnum.s';
 import { clientRpcFunc } from './init';
@@ -18,7 +18,7 @@ import { clientRpcFunc } from './init';
 export const openChest = (activityType: ActivityType) => {
     return new Promise((resolve, reject) => {
         const itemType = activityType;
-        clientRpcFunc(st_treasurebox, itemType, (r: Result) => {
+        clientRpcFunc(kt_treasurebox, itemType, (r: Result) => {
             console.log('[活动]rpc-openChest-resData-------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);

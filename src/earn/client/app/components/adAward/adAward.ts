@@ -2,7 +2,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
 /**
- * 广告奖励动画
+ * 广告奖励动画awardShow
  */
 interface Props {
     hoeType:number;
@@ -32,4 +32,5 @@ export class AdAward extends Widget {
             },1200);
         },300);
     }
+
 }

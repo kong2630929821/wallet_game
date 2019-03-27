@@ -84,7 +84,6 @@ export class Turntable extends Widget {
     public create() {
         super.create();
         if (isLogin()) {
-            alert(1);
             this.change(0);
             this.initTurntable();
             this.ledTimer();
