@@ -1,15 +1,28 @@
+.inviteFrined{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.inFrined{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background:linear-gradient(180deg,rgba(34,4,64,0.2) 0%,rgba(34,4,64,0) 13%,rgba(34,4,64,0) 36%,rgba(33,2,63,1) 67%,rgba(33,1,63,1) 100%)
+}
+
 .content{
     display:flex;
     flex-direction:column;
     justify-content:space-around;
     align-items:center;
     width:100%;
-    height:100%;
-    box-sizing: border-box;
+    height:90%;
+    position: relative;;
 }
 .share_main{
     width:100%;
-    height:469px;
+    height:240px;
+    margin-top: 6%;
     box-sizing: border-box;
     position:relative;
     overflow: hidden;
@@ -19,7 +32,7 @@
     width:80px;
     height:240px;
     position: absolute;
-    top:120px;
+    top:0px;
     right:0;
     background:rgba(48,90,199,1);
     box-shadow:0px 0px 10px 0px rgba(34,34,34,0.2);
@@ -56,7 +69,7 @@
     font-size:32px;
     font-family:PingFangSC-Regular;
     font-weight:400;
-    margin-top: 20px;
+    margin-top: 24%;
     color:rgba(255,255,255,1);
     line-height:40px;
     display: flex;
@@ -70,6 +83,9 @@
     border:1px solid rgba(255,255,255,1);
 }
 .bgLogin{
+    width: 400px;
+    height: 410px;
+    background: white;
     margin-top: 60px;
 }
 .share_icon{

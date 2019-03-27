@@ -330,9 +330,14 @@ export class MiningHome extends Widget {
             
         });
     }
-
-    public exit(e:any) {
-        console.log(e);
+    public clickTop(){
+        console.log('top');
+    }
+    public clickImg(){
+        console.log('img');
+    }
+    public rightClick(){
+        console.log(1);
     }
 }
 

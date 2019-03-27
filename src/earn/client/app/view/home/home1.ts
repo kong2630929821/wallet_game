@@ -380,15 +380,9 @@ const firstloginAward = () => {
         awardNum:2
     },() => {
         popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            title:'创建钱包成功',
+            title:'签到奖励',
             awardType:2001,
             awardNum:1
-        },() => {
-            popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                title:'签到奖励',
-                awardType:2001,
-                awardNum:1
-            });
         });
     });
 

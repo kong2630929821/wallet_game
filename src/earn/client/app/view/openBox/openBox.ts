@@ -15,7 +15,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
-import { getSTbalance } from '../../net/rpc';
+import { getSTbalance, getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest, queryChestOrder } from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
@@ -88,7 +88,7 @@ export class OpenBox extends Widget {
         super.create();
         if (isLogin()) {
             this.ledTimer();
-            getSTbalance();
+            getKTbalance();
             this.props.STbalance = getStore('balance/KT')||0;
             console.log(this.props.STbalance);
 
@@ -203,14 +203,15 @@ export class OpenBox extends Widget {
         }
         this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((order: any) => {
-            if (order.oid) { // 非免费机会开奖
-                queryChestOrder(order.oid).then((res:any) => {
-                    this.goLottery(e,boxIndex,res);
+            if(this.props.selectChest.type!==ActivityType.PrimaryChest){
+            // if (order.oid) { // 非免费机会开奖
+            //     queryChestOrder(order.oid).then((res:any) => {
+                    this.goLottery(e,boxIndex,order);
                     this.props.freeCount = 0;
-                }).catch(err => {
-                    this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
-                    console.log('查询开宝箱订单失败',err);
-                });
+            //     }).catch(err => {
+            //         this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
+            //         console.log('查询开宝箱订单失败',err);
+            //     });
 
             } else {         // 免费机会开奖
                 this.props.freeCount--;
@@ -279,7 +280,7 @@ export class OpenBox extends Widget {
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
             popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
-            getSTbalance();  // 更新余额
+            getKTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);
         } else {
             this.endOpenChest(e,boxIndex,BoxState.emptyBox);

@@ -14,10 +14,11 @@
     align-items: center;
 }
 .award-container{
-    position: relative;
+    position: absolute;
     width:480px;
     height:480px;
-    
+    top:453px;
+    left: 118px;
 }
 .award-bg{
     position: absolute;

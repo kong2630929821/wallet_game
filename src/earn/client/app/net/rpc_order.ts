@@ -22,20 +22,21 @@ export const openChest = (activityType: ActivityType) => {
             console.log('[活动]rpc-openChest-resData-------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                if (order.oid) { 
-                    walletPay(order,'101','15',(res,msg) => {
-                        console.log('chest PAY',res,order);
+                resolve(order);
+                // if (order.oid) { 
+                //     walletPay(order,'101','15',(res,msg) => {
+                //         console.log('chest PAY',res,order);
                         
-                        if (!res) {
-                            resolve(order);
-                        } else {
-                            showActError(res);
-                            reject(res);
-                        }
-                    });
-                } else { // 免费机会返回
-                    resolve(order);
-                }
+                //         if (!res) {
+                //             resolve(order);
+                //         } else {
+                //             showActError(res);
+                //             reject(res);
+                //         }
+                //     });
+                // } else { // 免费机会返回
+                //     resolve(order);
+                // }
             } else {
                 showActError(r.reslutCode);
                 reject(r);
@@ -55,20 +56,21 @@ export const openTurntable = (activityType: ActivityType) => {
             console.log('[活动]rpc-openTurntable-resData---------------', r);
             if (r.reslutCode === 1) {
                 const order = JSON.parse(r.msg);
-                if (order.oid) { 
-                    walletPay(order,'101','15',(res,msg) => {
-                        console.log('chest PAY',res,order);
+                resolve(order);
+                // if (order.oid) { 
+                //     walletPay(order,'101','15',(res,msg) => {
+                //         console.log('chest PAY',res,order);
                         
-                        if (!res) {
-                            resolve(order);
-                        } else {
-                            showActError(res);
-                            reject(res);
-                        }
-                    });
-                } else { // 免费机会返回
-                    resolve(order);
-                }
+                //         if (!res) {
+                //             resolve(order);
+                //         } else {
+                //             showActError(res);
+                //             reject(res);
+                //         }
+                //     });
+                // } else { // 免费机会返回
+                //     resolve(order);
+                // }
             } else {
                 showActError(r.reslutCode);
                 reject(r);

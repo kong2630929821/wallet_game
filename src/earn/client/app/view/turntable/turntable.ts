@@ -15,7 +15,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
-import { getSTbalance } from '../../net/rpc';
+import { getSTbalance, getKTbalance } from '../../net/rpc';
 import { isFirstFree, openTurntable, queryTurntableOrder } from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
@@ -87,7 +87,7 @@ export class Turntable extends Widget {
             this.change(0);
             this.initTurntable();
             this.ledTimer();
-            getSTbalance();
+            getKTbalance();
             this.props.STbalance = getStore('balance/KT') || 0;
             console.log('我的余额',this.props.STbalance);
 
@@ -204,18 +204,18 @@ export class Turntable extends Widget {
         // this.startLottery();
         
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
-            console.log(order)
-            if (order.oid) { // 非免费机会开奖
-                queryTurntableOrder(order.oid).then((res:any) => {
-                    console.log('转盘开奖成功！',res);
+            console.log('11111111111',order)
+            if (this.props.selectTurntable.type!==ActivityType.PrimaryTurntable) { // 非免费机会开奖
+                // queryTurntableOrder(order.oid).then((res:any) => {
+                    console.log('转盘开奖成功！',1);
                     this.props.freeCount = 0;
                     this.setChestTip(2);
-                    this.changeDeg(res);
+                    this.changeDeg(order);
                     this.paint();
-                }).catch(err => {
+                // }).catch(err => {
 
-                    console.log('查询转盘订单失败',err);
-                });
+                //     console.log('查询转盘订单失败',err);
+                // });
                 
             } else {         // 免费机会开奖
                 this.props.freeCount--;
@@ -295,7 +295,9 @@ export class Turntable extends Widget {
             this.endLottery();
             if (resData.awardType !== 9527) {
                 popNew('earn-client-app-components-lotteryModal-lotteryModal', resData);
-                getSTbalance();  // 更新余额
+                getKTbalance();  // 更新余额
+                this.props.STbalance = getStore('balance/KT') || 0;
+                console.log('我的余额转完',this.props.STbalance);
             }
             this.paint();
         }, 2500);
@@ -346,7 +348,7 @@ export class Turntable extends Widget {
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
-                    getSTbalance();   // 更新余额
+                    getKTbalance();   // 更新余额
                 });
                 break;
             case 2:          // 更换宝箱类型
