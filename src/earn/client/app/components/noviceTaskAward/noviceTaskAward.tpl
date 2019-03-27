@@ -5,7 +5,7 @@
                 {{it.title}}
             </div>
             <div w-class="award">
-                <img src="../../res/image/virtualGoods/{{it.awardType}}.jpg" w-class="award-img"/>
+                <img src="../../res/image/virtualGoods/{{it.awardType}}.png" w-class="award-img"/>
             </div>
             <div w-class="desc">
                 {{it.awardName + " +" + it.awardNum}}
