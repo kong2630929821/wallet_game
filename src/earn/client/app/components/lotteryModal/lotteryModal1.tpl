@@ -3,7 +3,7 @@
     <div w-class="body">
         <img src="{{it.img}}" style="height:300px;"/>
         <div w-class="btns">
-            <div w-class="btn1" on-tap="btnClick(1)" class="popBoxZoomIn">{{it.btn1}}</div>
+            <div w-class="{{it.isColor?'btn2':'btn1'}}" on-tap="btnClick(1)" class="popBoxZoomIn">{{it.btn1}}</div>
             <div w-class="btn2" on-tap="btnClick(2)" class="popBoxZoomIn">{{it.btn2}}</div>
         </div>
     </div>

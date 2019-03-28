@@ -75,6 +75,7 @@
             </div>
             <div w-class="ad-item" on-tap="watchAdClick" on-down="watchAdAnimateClick">
             </div>
+            <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>
     </div>
 </div>

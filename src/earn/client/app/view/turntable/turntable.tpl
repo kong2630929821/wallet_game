@@ -6,19 +6,8 @@
         {{% 大转盘标题}}
         <div w-class="turntable-name">
             <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it.STbalance}}</div>
-        </div>
-
-        {{if it.showMoreSetting}}
-        <div w-class="moreSetting" on-tap="setting">
-            {{if it.noPassword}}
-                关闭免密支付
-            {{else}}
-                开启免密支付
-            {{end}}
-        </div>
-        {{end}}
-        
+            <div w-class="myMoney">我的嗨豆:&nbsp;{{it1.KTbalance}}</div>
+        </div>     
         {{% 大转盘}}
         <div w-class="center">
             <div w-class="turntable-main-bg">

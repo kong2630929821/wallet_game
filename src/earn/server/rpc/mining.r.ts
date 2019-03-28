@@ -3,11 +3,11 @@
  */
 import { Bucket } from '../../utils/db';
 import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_MINE, BTC_TYPE, ETH_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, BTC_TYPE, ETH_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AwardMap, AwardQuery, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMap, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { ChatIDMap, UserAccMap } from '../data/db/user.s';
-import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, NOT_LOGIN, TOP_DATA_FAIL } from '../data/errorNum';
+import { ARE_YOU_SUPERMAN, CONFIG_ERROR, DB_ERROR, GET_RANDSEED_FAIL, HOE_NOT_ENOUGH, MINE_NOT_ENOUGH, MINE_NOT_EXIST, MINENUM_OVER_LIMIT, NOT_LOGIN, REQUEST_WALLET_FAIL, TOP_DATA_FAIL } from '../data/errorNum';
 import { doAward } from '../util/award.t';
 import { add_award, add_itemCount, add_medal, get_award_ids, get_mine_total, get_mine_type, get_today, mining_add_medal, reduce_itemCount, reduce_mine } from '../util/item_util.r';
 import { add_miningKTTotal, add_miningTotal, doMining, get_cfgAwardid, get_enumType } from '../util/mining_util';
@@ -107,30 +107,25 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         doAward(pid, randomMgr, v);
         console.log('award result!!!!!!!!!!!!!!!!!:', v);
         const itemNum = v[0][0];
-        console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
         const itemCount = v[0][1];
-        const item = add_itemCount(uid, itemNum, itemCount);
-        const awards = [];
-        awards.push(item);
-        add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
-        if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount); // 奖品为KT时添加挖矿获取KT总数
-        // 挖开第一个矿山额外奖励
-        // const totalMiningNum = get_totalminingNum(uid);
-        // if (totalMiningNum.total === 0) {
-        //     const regularBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
-        //     const firstAwardCfg = regularBucket.get<number, [RegularAwardCfg]>(FIRST_MINING_AWARD)[0];
-        //     if (!firstAwardCfg) {
-        //         miningResponse.resultNum = CONFIG_ERROR;
+        if (itemNum !== SURPRISE_BRO) { // 随机奖励不为空时
+            console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
+            const item = add_itemCount(uid, itemNum, itemCount);
+            const awards = [];
+            awards.push(item);
+            const award = add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
+            // 像钱包添加挖矿得到的货币失败
+            if (award.desc === '-1') {
+                miningResponse.resultNum = REQUEST_WALLET_FAIL;
+                // TODO 矿山和锄头数据回滚
 
-        //         return miningResponse;
-        //     }
-        //     const firstAward = add_itemCount(uid, firstAwardCfg.prop, firstAwardCfg.num);
-        //     add_award(uid, firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
-        //     awards.push(firstAward);
-        // }
-        miningResponse.awards = awards;
-        // 添加奖章
-        mining_add_medal(uid, itemNum);
+                return miningResponse;
+            }
+            if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount); // 奖品为KT时添加挖矿获取KT总数
+            miningResponse.awards = awards;
+            // 添加奖章
+            mining_add_medal(uid, itemNum);
+        }
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
         const mineNumBucket =  new Bucket(WARE_NAME, TodayMineNum._$info.name);
@@ -143,13 +138,27 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         }
     }
     miningResponse.resultNum = RESULT_SUCCESS;
-
+    
     return miningResponse;
 };
+// 挖开第一个矿山额外奖励
+// const totalMiningNum = get_totalminingNum(uid);
+// if (totalMiningNum.total === 0) {
+//     const regularBucket = new Bucket(MEMORY_NAME, RegularAwardCfg._$info.name, dbMgr);
+//     const firstAwardCfg = regularBucket.get<number, [RegularAwardCfg]>(FIRST_MINING_AWARD)[0];
+//     if (!firstAwardCfg) {
+//         miningResponse.resultNum = CONFIG_ERROR;
+
+//         return miningResponse;
+//     }
+//     const firstAward = add_itemCount(uid, firstAwardCfg.prop, firstAwardCfg.num);
+//     add_award(uid, firstAwardCfg.prop, firstAwardCfg.num, AWARD_SRC_MINE);
+//     awards.push(firstAward);
+// }
 
 // 签到奖励(连续登陆)
 // export const get_loginAward = ():ItemResponse => {
-//     const itemResponse = new ItemResponse();
+    //     const itemResponse = new ItemResponse();
 //     const uid = getUid();
 //     // 获取连续登陆天数
 //     const daysRes = get_loginDays();
@@ -327,16 +336,25 @@ export const get_miningKTTop = (topNum: number): MineKTTop => {
 export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
     console.log('get_friends_KTTop in!!!!!!!!!!!!!!!!!', chatIDs);
     const uid = getUid();
-    if (!uid) return;
     const mineTop = new MineKTTop();
+    if (!uid) {
+        mineTop.myKTNum = 0; 
+        mineTop.resultNum = NOT_LOGIN;
+    }
     const mapbucket = new Bucket(WARE_NAME, ChatIDMap._$info.name);
+    console.log('uid in!!!!!!!!!!!!!!!!!', uid);
     const fuids: [number] = [uid];
+    console.log('fuids1111111111111111 !!!!!!!!!!!!!!!!!', fuids);
     // 从数据库中绑定的聊天IDMap表中根据chatID关联到活动的uid
     for (let i = 0; i < chatIDs.chatIDs.length; i ++) {
-        if (!mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[i])) continue;
+        console.log('chatIDMap in!!!!!!!!!!!!!!!!!', chatIDs.chatIDs[i]);
+        if (!mapbucket.get(chatIDs.chatIDs[i])) continue;
         const chatIDMap = mapbucket.get<number, [ChatIDMap]>(chatIDs.chatIDs[i])[0];
+        console.log('chatIDMap out!!!!!!!!!!!!!!!!!');
+        if (!chatIDMap) continue;
         fuids.push(chatIDMap.uid);
-    }
+    } 
+    console.log('fuids2222222222222222222 !!!!!!!!!!!!!!!!!', fuids);
     const mineTopList = []; 
     for (let i = 0; i < fuids.length; i ++) {
         const miningKTNum = get_miningKTNum(fuids[i]);
