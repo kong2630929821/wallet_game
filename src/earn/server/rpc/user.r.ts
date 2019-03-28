@@ -76,7 +76,7 @@ export const login = (user: UserType): UserInfo => {
         // 初始化任务
         task_init(loginReq.uid);
         // 添加创建钱包奖励
-        get_task_award(1);
+        // get_task_award(1);
     }
 
     // 判断是否当日首次登陆
@@ -138,22 +138,23 @@ export const bind_chatID = (chatID: number): Result => {
 
         return result;
     }
-    const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
     const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name);
     console.log('!!!!!!!!!!!!!!!!4444444444444444444444');
-    const userInfo = userInfoBucket.get<number, UserInfo>(uid)[0];
-    console.log('userInfo:', userInfo);
-    if (!userInfo) {
-        result.reslutCode = NOT_USER_INFO;
+    // const userInfo = userInfoBucket.get<number, [UserInfo]>(uid)[0];
+    // console.log('userInfo:', userInfo);
+    // if (!userInfo) {
+    //     result.reslutCode = NOT_USER_INFO;
 
-        return result;
-    }
-    userInfo.chatID = chatID;
-    userInfoBucket.put(uid, userInfo);
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!566666666666666666666666');
-    chatIDMapBucket.put(chatID, uid);
+    //     return result;
+    // }
+    // userInfo.chatID = chatID;
+    // userInfoBucket.put(uid, userInfo);
+    const chatIDMap = new ChatIDMap();
+    chatIDMap.uid = uid;
+    chatIDMap.chatID = chatID;
+    chatIDMapBucket.put(chatID, chatIDMap);
+    
     result.reslutCode = CONSTANT.RESULT_SUCCESS;
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!7777777777777777777777result:', result);
 
     return result;
 };

@@ -5,6 +5,8 @@ import { Award, AwardMap, BTC, ConvertTab, ETH, Hoe, Item, Items, KT, Mine, Mine
 
 import { Bucket } from '../../utils/db';
 
+import { Tr } from '../../../pi/db/mgr';
+import { Env } from '../../../pi/lang/env';
 import { randomInt } from '../../../pi/util/math';
 import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
@@ -22,8 +24,6 @@ import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 import { send } from './sendMessage';
-import { Env } from '../../../pi/lang/env';
-import { Tr } from '../../../pi/db/mgr';
 
 declare var env: Env;
 
@@ -58,7 +58,10 @@ export const add_award = (uid:number, itemType:number, count:number, src:string,
     mapBucket.put(uid, awardMap);
     // 向钱包添加奖励相应的货币
     if (itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE || itemType === KT_TYPE) {
-        const num = oauth_alter_balance(itemType, awardid, count);
+        // 如果向钱包改动数据失败，返回错误码
+        if (!oauth_alter_balance(itemType, awardid, count)) {
+            award.desc = '-1';
+        }
         // 写入特别奖励表
         console.log('add_special before!!!!!!!!!!!!!!!!!:', itemType, src);
         if ((itemType === BTC_TYPE || itemType === ETH_TYPE || itemType === ST_TYPE) && (src === AWARD_SRC_MINE)) {
