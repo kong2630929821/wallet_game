@@ -9,6 +9,7 @@ import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../..
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
+import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
@@ -374,12 +375,12 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
         title:'新用户',
         awardType:2001,
         awardNum:2
     },() => {
-        popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
             title:'签到奖励',
             awardType:2001,
             awardNum:1
@@ -442,7 +443,7 @@ walletRegister('wallet/helpWord',() => {
         clientRpcFunc(get_task_award,2,(res:Result) => {
             console.log('备份成功',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'备份成功',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -461,7 +462,7 @@ walletRegister('wallet/sharePart',() => {
         clientRpcFunc(get_task_award,3,(res:Result) => {
             console.log('成功分享片段',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'成功分享片段',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -479,7 +480,7 @@ chatStore.register('flags/firstChat',() => {
         clientRpcFunc(get_task_award,4,(res:Result) => {
             console.log('参与聊天',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'参与聊天',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -517,7 +518,7 @@ walletRegister('flags/firstRecharge',() => {
         clientRpcFunc(get_task_award,7,(res:Result) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'首冲奖励',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count

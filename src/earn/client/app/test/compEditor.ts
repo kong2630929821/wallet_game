@@ -1,12 +1,10 @@
 import { uploadFileUrl } from '../../../../app/config';
-import { arrayBuffer2File, base64ToFile, popNewMessage } from '../../../../app/utils/tools';
-import { popNew } from '../../../../pi/ui/root';
-import { resize } from '../../../../pi/widget/resize/resize';
+import { base64ToFile, popNewMessage } from '../../../../app/utils/tools';
+import { popModalBoxs } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { RESULT_SUCCESS } from '../../../server/data/constant';
-import { AddCompetition, CompetitionList, CompResult, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
+import { AddCompetition, CompResult, MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { add_competitions, cancle_guessing, get_main_competitions, input_competition_result, settle_guessing_award } from '../../../server/rpc/guessingCompetition.p';
-import { WeightAwardCfg } from '../../../xlsx/awardCfg.s';
 import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { clientRpcFunc } from '../net/init';
 import { getMap } from '../store/cfgMap';
@@ -96,7 +94,7 @@ export class CompEditor extends Widget {
     }
 
     public addResult(e: any, result: number, cid: number) {
-        popNew('earn-client-app-test-modalBox',{
+        popModalBoxs('earn-client-app-test-modalBox',{
             title: '注意',
             content: '确认比赛结果'
         },() => {
@@ -107,7 +105,7 @@ export class CompEditor extends Widget {
     }
 
     public settleGuessing(e: any, cid: number) {
-        popNew('earn-client-app-test-modalBox',{
+        popModalBoxs('earn-client-app-test-modalBox',{
             title: '注意',
             content: '是否结算比赛'
         },() => {
@@ -118,7 +116,7 @@ export class CompEditor extends Widget {
     }
 
     public cancelGuessing(e: any, cid: number) {
-        popNew('earn-client-app-test-modalBox',{
+        popModalBoxs('earn-client-app-test-modalBox',{
             title: '注意',
             content: '是否取消比赛'
         },() => {
