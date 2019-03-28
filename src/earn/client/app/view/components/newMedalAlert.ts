@@ -6,7 +6,6 @@ import { shareDownload } from '../../../../../app/config';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { coinUnitchange } from '../../utils/tools';
 import { getMedalList } from '../../utils/util';
@@ -76,7 +75,7 @@ export class NewMedalAlert extends Widget {
             },
             fail: (result) => { 
                 this.ok && this.ok();
-                popNew('app-components1-message-message', { content: this.config.value.tips });
+                popNewMessage(this.config.value.tips);
             }
         });
     }
