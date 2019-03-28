@@ -1,6 +1,8 @@
 /**
  * 
  */
+import { Env } from '../../../pi/lang/env';
+import { Session } from '../../../pi/net/session';
 import { NetEvent } from '../../../pi_pt/event/event_server';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
@@ -14,12 +16,10 @@ import { get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { send } from '../util/sendMessage';
 import { SeriesDaysRes } from './itemQuery.s';
-import { setSession, getSession } from './session.r';
+import { getSession, setSession } from './session.r';
 import { add_free_rotary } from './stParties.r';
 import { LoginReq, UserType, UserType_Enum, WalletLoginReq } from './user.s';
 import { get_task_award } from './user_item.r';
-import { Env } from '../../../pi/lang/env';
-import { Session } from '../../../pi/net/session';
 
 declare var env: Env;
 
@@ -33,6 +33,8 @@ export const login = (user: UserType): UserInfo => {
         const walletLoginReq = <WalletLoginReq>user.value;
         openid = walletLoginReq.openid;
         const sign = walletLoginReq.sign;
+        const nonceStr = walletLoginReq.nonce_str;
+        const timesTamp = walletLoginReq.timestamp;
         // TODO 验证签名
         const userAccountBucket = new Bucket(CONSTANT.WARE_NAME, UserAcc._$info.name);
         const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name);
@@ -140,7 +142,7 @@ export const bind_chatID = (chatID: number): Result => {
     const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
     const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name);
     console.log('!!!!!!!!!!!!!!!!4444444444444444444444');
-    let userInfo = userInfoBucket.get<number, UserInfo>(uid)[0];
+    const userInfo = userInfoBucket.get<number, UserInfo>(uid)[0];
     console.log('userInfo:', userInfo);
     if (!userInfo) {
         result.reslutCode = NOT_USER_INFO;

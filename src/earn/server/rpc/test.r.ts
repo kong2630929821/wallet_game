@@ -3,6 +3,9 @@
  */
 import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
+import { ab2hex } from '../../../pi/util/util';
+import { digest, DigestAlgorithm } from '../../../pi_pt/rust/pi_crypto/digest';
+import { ECDSASecp256k1 } from '../../../pi_pt/rust/pi_crypto/signature';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
@@ -94,6 +97,54 @@ export const get_objStr = ():Result => {
     result.msg = JSON.stringify(openids);
 
     return result;
+};
+
+// 签名测试
+// #[rpc=rpcServer]
+export const test_secp256k1 = (msg:string):Result => {
+    // 创建一个secp256对象
+    const secp = ECDSASecp256k1.new();
+    // 要进行签名的消息 "abc"
+    // const data = new Uint8Array([97, 98, 99]); // "abc"
+    const data = str2ab(msg);
+    // 消息的sha256哈希，哈希算法可以自己选择
+    const hash = digest(DigestAlgorithm.SHA256, data).asSliceU8();
+    // 私钥， 32字节
+    const sk = DecodeHexStringToByteArray('9389abe48466d230289dcb847d1fcaddc3ac9665db3bcbcf461b2c2bf4e7efe7');
+    // 私钥对应的公钥
+    const pk = DecodeHexStringToByteArray('04419f657dc090c3679ac778cc1f324080f1fbc7cd74fbbb79ec3e9bf9336b653d4b2853ef38275130289924bc12dcabd83989c03a6819da710ddc65d50907b6fc');
+
+    // 签名结果
+    const sig = secp.sign(hash, sk).asSliceU8();
+
+    // 验证签名
+    console.log('verify result: ', secp.verify(hash, sig, pk));
+    const r = new Result();
+    r.reslutCode = 1;
+    const sign = ab2hex(sig);
+    r.msg = `${sign}`;
+
+    return r;
+};
+
+const DecodeHexStringToByteArray = (hexString:string) => {
+    const result = [];
+    while (hexString.length >= 2) { 
+        result.push(parseInt(hexString.substring(0, 2), 16));
+        hexString = hexString.substring(2, hexString.length);
+    }
+    
+    return new Uint8Array(result);
+};
+
+const str2ab = (str):Uint8Array => {
+    const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    const bufView = new Uint16Array(buf);
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+
+    return buf as Uint8Array;
 };
 
 // // #[rpc=rpcServer]

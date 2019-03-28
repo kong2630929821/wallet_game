@@ -6,7 +6,7 @@
 import { BigNumber } from '../../../../pi/bigint/biginteger';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
-import { GuessingReq } from '../../../server/data/db/guessing.s';
+import { GuessingReq, Result } from '../../../server/data/db/guessing.s';
 import { Invite } from '../../../server/data/db/invite.s';
 import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, Hoe, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse, SpecialAward, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
@@ -17,7 +17,7 @@ import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../.
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { add_convert, get_convert_list, get_hasFree, get_KTNum, get_STNum, st_convert, st_rotary, st_treasurebox } from '../../../server/rpc/stParties.p';
-import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket } from '../../../server/rpc/test.p';
+import { award as awardR, bigint_test, db_test, hit_test, item_add, item_addticket, test_secp256k1 } from '../../../server/rpc/test.p';
 import { Hits, IsOk, Test as Test2 } from '../../../server/rpc/test.s';
 import { get_loginDays, login as loginUser } from '../../../server/rpc/user.p';
 import { SendMessage, UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
@@ -290,6 +290,13 @@ export const competition_edit_test = () => {
 export const product_edit_test = () => {
     popNew('earn-client-app-test-convertEditor');
 };
+
+// 签名测试
+export const sign_test = () => {
+    clientRpcFunc(test_secp256k1, 'abc', (r: Result) => {
+        console.log(r);
+    });
+};
 const props = {
     bts: [
         {
@@ -411,6 +418,10 @@ const props = {
         {
             name: '编辑商品',
             func: () => { product_edit_test(); }
+        },
+        {
+            name: '签名测试',
+            func: () => { sign_test(); }
         }
     ] // 按钮数组
 };
