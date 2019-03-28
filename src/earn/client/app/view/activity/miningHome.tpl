@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" style="z-index: {{it.zIndex}};">
-    <div w-class="body" on-tap="closeClick">
+    <div w-class="body">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="container">
             <div on-tap="clickTop" w-class="holded-hoes" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
@@ -58,7 +58,7 @@
             </div>
             <div w-class="mine-area" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 {{for index,item of it.haveMines}}
-                <div on-tap="clickImg" ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
+                <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                     <earn-client-app-components1-mine-mine>{ 
                         mineType:{{ item.type }},
                         mineId:{{ item.id }}
@@ -75,6 +75,7 @@
             </div>
             <div w-class="ad-item" on-tap="watchAdClick" on-down="watchAdAnimateClick">
             </div>
+            <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>
     </div>
 </div>

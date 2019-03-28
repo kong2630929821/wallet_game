@@ -61,7 +61,6 @@ export class Mine extends Widget {
     }
 
     public mineClick(event:any) {
-        
         this.$imgContainer = this.$imgContainer || getRealNode(event.node.children[0]);
         this.$imgContainer.className = '';
         requestAnimationFrame(() => {
@@ -105,7 +104,7 @@ export class Mine extends Widget {
             const deg = Math.random() * 120 + 30;  //  初始速度方向  30 --- 150
             const rad = deg / 360 * 2 * Math.PI;   // 弧度
             const g = Math.random() * 500 + 500;   // 重力加速度  500 --- 1000
-            const duration = Math.floor(Math.random() * 500 + 1500); // 动画持续时间  1500 --- 2000 ms
+            const duration = Math.floor(Math.random() * 500 + 1000); // 动画持续时间  1500 --- 2000 ms
             this.domMove($rock,v0,rad,g,duration,new Date().getTime());
             notify(event.node,'ev-mine-click',{ itype:this.props.mineType,mineId:this.props.mineId });
         },() => {

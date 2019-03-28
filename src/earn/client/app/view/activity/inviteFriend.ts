@@ -13,7 +13,6 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { converInviteAwards } from '../../net/rpc';
 import { getStore, Invited, register } from '../../store/memstore';
 import { inviteAwardsMultiple } from '../../utils/constants';
-import { popNew } from '../../../../../pi/ui/root';
 import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
