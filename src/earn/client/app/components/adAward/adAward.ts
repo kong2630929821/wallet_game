@@ -2,7 +2,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
 /**
- * 广告奖励动画
+ * 广告奖励动画awardShow
  */
 interface Props {
     hoeType:number;
@@ -21,15 +21,22 @@ export class AdAward extends Widget {
         this.props = {
             ...props,
             imgUrl,
-            awardOut:false
+            awardOut:false,
+            moveX:0,
+            moveY:0,
+            imgScale:1
         };
         super.setProps(this.props,oldProps);
         setTimeout(() => {
             this.props.awardOut = true;
+            this.props.moveX = -265;
+            this.props.moveY = -549;
+            this.props.imgScale = 0.2;
             this.paint();
             setTimeout(() => {
                 this.ok && this.ok();
-            },1200);
+            },2400);
         },300);
     }
+ 
 }

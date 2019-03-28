@@ -29,7 +29,7 @@ export class ProductDetail extends Widget {
     public setProps(props:Props) {
         this.props = {
             ...props,
-            stShow:getModulConfig('ST_SHOW'),
+            stShow:getModulConfig('kT_SHOW'),
             convertInfo:{
                 convertCount: 0,
                 desc: '...',

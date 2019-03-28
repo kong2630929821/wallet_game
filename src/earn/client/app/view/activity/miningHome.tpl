@@ -1,8 +1,8 @@
 <div class="new-page" w-class="new-page" style="z-index: {{it.zIndex}};">
-    <div w-class="body">
+    <div w-class="body" on-tap="closeClick">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
-        <div w-class="container" on-tap="exit">
-            <div w-class="holded-hoes" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
+        <div w-class="container">
+            <div on-tap="clickTop" w-class="holded-hoes" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                     <earn-client-app-components1-holdedHoe-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components1-holdedHoe-holdedHoe>
                 </div>
@@ -25,7 +25,7 @@
                 <img src="../../res/image/select_hoe_tip.png" style="margin: 20px 0 0 21px;"/>
             </div>
             {{end}}
-            <div w-class="award-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
+            <div on-tap="rightClick" w-class="award-container" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"累计挖矿","zh_Hant":"累計挖礦","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
@@ -58,7 +58,7 @@
             </div>
             <div w-class="mine-area" style="{{it.zIndex ? 'visibility: hidden;' : ''}}">
                 {{for index,item of it.haveMines}}
-                <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
+                <div on-tap="clickImg" ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                     <earn-client-app-components1-mine-mine>{ 
                         mineType:{{ item.type }},
                         mineId:{{ item.id }}
@@ -75,7 +75,6 @@
             </div>
             <div w-class="ad-item" on-tap="watchAdClick" on-down="watchAdAnimateClick">
             </div>
-            <img src="../../res/image/close_mine.png" w-class="close" on-tap="closeClick"/>
         </div>
     </div>
 </div>
