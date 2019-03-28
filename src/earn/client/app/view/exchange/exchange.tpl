@@ -7,9 +7,9 @@
     <div w-class="content">
         <div w-class="body"> 
             {{% 内容}}
-            {{for i,item of it.list}}
+                {{for i,item of it1.list}}
                 <widget w-tag="earn-client-app-view-exchange-virtualItem">{{item}}</widget>
-            {{end}}
+                {{end}}
         </div>
     </div>
 

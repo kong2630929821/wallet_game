@@ -11,6 +11,7 @@ import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, g
 import { showActError } from '../utils/util';
 import { ActivityType } from '../xls/dataEnum.s';
 import { clientRpcFunc } from './init';
+import { cdkey } from '../../../server/rpc/invite.p';
 
 /**
  * 开宝箱下单
@@ -238,3 +239,17 @@ export const queryTurntableOrder = (oid:string) => {
         });
     });
 };
+
+// //获取邀请奖励
+// export const inviteCode = (code:string)=>{
+//     return new Promise((resolve,reject)=>{
+//         clientRpcFunc(cdkey,code,(r:Result)=>{
+//             console.log('[邀请人奖励]---------------', r);
+//             if(r.reslutCode ===1){
+//                 resolve(r)
+//             }else{
+//                 reject(r)
+//             }
+//         })
+//     })
+// };

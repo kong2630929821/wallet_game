@@ -164,6 +164,8 @@ export class MiningHome extends Widget {
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
             this.countDown();
+            this.props.miningCount++;
+            this.bloodLoss();
             this.paint();
 
             return;
