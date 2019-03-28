@@ -28,7 +28,7 @@ export class VirtualItem extends Widget {
     public setProps(props:VirtualItemProps) {
         this.props = {
             ...props,
-            stShow:getModulConfig('ST_SHOW')
+            stShow:getModulConfig('KT_SHOW')
         };
         super.setProps(this.props);
     }

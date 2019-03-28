@@ -15,7 +15,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
-import { getSTbalance } from '../../net/rpc';
+import { getSTbalance, getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest, queryChestOrder } from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
@@ -88,8 +88,8 @@ export class OpenBox extends Widget {
         super.create();
         if (isLogin()) {
             this.ledTimer();
-            getSTbalance();
-            this.props.STbalance = getStore('balance/ST');
+            getKTbalance();
+            this.props.STbalance = getStore('balance/KT')||0;
             console.log(this.props.STbalance);
 
             isFirstFree().then((res: FreePlay) => {
@@ -166,7 +166,7 @@ export class OpenBox extends Widget {
      * 初始数据
      */
     public initData() {
-        this.props.STbalance = getStore('balance/ST');
+        this.props.STbalance = getStore('balance/KT')||0;
         console.log(this.props.STbalance);
         this.paint();
         isFirstFree().then((res: FreePlay) => {
@@ -190,24 +190,28 @@ export class OpenBox extends Widget {
 
             return;
         }
-        if (this.props.STbalance < this.props.selectChest.needTicketNum) {  // 余额不足
+        if(this.props.selectChest.type===ActivityType.PrimaryChest){
             if (this.props.freeCount <= 0) { // 没有免费次数
                 // popNew('app-components1-message-message', { content: this.config.value.tips[0] });
                 this.popNextTips();
                 
                 return;
             }
+        }else if(this.props.STbalance < this.props.selectChest.needTicketNum){
+            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
+            return;
         }
         this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((order: any) => {
-            if (order.oid) { // 非免费机会开奖
-                queryChestOrder(order.oid).then((res:any) => {
-                    this.goLottery(e,boxIndex,res);
+            if(this.props.selectChest.type!==ActivityType.PrimaryChest){
+            // if (order.oid) { // 非免费机会开奖
+            //     queryChestOrder(order.oid).then((res:any) => {
+                    this.goLottery(e,boxIndex,order);
                     this.props.freeCount = 0;
-                }).catch(err => {
-                    this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
-                    console.log('查询开宝箱订单失败',err);
-                });
+            //     }).catch(err => {
+            //         this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
+            //         console.log('查询开宝箱订单失败',err);
+            //     });
 
             } else {         // 免费机会开奖
                 this.props.freeCount--;
@@ -227,60 +231,10 @@ export class OpenBox extends Widget {
         if (this.props.isOpening) return;
 
         if (this.props.watchAdAward < 10) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-                img:'../../res/image/no_money.png',
-                btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
-                btn2:'去充值'// 按钮2
-            },(num) => {
-                if (num === 1) {
-                    wathcAdGetAward(4,(award) => {
-                        this.props.freeCount = award.freeBox;
-                        this.props.watchAdAward = award.adAwardBox;
-                        this.setChestTip(2);
-                    });
-                } else {
-                    popNew('app-view-wallet-cloudWallet-rechargeKT');
-                }
-            });
-        } 
-        // else {
-        //     const chatUid = chatStore.getStore('uid');
-        //     const group = chatStore.getStore(`contactMap/${chatUid}`,{ group:[] }).group; // 聊天加入群组
-        //     if (group.indexOf(OPENBOX_GROUP) > -1) {
-        //         popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-        //             img:'../../res/image/no_money.png',
-        //             btn1:'去聊天',// 按钮1 
-        //             btn2:'去充值'// 按钮2
-        //         },(num) => {
-        //             if (num === 1) {
-        //                 // TODO 去聊天
-        //                 console.log('开宝箱去聊天');
-        //             } else {
-        //                 popNew('app-view-wallet-cloudWallet-rechargeKT');
-        //             }
-        //         });
-        //     } else {
-        //         popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
-        //             img:'../../res/image/no_money.png',
-        //             btn1:'加入游戏聊天群组',// 按钮1 
-        //             btn2:'去充值'// 按钮2
-        //         },(num) => {
-        //             if (num === 1) {
-        //                 inviteUserToGroup(OPENBOX_GROUP,(r) => {
-        //                     console.log('加群回调OPENBOX_GROUP---------------',r);
-        //                     if (r && r.r === 1) {
-        //                         popNew('app-components1-message-message',{ content:this.config.value.tips[3] });
-        //                     } else {
-        //                         popNew('app-components1-message-message',{ content:this.config.value.tips[4] });
-        //                     }
-        //                 });
-        //             } else {
-        //                 popNew('app-view-wallet-cloudWallet-rechargeKT');
-        //             }
-        //         });
-        //     }
-           
-        // }
+            popNewMessage({ zh_Hans: '点击更多免费', zh_Hant: '點擊更多免費', en: '' })
+        } else if(this.props.selectChest.type===ActivityType.PrimaryChest){
+            popNewMessage({ zh_Hans: '免费次数用完', zh_Hant: '免費次數用完', en: '' })
+        }
     }
 
     /**
@@ -292,7 +246,7 @@ export class OpenBox extends Widget {
      */
     public setChestTip(tipIndex: number = 1) {
         const chestTips = this.config.value.chestTips;
-        const stShow = getModulConfig('ST_SHOW');
+        const stShow = getModulConfig('KT_SHOW');
         switch (tipIndex) {
             case 0:
                 this.props.showTip = { zh_Hans:`免费次数: ${this.props.freeCount}`,zh_Hant:`免費次數: ${this.props.freeCount}`,en:'' };
@@ -307,7 +261,7 @@ export class OpenBox extends Widget {
                 }, 1000);
                 break;
             case 2:
-                if (this.props.freeCount > 0 && this.props.selectChest.type === ActivityType.PrimaryChest) {
+                if (this.props.selectChest.type === ActivityType.PrimaryChest) {
                     this.setChestTip(0);
                 } else {
                     this.props.showTip = { zh_Hans: `售价: ${this.props.selectChest.needTicketNum}${stShow}/个`, zh_Hant: `售價: ${this.props.selectChest.needTicketNum}${stShow}/個`, en: '' };
@@ -326,7 +280,7 @@ export class OpenBox extends Widget {
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
             popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
-            getSTbalance();  // 更新余额
+            getKTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);
         } else {
             this.endOpenChest(e,boxIndex,BoxState.emptyBox);
