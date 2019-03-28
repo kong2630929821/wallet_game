@@ -12,7 +12,7 @@ import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, Invit
 import { Achievements, Medals, ShowMedalRes } from '../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
-import { get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
+import { cdkey, get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
 import { SendMsg } from '../../server/rpc/send_message.s';
@@ -49,7 +49,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2';
+    walletLoginReq.openid = '20';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -378,6 +378,14 @@ export const get_taskAward_test = ()  => {
     });
 };
 
+// 兑换邀请码
+export const input_cdkey = ()  => {
+    const key = 'IWFUSI';
+    clientRpcFunc(cdkey, key, (r: Result) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         
@@ -496,11 +504,11 @@ const props = {
         {
             name: '查KT',
             func: () => { get_KT_test(); }
+        },
+        {
+            name: '兑换邀请码',
+            func: () => { input_cdkey(); }
         }
-        // {
-        //     name: '兑换',
-        //     func: () => { convert_test(); }
-        // }
     ] // 按钮数组
 };
 

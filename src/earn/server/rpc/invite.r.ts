@@ -132,6 +132,7 @@ export const cdkey = (code: string): Result => {
                     iuid = iuser.uid;
                     // 获取邀请人已邀请人数
                     const invites = get_invite_friends(inviteOpenid, iuid);
+                    console.log('----------------inviteNum--------------', invites.inviteNum);
                     invites.inviteNum += 1;
                     friendsNum = invites.inviteNum;
                     // 添加邀请人邀请记录
