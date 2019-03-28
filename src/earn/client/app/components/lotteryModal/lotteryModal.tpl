@@ -11,7 +11,7 @@
                 
                 <img src="../../res/image/trophies.png" width="260px" height="280px;" alt="" class="popBoxShake"/>
                 <div w-class="prize-img">
-                    <img src="../../res/image/virtualGoods/{{it.prizeType}}.jpg" width="200px" height="200px;"  alt="" />
+                    <img src="../../res/image/virtualGoods/{{it.prizeType}}.png" width="200px" height="200px;"  alt="" />
                 </div>
                 <widget w-class="tips" w-tag="pi-ui-lang">{"zh_Hans":"抽中了","zh_Hant":"抽中了","en":""}</widget>
                 <div>

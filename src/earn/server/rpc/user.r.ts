@@ -4,6 +4,7 @@
 import { Env } from '../../../pi/lang/env';
 import { Session } from '../../../pi/net/session';
 import { NetEvent } from '../../../pi_pt/event/event_server';
+import { ServerNode } from '../../../pi_pt/rust/mqtt/server';
 import { setMqttTopic } from '../../../pi_pt/rust/pi_serv/js_net';
 import { Bucket } from '../../utils/db';
 import { SeriesLoginAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
@@ -59,7 +60,7 @@ export const login = (user: UserType): UserInfo => {
 
         return userInfo;
     }
-    const mqttServer = env.get('mqttServer');
+    const mqttServer:ServerNode = env.get('mqttServer');
     setMqttTopic(mqttServer, `send/${loginReq.uid.toString()}`, true, true);
 
     // save session
