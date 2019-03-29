@@ -34,6 +34,8 @@ export const login = (user: UserType): UserInfo => {
         const walletLoginReq = <WalletLoginReq>user.value;
         openid = walletLoginReq.openid;
         const sign = walletLoginReq.sign;
+        // const nonceStr = walletLoginReq.nonce_str;
+        // const timesTamp = walletLoginReq.timestamp;
         // TODO 验证签名
         const userAccountBucket = new Bucket(CONSTANT.WARE_NAME, UserAcc._$info.name);
         const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name);

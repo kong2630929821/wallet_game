@@ -3,6 +3,9 @@
  */
 import * as bigInt from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
+import { ab2hex } from '../../../pi/util/util';
+import { digest, DigestAlgorithm } from '../../../pi_pt/rust/pi_crypto/digest';
+import { ECDSASecp256k1 } from '../../../pi_pt/rust/pi_crypto/signature';
 import { Bucket } from '../../utils/db';
 import { RESULT_SUCCESS, THE_ELDER_SCROLLS, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
@@ -94,6 +97,57 @@ export const get_objStr = ():Result => {
     result.msg = JSON.stringify(openids);
 
     return result;
+};
+
+// 签名测试
+// #[rpc=rpcServer]
+export const test_secp256k1 = (msg:string):Result => {
+    // 创建一个secp256对象
+    const secp = ECDSASecp256k1.new();
+    // 要进行签名的消息 "abc"
+    // const data = new Uint8Array([97, 98, 99]); // "abc"
+    const data = str2ab(msg);
+    // 消息的sha256哈希，哈希算法可以自己选择
+    const hash = digest(DigestAlgorithm.SHA256, data).asSliceU8();
+    // 私钥， 32字节
+    const sk = DecodeHexStringToByteArray('1468577c399931bd1443aedb915267421863547ede5939eb8a3b7d1f20d1ac78');
+    // 私钥对应的公钥
+    const pk = DecodeHexStringToByteArray('043ec6a343d986aaaf90ee6665b41705699a8b296dd7443c93e83be9abeca0f99be28db368121b8b4cfa3c82a8bdf764eb63d77f10faf02187feea781cc99d0267');
+
+    // 签名结果
+    const sig = secp.sign(hash, sk).asSliceU8();
+
+    const verify = secp.verify(hash, sig, pk);
+
+    // 验证签名
+    console.log('verify result: ', verify);
+    const r = new Result();
+    r.reslutCode = 1;
+    const sign = ab2hex(sig);
+    r.msg = `verify:${verify}, sign:${sign}, msg:${msg}, sk:${sk}, pk:${pk}`;
+
+    return r;
+};
+
+const DecodeHexStringToByteArray = (hexString:string) => {
+    const result = [];
+    while (hexString.length >= 2) { 
+        result.push(parseInt(hexString.substring(0, 2), 16));
+        hexString = hexString.substring(2, hexString.length);
+    }
+    
+    return new Uint8Array(result);
+};
+
+const str2ab = (str):Uint8Array => {
+    const arr = [];
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+        arr[i] = str.charCodeAt(i);
+    }
+
+    console.log(arr);
+
+    return new Uint8Array(arr);
 };
 
 // // #[rpc=rpcServer]
