@@ -266,7 +266,7 @@ export class MiningHome extends Widget {
                         number:coinUnitchange(r.awards[1].value.num,r.awards[1].value.count)
                     };
                 }
-                popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
+                popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
                 
             } else {
                 const mine = this.props.haveMines[this.getSelectedMineIndex()];
@@ -320,7 +320,6 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
-        // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test'); //测试锄头
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
