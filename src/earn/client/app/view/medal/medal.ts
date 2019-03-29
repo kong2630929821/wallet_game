@@ -4,15 +4,16 @@
 
 import { makeScreenShot } from '../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../../pi/ui/root';
+import { popNewMessage } from '../../../../../app/utils/tools';
+import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal, getKTbalance } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { computeRankMedal, getACHVmedalList, getMedalList } from '../../utils/util';
+import { getACHVmedalList, getMedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
 
@@ -114,7 +115,7 @@ export class Medal extends Widget {
         const $realDomStyle = $realDom.style;
         $realDomStyle.visibility = `hidden`;
         
-        popNew('earn-client-app-view-medal-medalShow', {
+        popModalBoxs('earn-client-app-view-medal-medalShow', {
             medalId,
             medalSite,
             isHave: (this.props.mineMedal.rankMedal >= medalId),
@@ -132,9 +133,9 @@ export class Medal extends Widget {
      */
     public shareClick() {
         makeScreenShot(() => {
-            popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_SCREEN });
+            popNew('app-components-share-share', { shareType: ShareType.TYPE_SCREEN });
         }, () => {
-            popNew('app-components1-message-message', { content: this.config.value.tips });
+            popNewMessage(this.config.value.tips);
         });
     }
 

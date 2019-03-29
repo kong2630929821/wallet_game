@@ -3,6 +3,7 @@
  */
 
 import { getModulConfig } from '../../../../../../app/modulConfig';
+import { popNewMessage } from '../../../../../../app/utils/tools';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';
@@ -61,12 +62,12 @@ export class GuessDetail extends Widget {
      */
     public guess(team: number) {
         if (this.props.guessSTnum > this.props.selfSTnum) { // 余额不足
-            popNew('app-components1-message-message', { content: this.config.value.tips[0] });
+            popNewMessage(this.config.value.tips[0]);
 
             return;
         }
         if (this.props.guessSTnum < this.props.defaultGuessStNum) {  // 竞猜ST小于0.1
-            popNew('app-components1-message-message', { content: this.config.value.tips[1] });
+            popNewMessage(this.config.value.tips[1]);
 
             return;
         }
@@ -74,11 +75,11 @@ export class GuessDetail extends Widget {
         betGuess(this.props.guessData.cid,this.props.guessSTnum,team).then((order:any) => {
             queryBetGuess(order.oid).then(res => {      
                 console.log('下注成功，查询！！！！！',res);
-                popNew('app-components1-message-message', { content: this.config.value.tips[2] });
+                popNewMessage(this.config.value.tips[2]);
                 this.initData();
                 // this.inputChange({ value:this.props.defaultGuessStNum });
             }).catch(err => {
-                popNew('app-components1-message-message', { content: this.config.value.tips[3] });
+                popNewMessage(this.config.value.tips[3]);
                 console.log('查询下注失败',err);
             });
         }).catch(err => {

@@ -173,13 +173,13 @@ export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
 
 // 钱包服务器地址
-export const WALLET_SERVER_URL = 'http://127.0.0.1:8099';
+export const WALLET_SERVER_URL = 'https://127.0.0.1:8099';
 // appid
-export const WALLET_APPID = '101';
+export const WALLET_APPID = '11';
 // mch_id
-export const WALLET_MCH_ID = '15';
+export const WALLET_MCH_ID = '1';
 // 私钥
-export const WALLET_SERVER_KEY = 'xxxxxxxxx';
+export const WALLET_SERVER_KEY = '1468577c399931bd1443aedb915267421863547ede5939eb8a3b7d1f20d1ac78';
 // 兑换邀请码
 export const WALLET_API_CDKEY = '/oAuth/cdkey';
 // 查询余额
