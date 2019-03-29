@@ -51,7 +51,7 @@
                     </div>
                 {{end}}
             </div>
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it1.KTbalance}}</div>
+            <div w-class="myMoney">我的{{it.moneyName}}:&nbsp;{{it1.KTbalance}}</div>
 
             {{% 余票}}
             <div w-class="ticket">

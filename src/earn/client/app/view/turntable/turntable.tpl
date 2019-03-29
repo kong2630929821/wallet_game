@@ -6,7 +6,7 @@
         {{% 大转盘标题}}
         <div w-class="turntable-name">
             <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it1.KTbalance}}</div>
+            <div w-class="myMoney">我的{{it.moneyName}}:&nbsp;{{it1.KTbalance}}</div>
         </div>     
         {{% 大转盘}}
         <div w-class="center">

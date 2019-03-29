@@ -3,7 +3,7 @@
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { popNew } from '../../../../../pi/ui/root';
+import { popNew, popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -33,6 +33,7 @@ interface Props {
     watchAdAward:number; // 看广告已经获得的免费次数
     showMoreSetting: boolean; // 展开设置免密支付
     adCount:number;// 看广告次数
+    moneyName:string; //消费金额的类型
 }
 
 enum BoxState {
@@ -70,12 +71,14 @@ export class OpenBox extends Widget {
         LEDTimer:{},
         watchAdAward:0,
         showMoreSetting: false,
-        adCount:10
+        adCount:10,
+        moneyName:''
     };
     cancel: any;
 
     public create() {
         super.create();
+        this.props.moneyName = getModulConfig('KT_SHOW');
         if (isLogin()) {
             this.ledTimer();
             getKTbalance();
@@ -142,7 +145,7 @@ export class OpenBox extends Widget {
         if (this.props.isOpening) return;
 
         if (this.props.watchAdAward < 10) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_free.png',
                 btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
                 btn2:'知道了'// 按钮2
@@ -158,7 +161,7 @@ export class OpenBox extends Widget {
                 }
             });
         } else if(this.props.selectChest.type===ActivityType.PrimaryChest){
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_chance.png',
                 btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
                 btn2:'知道了',// 按钮2
@@ -211,7 +214,7 @@ export class OpenBox extends Widget {
      */
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal', order);
             getKTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);
         } else {
