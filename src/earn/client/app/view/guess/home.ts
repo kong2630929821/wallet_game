@@ -2,11 +2,7 @@
  * 竞猜主页
  */
 
-import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { register as walletRegister } from '../../../../../app/store/memstore';
-import { walletSetNoPSW } from '../../../../../app/utils/pay';
-import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
-import { LOLGUESS_GROUP } from '../../../../../chat/server/data/constant';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import * as store from '../../store/memstore';
@@ -45,19 +41,6 @@ export class GuessHome extends Widget {
     public create() {
         super.create();
         this.props.selectTopbar = this.props.topbarList[1];
-        queryNoPWD('101', (res, msg) => {
-            store.setStore('flags/noPassword',!!res);
-            if (!res) {
-                this.props.noPassword = true;
-            } else {
-                this.props.noPassword = false;
-            }
-            this.paint();
-        });
-        inviteUserToGroup(LOLGUESS_GROUP,(r) => {
-            console.log('加群回调LOLGUESS_GROUP---------------',r);
-        });
-        
     }
 
     /**
@@ -93,15 +76,6 @@ export class GuessHome extends Widget {
         if (this.props.noPassword === false) {
             state = 1;
         } 
-
-        walletSetNoPSW('101', '15', state, (res,msg) => {
-            console.log(res,msg);
-            if (!res) {
-                this.props.noPassword = !this.props.noPassword; 
-                this.paint();
-            } 
-
-        });
         this.closeSetting();
     }
 

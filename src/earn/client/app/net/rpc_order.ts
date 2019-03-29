@@ -2,16 +2,15 @@
 /**
  * 支付下单rpc
  */
-import { walletPay } from '../../../../app/utils/pay';
 import { ST2st } from '../../../../app/utils/unitTools';
 import { GuessingReq, Result } from '../../../server/data/db/guessing.s';
 import { FreePlay } from '../../../server/data/db/item.s';
 import { start_guessing } from '../../../server/rpc/guessingCompetition.p';
-import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, rotary_pay_query, st_convert, st_treasurebox, kt_rotary, kt_treasurebox} from '../../../server/rpc/stParties.p';
+import { cdkey } from '../../../server/rpc/invite.p';
+import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, kt_rotary, kt_treasurebox, rotary_pay_query, st_convert, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { showActError } from '../utils/util';
 import { ActivityType } from '../xls/dataEnum.s';
 import { clientRpcFunc } from './init';
-import { cdkey } from '../../../server/rpc/invite.p';
 
 /**
  * 开宝箱下单
