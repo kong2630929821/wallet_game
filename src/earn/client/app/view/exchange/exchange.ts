@@ -5,8 +5,8 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getExchangeVirtualList } from '../../net/rpc_order';
 import { isLogin } from '../../utils/util';
+import { getStore, register } from '../../store/memstore';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -16,14 +16,13 @@ export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
 export class Exchange extends Widget {
     public ok: () => void;
-    public props: any = {
-        list:[]
-    };
-
     public create() {
         super.create();
+        this.state = {
+            list:[]
+        };
         if (isLogin()) {
-            this.initData();
+            this.state.list = getStore('redemption');
         }
     }
 
@@ -32,19 +31,6 @@ export class Exchange extends Widget {
             this.backPrePage();
         }
     }
-
-    /**
-     * 初始数据
-     */
-    public initData() {
-        getExchangeVirtualList().then((res:any) => {
-            console.log(res);
-            this.props.list = res.list;
-            this.paint();
-        });
-        this.paint();
-    }
-
     /**
      * 查看历史记录
      */
@@ -62,7 +48,6 @@ export class Exchange extends Widget {
 
 // ===================================================== 立即执行
 
-// register('goods',(goods:Item[]) => {
-//     const w:any = forelet.getWidget(WIDGET_NAME);
-//     w && w.initData();
-// });
+register('redemption',(r:any) => {
+    forelet.paint({list:r})
+});

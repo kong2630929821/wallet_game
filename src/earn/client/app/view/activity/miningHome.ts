@@ -1,7 +1,7 @@
 /**
  * digging mines home
  */
-import { popNew } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -137,7 +137,7 @@ export class MiningHome extends Widget {
         const mineId = e.mineId;
         if (this.props.startMining) return;  // 如果正在通信  不响应
         if (this.props.miningedNumber >= MineMax) {
-            popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
+            popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
             
             return;
         }
@@ -164,6 +164,8 @@ export class MiningHome extends Widget {
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
             this.countDown();
+            this.props.miningCount++;
+            this.bloodLoss();
             this.paint();
 
             return;
@@ -318,25 +320,25 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
-        // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
+        // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test'); //测试锄头
-        // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
+        // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {
             console.log('广告关闭  奖励内容 = ',award);
             setTimeout(() => {
-                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+                popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
             },300);
             
         });
     }
-    public clickTop(){
+    public clickTop() {
         console.log('top');
     }
-    public clickImg(){
+    public clickImg() {
         console.log('img');
     }
-    public rightClick(){
+    public rightClick() {
         console.log(1);
     }
 }

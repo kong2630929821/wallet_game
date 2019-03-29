@@ -1,5 +1,5 @@
 
-import { popNew } from '../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
 import { clientRpcFunc } from '../../client/app/net/init';
 import { getMap } from '../../client/app/store/cfgMap';
@@ -93,7 +93,7 @@ export class CompEditor extends Widget {
     }
 
     public addResult(e: any, result: number, cid: number) {
-        popNew('earn-editor-edit-modalBox',{
+        popModalBoxs('earn-editor-edit-modalBox',{
             title: '注意',
             content: '确认比赛结果'
         },() => {
@@ -104,7 +104,7 @@ export class CompEditor extends Widget {
     }
 
     public settleGuessing(e: any, cid: number) {
-        popNew('earn-editor-edit-modalBox',{
+        popModalBoxs('earn-editor-edit-modalBox',{
             title: '注意',
             content: '是否结算比赛'
         },() => {
@@ -115,7 +115,7 @@ export class CompEditor extends Widget {
     }
 
     public cancelGuessing(e: any, cid: number) {
-        popNew('earn-editor-edit-modalBox',{
+        popModalBoxs('earn-editor-edit-modalBox',{
             title: '注意',
             content: '是否取消比赛'
         },() => {

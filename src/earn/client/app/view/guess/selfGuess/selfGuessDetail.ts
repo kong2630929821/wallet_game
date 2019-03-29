@@ -4,7 +4,8 @@
 
 import { makeScreenShot } from '../../../../../../app/logic/native';
 import { getModulConfig } from '../../../../../../app/modulConfig';
-import { ShareToPlatforms } from '../../../../../../pi/browser/shareToPlatforms';
+import { popNewMessage } from '../../../../../../app/utils/tools';
+import { ShareType } from '../../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 
@@ -42,9 +43,9 @@ export class SelfGuessDetail extends Widget {
      */
     public shareClick() {
         makeScreenShot(() => {
-            popNew('app-components-share-share', { shareType: ShareToPlatforms.TYPE_SCREEN });
+            popNew('app-components-share-share', { shareType: ShareType.TYPE_SCREEN });
         }, () => {
-            popNew('app-components1-message-message', { content: this.config.value.tips });
+            popNewMessage(this.config.value.tips);
         });
     }
 

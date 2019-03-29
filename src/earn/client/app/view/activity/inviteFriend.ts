@@ -2,10 +2,11 @@
  * 活动-邀请好友
  */
 
+import { shareDownload } from '../../../../../app/config';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getInviteCode } from '../../../../../app/net/pull';
 import { LuckyMoneyType } from '../../../../../app/store/interface';
-import { copyToClipboard, popNewMessage, popNew3 } from '../../../../../app/utils/tools';
+import { copyToClipboard, popNew3, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -13,7 +14,6 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { converInviteAwards } from '../../net/rpc';
 import { getStore, Invited, register } from '../../store/memstore';
 import { inviteAwardsMultiple } from '../../utils/constants';
-import { popNew } from '../../../../../pi/ui/root';
 import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -59,7 +59,7 @@ export class InviteFriend extends Widget {
         this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'扫码下载',zh_Hant:'掃碼下載',en:'' };
-        this.props.bgImg= this.props.bgImg|| 'app/res/image/bgintive.png';
+        this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
         this.paint();
     }
@@ -103,8 +103,8 @@ export class InviteFriend extends Widget {
         copyToClipboard(this.props.address);
         popNewMessage(this.language.tips[0]);
     }
-    public myInvite(){
-        popNew3('earn-client-app-view-activity-myInviteUsers')
+    public myInvite() {
+        popNew3('earn-client-app-view-activity-myInviteUsers');
     }
     /**
      * 切换显示页面

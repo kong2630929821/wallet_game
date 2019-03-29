@@ -47,11 +47,11 @@
                 </div>
                 {{if it.selectChest.type==101001}}
                     <div w-class="sale-btn1" on-tap="btnClick(e,1)">
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
+                        <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费 {{it.watchAdAward}}/10","zh_Hant":"更多免費 {{it.watchAdAward}}/10","en":""}</widget>
                     </div>
                 {{end}}
             </div>
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it.STbalance}}</div>
+            <div w-class="myMoney">我的嗨豆:&nbsp;{{it1.KTbalance}}</div>
 
             {{% 余票}}
             <div w-class="ticket">

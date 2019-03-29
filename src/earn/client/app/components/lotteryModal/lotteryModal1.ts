@@ -9,6 +9,7 @@ interface Props {
     btn1:string;// 按钮1 
     btn2:string;// 按钮2
     img:string;// 图片
+    isColor:false;
 }
 
 export class LotteryModal extends Widget {
