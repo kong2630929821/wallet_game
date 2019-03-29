@@ -37,7 +37,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
 };
 
 // 登录
-loginWallet('101',(openid:number) => {
+loginWallet('11',(openid:number) => {
     console.log('获取到openId ====',openid);
     initClient(openid,loginSuccess);
 });

@@ -4,19 +4,38 @@
  */
 import { BigNumber } from '../../../pi/bigint/biginteger';
 import { randomInt } from '../../../pi/util/math';
+import { ab2hex } from '../../../pi/util/util';
+import { digest, DigestAlgorithm } from '../../../pi_pt/rust/pi_crypto/digest';
+import { ECDSASecp256k1 } from '../../../pi_pt/rust/pi_crypto/signature';
 import { BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WALLET_API_UNIFIEDORDER, WALLET_APPID, WALLET_MCH_ID, WALLET_ORDER_QUERY, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
 import { getOpenid } from '../rpc/user.r';
 import * as http from './http_client';
 
 // 签名
 export const sign = (msg: string, privateKey: string) => {
-    // const sig = new KJUR.crypto.Signature({ alg: KJUR.jws.JWS.jwsalg2sigalg.ES256 });
-    // sig.init({ d: privateKey, curve: 'secp256k1' });
-    // sig.updateString(msg);
+    const secp = ECDSASecp256k1.new();
+    const data = str2ab(msg);
+    // 消息的sha256哈希，哈希算法可以自己选择
+    const hash = digest(DigestAlgorithm.SHA256, data).asSliceU8();
+    // 私钥， 32字节
+    const skAb = DecodeHexStringToByteArray(privateKey);
 
-    // return sig.sign();
+    // 签名结果
+    const sig = secp.sign(hash, skAb).asSliceU8();
+    console.log('oauth_lib!!!!!!!!!!!!sign!!!!msg:', msg, 'sign:', ab2hex(sig), 'key:', privateKey);
+    return ab2hex(sig);
 
-    return 'testsign';
+};
+
+const str2ab = (str):Uint8Array => {
+    const arr = [];
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+        arr[i] = str.charCodeAt(i);
+    }
+
+    console.log(arr);
+
+    return new Uint8Array(arr);
 };
 
 // json转字符串为uri并按照字典排序
@@ -34,7 +53,18 @@ export const json_uri_sort = (json) => {
         }
     }
 
+    console.log('!!!!!!!!!!!!!!!msg:', msg);
     return msg;
+};
+
+const DecodeHexStringToByteArray = (hexString:string) => {
+    const result = [];
+    while (hexString.length >= 2) { 
+        result.push(parseInt(hexString.substring(0, 2), 16));
+        hexString = hexString.substring(2, hexString.length);
+    }
+    
+    return new Uint8Array(result);
 };
 
 export const oauth_send = (uri: string, body) => {
@@ -43,6 +73,7 @@ export const oauth_send = (uri: string, body) => {
     body.timestamp = new Date().getTime();
     // 签名
     const signStr = sign(json_uri_sort(body), WALLET_SERVER_KEY);
+    console.log('!!!!!!!!!!!!key:', WALLET_SERVER_KEY, 'sign:', signStr);
     body.sign = signStr;
     const url = `${WALLET_SERVER_URL}${uri}`;
     console.log('!!!!!!!!!url:', url);

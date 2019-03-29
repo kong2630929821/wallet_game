@@ -2,8 +2,8 @@
 struct WalletLoginReq {
     openid: String,
     sign: String,
-    nonce_str: String,
-    timestamp: u32
+    // nonce_str: String,
+    // timestamp: u32
 }
 
 struct LoginReply {

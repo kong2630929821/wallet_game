@@ -110,19 +110,21 @@ export const test_secp256k1 = (msg:string):Result => {
     // 消息的sha256哈希，哈希算法可以自己选择
     const hash = digest(DigestAlgorithm.SHA256, data).asSliceU8();
     // 私钥， 32字节
-    const sk = DecodeHexStringToByteArray('9389abe48466d230289dcb847d1fcaddc3ac9665db3bcbcf461b2c2bf4e7efe7');
+    const sk = DecodeHexStringToByteArray('1468577c399931bd1443aedb915267421863547ede5939eb8a3b7d1f20d1ac78');
     // 私钥对应的公钥
-    const pk = DecodeHexStringToByteArray('04419f657dc090c3679ac778cc1f324080f1fbc7cd74fbbb79ec3e9bf9336b653d4b2853ef38275130289924bc12dcabd83989c03a6819da710ddc65d50907b6fc');
+    const pk = DecodeHexStringToByteArray('043ec6a343d986aaaf90ee6665b41705699a8b296dd7443c93e83be9abeca0f99be28db368121b8b4cfa3c82a8bdf764eb63d77f10faf02187feea781cc99d0267');
 
     // 签名结果
     const sig = secp.sign(hash, sk).asSliceU8();
 
+    const verify = secp.verify(hash, sig, pk);
+
     // 验证签名
-    console.log('verify result: ', secp.verify(hash, sig, pk));
+    console.log('verify result: ', verify);
     const r = new Result();
     r.reslutCode = 1;
     const sign = ab2hex(sig);
-    r.msg = `${sign}`;
+    r.msg = `verify:${verify}, sign:${sign}, msg:${msg}, sk:${sk}, pk:${pk}`;
 
     return r;
 };
@@ -138,13 +140,14 @@ const DecodeHexStringToByteArray = (hexString:string) => {
 };
 
 const str2ab = (str):Uint8Array => {
-    const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    const bufView = new Uint16Array(buf);
+    const arr = [];
     for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
+        arr[i] = str.charCodeAt(i);
     }
 
-    return buf as Uint8Array;
+    console.log(arr);
+
+    return new Uint8Array(arr);
 };
 
 // // #[rpc=rpcServer]
