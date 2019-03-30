@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refresh">
     {{: topBarTitle = {"zh_Hans":"勋章成就","zh_Hant":"勳章成就","en":""} }}
-    <widget style="position: fixed;width: 100%;" w-tag="app-components-topBar-topBar2">{scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
+    <widget style="position: fixed;width: 100%;" w-tag="app-components-topBar-topBar2">{isOne:1,scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
 
     <div w-class="content flex-col" on-scroll="scrollPage">
         <div w-class="content-bg">
