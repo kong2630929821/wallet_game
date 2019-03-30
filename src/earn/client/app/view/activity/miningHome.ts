@@ -8,7 +8,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining, getKTbalance } from '../../net/rpc';
-import { getStore, Mine, register, setStore } from '../../store/memstore';
+import { Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
