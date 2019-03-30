@@ -3,8 +3,6 @@
  */
 
 import { register as walletRegister } from '../../../../../app/store/memstore';
-import { walletSetNoPSW } from '../../../../../app/utils/pay';
-import { LOLGUESS_GROUP } from '../../../../../chat/server/data/constant';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import * as store from '../../store/memstore';
@@ -78,15 +76,6 @@ export class GuessHome extends Widget {
         if (this.props.noPassword === false) {
             state = 1;
         } 
-
-        walletSetNoPSW('101', '15', state, (res,msg) => {
-            console.log(res,msg);
-            if (!res) {
-                this.props.noPassword = !this.props.noPassword; 
-                this.paint();
-            } 
-
-        });
         this.closeSetting();
     }
 
