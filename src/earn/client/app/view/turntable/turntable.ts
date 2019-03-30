@@ -4,7 +4,7 @@
 
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { popNew } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -33,6 +33,7 @@ interface Props {
     LEDTimer:any; // LED计时器
     ledShow:boolean; // LED灯
     watchAdAward:number; // 看广告已经获得的免费次数
+    moneyName:string; // 消费的金钱种类
 }
 // tslint:disable-next-line:completed-docs
 export class Turntable extends Widget {
@@ -64,7 +65,8 @@ export class Turntable extends Widget {
         freeCount:0,
         LEDTimer:{},
         ledShow:false,
-        watchAdAward:0
+        watchAdAward:0,
+        moneyName:''
     };
     public create() {
         super.create();
@@ -73,6 +75,7 @@ export class Turntable extends Widget {
             this.initTurntable();
             this.ledTimer();
             // getKTbalance();
+            this.props.moneyName = getModulConfig('KT_SHOW');
             this.state.KTbalance = getStore('balance/KT') || 0;
 
             isFirstFree().then((res:FreePlay) => {
@@ -111,32 +114,26 @@ export class Turntable extends Widget {
      */
     public goLottery() {
         if (this.props.isTurn) return;
-        if(this.props.selectTurntable.type===ActivityType.PrimaryTurntable){
+        if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
             if (this.props.freeCount <= 0) { // 没有免费次数
                 this.popNextTips();
                 return;
             }
-        }else if(this.state.KTbalance < this.props.selectTurntable.needTicketNum){
-            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
+        } else if (this.state.KTbalance < this.props.selectTurntable.needTicketNum) {
+            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
             return;
         }
         this.props.isTurn = true;
         // this.startLottery();
         
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
-            console.log('11111111111',order)
-            if (this.props.selectTurntable.type!==ActivityType.PrimaryTurntable) { // 非免费机会开奖
-                // queryTurntableOrder(order.oid).then((res:any) => {
-                    console.log('转盘开奖成功！',1);
-                    this.props.freeCount = 0;
-                    this.setChestTip(2);
-                    this.changeDeg(order);
-                    this.paint();
-                // }).catch(err => {
-
-                //     console.log('查询转盘订单失败',err);
-                // });
-                
+            console.log('11111111111',order);
+            if (this.props.selectTurntable.type !== ActivityType.PrimaryTurntable) { // 非免费机会开奖
+                console.log('转盘开奖成功！',1);
+                this.props.freeCount = 0;
+                this.setChestTip(2);
+                this.changeDeg(order);
+                this.paint();    
             } else {         // 免费机会开奖
                 this.props.freeCount--;
                 this.setChestTip(2);
@@ -159,7 +156,7 @@ export class Turntable extends Widget {
         if (this.props.isTurn) return;
 
         if (this.props.watchAdAward < 10) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_free.png',
                 btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
                 btn2:'知道了'// 按钮2
@@ -171,11 +168,11 @@ export class Turntable extends Widget {
                         this.setChestTip(2);
                     });
                 } else {
-                    this.paint()
+                    this.paint();
                 }
             });
-        }else if(this.props.selectTurntable.type===ActivityType.PrimaryTurntable){
-            popNew('earn-client-app-components-lotteryModal-lotteryModal1', {
+        } else if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_chance.png',
                 btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
                 btn2:'知道了',// 按钮2
@@ -183,7 +180,7 @@ export class Turntable extends Widget {
             },(num) => {
                 this.paint();
             });
-        }else{
+        } else {
            
         }
     }
@@ -354,5 +351,5 @@ export class Turntable extends Widget {
 // ===================================================== 立即执行
 
 register('balance/KT',(r:number) => {
-    forelet.paint({KTbalance:r});
+    forelet.paint({ KTbalance:r });
 });

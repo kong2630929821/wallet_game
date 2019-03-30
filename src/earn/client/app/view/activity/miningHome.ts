@@ -131,7 +131,7 @@ export class MiningHome extends Widget {
 
     /**
      * 挖矿
-     */
+     */zzzzzz
     public mineClick(e:any) {
         const itype = e.itype;
         const mineId = e.mineId;
@@ -234,9 +234,11 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
+        // this.deleteBoomMine();
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
+            console.log("挖完了！！！！！！！！！！！！",r);
             console.log('miningHome ==== ',this.props);
             this.props.miningCount = 0;
             this.props.startMining = false;
