@@ -11,7 +11,7 @@ import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessin
 import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { get_KTNum, get_STNum, get_convert_list } from '../../../server/rpc/stParties.p';
+import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
@@ -78,23 +78,23 @@ export const getAllGoods = () => {
     });
 };
 
-//获取兑换列表
-export const redemptionList = () =>{
-    clientRpcFunc(get_convert_list,null,(r:any)=>{
+// 获取兑换列表
+export const redemptionList = () => {
+    clientRpcFunc(get_convert_list,null,(r:any) => {
         
         const list = JSON.parse(r.msg).list;
         console.log('兑换物品的列表--------------',r);
-        if(r.reslutCode===1){
+        if (r.reslutCode === 1) {
             setStore('redemption',list);
         }
-    })
-}
+    });
+};
 // 获取ST数量
 export const getSTbalance = () => {
     clientRpcFunc(get_STNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/ST', st2ST(r.num));
+            setStore('balance/ST', st2ST(r.num) || 0);
         } else {
             showActError(r.resultNum);
         }
@@ -107,7 +107,7 @@ export const getKTbalance = () => {
     clientRpcFunc(get_KTNum, null, (r: CoinQueryRes) => {
         console.log('rpc-getSTbalance--KT余额---------------', r);
         if (r.resultNum === 1) {
-            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num));
+            setStore('balance/KT', coinUnitchange(CoinType.KT,r.num) || 0);
         } else {
             showActError(r.resultNum);
         }
