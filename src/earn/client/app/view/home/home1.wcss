@@ -189,7 +189,7 @@
 }
 .mining-title{
     font-size:28px;
-    font-weight:500;
+    font-weight: bold;
     color:rgba(34,34,34,1);
     line-height:40px;
 }
@@ -198,6 +198,7 @@
     color:rgba(34,34,34,1);
     line-height:33px;
     margin-top: 10px;
+    display: flex;
 }
 .rank-num{
     font-size:48px;
@@ -275,4 +276,13 @@
     height: 70px;
     border-radius: 50%;
     margin: 5px;
+}
+.ktShowNum{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    z-index: 1;
+    display: flex;
+    justify-items: center;
+    align-items: center;
 }

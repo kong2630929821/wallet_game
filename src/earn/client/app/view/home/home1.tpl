@@ -21,8 +21,11 @@
             <div w-class="mining-rank" style="{{ it.animateStart ? 'visibility: hidden;' : ''}}" on-tap="goMineRank">
                 <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
                 <div w-class="mining-result">
-                    <div w-class="mining-title">挖矿</div>
-                    <div w-class="mining-number">{{it.miningKTnum}}&nbsp;{{it.ktShow}}</div>
+                    <div w-class="mining-title">{{it.ktShow}}排名</div>
+                    <div w-class="mining-number">
+                        <img w-class="ktShowNum" src="../../res/image/KT.png" alt=""/>&nbsp;
+                        {{it.miningKTnum}}
+                    </div>
                 </div>
                 {{if it.miningRank === 0}}
                 <div w-class="rank-num">暂无排名</div>
