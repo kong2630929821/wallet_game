@@ -14,7 +14,6 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { converInviteAwards } from '../../net/rpc';
 import { getStore, Invited, register } from '../../store/memstore';
 import { inviteAwardsMultiple } from '../../utils/constants';
-import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -94,7 +93,14 @@ export class InviteFriend extends Widget {
      * 返回上一页
      */
     public backPrePage() {
-        this.ok && this.ok();
+        if (this.props.okCB) {
+            this.props.okCB && this.props.okCB();
+            setTimeout(() => {
+                this.ok && this.ok();
+            },500);
+        } else {
+            this.ok && this.ok();
+        }
     }
     public refreshPage() {
         this.initData();
