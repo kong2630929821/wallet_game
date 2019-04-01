@@ -117,10 +117,12 @@ export class Turntable extends Widget {
         if (this.props.selectTurntable.type === ActivityType.PrimaryTurntable) {
             if (this.props.freeCount <= 0) { // 没有免费次数
                 this.popNextTips();
+
                 return;
             }
         } else if (this.state.KTbalance < this.props.selectTurntable.needTicketNum) {
             popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
+
             return;
         }
         this.props.isTurn = true;
@@ -180,9 +182,7 @@ export class Turntable extends Widget {
             },(num) => {
                 this.paint();
             });
-        } else {
-           
-        }
+        } 
     }
 
     /**
@@ -209,8 +209,8 @@ export class Turntable extends Widget {
             }
         });
 
-        $turnStyle.transition = 'transform 1.5s ease-in-out';
-        $turnStyle.transform = `rotate(${this.props.turnNum + 2880}deg)`;
+        $turnStyle.transition = 'transform 3.5s ease-in-out';
+        $turnStyle.transform = `rotate(${this.props.turnNum + 1440}deg)`;
 
         setTimeout(() => {
             this.endLottery();
@@ -220,7 +220,7 @@ export class Turntable extends Widget {
                 this.state.KTbalance = getStore('balance/KT') || 0;
             }
             this.paint();
-        }, 1500);
+        }, 3500);
     }
 
     /**
