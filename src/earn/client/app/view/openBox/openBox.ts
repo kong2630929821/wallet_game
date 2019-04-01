@@ -214,6 +214,7 @@ export class OpenBox extends Widget {
      */
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
+            console.log('开出什么东西了！！！！！！！',order);
             popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal', order);
             getKTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);

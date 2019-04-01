@@ -148,7 +148,7 @@ export class EarnHome extends Widget {
             img: '',
             title: '验证手机号',
             desc: '凭借手机验证可找回云端资产',
-            btn:'做任务',
+            btn:'去绑定',
             addOne:false,
             components:'app-view-mine-setting-phone',
             complete: !!getUserInfo().phoneNumber,

@@ -13,6 +13,7 @@ import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
+import { getModulConfig } from '../../../../../app/modulConfig';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -60,7 +61,9 @@ export class MiningHome extends Widget {
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
-            startMining:false // 请求挖矿标识
+            startMining:false, // 请求挖矿标识
+            ktShow:getModulConfig('KT_SHOW')
+            
         };
         this.mineLocationInit();   // 矿山位置初始化
         console.log('miningHome ----------');
