@@ -1,12 +1,12 @@
 <div class="new-page" w-class="new-page" on-tap="closeSetting"  ev-back-click="backPrePage" ev-next-click="goHistory" ev-next1-click="showSetting">
     {{: topBarTitle = {"zh_Hans":"大转盘","zh_Hant":"大轉盤","en":""} }}
-    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",nextImg1:"../../res/image/more_dot_white.png",background:"transparent" }</app-components-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"transparent" }</app-components-topBar-topBar>
     <div w-class="content">
     
         {{% 大转盘标题}}
         <div w-class="turntable-name">
             <img src="../../res/image/{{it.selectTurntable.type}}title.png" height="100%" />
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it1.KTbalance}}</div>
+            <div w-class="myMoney">我的{{it.moneyName}}:&nbsp;{{it1.KTbalance}}</div>
         </div>     
         {{% 大转盘}}
         <div w-class="center">

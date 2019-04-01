@@ -116,12 +116,6 @@ export class EarnHome extends Widget {
             title: '邀请好友',
             desc: '累计邀请有好礼',
             components:'earn-client-app-view-activity-inviteFriend'
-        },{
-            img: 'btn_yun_4.png',
-            title: '验证手机',
-            desc: '确认是真实用户',
-            components:'app-view-mine-setting-phone',
-            hidden:!!getUserInfo().phoneNumber
         }];
     }
     /**
@@ -130,8 +124,10 @@ export class EarnHome extends Widget {
     public initPropsNoviceTask() {
         const wallet = walletGetStore('wallet');
         const flags = getStore('flags');
+        const isPhone = getUserInfo().phoneNumber;
         // tslint:disable-next-line:ban-comma-operator
-        this.props.noviceTask = [{
+        this.props.noviceTask = [
+            {
             img: '2002.png',
             title: '去备份助记词',
             desc: '助记词是您找回账号的唯一凭证',
@@ -149,7 +145,18 @@ export class EarnHome extends Widget {
             components:'sharePart',
             complete: !!flags.sharePart,
             show:wallet && wallet.setPsw
-        }, {
+        }, 
+        {
+            img: '',
+            title: '验证手机号',
+            desc: '凭借手机验证可找回云端资产',
+            btn:'做任务',
+            addOne:false,
+            components:'app-view-mine-setting-phone',
+            complete: !!getUserInfo().phoneNumber,
+            show:true
+        },
+        {
             img: '2001.png',
             title: '参与聊天',
             desc: '和大家聊一聊最近的热点',
@@ -538,6 +545,7 @@ walletRegister('user/info',() => {
         // tslint:disable-next-line:ban-comma-operator
         w.props.avatar = getUserInfo().avatar ||  '../../res/image1/default_avatar.png';
         w.initHotActivities();
+        w.initPropsNoviceTask();
         w.paint();
     }
 });
