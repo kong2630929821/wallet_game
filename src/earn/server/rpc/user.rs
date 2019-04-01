@@ -1,7 +1,9 @@
 
 struct WalletLoginReq {
     openid: String,
-    sign: String
+    sign: String,
+    // nonce_str: String,
+    // timestamp: u32
 }
 
 struct LoginReply {
@@ -34,7 +36,7 @@ struct AutoLogin {
 
 //自动登录返回
 struct AutoLoginResult {
-    code: u32,
+    code: i32,
 }
 
 //获取TOKEN
@@ -44,6 +46,6 @@ struct GetToken {
 
 //获取TOKEN
 struct Token {
-    code: u32,
+    code: i32,
     token: String,
 }

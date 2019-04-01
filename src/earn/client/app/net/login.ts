@@ -8,7 +8,7 @@ import { getStore, initEarnStore, Invited, setStore } from '../store/memstore';
 import { canInviteAward } from '../utils/util';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo } from './rpc';
+import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
@@ -34,10 +34,11 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getTodayMineNum();  // 获取今天已挖矿山数
     getRankList();   // 获取挖矿排名
     getMiningCoinNum(); // 获取累积挖矿
+    redemptionList();
 };
 
 // 登录
-loginWallet('101',(openid:number) => {
+loginWallet('11',(openid:number) => {
     console.log('获取到openId ====',openid);
     initClient(openid,loginSuccess);
 });

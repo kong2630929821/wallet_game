@@ -2,12 +2,12 @@
 /**
  * 支付下单rpc
  */
-import { walletPay } from '../../../../app/utils/pay';
 import { ST2st } from '../../../../app/utils/unitTools';
 import { GuessingReq, Result } from '../../../server/data/db/guessing.s';
 import { FreePlay } from '../../../server/data/db/item.s';
 import { start_guessing } from '../../../server/rpc/guessingCompetition.p';
-import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, rotary_pay_query, st_convert, st_treasurebox, kt_rotary, kt_treasurebox} from '../../../server/rpc/stParties.p';
+import { cdkey } from '../../../server/rpc/invite.p';
+import { box_pay_query, convert_pay_query, get_convert_info, get_convert_list, get_hasFree, kt_rotary, kt_treasurebox, rotary_pay_query, st_convert, st_treasurebox } from '../../../server/rpc/stParties.p';
 import { showActError } from '../utils/util';
 import { ActivityType } from '../xls/dataEnum.s';
 import { clientRpcFunc } from './init';
@@ -238,3 +238,17 @@ export const queryTurntableOrder = (oid:string) => {
         });
     });
 };
+
+// //获取邀请奖励
+// export const inviteCode = (code:string)=>{
+//     return new Promise((resolve,reject)=>{
+//         clientRpcFunc(cdkey,code,(r:Result)=>{
+//             console.log('[邀请人奖励]---------------', r);
+//             if(r.reslutCode ===1){
+//                 resolve(r)
+//             }else{
+//                 reject(r)
+//             }
+//         })
+//     })
+// };

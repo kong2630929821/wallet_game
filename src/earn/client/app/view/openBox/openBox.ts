@@ -1,22 +1,15 @@
 /**
  * 开宝箱 - 首页
  */
-
-import { queryNoPWD } from '../../../../../app/api/JSAPI';
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { register as walletRegister } from '../../../../../app/store/memstore';
-import { walletSetNoPSW } from '../../../../../app/utils/pay';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import * as chatStore from '../../../../../chat/client/app/data/store';
-import { inviteUserToGroup } from '../../../../../chat/client/app/net/rpc';
-import { OPENBOX_GROUP } from '../../../../../chat/server/data/constant';
-import { popNew } from '../../../../../pi/ui/root';
+import { popNew, popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
-import { getSTbalance, getKTbalance } from '../../net/rpc';
-import { isFirstFree, openChest, queryChestOrder } from '../../net/rpc_order';
+import { getKTbalance } from '../../net/rpc';
+import { isFirstFree, openChest} from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
@@ -33,15 +26,14 @@ interface Props {
     isOpening: boolean;// 正在开启宝箱中
     selectChest: any; // 选择的宝箱类型
     boxList: any; // 宝箱列表
-    STbalance: number; // 账户余额(st)
     chestList: any; // 宝箱选择列表
     freeCount: number; // 免费次数
     ledShow:boolean;  // 彩灯状态
     LEDTimer:any;     // 彩灯控制器
     watchAdAward:number; // 看广告已经获得的免费次数
     showMoreSetting: boolean; // 展开设置免密支付
-    noPassword: boolean; // 免密支付是否打开
     adCount:number;// 看广告次数
+    moneyName:string; //消费金额的类型
 }
 
 enum BoxState {
@@ -56,7 +48,6 @@ export class OpenBox extends Widget {
         showTip: { zh_Hans: '', zh_Hant: '', en: '' },
         isOpening: false,
         boxList: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 0:未开 1:获奖宝箱 2:空宝箱
-        STbalance: 0,
         chestList: [
             {
                 type: ActivityType.PrimaryChest,
@@ -80,37 +71,22 @@ export class OpenBox extends Widget {
         LEDTimer:{},
         watchAdAward:0,
         showMoreSetting: false,
-        noPassword: getStore('flags').noPassword,
-        adCount:10
+        adCount:10,
+        moneyName:''
     };
+    cancel: any;
 
     public create() {
         super.create();
+        this.props.moneyName = getModulConfig('KT_SHOW');
         if (isLogin()) {
             this.ledTimer();
             getKTbalance();
-            this.props.STbalance = getStore('balance/KT')||0;
-            console.log(this.props.STbalance);
-
+            this.state.KTbalance = getStore('balance/KT')||0;
             isFirstFree().then((res: FreePlay) => {
                 this.props.freeCount = res.freeBox;
                 this.props.watchAdAward = res.adAwardBox;
                 this.setChestTip(2);
-                // 首次进入不需要判断
-                // if (this.props.STbalance < this.props.selectChest.needTicketNum && this.props.freeCount <= 0) {
-                //     this.popNextTips();
-                // }            
-
-            });
-
-            queryNoPWD('101', (res, msg) => {
-                setStore('flags/noPassword',!!res);
-                if (!res) {
-                    this.props.noPassword = true;
-                } else {
-                    this.props.noPassword = false;
-                }
-                this.paint();
             });
         }
     }
@@ -122,60 +98,6 @@ export class OpenBox extends Widget {
             this.change(0);
         }
     }
-
-    /**
-     * 更多设置
-     */
-    public showSetting() {
-        this.props.showMoreSetting = !this.props.showMoreSetting;
-        this.paint();
-        
-    }
-    /**
-     * 设置免密支付
-     */
-    public async setting() {
-        let state = 0;
-        if (this.props.noPassword === false) {
-            state = 1;
-        } 
-
-        walletSetNoPSW('101', '15', state, (res, msg) => {
-            console.log(res, msg);
-            if (!res) {
-                popNew('app-components1-message-message',{ content:{ zh_Hans:'设置成功！',zh_Hant:'設置成功！',en:'' } });
-                this.props.noPassword = !this.props.noPassword; 
-                this.paint();
-            } else {
-                popNew('app-components1-message-message',{ content:{ zh_Hans:'设置失败！',zh_Hant:'設置失败！',en:'' } });
-            }
-
-        });
-        this.closeSetting();
-    }
-    
-    /**
-     * 关闭设置
-     */
-    public closeSetting() {
-        this.props.showMoreSetting = false;
-        this.paint();
-    }
-
-    /**
-     * 初始数据
-     */
-    public initData() {
-        this.props.STbalance = getStore('balance/KT')||0;
-        console.log(this.props.STbalance);
-        this.paint();
-        isFirstFree().then((res: FreePlay) => {
-            this.props.freeCount = res.freeBox;
-            this.props.watchAdAward = res.adAwardBox;
-            this.setChestTip(2);
-        });
-    }
-
     /**
      * 打开宝箱 
      * @param num 宝箱序数
@@ -197,28 +119,20 @@ export class OpenBox extends Widget {
                 
                 return;
             }
-        }else if(this.props.STbalance < this.props.selectChest.needTicketNum){
+        }else if(this.state.KTbalance < this.props.selectChest.needTicketNum){
             popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
             return;
         }
         this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((order: any) => {
             if(this.props.selectChest.type!==ActivityType.PrimaryChest){
-            // if (order.oid) { // 非免费机会开奖
-            //     queryChestOrder(order.oid).then((res:any) => {
-                    this.goLottery(e,boxIndex,order);
-                    this.props.freeCount = 0;
-            //     }).catch(err => {
-            //         this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
-            //         console.log('查询开宝箱订单失败',err);
-            //     });
-
+                this.goLottery(e,boxIndex,order);
+                this.props.freeCount = 0;
             } else {         // 免费机会开奖
                 this.props.freeCount--;
                 this.goLottery(e,boxIndex,order);
                 setStore('flags/firstOpenBox',true);
-            }
-            
+            }    
         }).catch((err) => {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
@@ -231,9 +145,30 @@ export class OpenBox extends Widget {
         if (this.props.isOpening) return;
 
         if (this.props.watchAdAward < 10) {
-            popNewMessage({ zh_Hans: '点击更多免费', zh_Hant: '點擊更多免費', en: '' })
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'../../res/image/no_free.png',
+                btn1:`更多免费机会(${this.props.watchAdAward}/${10})`,// 按钮1 
+                btn2:'知道了'// 按钮2
+            },(num) => {
+                if (num === 1) {
+                    wathcAdGetAward(3,(award) => {
+                        this.props.freeCount = award.freeRotary;
+                        this.props.watchAdAward = award.adAwardRotary;
+                        this.setChestTip(2);
+                    });
+                } else {
+                    this.paint()
+                }
+            });
         } else if(this.props.selectChest.type===ActivityType.PrimaryChest){
-            popNewMessage({ zh_Hans: '免费次数用完', zh_Hant: '免費次數用完', en: '' })
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
+                img:'../../res/image/no_chance.png',
+                btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
+                btn2:'知道了',// 按钮2
+                isColor:true
+            },(num) => {
+                this.paint();
+            });
         }
     }
 
@@ -279,7 +214,7 @@ export class OpenBox extends Widget {
      */
     public goLottery(e:any,boxIndex:number,order:any) {
         if (order.awardType !== 9527) {
-            popNew('earn-client-app-components-lotteryModal-lotteryModal', order);
+            popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal', order);
             getKTbalance();  // 更新余额
             this.endOpenChest(e,boxIndex,BoxState.prizeBox);
         } else {
@@ -412,29 +347,11 @@ export class OpenBox extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
-
-    /**
-     * 刷新免密支付设置状态
-     */
-    public initNoPsw(noPSW:boolean) {
-        this.props.noPassword = noPSW;
-        setStore('flags/noPassword',noPSW);
-        this.paint();
-    }
 }
 
 // ===================================================== 立即执行
 
-register('userInfo/uid', (r: any) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.initData();
-});
 
-register('balance/ST', (r: any) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w && w.initData();
-});
-walletRegister('flags/noPassword',(r:any) => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    w &&  w.initNoPsw(r);
+register('balance/KT', (r: any) => {
+    forelet.paint({KTbalance:r});
 });

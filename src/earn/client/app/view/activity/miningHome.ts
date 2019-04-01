@@ -1,14 +1,14 @@
 /**
  * digging mines home
  */
-import { popNew } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
-import { getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
-import { getStore, Mine, register, setStore } from '../../store/memstore';
+import { getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining, getKTbalance } from '../../net/rpc';
+import { Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
@@ -37,6 +37,7 @@ export class MiningHome extends Widget {
     public create() {
         super.create();
         this.init();
+        this.state = STATE;
     }
 
     public init() {
@@ -59,15 +60,7 @@ export class MiningHome extends Widget {
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
-            startMining:false, // 请求挖矿标识
-            miningedNumber:getStore('mine/miningedNumber'),  // 已挖矿山数目
-            miningNumber:{
-                KT:0,
-                ST:0,
-                ETH:0,
-                BTC:0
-            },     // 累计挖矿
-            zIndex:-1            // z-index数值
+            startMining:false // 请求挖矿标识
         };
         this.mineLocationInit();   // 矿山位置初始化
         console.log('miningHome ----------');
@@ -136,8 +129,8 @@ export class MiningHome extends Widget {
         const itype = e.itype;
         const mineId = e.mineId;
         if (this.props.startMining) return;  // 如果正在通信  不响应
-        if (this.props.miningedNumber >= MineMax) {
-            popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
+        if (this.state.miningedNumber >= MineMax) {
+            popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
             
             return;
         }
@@ -164,6 +157,8 @@ export class MiningHome extends Widget {
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
             this.countDown();
+            this.props.miningCount++;
+            this.bloodLoss();
             this.paint();
 
             return;
@@ -232,9 +227,11 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
+        // this.deleteBoomMine();
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
+            console.log("挖完了！！！！！！！！！！！！",r);
             console.log('miningHome ==== ',this.props);
             this.props.miningCount = 0;
             this.props.startMining = false;
@@ -263,8 +260,12 @@ export class MiningHome extends Widget {
                         type:r.awards[1].value.num,
                         number:coinUnitchange(r.awards[1].value.num,r.awards[1].value.count)
                     };
-                }
+                } 
+                console.log('获得奖励==========================================',extraAward,routineAward);
                 popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
+                if(routineAward){
+                    getKTbalance();
+                }
                 
             } else {
                 const mine = this.props.haveMines[this.getSelectedMineIndex()];
@@ -293,20 +294,6 @@ export class MiningHome extends Widget {
         }
         this.paint();
     }
-    /**
-     * 更新已挖矿山
-     */
-    public updateMining(mine:Mine) {
-        this.props.miningedNumber = mine.miningedNumber;
-        this.props.miningNumber = {
-            KT:mine.miningKTnum,
-            ST:mine.miningSTnum,
-            BTC:mine.miningBTCnum,
-            ETH:mine.miningETHnum
-        };
-        this.paint();
-    }
-
     public watchAdAnimateClick(event:any) {
         const adBillboard = getRealNode(event.node);
         adBillboard.className = 'adBillboardClick';
@@ -318,51 +305,62 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
-        // popNew('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
+        // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test'); //测试锄头
-        // popNew('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
+        // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {
             console.log('广告关闭  奖励内容 = ',award);
             setTimeout(() => {
-                popNew('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+                popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
             },300);
             
         });
     }
-    public clickTop(){
+    public clickTop() {
         console.log('top');
     }
-    public clickImg(){
+    public clickImg() {
         console.log('img');
     }
-    public rightClick(){
+    public rightClick() {
         console.log(1);
     }
 }
 
 // ===================================================== 立即执行
+const STATE={
+    miningNumber:0, //嗨豆数量
+    miningedNumber:0,  //已挖矿山
+    zIndex:-1
 
+}
 register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
 });
 
+//监听矿山
 register('mine',(mine:Mine) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateMining(mine);
+    STATE.miningedNumber =mine.miningedNumber;
+    forelet.paint(STATE);
 });
 
+//监听嗨豆
+register('balance/KT',(r:number)=>{
+    STATE.miningNumber =r;
+    console.log('ssssssssssssssssssssssssss',STATE);
+    forelet.paint(STATE);
+})
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
     if (earnHomeHidden) {
         setTimeout(() => {
-            w.props.zIndex = 0;
-            w.paint();
+            STATE.zIndex = 0;
+            forelet.paint(STATE);
         },500);
     } else {
-        w.props.zIndex = -1;
-        w.paint();
+        STATE.zIndex = -1;
+        forelet.paint(STATE);
     }
 });
 

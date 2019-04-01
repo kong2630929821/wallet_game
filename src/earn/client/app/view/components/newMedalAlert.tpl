@@ -1,8 +1,10 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
     <div w-class="content flex-col" class="popBoxFadeIn {{it.fadeOut ? 'popBoxFadeOut' : ''}}">
+        {{if !it.shareUrl}}
         <div w-class="closeImg" on-tap="backPrePage">
-            <img src="../../res/image1/close-white.png" style="    padding: 15px;border: 2px solid white;border-radius: 50%;" width="36px" height="36px" alt="" />
+            <img src="../../res/image1/close-white.png" style="padding: 15px;border: 2px solid white;border-radius: 50%;" width="36px" height="36px" alt="" />
         </div>
+        {{end}}
         <div w-class="medal"  id="medalShow">
             <img class="sunShine" src="../../res/image/medalShow_bg.png" width="480px" height="480px"/>
             <img w-class="medal-img" src="../../res/image/medals/{{it.medalImg}}.png" width="480px"/>
@@ -23,11 +25,17 @@
                 </div>
                 <img src="{{it.userInfo.avatar?it.userInfo.avatar:'../../res/image1/default_head.png'}}"  alt="" w-class="avatar"/>
             </div>
-
         </div>
+
+        {{if !it.shareUrl}}
         <div w-class="content-bottom" on-tap="shareWX">
             <img src="../../res/image1/img_share_wechat.png" style="background: white;border-radius: 50%;padding: 5px;" alt="" width="45px" height="45px"/>
             <widget w-class="medal-btn" w-tag="pi-ui-lang">{"zh_Hans":"秀一下","zh_Hant":"秀一下","en":""}</widget>
         </div>
+        {{else}}
+        <div style="text-align:center;background:#fff;padding: 0 10px 10px;">
+            <app-components-qrcode-qrcode>{value:{{it.shareUrl}},size:"150"}</app-components-qrcode-qrcode>
+        </div>
+        {{end}}
     </div>
 </div>

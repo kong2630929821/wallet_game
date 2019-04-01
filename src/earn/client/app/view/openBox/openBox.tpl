@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page" on-tap="closeSetting" ev-back-click="backPrePage" ev-next-click="goHistory" ev-next1-click="showSetting">
     {{: topBarTitle = {"zh_Hans":"开宝箱","zh_Hant":"開寶箱","en":""} }}
-    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",nextImg1:"../../res/image/more_dot_white.png",background:"transparent" }</app-components-topBar-topBar>
+    <app-components-topBar-topBar>{title:{{topBarTitle}},nextImg:"../../res/image/26_white.png",background:"transparent" }</app-components-topBar-topBar>
     
     <div w-class="content">
         {{if it.showMoreSetting}}
@@ -47,11 +47,11 @@
                 </div>
                 {{if it.selectChest.type==101001}}
                     <div w-class="sale-btn1" on-tap="btnClick(e,1)">
-                        <widget w-tag="pi-ui-lang">{"zh_Hans":"更多机会 {{it.watchAdAward}}/10","zh_Hant":"更多機會 {{it.watchAdAward}}/10","en":""}</widget>
+                        <widget w-tag="pi-ui-lang">{"zh_Hans":"更多免费 {{it.watchAdAward}}/10","zh_Hant":"更多免費 {{it.watchAdAward}}/10","en":""}</widget>
                     </div>
                 {{end}}
             </div>
-            <div w-class="myMoney">我的嗨豆:&nbsp;{{it.STbalance}}</div>
+            <div w-class="myMoney">我的{{it.moneyName}}:&nbsp;{{it1.KTbalance}}</div>
 
             {{% 余票}}
             <div w-class="ticket">

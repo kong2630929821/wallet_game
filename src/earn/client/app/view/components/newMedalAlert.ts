@@ -2,11 +2,10 @@
  * 勋章成就 -- 新获勋章提示
  */
 
-import { makeScreenShot } from '../../../../../app/logic/native';
+import { shareDownload } from '../../../../../app/config';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
-import { ShareToPlatforms, SharePlatform } from '../../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../../pi/ui/root';
+import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../../pi/widget/widget';
 import { coinUnitchange } from '../../utils/tools';
 import { getMedalList } from '../../utils/util';
@@ -20,11 +19,12 @@ interface Props {
 export class NewMedalAlert extends Widget {
     public ok: () => void;
     public props: any = {
-        medalId: 0,
+        medalId: 8001,
         medalImg: '',
         condition: 0, // 勋章获得条件
         medalTitle: {}, // 勋章称号,
-        userInfo:getUserInfo()
+        userInfo:getUserInfo(),
+        shareUrl:''
     };
 
     public setProps(props: Props) {
@@ -51,6 +51,8 @@ export class NewMedalAlert extends Widget {
     }
 
     public shareWX() {
+        this.props.shareUrl = shareDownload;
+        this.paint();
         this.baseShare(SharePlatform.PLATFORM_WEBCHAT);
     }
 
@@ -59,6 +61,8 @@ export class NewMedalAlert extends Widget {
         stp.init();
         stp.makeScreenShot({
             success: (result) => { 
+                this.ok && this.ok();
+
                 stp.shareScreenShot({
                     success: (result) => { 
                         popNewMessage('分享成功');
@@ -70,7 +74,8 @@ export class NewMedalAlert extends Widget {
                 });
             },
             fail: (result) => { 
-                popNew('app-components1-message-message', { content: this.config.value.tips });
+                this.ok && this.ok();
+                popNewMessage(this.config.value.tips);
             }
         });
     }

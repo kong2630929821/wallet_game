@@ -2,9 +2,7 @@
  * 我的收藏 --主页
  */
 
-import { makeScreenShot } from '../../../../../app/logic/native';
-import { ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
-import { popNew } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -65,7 +63,7 @@ export class Collect extends Widget {
      * 分享
      */
     public shareClick() {
-        popNew('earn-client-app-view-components-newMedalAlert', {
+        popModalBoxs('earn-client-app-view-components-newMedalAlert', {
             // tslint:disable-next-line:radix
             medalId:8001,
             medalType:''
@@ -93,7 +91,7 @@ export class Collect extends Widget {
         const $realDomStyle = $realDom.style;
         $realDomStyle.visibility  = `hidden`;
 
-        popNew('earn-client-app-view-medal-medalShow', { 
+        popModalBoxs('earn-client-app-view-medal-medalShow', { 
             medalId:this.props.medalList[index].id, 
             medalSite ,
             isHave:this.props.medalList[index].isHave,

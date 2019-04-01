@@ -9,6 +9,7 @@ import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../..
 import { gotoChat } from '../../../../../app/view/base/app';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
+import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
@@ -113,12 +114,6 @@ export class EarnHome extends Widget {
             title: '邀请好友',
             desc: '累计邀请有好礼',
             components:'earn-client-app-view-activity-inviteFriend'
-        },{
-            img: 'btn_yun_4.png',
-            title: '验证手机',
-            desc: '确认是真实用户',
-            components:'app-view-mine-setting-phone',
-            hidden:!!getUserInfo().phoneNumber
         }];
     }
     /**
@@ -127,8 +122,10 @@ export class EarnHome extends Widget {
     public initPropsNoviceTask() {
         const wallet = walletGetStore('wallet');
         const flags = getStore('flags');
+        const isPhone = getUserInfo().phoneNumber;
         // tslint:disable-next-line:ban-comma-operator
-        this.props.noviceTask = [{
+        this.props.noviceTask = [
+            {
             img: '2002.png',
             title: '去备份助记词',
             desc: '助记词是您找回账号的唯一凭证',
@@ -146,7 +143,18 @@ export class EarnHome extends Widget {
             components:'sharePart',
             complete: !!flags.sharePart,
             show:wallet && wallet.setPsw
-        }, {
+        }, 
+        {
+            img: '',
+            title: '验证手机号',
+            desc: '凭借手机验证可找回云端资产',
+            btn:'做任务',
+            addOne:false,
+            components:'app-view-mine-setting-phone',
+            complete: !!getUserInfo().phoneNumber,
+            show:true
+        },
+        {
             img: '2001.png',
             title: '参与聊天',
             desc: '和大家聊一聊最近的热点',
@@ -374,12 +382,12 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
         title:'新用户',
         awardType:2001,
         awardNum:2
     },() => {
-        popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
             title:'签到奖励',
             awardType:2001,
             awardNum:1
@@ -442,7 +450,7 @@ walletRegister('wallet/helpWord',() => {
         clientRpcFunc(get_task_award,2,(res:Result) => {
             console.log('备份成功',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'备份成功',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -461,7 +469,7 @@ walletRegister('wallet/sharePart',() => {
         clientRpcFunc(get_task_award,3,(res:Result) => {
             console.log('成功分享片段',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'成功分享片段',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -479,7 +487,7 @@ chatStore.register('flags/firstChat',() => {
         clientRpcFunc(get_task_award,4,(res:Result) => {
             console.log('参与聊天',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'参与聊天',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -517,7 +525,7 @@ walletRegister('flags/firstRecharge',() => {
         clientRpcFunc(get_task_award,7,(res:Result) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
-                popNew3('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
                     title:'首冲奖励',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
@@ -535,6 +543,7 @@ walletRegister('user/info',() => {
         // tslint:disable-next-line:ban-comma-operator
         w.props.avatar = getUserInfo().avatar ||  '../../res/image1/default_avatar.png';
         w.initHotActivities();
+        w.initPropsNoviceTask();
         w.paint();
     }
 });
