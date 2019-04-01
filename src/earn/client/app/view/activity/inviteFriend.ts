@@ -103,6 +103,7 @@ export class InviteFriend extends Widget {
         copyToClipboard(this.props.address);
         popNewMessage(this.language.tips[0]);
     }
+    //我的邀请
     public myInvite() {
         popNew3('earn-client-app-view-activity-myInviteUsers');
     }
