@@ -151,7 +151,7 @@ export class OpenBox extends Widget {
                 btn2:'知道了'// 按钮2
             },(num) => {
                 if (num === 1) {
-                    wathcAdGetAward(3,(award) => {
+                    wathcAdGetAward(4,(award) => {
                         this.props.freeCount = award.freeRotary;
                         this.props.watchAdAward = award.adAwardRotary;
                         this.setChestTip(2);

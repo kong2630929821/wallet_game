@@ -52,16 +52,16 @@ export class InviteFriend extends Widget {
         super.setProps(this.props,oldProps);
     }
 
-    public async initData() {
+    public initData() {
         this.language = this.config.value[getLang()];
-        const inviteCodeInfo = await getInviteCode();
-        if (inviteCodeInfo.result !== 1) return;
-        this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
-        this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'扫码下载',zh_Hant:'掃碼下載',en:'' };
+        this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
-        this.paint();
+        getInviteCode().then(inviteCodeInfo=>{
+            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+            this.paint();
+        })
     }
 
     // 初始化可领取得奖励

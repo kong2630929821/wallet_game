@@ -76,8 +76,9 @@ export class Turntable extends Widget {
             this.ledTimer();
             // getKTbalance();
             this.props.moneyName = getModulConfig('KT_SHOW');
+            
             this.state.KTbalance = getStore('balance/KT') || 0;
-
+            console.log('我的余额是：--------------------------------',this.state.KTbalance);
             isFirstFree().then((res:FreePlay) => {
                 this.props.freeCount = res.freeRotary;
                 this.props.watchAdAward = res.adAwardRotary;
