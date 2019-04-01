@@ -369,7 +369,7 @@ export const get_friends_KTTop = (chatIDs: ChatIDs): MineKTTop => {
             miningKTMapTab.medal = miningKTNum.medal;
         }
         miningKTMapTab.openid = miningKTNum.openid;
-        mineTopList.push(miningKTMapTab);
+        if (miningKTMapTab.miningKTMap.ktNum > 0 || miningKTMapTab.miningKTMap.uid === uid) mineTopList.push(miningKTMapTab);
     }
     // 按挖矿的KT数从大到小排序
     sort(mineTopList, 0, mineTopList.length - 1);
