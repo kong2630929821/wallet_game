@@ -7,7 +7,6 @@ declare var pi_modules;
 
 // ================================================ 导入
 import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
-import { setReconnectingState } from '../../../../app/net/reconnect';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';
@@ -19,7 +18,6 @@ import { AutoLoginMgr,UserType } from './autologin';
 export const sourceIp = activeLogicIp;
 export const sourcePort = activeLogicPort;
 
-const reconnectinName = 'earn';
 /**
  * 客户端初始化
  */
@@ -36,10 +34,8 @@ export const initClient = (openId:number,loginSuccess:Function) => {
                 loginSuccess(openId,res);
             });
             setStore('userInfo/offline',false);
-            setReconnectingState(reconnectinName,false);
         },() => {
             console.log('connection failed openId',openId);
-            setReconnectingState(reconnectinName,false);
             setStore('userInfo/isLogin',false);
             setStore('userInfo/offline',true);
             
@@ -160,6 +156,7 @@ export const disconnect = () => {
  * 赚钱手动重连
  */
 export const earnManualReconnect = () => {
+    console.log('earnManualReconnect called');
     mqtt && mqtt.reconnect();
 };
 

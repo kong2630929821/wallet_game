@@ -2,6 +2,7 @@
  * earn home 
  */
 // ================================ 导入
+import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
@@ -60,6 +61,7 @@ export class EarnHome extends Widget {
         const flags = getStore('flags');
         this.props = {
             ...this.props,
+            offlienType:OfflienType.EARN,
             ktShow,
             scrollHeight: 0,            
             refresh: false,

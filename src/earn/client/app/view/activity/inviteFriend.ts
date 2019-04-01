@@ -59,7 +59,7 @@ export class InviteFriend extends Widget {
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'扫码下载',zh_Hant:'掃碼下載',en:'' };
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
-        this.props.shareUrl = shareDownload;
+        this.props.shareUrl = this.props.shareUrl || shareDownload;
         this.paint();
     }
 
