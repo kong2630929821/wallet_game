@@ -105,7 +105,7 @@ export class EarnHome extends Widget {
             img: 'btn_yun_7.png',
             title: `充${scShow}送${ktShow}`,
             desc: '赠品可以玩游戏',
-            components:'app-view-wallet-cloudWalletSC-rechargeSC'
+            components:'app-view-wallet-cloudWalletCustomize-rechargeSC'
         }, {
             img: 'btn_yun_8.png',
             title: '兑换码',
@@ -188,7 +188,7 @@ export class EarnHome extends Widget {
                 desc: '充值玩更多游戏',
                 btn:'去充值',
                 addOne:true,
-                components:'app-view-wallet-cloudWalletSC-rechargeSC',
+                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
                 complete: !!flags.firstRecharge,
                 show:true
             }];
