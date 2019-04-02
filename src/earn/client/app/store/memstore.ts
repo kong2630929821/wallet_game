@@ -175,7 +175,7 @@ export interface Store {
     balance:Balance;  // 账户余额 
     ACHVmedals:any;   // 拥有成就勋章
     flags:any;       //  全局标识位  
-    redemption:any  // 商场兑换
+    redemption:any;  // 商场兑换
 }
 
 export interface Balance {
