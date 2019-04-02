@@ -9,10 +9,11 @@
     justify-content: space-between;
 }
 .medal{
-    margin-top: 200px;
+    margin-top: 100px;
     position: relative;
     
 }
+
 .medal-bgimg{
 
 }
@@ -23,7 +24,7 @@
 }
 .medal-img{
     position: absolute;
-    left: 0px;
+    left: 18%;
     top: 50%;
     transform: translateY(-50%);
 }
@@ -89,4 +90,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.closeMedal{
+    position: absolute;
+    top:0px;
+    left:0px;
+    z-index:2;
 }

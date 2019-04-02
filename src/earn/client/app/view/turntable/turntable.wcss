@@ -249,3 +249,7 @@
     border-radius:30px;
     border:7px solid #FFFFFF;
 }
+.num{
+    font-size: 24px;
+    color: #888;
+}

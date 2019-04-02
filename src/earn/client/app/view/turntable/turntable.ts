@@ -77,7 +77,7 @@ export class Turntable extends Widget {
             // getKTbalance();
             this.props.moneyName = getModulConfig('KT_SHOW');
             this.state.KTbalance = getStore('balance/KT') || 0;
-
+            console.log('我的余额是：--------------------------------',this.state.KTbalance);
             isFirstFree().then((res:FreePlay) => {
                 this.props.freeCount = res.freeRotary;
                 this.props.watchAdAward = res.adAwardRotary;
@@ -102,10 +102,12 @@ export class Turntable extends Widget {
         
         for (let i = 0, length = prizeList.length; i < length; i++) {
             const prizeItem = {
-                awardType: prizeList[i],
+                awardType: prizeList[i].prop,
+                num:prizeList[i].num,
                 deg: (-360 / length) * i
             };
             this.props.prizeList.push(prizeItem);
+            console.log('奖品列表++++++++++++++++++++++++++++',this.props.prizeList);
         }
     }
 
@@ -204,7 +206,7 @@ export class Turntable extends Widget {
         this.props.isTurn = true;
         const $turnStyle = document.getElementById('turntable').style;
         this.props.prizeList.forEach(element => {
-            if (element.awardType === resData.awardType) {
+            if (element.awardType === resData.awardType && element.num === resData.count) {
                 this.props.turnNum = element.deg;
             }
         });

@@ -12,7 +12,8 @@ export class MyInviteUsers extends Widget {
     public ok : () => void;
     public language:any;
     public props:any = {
-        num: getStore('invited').invitedNumberOfPerson  // 成功邀请的人数
+        num: getStore('invited').invitedNumberOfPerson // 成功邀请的人数
+
     };
 
     // 返回上一页

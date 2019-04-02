@@ -25,6 +25,7 @@
                                         {{if item.awardType !== 9527}}
                                         <img w-class="turntable-iicon" src="../../res/image/virtualGoods/{{item.awardType}}.png"
                                             width="70px" height="70px" />
+                                        <p w-class="num">{{item.num}}</p>
                                         {{else}}
                                         <p w-class="turntable-itext">
                                             <span style="width:70px;height:70px;font-size:26px;">谢谢惠顾</span>

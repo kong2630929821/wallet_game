@@ -11,6 +11,7 @@ interface Props {
     miningMax:boolean;  // 挖矿达到上限提示
     routineAward:Award;    // 常规奖励内容
     extraAward:Award;   // 额外奖励内容
+    empty:boolean;
 }
 interface Award {
     awardType:number; 
