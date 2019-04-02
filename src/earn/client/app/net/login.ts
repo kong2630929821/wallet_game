@@ -2,12 +2,11 @@
  * 登录
  */
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
-import { popModalBoxs } from '../../../../pi/ui/root';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInviteAwards, getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
+import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
