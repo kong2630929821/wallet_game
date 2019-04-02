@@ -383,17 +383,17 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-        title:'新用户',
-        awardType:2001,
-        awardNum:2
-    },() => {
-        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            title:'签到奖励',
-            awardType:2001,
-            awardNum:1
-        });
-    });
+    // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //     title:'新用户',
+    //     awardType:2001,
+    //     awardNum:2
+    // },() => {
+    //     popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //         title:'签到奖励',
+    //         awardType:2001,
+    //         awardNum:1
+    //     });
+    // });
 
     // 绑定聊天UID
     const uid = chatStore.getStore('uid',0);

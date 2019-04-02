@@ -259,7 +259,6 @@ export const getPrizeList = (activityType: ActivityType): any => {
     const filterCfgs = [];
     for (const [k, cfg] of cfgs) {
         if (cfg.id >= activityType && cfg.id <= (activityType + 99)) {
-            console.log('转盘的++++++++++++++++++++++++++++++++++++++++',cfg);
             const data = {
                 prop:cfg.prop,
                 num:cfg.max

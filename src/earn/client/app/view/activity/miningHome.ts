@@ -249,7 +249,6 @@ export class MiningHome extends Widget {
                 this.props.mineId = -1;
                 this.props.mineType = -1;
                 if (!r.awards) {
-                    alert(1);
                     popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
                     this.paint();
 
