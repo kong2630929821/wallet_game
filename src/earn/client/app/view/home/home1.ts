@@ -126,71 +126,71 @@ export class EarnHome extends Widget {
         // tslint:disable-next-line:ban-comma-operator
         this.props.noviceTask = [
             {
-            img: '2002.png',
-            title: '去备份助记词',
-            desc: '助记词是您找回账号的唯一凭证',
-            btn:'去备份',
-            addOne:true,                
-            components:'backUp',
-            complete: !!flags.helpWord,
-            show:wallet && wallet.setPsw
-        }, {
-            img: '2003.png',
-            title: `去分享秘钥片段`,
-            desc: '分享使保存更安全',
-            btn:'分享片段',
-            addOne:true,                
-            components:'sharePart',
-            complete: !!flags.sharePart,
-            show:wallet && wallet.setPsw
-        }, 
-        {
-            img: '',
-            title: '验证手机号',
-            desc: '凭借手机验证可找回云端资产',
-            btn:'去绑定',
-            addOne:false,
-            components:'app-view-mine-setting-phone',
-            complete: !!getUserInfo().phoneNumber,
-            show:true
-        },
-        {
-            img: '2001.png',
-            title: '参与聊天',
-            desc: '和大家聊一聊最近的热点',
-            btn:'去聊天',
-            addOne:true,                
-            components:'goChat',
-            complete:!!flags.firstChat,
-            show:true
-        },{
-            img: 'task_gift.png',
-            title: '玩一把大转盘',
-            desc: '每天赠送初级大转盘一次抽奖机会',
-            btn:'去抽奖',
-            addOne:false,
-            components:'earn-client-app-view-turntable-turntable',
-            complete: !!flags.firstTurntable,
-            show:true
-        },{
-            img: 'task_gift.png',
-            title: '开个初级宝箱',
-            desc: '每天免费开初级宝箱一次',
-            btn:'开个宝箱',
-            addOne:false,                
-            components:'earn-client-app-view-openBox-openBox',
-            complete: !!flags.firstOpenBox,
-            show:true
-        },{
-            img: '2003.png',
-            title: '首次充值成功',
-            desc: '充值玩更多游戏',
-            btn:'去充值',
-            addOne:true,
-            components:'app-view-wallet-cloudWallet-rechargeKT',
-            complete: !!flags.firstRecharge,
-            show:true
-        }];
+                img: '2002.png',
+                title: '去备份助记词',
+                desc: '助记词是您找回账号的唯一凭证',
+                btn:'去备份',
+                addOne:true,                
+                components:'backUp',
+                complete: !!flags.helpWord,
+                show:wallet && wallet.setPsw
+            }, {
+                img: '2003.png',
+                title: `去分享秘钥片段`,
+                desc: '分享使保存更安全',
+                btn:'分享片段',
+                addOne:true,                
+                components:'sharePart',
+                complete: !!flags.sharePart,
+                show:wallet && wallet.setPsw
+            }, 
+            {
+                img: '',
+                title: '验证手机号',
+                desc: '凭借手机验证可找回云端资产',
+                btn:'去绑定',
+                addOne:false,
+                components:'app-view-mine-setting-phone',
+                complete: !!getUserInfo().phoneNumber,
+                show:true
+            },
+            {
+                img: '2001.png',
+                title: '参与聊天',
+                desc: '和大家聊一聊最近的热点',
+                btn:'去聊天',
+                addOne:true,                
+                components:'goChat',
+                complete:!!flags.firstChat,
+                show:true
+            },{
+                img: 'task_gift.png',
+                title: '玩一把大转盘',
+                desc: '每天赠送初级大转盘一次抽奖机会',
+                btn:'去抽奖',
+                addOne:false,
+                components:'earn-client-app-view-turntable-turntable',
+                complete: !!flags.firstTurntable,
+                show:true
+            },{
+                img: 'task_gift.png',
+                title: '开个初级宝箱',
+                desc: '每天免费开初级宝箱一次',
+                btn:'开个宝箱',
+                addOne:false,                
+                components:'earn-client-app-view-openBox-openBox',
+                complete: !!flags.firstOpenBox,
+                show:true
+            },{
+                img: '2003.png',
+                title: '首次充值成功',
+                desc: '充值玩更多游戏',
+                btn:'去充值',
+                addOne:true,
+                components:'app-view-wallet-cloudWallet-rechargeKT',
+                complete: !!flags.firstRecharge,
+                show:true
+            }];
     }
     /**
      * 刷新任务数据
@@ -382,17 +382,17 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-        title:'新用户',
-        awardType:2001,
-        awardNum:2
-    },() => {
-        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            title:'签到奖励',
-            awardType:2001,
-            awardNum:1
-        });
-    });
+    // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //     title:'新用户',
+    //     awardType:2001,
+    //     awardNum:2
+    // },() => {
+    //     popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //         title:'签到奖励',
+    //         awardType:2001,
+    //         awardNum:1
+    //     });
+    // });
 
     // 绑定聊天UID
     const uid = chatStore.getStore('uid',0);

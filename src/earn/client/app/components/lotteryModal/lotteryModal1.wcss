@@ -58,3 +58,14 @@
     line-height:80px;
     text-align: center;  
 }
+.btn3{
+    width:500px;
+    height:80px;
+    background:#CCCCCC;
+    border-radius:40px;
+    font-size:32px;
+    color:#222222;
+    line-height:80px;
+    text-align: center;  
+    margin: 50px 0 30px;
+}

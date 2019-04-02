@@ -103,10 +103,12 @@ export class Turntable extends Widget {
         
         for (let i = 0, length = prizeList.length; i < length; i++) {
             const prizeItem = {
-                awardType: prizeList[i],
-                deg: (-360 / length) * i
+                awardType: prizeList[i].prop,
+                num:prizeList[i].num,
+                deg: (-360 / length) * i - 10
             };
             this.props.prizeList.push(prizeItem);
+            console.log('奖品列表++++++++++++++++++++++++++++',this.props.prizeList);
         }
     }
 
@@ -181,8 +183,6 @@ export class Turntable extends Widget {
             },(num) => {
                 this.paint();
             });
-        } else {
-           
         }
     }
 

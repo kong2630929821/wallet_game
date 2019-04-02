@@ -88,6 +88,7 @@ export class MineRank extends Widget {
                 this.paint();
             });
         } else {
+            
             const chatIds = new ChatIDs();
             chatIds.chatIDs = getAllFriendIDs();
             getFriendsKTTop(chatIds).then(async (res: any) => {

@@ -3,7 +3,7 @@
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { popNew, popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -33,7 +33,7 @@ interface Props {
     watchAdAward:number; // 看广告已经获得的免费次数
     showMoreSetting: boolean; // 展开设置免密支付
     adCount:number;// 看广告次数
-    moneyName:string; //消费金额的类型
+    moneyName:string; // 消费金额的类型
 }
 
 enum BoxState {
@@ -74,7 +74,7 @@ export class OpenBox extends Widget {
         adCount:10,
         moneyName:''
     };
-    cancel: any;
+    public cancel: any;
 
     public create() {
         super.create();
@@ -82,7 +82,7 @@ export class OpenBox extends Widget {
         if (isLogin()) {
             this.ledTimer();
             getKTbalance();
-            this.state.KTbalance = getStore('balance/KT')||0;
+            this.state.KTbalance = getStore('balance/KT') || 0;
             isFirstFree().then((res: FreePlay) => {
                 this.props.freeCount = res.freeBox;
                 this.props.watchAdAward = res.adAwardBox;
@@ -112,20 +112,20 @@ export class OpenBox extends Widget {
 
             return;
         }
-        if(this.props.selectChest.type===ActivityType.PrimaryChest){
+        if (this.props.selectChest.type === ActivityType.PrimaryChest) {
             if (this.props.freeCount <= 0) { // 没有免费次数
                 // popNew('app-components1-message-message', { content: this.config.value.tips[0] });
                 this.popNextTips();
                 
                 return;
             }
-        }else if(this.state.KTbalance < this.props.selectChest.needTicketNum){
-            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' })
+        } else if (this.state.KTbalance < this.props.selectChest.needTicketNum) {
+            popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
             return;
         }
         this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((order: any) => {
-            if(this.props.selectChest.type!==ActivityType.PrimaryChest){
+            if (this.props.selectChest.type !== ActivityType.PrimaryChest) {
                 this.goLottery(e,boxIndex,order);
                 this.props.freeCount = 0;
             } else {         // 免费机会开奖
@@ -152,15 +152,15 @@ export class OpenBox extends Widget {
             },(num) => {
                 if (num === 1) {
                     wathcAdGetAward(4,(award) => {
-                        this.props.freeCount = award.freeRotary;
-                        this.props.watchAdAward = award.adAwardRotary;
+                        this.props.freeCount = award.freeBox;
+                        this.props.watchAdAward = award.adAwardBox;
                         this.setChestTip(2);
                     });
                 } else {
-                    this.paint()
+                    this.paint();
                 }
             });
-        } else if(this.props.selectChest.type===ActivityType.PrimaryChest){
+        } else if (this.props.selectChest.type === ActivityType.PrimaryChest) {
             popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
                 img:'../../res/image/no_chance.png',
                 btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
@@ -352,7 +352,6 @@ export class OpenBox extends Widget {
 
 // ===================================================== 立即执行
 
-
 register('balance/KT', (r: any) => {
-    forelet.paint({KTbalance:r});
+    forelet.paint({ KTbalance:r });
 });

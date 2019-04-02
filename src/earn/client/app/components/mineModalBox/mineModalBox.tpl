@@ -4,6 +4,8 @@
         <div w-class="modal-box-content">
             {{if it.miningMax}}
                 <img src="../../res/image/mine_text.png" class="popBoxZoomIn" />
+            {{elseif it.empty}}
+                <img src="../../res/image/notDig.png"  class="popBoxZoomIn"/>
             {{else}}
                 <div w-class="item">
                     <img src="{{it.routineAwardImgUrl}}" style="width:150px;height:150px;" class="popBoxShake"/>
