@@ -44,10 +44,8 @@ export const get_inviteNum = (): InviteNumTab => {
     console.log('get_inviteNum 444444444444444');
     // 更新数据库中的邀请人数
     const length = inviteNumInfo.usedNum.length; // 可领取邀请奖励宝箱的个数
-    const awardCount = Math.floor(inviteNum / MIN_INVITE_NUM);  // 每三个邀请人数添加一个可领取宝箱
-    console.log('awardCount!!!!!!!!!!!!!!!!!!!!!!!!', awardCount);
-    if (length < awardCount) {
-        for (let i = 0; i < awardCount - length; i ++) {
+    if (length < inviteNum) {
+        for (let i = 0; i < inviteNum - length; i ++) {
             inviteNumInfo.usedNum.push(1);
             continue;
         }
@@ -70,23 +68,26 @@ export const get_invite_awards = (index:number):InviteAwardRes  => {
     const inviteNumTab = get_inviteNum();
     const awardResponse = new InviteAwardRes();
     awardResponse.award = [];
+    console.log('get_invite_awards in !!!!!!!!!!!!!!!!!!!!!!!!', inviteNumTab);
     // 验证邀请好友数量是否正确
     if (inviteNumTab.inviteNum < index) {
         awardResponse.resultNum = INVITE_COUNT_ERROR;
 
         return awardResponse;
     }
-    if (!inviteNumTab.usedNum[index]) {
+    // 判断奖励是否存在
+    if (!inviteNumTab.usedNum[index - 1]) {
         awardResponse.resultNum = INVITE_NOT_ENOUGH;
 
         return awardResponse;
     }
-    if (inviteNumTab.usedNum[index] === 0) {
+    if (inviteNumTab.usedNum[index - 1] === 0) {
         awardResponse.resultNum = INVITE_AWARD_ALREADY_TAKEN;
 
         return awardResponse;
     }
     const award = invite_award(uid, index);
+    console.log('get_invite_awards in !!!!!!!!!!!!!!!!!!!!!!!!award:', award);
     awardResponse.award.push(award);
     if (!awardResponse.award) {
         awardResponse.resultNum = DB_ERROR;
@@ -94,10 +95,11 @@ export const get_invite_awards = (index:number):InviteAwardRes  => {
         return awardResponse;
     }
     // 添加已领取记录
-    inviteNumTab.usedNum[index] = 0;
+    inviteNumTab.usedNum[index - 1] = 0;
     console.log('inviteNumTab.usedNum !!!!!!!!!!!!!!!!!!!!!!!!', inviteNumTab.usedNum);
     bucket.put(uid, inviteNumTab);
     awardResponse.resultNum = RESULT_SUCCESS;
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!awardResponse:', awardResponse);
 
     return awardResponse;
 };

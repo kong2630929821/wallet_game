@@ -8,7 +8,7 @@ import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, To
 import { Achievements } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query } from '../../../server/rpc/guessingCompetition.p';
-import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
+import { get_invite_awards, get_inviteNum, getInviteAward } from '../../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
@@ -320,7 +320,7 @@ export const addST = () => {
 };
 
 /**
- * 获取已经邀请的人数
+ * 获取已经邀请成功的人数
  */
 export const getInvitedNumberOfPerson = () => {
     return new Promise((resolve, reject) => {
@@ -337,14 +337,26 @@ export const getInvitedNumberOfPerson = () => {
 };
 
 /**
- * 兑换邀请奖励
+ * 邀请好友成功的奖励
  */
-export const converInviteAwards = (index:number) => {
+export const getInviteAwards = (index:number) => {
     return new Promise((resolve, reject) => {
-        clientRpcFunc(get_invite_awards, index, (r: InviteAwardRes) => {
-            console.log('[活动]rpc-converInviteAwards---------------', r);
+        clientRpcFunc(get_invite_awards, Number(index), (r: InviteAwardRes) => {
+            console.log('[活动]rpc-getInviteAwards---------------',index, r);
             resolve(r);
             getInvitedNumberOfPerson();
+        });
+    });
+};
+
+/**
+ * 输入兑换码获得奖励
+ */
+export const convertAwards = (code:string) => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(getInviteAward, code, (r: InviteAwardRes) => {
+            console.log('[活动]rpc-convertAwards---------------', r);
+            resolve(r);
         });
     });
 };

@@ -19,7 +19,7 @@
 }
 .medal-img{
     position: absolute;
-    left: 0px;
+    left: 18%;
     top: 50%;
     transform: translateY(-50%);
 }

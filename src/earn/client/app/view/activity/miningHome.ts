@@ -1,6 +1,7 @@
 /**
  * digging mines home
  */
+import { getModulConfig } from '../../../../../app/modulConfig';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -60,7 +61,9 @@ export class MiningHome extends Widget {
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
-            startMining:false // 请求挖矿标识
+            startMining:false, // 请求挖矿标识
+            ktShow:getModulConfig('KT_SHOW')
+            
         };
         this.mineLocationInit();   // 矿山位置初始化
         console.log('miningHome ----------');
@@ -156,8 +159,8 @@ export class MiningHome extends Widget {
             });
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
-            this.countDown();
             this.props.miningCount++;
+            this.countDown();
             this.bloodLoss();
             this.paint();
 
@@ -188,9 +191,10 @@ export class MiningHome extends Widget {
             const mine = this.props.haveMines[i];
             if (mine.type === this.props.mineType && mine.id === this.props.mineId) {
                 this.props.lossHp = this.hits[this.props.miningCount - 1] || 1;
-                // console.log('lossHp  ==',this.props.lossHp);
+                console.log('lossHp  =============',this.props.lossHp);
                 mine.hp -= this.props.lossHp;
                 if (mine.hp <= 0) {
+                    mine.hp = 0;
                     this.initMiningState();
                 }
                 break;
@@ -231,7 +235,8 @@ export class MiningHome extends Widget {
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
-            console.log('挖完了！！！！！！！！！！！！',r);
+            console.log('当前矿山的血量', this.props.haveMines);
+            console.log('挖完了！！！！！！！！！！！！',r,this.props.miningCount);
             console.log('miningHome ==== ',this.props);
             this.props.miningCount = 0;
             this.props.startMining = false;
@@ -243,6 +248,13 @@ export class MiningHome extends Widget {
                 getMiningCoinNum();
                 this.props.mineId = -1;
                 this.props.mineType = -1;
+                if (!r.awards) {
+                    popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
+                    this.paint();
+
+                    return;
+                }
+                // debugger;
                 const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
                 const type0 = r.awards[0].value.num;   // 货币类型
                 const number0 = coinUnitchange(type0,r.awards[0].value.count);
@@ -306,7 +318,7 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test'); //测试锄头
+        // popNew('earn-client-app-test-test'); // 测试锄头
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         wathcAdGetAward(1,null,(award:Award) => {

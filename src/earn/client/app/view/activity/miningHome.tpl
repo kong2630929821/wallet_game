@@ -26,7 +26,7 @@
             </div>
             {{end}}
             <div on-tap="rightClick" w-class="award-container" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
-                <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"累计挖矿","zh_Hant":"累計挖礦","en":""}</widget></div>
+                <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"我的{{it.ktShow}}","zh_Hant":"我的{{it.ktShow}}","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
                     {{if it1.miningNumber}}
