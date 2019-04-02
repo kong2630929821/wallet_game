@@ -12,7 +12,7 @@ import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, Hoe, 
 import { Achievements, Medals, ShowMedalRes } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../../server/rpc/guessingCompetition.p';
-import { get_invite_awards, get_inviteNum } from '../../../server/rpc/invite.p';
+import { get_invite_awards, get_inviteNum, getInviteAward } from '../../../server/rpc/invite.p';
 import { CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_miningKTTop, get_miningTop, mining, mining_result } from '../../../server/rpc/mining.p';
 import { SendMsg } from '../../../server/rpc/send_message.s';
@@ -192,6 +192,14 @@ export const get_inviteAward_test = () => {
     });
 };
 
+// 获取被邀请奖励
+export const get_inviteAward_test2 = () => {
+    const code = 'xxxx';
+    clientRpcFunc(getInviteAward, code, (r: InviteAwardRes) => {
+        console.log(r);
+    });
+};
+
 // 获取所有奖章
 export const get_medals_test = () => {
     clientRpcFunc(get_medals, null, (r: Medals) => {
@@ -366,6 +374,10 @@ const props = {
         {
             name: '获取邀请奖励',
             func: () => { get_inviteAward_test(); }
+        },
+        {
+            name:'获取被邀请人奖励',
+            func: () => {get_inviteAward_test2();}
         },
         {
             name: '获取奖章',

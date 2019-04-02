@@ -2,7 +2,7 @@
     <earn-client-app-view-activity-miningHome></earn-client-app-view-activity-miningHome>
     <div w-class="top-animate-container"  class="{{it.upAnimate}}">
         <div w-class="topbar-container" ><app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:0 }</app-components1-topBar-topBar1></div>
-        <app-components1-offlineTip-offlineTip></app-components1-offlineTip-offlineTip>
+        <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
         <div w-class="mining-rank-copy" style="{{ !it.animateStart || it.scrollHeight >= 160 ? 'visibility: hidden;' : ''}}bottom: {{ -20 + it.scrollHeight}}px;"> 
             <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
             <div w-class="mining-result">

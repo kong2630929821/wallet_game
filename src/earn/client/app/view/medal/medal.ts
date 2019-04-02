@@ -75,7 +75,7 @@ export class Medal extends Widget {
             element1.medal = [];
             medalList.forEach((element,i) => {
                 const medal = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
-                if (element.coinNum < ktNum) {
+                if (element.coinNum <= ktNum) {
                     medal.isHave = true;
                     this.props.mineMedal.rankMedal = element.id;
                     this.props.mineMedal.desc = medal.title;
