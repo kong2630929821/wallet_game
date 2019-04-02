@@ -4,16 +4,16 @@
 import * as walletStore from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getStore } from '../../store/memstore';
 
 export const forelet = new Forelet();
 
 export class MyInviteUsers extends Widget {
     public ok : () => void;
-    public language:any;
-    public props:any = {
-        num: getStore('invited').invitedNumberOfPerson  // 成功邀请的人数
-    };
+
+    public create() {
+        super.create();
+        this.state = STATE;
+    }
 
     // 返回上一页
     public backPrePage() {
@@ -23,7 +23,17 @@ export class MyInviteUsers extends Widget {
 }
 
 // ==========================================================本地
+const STATE = {
+    num:0,
+    invites:[]
+};
 // 邀请好友成功
 walletStore.register('flags/invite_success',(r) => {
-    forelet.paint(r);
+    STATE.invites = r;
+    forelet.paint(STATE);
+});
+// 邀请好友成为真实用户的个数
+walletStore.register('flags/invite_realUser',(r) => {
+    STATE.num = r;
+    forelet.paint(STATE);
 });

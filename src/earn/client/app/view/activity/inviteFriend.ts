@@ -11,8 +11,6 @@ import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/share
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { converInviteAwards } from '../../net/rpc';
-import { getStore, Invited, register } from '../../store/memstore';
 import { inviteAwardsMultiple } from '../../utils/constants';
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -26,12 +24,10 @@ export class InviteFriend extends Widget {
     public props:any;
     public create() {
         super.create();
-        const invited = getStore('invited');
         this.props = {
             walletName:getModulConfig('WALLET_NAME'),
             inviteCode:'******',
             welfareAwards : [],
-            invitedNumberOfPerson:invited.invitedNumberOfPerson,
             inviteAwardsMultiple,
             topBarTitle:'',
             quickInvitation:'',
@@ -39,7 +35,6 @@ export class InviteFriend extends Widget {
             background:'',
             shareUrl:''
         };
-        this.initWelfareAwards(invited.receiveAwards);
         this.initData();
     }
 
@@ -63,32 +58,6 @@ export class InviteFriend extends Widget {
         this.paint();
     }
 
-    // 初始化可领取得奖励
-    public initWelfareAwards(receiveAwards:number[] = []) {
-        const defaultAwardsLen = 5;
-        const len = Math.ceil(receiveAwards.length / defaultAwardsLen) + 1;
-        let welfareAwards;
-        for (let i = 0;i < len;i++) {
-            welfareAwards = [];
-            let allReceived = true;
-            for (let k = 0;k < defaultAwardsLen;k++) {
-                const index = i * defaultAwardsLen + k;
-                if (receiveAwards[index] === 1) {
-                    allReceived = false;
-                }
-                const received = receiveAwards[index] === 0; 
-                const canReceive = receiveAwards[index] === 1; 
-                welfareAwards.push({
-                    received,
-                    canReceive,
-                    number:(index + 1) * inviteAwardsMultiple
-                });
-            }
-            if (!allReceived) break;
-        }
-
-        this.props.welfareAwards = welfareAwards;
-    }
     /**
      * 返回上一页
      */
@@ -141,13 +110,6 @@ export class InviteFriend extends Widget {
         popNewMessage(this.language.tips[0]);
     }
 
-    public openClick(e:any,index:number) {
-        console.log(index);
-        const welfareAward = this.props.welfareAwards[index];
-        if (!welfareAward.canReceive) return;
-        converInviteAwards(welfareAward / inviteAwardsMultiple);
-    }
-    
     public baseShare(platform: number) {
         const stp = new ShareToPlatforms();
         stp.init();
@@ -168,14 +130,4 @@ export class InviteFriend extends Widget {
             }
         });
     }
-    public updateInvited(invited:Invited) {
-        this.props.invitedNumberOfPerson = invited.invitedNumberOfPerson;
-        this.initWelfareAwards(invited.convertedInvitedAward);
-        this.paint();
-    } 
 }
-
-register('invited',(invited:Invited) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateInvited(invited);
-});

@@ -2,13 +2,12 @@
  * 登录
  */
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
-import { popNew } from '../../../../pi/ui/root';
+import { popModalBoxs } from '../../../../pi/ui/root';
 import { UserInfo } from '../../../server/data/db/user.s';
-import { getStore, initEarnStore, Invited, setStore } from '../store/memstore';
-import { canInviteAward } from '../utils/util';
+import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
+import { getInviteAwards, getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
@@ -26,11 +25,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getSTbalance();  // 获取ST余额
     getKTbalance();  // 获取KT余额   
     getUserInfo(openId, 'self'); // 获取用户信息
-    getInvitedNumberOfPerson().then((invite:Invited) => {
-        if (canInviteAward(invite)) {
-            popNew('earn-client-app-view-activity-inviteAward');
-        }
-    });  // 获取邀请成功人数
+    getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     getRankList();   // 获取挖矿排名
     getMiningCoinNum(); // 获取累积挖矿
