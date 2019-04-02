@@ -96,6 +96,10 @@ export const INVITE_AWARD_CIRCLE_LEVEL2 = 17;
 // 邀请好友第三级循环奖励
 export const INVITE_AWARD_CIRCLE_LEVEL3 = 18;
 
+// ================ 奖励类型 =============
+// 兑换邀请码
+export const AWARD_INVITE = 'invite';
+
 // ================ 固定奖励 ===================
 // 首次登陆奖励
 export const FIRST_LOGIN_AWARD = 600101;
@@ -188,6 +192,8 @@ export const WALLET_API_QUERY = '/oAuth/balancequery';
 export const WALLET_API_ALTER = '/oAuth/alterbalance';
 // 邀请人数
 export const WALLET_API_INVITENUM = '/oAuth/invite';
+// 邀请真实人数
+export const WALLET_API_INVITENUM_REAL = '/oAuth/invite_real';
 // 生成钱包订单
 export const WALLET_API_UNIFIEDORDER = '/pay/unifiedorder';
 // 订单查询

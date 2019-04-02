@@ -3,10 +3,19 @@
 use item.s::{Award};
 
 /**
-*兑换物品
+*兑换奖励KEY
 */
-#[primary=code,db=file,dbMonitor=true,hasmgr=false]
-struct Invite {
-    code: String, //uid:code组成的兑换码
-    items: &[Award],
+struct InviteKey {
+    uid: u32,
+    invite_type: String,
+}
+
+
+/**
+*兑换记录
+*/
+#[primary=invite,db=file,dbMonitor=true,hasmgr=false]
+struct InviteInfo {
+    invite: InviteKey, //组合key
+    items: &[Award], //奖励数组
 }

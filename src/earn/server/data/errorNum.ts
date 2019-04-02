@@ -44,6 +44,9 @@ export const INVITE_AWARD_ALREADY_TAKEN = 2102;
 // 已兑换过邀请码
 export const INVITE_CONVERT_REPEAT = 2103;
 
+// 邀请人数不足
+export const INVITE_COUNT_ERROR = 2104;
+
 // ST数量不足
 export const ST_NOT_ENOUGH = 3101;
 // 转盘类型错误

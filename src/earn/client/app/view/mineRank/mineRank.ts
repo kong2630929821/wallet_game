@@ -114,6 +114,7 @@ export class MineRank extends Widget {
                 openidAry.push(parseInt(element.openid));
             });
             const userInfoList = await getUserList(openidAry, 1);
+            console.log('批量获取挖矿用户信息--------------------------', userInfoList);
             for (let i = 0; i < data.length; i++) {
                 const element = data[i];
                 const elementUser = userInfoList[i];

@@ -2,6 +2,7 @@
  * earn home 
  */
 // ================================ 导入
+import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
@@ -60,6 +61,7 @@ export class EarnHome extends Widget {
         const flags = getStore('flags');
         this.props = {
             ...this.props,
+            offlienType:OfflienType.EARN,
             ktShow,
             scrollHeight: 0,            
             refresh: false,
@@ -122,7 +124,6 @@ export class EarnHome extends Widget {
     public initPropsNoviceTask() {
         const wallet = walletGetStore('wallet');
         const flags = getStore('flags');
-        const isPhone = getUserInfo().phoneNumber;
         // tslint:disable-next-line:ban-comma-operator
         this.props.noviceTask = [
             {
@@ -187,7 +188,7 @@ export class EarnHome extends Widget {
                 desc: '充值玩更多游戏',
                 btn:'去充值',
                 addOne:true,
-                components:'app-view-wallet-cloudWallet-rechargeKT',
+                components:'app-view-wallet-cloudWalletSC-rechargeSC',
                 complete: !!flags.firstRecharge,
                 show:true
             }];
@@ -211,7 +212,7 @@ export class EarnHome extends Widget {
             });
         }
         getCompleteTask().then((data:any) => {
-            console.log('home1 getCompleteTask');
+            console.log('home1 getCompleteTask',data);
             const flags = getStore('flags');
             for (const v of data.taskList) {
                 if (v.state) {
@@ -382,17 +383,17 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-    //     title:'新用户',
-    //     awardType:2001,
-    //     awardNum:2
-    // },() => {
-    //     popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-    //         title:'签到奖励',
-    //         awardType:2001,
-    //         awardNum:1
-    //     });
-    // });
+    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+        title:'新用户',
+        awardType:2001,
+        awardNum:2
+    },() => {
+        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+            title:'签到奖励',
+            awardType:2001,
+            awardNum:1
+        });
+    });
 
     // 绑定聊天UID
     const uid = chatStore.getStore('uid',0);
