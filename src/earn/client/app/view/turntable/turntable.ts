@@ -206,7 +206,7 @@ export class Turntable extends Widget {
         this.props.isTurn = true;
         const $turnStyle = document.getElementById('turntable').style;
         this.props.prizeList.forEach(element => {
-            if (element.awardType === resData.awardType) {
+            if (element.awardType === resData.awardType && element.num === resData.count) {
                 this.props.turnNum = element.deg;
             }
         });
