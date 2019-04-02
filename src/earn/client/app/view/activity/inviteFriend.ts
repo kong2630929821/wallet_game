@@ -12,6 +12,7 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { inviteAwardsMultiple } from '../../utils/constants';
+import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -46,16 +47,16 @@ export class InviteFriend extends Widget {
         super.setProps(this.props,oldProps);
     }
 
-    public async initData() {
+    public initData() {
         this.language = this.config.value[getLang()];
-        const inviteCodeInfo = await getInviteCode();
-        if (inviteCodeInfo.result !== 1) return;
-        this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
-        this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.quickInvitation = this.props.quickInvitation || { zh_Hans:'扫码下载',zh_Hant:'掃碼下載',en:'' };
+        this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
-        this.props.shareUrl = this.props.shareUrl || shareDownload;
-        this.paint();
+        this.props.shareUrl = shareDownload;
+        getInviteCode().then(inviteCodeInfo=>{
+            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+            this.paint();
+        })
     }
 
     /**
@@ -78,6 +79,7 @@ export class InviteFriend extends Widget {
         copyToClipboard(this.props.address);
         popNewMessage(this.language.tips[0]);
     }
+    //我的邀请
     public myInvite() {
         popNew3('earn-client-app-view-activity-myInviteUsers');
     }

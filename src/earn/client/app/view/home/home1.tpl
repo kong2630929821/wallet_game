@@ -6,8 +6,11 @@
         <div w-class="mining-rank-copy" style="{{ !it.animateStart || it.scrollHeight >= 160 ? 'visibility: hidden;' : ''}}bottom: {{ -20 + it.scrollHeight}}px;"> 
             <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
             <div w-class="mining-result">
-                <div w-class="mining-title">挖矿</div>
-                <div w-class="mining-number">{{it.miningKTnum}}&nbsp;{{it.ktShow}}</div>
+                <div w-class="mining-title">{{it.ktShow}}排名</div>
+                <div w-class="mining-number">
+                    <img w-class="ktShowNum" src="../../res/image/KT.png" alt=""/>&nbsp;
+                    {{it.miningKTnum}}
+                </div>
             </div>
             {{if it.miningRank === 0}}
             <div w-class="rank-num">暂无排名</div>
@@ -72,7 +75,7 @@
                 <div w-class="welfare-container">
                     {{for i,item of it.noviceTask}}
                         {{if !item.complete && item.show}}
-                        <div w-class="welfare-noviceTask-item"  on-tap="goNoviceTask({{i}})">
+                        <div w-class="welfare-noviceTask-item"  on-tap="goNoviceTask({{i}})" on-down="onShow">
                             <div>
                                 <div w-class="noviceTask-title">
                                     {{item.title}}

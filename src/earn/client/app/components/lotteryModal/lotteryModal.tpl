@@ -9,7 +9,7 @@
             {{% 内容}}
             <div w-class="content">
                 
-                <img src="../../res/image/trophies.png" width="260px" height="280px;" alt="" class="popBoxShake"/>
+                <img src="../../res/image/trophies.png" width="282px" height="259px;" alt="" class="popBoxShake"/>
                 <div w-class="prize-img">
                     <img src="../../res/image/virtualGoods/{{it.prizeType}}.png" width="200px" height="200px;"  alt="" />
                 </div>
