@@ -13,7 +13,7 @@ import { Result } from '../data/db/guessing.s';
 import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
 import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN, NOT_USER_INFO } from '../data/errorNum';
 import { get_index_id } from '../data/util';
-import { get_today, task_init } from '../util/item_util.r';
+import { add_medal, get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
 import { send } from '../util/sendMessage';
 import { SeriesDaysRes } from './itemQuery.s';
@@ -77,6 +77,8 @@ export const login = (user: UserType): UserInfo => {
         firstLogin_award();
         // 初始化任务
         task_init(loginReq.uid);
+        // 添加初始勋章
+        add_medal(loginReq.uid, CONSTANT.MEDAL_KT0, false);
         // 添加创建钱包奖励
         // get_task_award(1);
     }
