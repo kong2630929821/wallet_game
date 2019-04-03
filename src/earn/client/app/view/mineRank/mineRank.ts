@@ -91,7 +91,7 @@ export class MineRank extends Widget {
                 // this.props.myRank.rank = res.myNum;
                 // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
                 // this.props.myRank.medal = res.myMedal;
-                this.paint();
+                // this.paint();
             });
         } else {
             
