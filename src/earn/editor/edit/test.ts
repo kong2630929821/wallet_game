@@ -132,7 +132,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 10;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 2;
+    miningResult.mineNum = 1;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
