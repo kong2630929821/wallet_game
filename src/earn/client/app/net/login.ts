@@ -11,6 +11,7 @@ import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
 const loginSuccess = (openId:number,res:UserInfo) => {
+    console.timeEnd('login');
     console.log('[活动] 登录成功');
     setStore('userInfo/isLogin',true);
     const userInfo = getStore('userInfo');
