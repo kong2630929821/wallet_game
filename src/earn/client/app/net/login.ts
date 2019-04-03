@@ -30,6 +30,13 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getRankList();   // 获取挖矿排名
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
+    // // TODO 测试
+    // const getShowArr = new getShowMedals();
+    // const arr = ['807017', '425391'];
+    // getShowArr.arr = arr;
+    // clientRpcFunc(get_showMedals,getShowArr,(r:ShowMedalResArr) => {
+    //     console.log('!!!!!!!!!!!!!!!!!test111r:', r);
+    // });
 };
 
 // 登录

@@ -10,8 +10,8 @@ import { Bucket } from '../../utils/db';
 import { SeriesLoginAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { ChatIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
-import { CHAT_NOT_REGISTER, DB_ERROR, NOT_LOGIN, NOT_USER_INFO } from '../data/errorNum';
+import { AccIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
+import { CHAT_NOT_REGISTER, DB_ERROR, ERROR_BUILD_ACCID, NOT_LOGIN, NOT_USER_INFO } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { add_medal, get_today, task_init } from '../util/item_util.r';
 import { firstLogin_award, login_add_mine, seriesLogin_award } from '../util/regularAward';
@@ -123,12 +123,12 @@ export const getLoginDays = (): SeriesDaysRes => {
     return seriesDaysRes;
 };
 
-// 绑定聊天ID
+// 绑定accID
 // #[rpc=rpcServer]
-export const bind_chatID = (chatID: number): Result => {
-    console.log('bind_chatID:', chatID);
+export const bind_accID = (accID: string): Result => {
+    console.log('bind_chatID:', accID);
     const result = new Result();
-    if (!chatID) {
+    if (!accID) {
         console.log('!!!!!!!!!!!!!!!!1111111111111111111111111');
         result.reslutCode = CHAT_NOT_REGISTER;
 
@@ -142,7 +142,16 @@ export const bind_chatID = (chatID: number): Result => {
 
         return result;
     }
-    const chatIDMapBucket = new Bucket(CONSTANT.WARE_NAME, ChatIDMap._$info.name);
+    const accIDMapBucket = new Bucket(CONSTANT.WARE_NAME, AccIDMap._$info.name);
+    // const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
+    const uid2 = accIDMapBucket.get(accID)[0];
+    console.log('!!!!!!!!!!!!!!!!!uid2:', uid2);
+    if (uid2) {
+        console.log('!!!!!!!!!!!!!!!!3333333333333333333333333322222222222');
+        result.reslutCode = ERROR_BUILD_ACCID;
+
+        return result;
+    }
     console.log('!!!!!!!!!!!!!!!!4444444444444444444444');
     // const userInfo = userInfoBucket.get<number, [UserInfo]>(uid)[0];
     // console.log('userInfo:', userInfo);
@@ -151,12 +160,12 @@ export const bind_chatID = (chatID: number): Result => {
 
     //     return result;
     // }
-    // userInfo.chatID = chatID;
+    // userInfo.accID = accID;
     // userInfoBucket.put(uid, userInfo);
-    const chatIDMap = new ChatIDMap();
-    chatIDMap.uid = uid;
-    chatIDMap.chatID = chatID;
-    chatIDMapBucket.put(chatID, chatIDMap);
+    const accIDMap = new AccIDMap();
+    accIDMap.uid = uid;
+    accIDMap.accID = accID;
+    accIDMapBucket.put(accID, accIDMap);
     
     result.reslutCode = CONSTANT.RESULT_SUCCESS;
 

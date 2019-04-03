@@ -42,3 +42,18 @@ struct ShowMedalRes {
     resultNum: u32,
     medalType: Option<u32>
 }
+
+/**
+* 展示勋章返回
+*/
+struct ShowMedalResArr {
+    resultNum: u32,
+    arr: &[ShowMedalRes]
+}
+
+/**
+* 批量获取展示勋章
+*/
+struct getShowMedals {
+    arr: &[String]
+}
