@@ -10,7 +10,7 @@ import { Env } from '../../../pi/lang/env';
 import { randomInt } from '../../../pi/util/math';
 import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
-import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, AWARD_SRC_MINE_PRE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals, ShowMedal } from '../data/db/medal.s';
 import { Task, UserTaskTab } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
@@ -122,8 +122,10 @@ export const add_itemCount = (uid:number, itemType:number, count: number): Item 
         const itemNum = v[0][0];
         const itemCount = v[0][1];
         // 添加矿山的奖励属性
-        mineHp.award = itemNum;
-        mineHp.awardCount = itemCount;
+        if (itemNum !== SURPRISE_BRO) {   // 随机奖励不为空添加奖励属性
+            const award = new Award(AWARD_SRC_MINE_PRE, itemNum, itemCount, uid, AWARD_SRC_MINE_PRE);
+            mineHp.award = award;
+        }
         let hpList = [];
         const mine = <Mine>item.value;
         hpList = mine.hps;
@@ -198,8 +200,6 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): Mine
         console.log('mine index!!!!!!!!!!!!!!', i);
         if (hps[i].num === mineNum) {
             console.log('mine HP!!!!!!!!!!!!!!', hps[i]);
-            const award = mine.hps[i].award;
-            const awardCount = mine.hps[i].awardCount;
             leftHp = mine.hps[i].hp;
             leftHp -= hits;
             hps[i].hp = leftHp;
@@ -233,8 +233,7 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): Mine
             }
             const mineHp = new MineHp();
             mineHp.hp = leftHp;
-            mineHp.award = award;
-            mineHp.awardCount = awardCount;
+            if (mine.hps[i].award)  mineHp.award = mine.hps[i].award;
             mineHp.num = mineNum;
 
             return mineHp;
