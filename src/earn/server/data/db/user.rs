@@ -28,15 +28,15 @@ struct UserInfo {
     tel: Option<String>,//电话
     note: Option<String>,//用户自己的备注信息
     loginCount: u32, //登录次数
-    chatID: Option<u32>, //聊天ID
+    accID: Option<String>, //聊天ID
 }
 
 /**
 *聊天IDMap表
 */
-#[primary=chatID,db=file,dbMonitor=true,hasmgr=false]
-struct ChatIDMap {
-    chatID: u32,
+#[primary=accID,db=file,dbMonitor=true,hasmgr=false]
+struct AccIDMap {
+    accID: String,
     uid: u32
 }
 

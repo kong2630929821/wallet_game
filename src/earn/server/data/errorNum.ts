@@ -13,6 +13,8 @@ export const NOT_LOGIN = 900;
 
 // 用户信息为空
 export const NOT_USER_INFO = 901;
+// 已绑定accid
+export const ERROR_BUILD_ACCID = 902;
 
 // 该类型矿山数量不足
 export const MINE_NOT_ENOUGH = 1101;

@@ -5,6 +5,7 @@
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
+import * as walletStore from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -15,7 +16,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
-import { bind_chatID } from '../../../../server/rpc/user.p';
+import { bind_accID, bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -394,29 +395,19 @@ const firstloginAward = () => {
             awardNum:1
         });
     });
-
-    // 绑定聊天UID
-    const uid = chatStore.getStore('uid',0);
-    if (uid > 0) {
-        clientRpcFunc(bind_chatID,uid,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',uid);
-            }
-        });
-    }
 };
 
-chatStore.register('uid',(r) => {
-    const user = getStore('userInfo');
-    if (user.uid > 0) {
-        // 绑定聊天UID
-        clientRpcFunc(bind_chatID,r,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',r);
-            }
-        });
-    }
-});
+// chatStore.register('uid',(r) => {
+//     const user = getStore('userInfo');
+//     if (user.uid > 0) {
+//         // 绑定聊天UID
+//         clientRpcFunc(bind_chatID,r,(r:Result) => {
+//             if (r && r.reslutCode) {
+//                 console.log('绑定聊天UID成功，聊天uid:',r);
+//             }
+//         });
+//     }
+// });
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',() => {
     const level_3_page_loaded = walletGetStore('flags').level_3_page_loaded;

@@ -1,12 +1,17 @@
 /**
  * 登录
  */
+import * as walletStore from '../../../../../app/store/memstore';
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
 import { popNew } from '../../../../pi/ui/root';
+import { Result } from '../../../server/data/db/guessing.s';
+import { getShowMedals, ShowMedalRes, ShowMedalResArr } from '../../../server/data/db/medal.s';
 import { UserInfo } from '../../../server/data/db/user.s';
+import { bind_accID } from '../../../server/rpc/user.p';
+import { get_showMedals } from '../../../server/rpc/user_item.p';
 import { getStore, initEarnStore, Invited, setStore } from '../store/memstore';
 import { canInviteAward } from '../utils/util';
-import { disconnect, initClient } from './init';
+import { clientRpcFunc, disconnect, initClient } from './init';
 import { initReceive } from './receive';
 import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
@@ -35,6 +40,27 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getRankList();   // 获取挖矿排名
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
+
+    // 绑定accID
+    const user = walletStore.getStore('user',{ info:{}, id:'' });
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
+    const accID = user.info.acc_id;
+    if (accID) {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+        clientRpcFunc(bind_accID,accID,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定AccUID成功，accuid:',r);
+            }
+        });
+    }
+    
+    // // TODO 测试
+    // const getShowArr = new getShowMedals();
+    // const arr = ['807017', '425391'];
+    // getShowArr.arr = arr;
+    // clientRpcFunc(get_showMedals,getShowArr,(r:ShowMedalResArr) => {
+    //     console.log('!!!!!!!!!!!!!!!!!test111r:', r);
+    // });
 };
 
 // 登录
