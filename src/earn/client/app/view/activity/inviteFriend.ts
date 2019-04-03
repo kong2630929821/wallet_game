@@ -14,13 +14,13 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { converInviteAwards } from '../../net/rpc';
 import { getStore, Invited, register } from '../../store/memstore';
 import { inviteAwardsMultiple } from '../../utils/constants';
-import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class InviteFriend extends Widget {
     public ok : () => void;
     public language:any;
@@ -58,10 +58,10 @@ export class InviteFriend extends Widget {
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
-        getInviteCode().then(inviteCodeInfo=>{
+        getInviteCode().then(inviteCodeInfo => {
             this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
             this.paint();
-        })
+        });
     }
 
     // 初始化可领取得奖励
@@ -110,7 +110,7 @@ export class InviteFriend extends Widget {
         copyToClipboard(this.props.address);
         popNewMessage(this.language.tips[0]);
     }
-    //我的邀请
+    // 我的邀请
     public myInvite() {
         popNew3('earn-client-app-view-activity-myInviteUsers');
     }
