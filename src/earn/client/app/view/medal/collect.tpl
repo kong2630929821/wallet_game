@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"收集","zh_Hant":"收集","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"特殊勋章","zh_Hant":"特殊勳章","en":""} }}
     <widget style="position: fixed;width: 100%;" w-tag="app-components-topBar-topBar2">{isOne:1,scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
 
     <div w-class="content" on-scroll="scrollPage">

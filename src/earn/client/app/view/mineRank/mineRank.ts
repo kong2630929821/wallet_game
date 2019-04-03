@@ -80,23 +80,24 @@ export class MineRank extends Widget {
         const userInfo = getUserInfo();
         if (this.props.topbarSel === 0) {
             getHighTop(100).then(async (res: any) => {  // TODO排名
-                const mine = getStore('mine',{});
-                mine.miningRank = res.miningRank || 0;
-                mine.miningKTnum = res.miningKTnum || 0;
-                setStore('mine',mine);
-                this.props.rankList = res.rank;
-                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                this.props.myRank.userName = userInfo.nickName;
-                this.props.myRank.rank = res.myNum;
-                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                this.props.myRank.medal = res.myMedal;
+                console.log('排行榜++++++++++++++++++++++',res);
+                // const mine = getStore('mine',{});
+                // mine.miningRank = res.miningRank || 0;
+                // mine.miningKTnum = res.miningKTnum || 0;
+                // setStore('mine',mine);
+                // this.props.rankList = res.rank;
+                // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
+                // this.props.myRank.userName = userInfo.nickName;
+                // this.props.myRank.rank = res.myNum;
+                // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                // this.props.myRank.medal = res.myMedal;
                 this.paint();
             });
         } else {
             
-            const chatIds = new ChatIDs();
-            chatIds.chatIDs = getAllFriendIDs();
-            getFriendsKTTop(chatIds).then(async (res: any) => {
+            // const chatIds = new ChatIDs();
+            // chatIds.chatIDs = getAllFriendIDs();
+            // getFriendsKTTop(chatIds).then(async (res: any) => {
                 // this.props.rankList = await this.processData(res.topList);
                 // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                 // this.props.myRank.userName = userInfo.nickName;
@@ -104,7 +105,7 @@ export class MineRank extends Widget {
                 // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
                 // this.props.myRank.medal = res.myMedal;
                 // this.paint();
-            });
+            // });
         }
        
     }

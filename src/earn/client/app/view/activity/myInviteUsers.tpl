@@ -3,7 +3,7 @@
     <div w-class="amount">{{it1.num}}</div>
     <div w-class="inviteNum">已成功邀请人数</div>
     <div w-class="successInvite">
-        {{for i,v of it.successList}}
+        {{for i,v of it1.successList}}
             <div w-class="successBox">
                 <img w-class="rewardImg" src="{{v.src}}" alt=""/>
                 <p w-class="rewardPeople">{{v.index}}人</p>

@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" style="z-index: {{it1.zIndex}};">
-    <div w-class="body" on-tap="closeClick">
+    <div w-class="body">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="container">
             <div on-tap="clickTop" w-class="holded-hoes" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
