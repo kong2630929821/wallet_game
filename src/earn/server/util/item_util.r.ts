@@ -20,7 +20,7 @@ import { IsOk } from '../rpc/test.s';
 import { getOpenid, getUid } from '../rpc/user.r';
 import { get_item, item_query, show_medal } from '../rpc/user_item.r';
 import { doAward } from './award.t';
-import { get_enumType } from './mining_util';
+import { get_cfgAwardid, get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 import { send } from './sendMessage';
@@ -106,13 +106,24 @@ export const add_itemCount = (uid:number, itemType:number, count: number): Item 
         }
     }
     const itemBucket = new Bucket('file', Items._$info.name);
-    if (enumNum === 1) {
-        if (count > 1) return;
+    if (enumNum === 1) { // 添加物品为矿山时
+        if (count > 1) return; // 拒绝批量添加矿山
         const mineHp = new MineHp();
         mineHp.hp = get_mine_hp(typeNum);
         const index = `${uid}:${mineHp.hp}`;
         mineHp.num = get_index_id(index);
-        console.log('hp:!!!!!!!!!!!!!!', mineHp);
+        const v = [];
+        const seed = Math.floor(Math.random() * 233280 + 1);
+        const randomMgr = new RandomSeedMgr(seed);
+        const mineType = itemType;
+        const pid = get_cfgAwardid(mineType); // 配置奖励权重主键
+        doAward(pid, randomMgr, v);
+        console.log('award result!!!!!!!!!!!!!!!!!:', v);
+        const itemNum = v[0][0];
+        const itemCount = v[0][1];
+        // 添加矿山的奖励属性
+        mineHp.award = itemNum;
+        mineHp.awardCount = itemCount;
         let hpList = [];
         const mine = <Mine>item.value;
         hpList = mine.hps;
@@ -173,7 +184,7 @@ export const reduce_itemCount = (itemType: number, count: number): Item => {
 };
 
 // 矿山扣血
-export const reduce_mine = (itemType: number, mineNum:number, hits:number): number => {
+export const reduce_mine = (itemType: number, mineNum:number, hits:number): MineHp => {
     console.log('reduce_mine in!!!!!!!!!!!!!!', mineNum);
     const uid = getUid();
     const typeNum = itemType;
@@ -187,6 +198,8 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
         console.log('mine index!!!!!!!!!!!!!!', i);
         if (hps[i].num === mineNum) {
             console.log('mine HP!!!!!!!!!!!!!!', hps[i]);
+            const award = mine.hps[i].award;
+            const awardCount = mine.hps[i].awardCount;
             leftHp = mine.hps[i].hp;
             leftHp -= hits;
             hps[i].hp = leftHp;
@@ -207,7 +220,6 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
                 itemInfo.item = items;
                 itemBucket.update(uid, itemInfo);
         
-                return leftHp;
             } else {
                 console.log('mine HP zero!!!!!!!!!!!!!!');
                 mine.count = mine.count - 1;
@@ -217,8 +229,15 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): numb
                 itemInfo.item = items;
                 itemBucket.update(uid, itemInfo);
         
-                return 0;
+                leftHp = 0;
             }
+            const mineHp = new MineHp();
+            mineHp.hp = leftHp;
+            mineHp.award = award;
+            mineHp.awardCount = awardCount;
+            mineHp.num = mineNum;
+
+            return mineHp;
         }
     }
 
