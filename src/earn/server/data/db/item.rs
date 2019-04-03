@@ -1,25 +1,9 @@
-
-/**
-*奖品表
-*/
-#[primary=id,db=file,dbMonitor=true,hasmgr=false,constructor=true]
-struct Award {
-    id: String,
-    awardType: u32,
-    count: u32,
-    uid: u32,
-    src: String,
-    time: Option<String>,
-    desc: Option<String>,
-    convert: Option<String>,
-    deadTime: Option<String>
-}
-
 //矿山血量
 struct MineHp {
     num: u32, // 坐标
     hp: u32, // 血量
-    award: Option<Award>
+    award: u32, // 矿山奖励编号
+    awardCount: u32 //矿山奖励数量
 }
 
 //矿山
@@ -105,6 +89,22 @@ struct Items {
 struct ItemsResponse{
     resultNum: u32,
     item: Option<Items>
+}
+
+/**
+*奖品表
+*/
+#[primary=id,db=file,dbMonitor=true,hasmgr=false,constructor=true]
+struct Award {
+    id: String,
+    awardType: u32,
+    count: u32,
+    uid: u32,
+    src: String,
+    time: String,
+    desc: Option<String>,
+    convert: Option<String>,
+    deadTime: Option<String>
 }
 
 /**
