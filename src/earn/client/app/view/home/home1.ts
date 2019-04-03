@@ -532,10 +532,11 @@ register('flags/firstOpenBox',() => {
         }
     });
 });
-walletRegister('flags/firstRecharge',() => {
+
+register('flags/firstRecharge',(firstRecharge:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次充值
-    if (!getStore('flags',{}).firstRecharge) {
+    if (firstRecharge) {
         clientRpcFunc(get_task_award,7,(res:Result) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
