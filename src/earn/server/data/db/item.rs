@@ -1,14 +1,16 @@
 //矿山血量
 struct MineHp {
-    num: u32,
-    hp: u32
+    num: u32, // 坐标
+    hp: u32, // 血量
+    award: u32, // 矿山奖励编号
+    awardCount: u32 //矿山奖励数量
 }
 
 //矿山
 struct Mine {
     num: u32, //编号
     count: u32, //数量
-    hps: &[Option<MineHp>] //血量数组
+    hps: &[MineHp] //血量数组
 }
 
 //锄头

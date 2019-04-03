@@ -3,7 +3,7 @@
  */
 import { Bucket } from '../../utils/db';
 import { RegularAwardCfg } from '../../xlsx/awardCfg.s';
-import { AWARD_SRC_MINE, BTC_TYPE, ETH_TYPE, FIRST_MINING_AWARD, INDEX_PRIZE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_TYPE, FIRST_MINING_AWARD, GOLD_HOE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_TYPE, MAX_HUMAN_HITS, MAX_ONEDAY_MINING, MEMORY_NAME, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { AwardMap, AwardQuery, Item, ItemResponse, Mine, MineKTTop, MineSeed, MineTop, MiningKTMap, MiningKTMapTab, MiningKTNum, MiningMap, MiningResponse, TodayMineNum, TotalMiningMap, TotalMiningNum } from '../data/db/item.s';
 import { ChatIDMap, UserAccMap } from '../data/db/user.s';
@@ -21,6 +21,8 @@ import { add_mine, award_query, get_item, get_showMedal } from './user_item.r';
 // #[rpc=rpcServer]
 export const mining = (itemType:number):SeedResponse => {
     const seedResponse = new SeedResponse();
+    console.log('--------------77777----------------', itemType);
+    
     // 相应锄头数量减1
     if (!reduce_itemCount(itemType, 1)) {
         seedResponse.resultNum = HOE_NOT_ENOUGH;
@@ -28,7 +30,9 @@ export const mining = (itemType:number):SeedResponse => {
         return seedResponse;
     }
     // 获取随机种子并写入内存表
-    const seed = Math.floor(Math.random() * 233280 + 1);
+    // const seed = Math.floor(Math.random() * 233280 + 1);
+    // 暂时写死随机种子
+    const seed = get_cfgSeed(itemType);
     const uid = getUid();
     if (!uid) {
         seedResponse.resultNum = NOT_LOGIN;
@@ -59,8 +63,8 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 
         return miningResponse;
     }
-    const itemType = result.itemType;
-    if (get_item(itemType).value.count === 0) {
+    const mineType = result.itemType;
+    if (get_item(mineType).value.count === 0) {
         miningResponse.resultNum = MINE_NOT_ENOUGH;
         
         return miningResponse;
@@ -89,31 +93,36 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         sumHits = sumHits + hit;
         seed = RandomSeedMgr.randNumber(seed);
     }
-    const leftHp = reduce_mine(itemType, mineNum, sumHits);
-    if (!leftHp && leftHp !== 0) {
-        console.log('!!!!!!!!!!!!!!leftHp:', leftHp);
+    // 获取矿山奖励和剩余血量
+    const mineHp = reduce_mine(mineType, mineNum, sumHits);
+    if (!mineHp) {
+        console.log('!!!!!!!!!!!!!!leftHp:', mineHp);
         miningResponse.resultNum = MINE_NOT_EXIST;
 
         return miningResponse;
     }
+    const leftHp = mineHp.hp;
+    const mineAward = mineHp.award;
+    const mineAwardCount = mineHp.awardCount;
     if (leftHp > 0) {
         miningResponse.leftHp = leftHp;
     } else {
         miningResponse.leftHp = 0; // 当前矿山血量小于等于0时，添加奖励
-        const v = [];
-        const randomMgr = new RandomSeedMgr(seed);
-        const mineType = itemType;
-        const pid = get_cfgAwardid(mineType); // 权重配置主键
-        doAward(pid, randomMgr, v);
-        console.log('award result!!!!!!!!!!!!!!!!!:', v);
-        const itemNum = v[0][0];
-        const itemCount = v[0][1];
-        if (itemNum !== SURPRISE_BRO) { // 随机奖励不为空时
-            console.log('itemNum!!!!!!!!!!!!!!!!!:', itemNum);
-            const item = add_itemCount(uid, itemNum, itemCount);
+        // const randomMgr = new RandomSeedMgr(seed);
+        // const mineType = itemType;
+        // const pid = get_cfgAwardid(mineType); // 权重配置主键
+        // const v = [];
+        // doAward(pid, randomMgr, v);
+        // console.log('award result!!!!!!!!!!!!!!!!!:', v);
+        // const itemNum = v[0][0];
+        // const itemCount = v[0][1];
+
+        if (mineAward !== SURPRISE_BRO) { // 随机奖励不为空时
+            console.log('itemNum!!!!!!!!!!!!!!!!!:', mineAward);
+            const item = add_itemCount(uid, mineAward, mineAwardCount);
             const awards = [];
             awards.push(item);
-            const award = add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
+            const award = add_award(uid, mineAward, mineAwardCount, AWARD_SRC_MINE);
             // 像钱包添加挖矿得到的货币失败
             if (award.desc === '-1') {
                 miningResponse.resultNum = REQUEST_WALLET_FAIL;
@@ -121,10 +130,10 @@ export const mining_result = (result:MiningResult):MiningResponse => {
 
                 return miningResponse;
             }
-            if (itemNum === KT_TYPE) add_miningKTTotal(uid, itemCount); // 奖品为KT时添加挖矿获取KT总数
+            if (mineAward === KT_TYPE) add_miningKTTotal(uid, mineAwardCount); // 奖品为KT时添加挖矿获取KT总数
             miningResponse.awards = awards;
             // 添加奖章
-            mining_add_medal(uid, itemNum);
+            mining_add_medal(uid, mineAward);
         }
         // 用户挖矿数量+1
         todayMineNum.mineNum = todayMineNum.mineNum + 1;
@@ -444,4 +453,18 @@ export const get_miningTop = (topNum: number): MineTop => {
     mineTop.resultNum = RESULT_SUCCESS;
 
     return mineTop;
+};
+
+// 暂时写死随机种子
+const get_cfgSeed = (itemType: number): number => {
+    switch (itemType) {
+        case IRON_HOE_TYPE:
+            return 555;
+        case GOLD_HOE_TYPE:
+            return 666;
+        case DIAMOND_HOE_TYPE:
+            return 777;
+        default:
+            return 777;
+    }
 };
