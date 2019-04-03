@@ -1,6 +1,8 @@
 /**
  * 
  */
+import { Tr } from '../../../pi/db/mgr';
+import { Env } from '../../../pi/lang/env';
 import { Bucket } from '../../utils/db';
 import { WeightMiningCfg } from '../../xlsx/awardCfg.s';
 import { BTC_ENUM_NUM, BTC_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, GOLD_HOE_TYPE, GOLD_TICKET_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, HUGE_MINE_TYPE_AWARD, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, MEMORY_NAME, MIDDLE_MINE_TYPE, MIDDLE_MINE_TYPE_AWARD, MINE_ENUM_NUM, RAINBOW_TICKET_TYPE, SILVER_TICKET_TYPE, SMALL_MINE_TYPE, SMALL_MINE_TYPE_AWARD, ST_ENUM_NUM, ST_TYPE, TICKET_ENUM_NUM, WARE_NAME } from '../data/constant';
@@ -9,8 +11,6 @@ import { get_miningKTNum, get_totalminingNum } from '../rpc/mining.r';
 import { get_showMedal } from '../rpc/user_item.r';
 import { getWeightIndex } from './award';
 import { RandomSeedMgr } from './randomSeedMgr';
-import { Env } from '../../../pi/lang/env';
-import { Tr } from '../../../pi/db/mgr';
 
 declare var env: Env;
 
