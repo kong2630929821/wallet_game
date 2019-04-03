@@ -4,10 +4,11 @@
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
+import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
-import { Achievements, Medals, ShowMedal, ShowMedalRes } from '../data/db/medal.s';
-import { Task, UserTaskTab } from '../data/db/user.s';
+import { Achievements, getShowMedals, Medals, ShowMedal, ShowMedalRes, ShowMedalResArr } from '../data/db/medal.s';
+import { AccIDMap, UserTaskTab } from '../data/db/user.s';
 import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, NOT_LOGIN, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, task_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
@@ -123,6 +124,28 @@ export const get_showMedal = (uid: number):ShowMedalRes => {
     showMedalRes.medalType = showMedal.medal;
 
     return showMedalRes;
+};
+
+// 批量查看展示的奖章
+// #[rpc=rpcServer]
+export const get_showMedals = (accIDs: getShowMedals):ShowMedalResArr => {
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!accIDs:', accIDs);
+    const accIDMapBucket = new Bucket(CONSTANT.WARE_NAME, AccIDMap._$info.name);
+    // 转换accid为uid
+    const uids = accIDMapBucket.get<string[], AccIDMap[]>(accIDs.arr);
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!uids:', uids);
+    const r = new ShowMedalResArr();
+    const arr = [];
+    
+    // 循环调用获取展示勋章
+    for (let i = 0; i < uids.length; i++) {
+        arr.push(get_showMedal(uids[i].uid));
+    }
+    r.arr = arr;
+    r.resultNum = 1;
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!r:', r);
+
+    return r;
 };
 
 // 展示奖章
