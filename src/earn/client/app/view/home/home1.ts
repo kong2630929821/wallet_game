@@ -106,7 +106,7 @@ export class EarnHome extends Widget {
             img: 'btn_yun_7.png',
             title: `充${scShow}送${ktShow}`,
             desc: '赠品可以玩游戏',
-            components:'app-view-wallet-cloudWalletSC-rechargeSC'
+            components:'app-view-wallet-cloudWalletCustomize-rechargeSC'
         }, {
             img: 'btn_yun_8.png',
             title: '兑换码',
@@ -150,7 +150,7 @@ export class EarnHome extends Widget {
                 img: '',
                 title: '验证手机号',
                 desc: '凭借手机验证可找回云端资产',
-                btn:'做任务',
+                btn:'去绑定',
                 addOne:false,
                 components:'app-view-mine-setting-phone',
                 complete: !!getUserInfo().phoneNumber,
@@ -189,7 +189,7 @@ export class EarnHome extends Widget {
                 desc: '充值玩更多游戏',
                 btn:'去充值',
                 addOne:true,
-                components:'app-view-wallet-cloudWalletSC-rechargeSC',
+                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
                 complete: !!flags.firstRecharge,
                 show:true
             }];
@@ -384,17 +384,39 @@ register('mine',(mine:Mine) => {
 let firstLoginDelay = false;
 // 首次登陆奖励
 const firstloginAward = () => {
-    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-        title:'新用户',
-        awardType:2001,
-        awardNum:2
-    },() => {
-        popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-            title:'签到奖励',
-            awardType:2001,
-            awardNum:1
+    // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //     title:'新用户',
+    //     awardType:2001,
+    //     awardNum:2
+    // },() => {
+    //     popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+    //         title:'签到奖励',
+    //         awardType:2001,
+    //         awardNum:1
+    //     });
+    // });
+
+    // // 绑定聊天UID
+    // const uid = chatStore.getStore('uid',0);
+    // if (uid > 0) {
+    //     clientRpcFunc(bind_chatID,uid,(r:Result) => {
+    //         if (r && r.reslutCode) {
+    //             console.log('绑定聊天UID成功，聊天uid:',uid);
+    //         }
+    //     });
+    // }
+    // 绑定accID
+    const user = walletStore.getStore('user',{ info:{}, id:'' });
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
+    const accID = user.info.acc_id;
+    if (accID) {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+        clientRpcFunc(bind_accID,accID,(r:Result) => {
+            if (r && r.reslutCode) {
+                console.log('绑定AccUID成功，accuid:',r);
+            }
         });
-    });
+    }
 };
 
 // chatStore.register('uid',(r) => {

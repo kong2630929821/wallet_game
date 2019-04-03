@@ -3,7 +3,7 @@
  */
 
 import { uploadFileUrlPrefix } from '../../../../../app/config';
-import { getUserList } from '../../../../../app/net/pull';
+import { getHighTop, getUserList } from '../../../../../app/net/pull';
 import { getUserInfo } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -11,6 +11,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
 import { getFriendsKTTop, getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
+import { getStore, setStore } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
 import { formateCurrency } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
@@ -78,8 +79,12 @@ export class MineRank extends Widget {
     public initData() {
         const userInfo = getUserInfo();
         if (this.props.topbarSel === 0) {
-            getRankList().then(async (res: any) => {
-                this.props.rankList = await this.processData(res.topList);
+            getHighTop(100).then(async (res: any) => {  // TODO排名
+                const mine = getStore('mine',{});
+                mine.miningRank = res.miningRank || 0;
+                mine.miningKTnum = res.miningKTnum || 0;
+                setStore('mine',mine);
+                this.props.rankList = res.rank;
                 this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                 this.props.myRank.userName = userInfo.nickName;
                 this.props.myRank.rank = res.myNum;
@@ -88,50 +93,51 @@ export class MineRank extends Widget {
                 this.paint();
             });
         } else {
+            
             const chatIds = new ChatIDs();
             chatIds.chatIDs = getAllFriendIDs();
             getFriendsKTTop(chatIds).then(async (res: any) => {
-                this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                this.props.myRank.userName = userInfo.nickName;
-                this.props.myRank.rank = res.myNum;
-                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                this.props.myRank.medal = res.myMedal;
-                this.paint();
+                // this.props.rankList = await this.processData(res.topList);
+                // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
+                // this.props.myRank.userName = userInfo.nickName;
+                // this.props.myRank.rank = res.myNum;
+                // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                // this.props.myRank.medal = res.myMedal;
+                // this.paint();
             });
         }
        
     }
 
-    // 处理排行榜
-    public async processData(data: any) {
-        const resData = [];
-        const openidAry = [];  // 挖矿用户openid数组
-        if (data.length !== 0) {
-            data.forEach(element => {
-                // tslint:disable-next-line:radix
-                openidAry.push(parseInt(element.openid));
-            });
-            const userInfoList = await getUserList(openidAry, 1);
-            console.log('批量获取挖矿用户信息--------------------------', userInfoList);
-            for (let i = 0; i < data.length; i++) {
-                const element = data[i];
-                const elementUser = userInfoList[i];
-                const res = {
-                    // tslint:disable-next-line:max-line-length
-                    avatar: elementUser.avatar ? `${uploadFileUrlPrefix}${elementUser.avatar}` : 'earn/client/app/res/image1/default_head.png',
-                    userName: elementUser.nickName,
-                    rank: i + 1,
-                    ktNum: formateCurrency(element.miningKTMap.ktNum),
-                    medal: element.medal
-                };
-                resData.push(res);
-            }
-        }
-        console.log('批量获取挖矿用户信息--------------------------', resData);
+    // // 处理排行榜
+    // public async processData(data: any) {
+    //     const resData = [];
+    //     const openidAry = [];  // 挖矿用户openid数组
+    //     if (data.length !== 0) {
+    //         data.forEach(element => {
+    //             // tslint:disable-next-line:radix
+    //             openidAry.push(parseInt(element.openid));
+    //         });
+    //         const userInfoList = await getUserList(openidAry, 1);
+    //         console.log('批量获取挖矿用户信息--------------------------', userInfoList);
+    //         for (let i = 0; i < data.length; i++) {
+    //             const element = data[i];
+    //             const elementUser = userInfoList[i];
+    //             const res = {
+    //                 // tslint:disable-next-line:max-line-length
+    //                 avatar: elementUser.avatar ? `${uploadFileUrlPrefix}${elementUser.avatar}` : 'earn/client/app/res/image1/default_head.png',
+    //                 userName: elementUser.nickName,
+    //                 rank: i + 1,
+    //                 ktNum: formateCurrency(element.miningKTMap.ktNum),
+    //                 medal: element.medal
+    //             };
+    //             resData.push(res);
+    //         }
+    //     }
+    //     console.log('批量获取挖矿用户信息--------------------------', resData);
 
-        return resData;
-    }
+    //     return resData;
+    // }
 
     /**
      * 导航栏切换
