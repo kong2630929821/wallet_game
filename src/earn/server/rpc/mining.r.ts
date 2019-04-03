@@ -102,6 +102,8 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         return miningResponse;
     }
     const leftHp = mineHp.hp;
+    const mineAward = mineHp.award;
+    const mineAwardCount = mineHp.awardCount;
     if (leftHp > 0) {
         miningResponse.leftHp = leftHp;
     } else {
@@ -115,9 +117,7 @@ export const mining_result = (result:MiningResult):MiningResponse => {
         // const itemNum = v[0][0];
         // const itemCount = v[0][1];
 
-        if (mineHp.award) { // 随机奖励不为空时
-            const mineAward = mineHp.award.awardType;
-            const mineAwardCount = mineHp.award.count;
+        if (mineAward !== SURPRISE_BRO) { // 随机奖励不为空时
             console.log('itemNum!!!!!!!!!!!!!!!!!:', mineAward);
             const item = add_itemCount(uid, mineAward, mineAwardCount);
             const awards = [];
