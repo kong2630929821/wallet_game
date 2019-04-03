@@ -12,7 +12,6 @@ import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { inviteAwardsMultiple } from '../../utils/constants';
-import { shareDownload } from '../../../../../app/config';
 
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
@@ -53,10 +52,10 @@ export class InviteFriend extends Widget {
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
-        getInviteCode().then(inviteCodeInfo=>{
+        getInviteCode().then(inviteCodeInfo => {
             this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
             this.paint();
-        })
+        });
     }
 
     /**
@@ -79,7 +78,7 @@ export class InviteFriend extends Widget {
         copyToClipboard(this.props.address);
         popNewMessage(this.language.tips[0]);
     }
-    //我的邀请
+    // 我的邀请
     public myInvite() {
         popNew3('earn-client-app-view-activity-myInviteUsers');
     }
