@@ -551,8 +551,13 @@ export const getMedalest = (arr:any) => {
     // tslint:disable-next-line:promise-must-complete
     return new Promise((resolve,reject) => {
         clientRpcFunc(get_showMedals,getShowArr,(res:ShowMedalResArr) => {
-            debugger
-            console.log(res);
+            console.log('[最高勋章]get_showMedals---------------', res);
+            if (res && res.resultNum === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+            
         });
     });
 };

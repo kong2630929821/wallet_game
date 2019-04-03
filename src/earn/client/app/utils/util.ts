@@ -61,7 +61,7 @@ export const getAllMines = () => {
                 const mine = {
                     type: itype,
                     id: good.value.hps[j].num,
-                    reward:good.value.hps[j].reward,
+                    award:good.value.hps[j].award,
                     hp
                 };
                 mines.push(mine);

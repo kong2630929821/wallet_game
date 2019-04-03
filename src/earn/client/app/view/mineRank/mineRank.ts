@@ -9,7 +9,7 @@ import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
-import { getFriendsKTTop, getRankList } from '../../net/rpc';
+import { getFriendsKTTop, getMedalest, getRankList } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
@@ -81,17 +81,24 @@ export class MineRank extends Widget {
         if (this.props.topbarSel === 0) {
             getHighTop(100).then(async (res: any) => {  // TODO排名
                 console.log('排行榜++++++++++++++++++++++',res);
-                // const mine = getStore('mine',{});
-                // mine.miningRank = res.miningRank || 0;
-                // mine.miningKTnum = res.miningKTnum || 0;
-                // setStore('mine',mine);
-                // this.props.rankList = res.rank;
-                // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                // this.props.myRank.userName = userInfo.nickName;
-                // this.props.myRank.rank = res.myNum;
-                // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                // this.props.myRank.medal = res.myMedal;
-                // this.paint();
+                const medalest = [];
+                res.rank.forEach((v) => {
+                    medalest.push(v.acc_id);
+                });
+                getMedalest(medalest).then((resList:any) => {
+                    console.log('最高勋章列表',resList);
+                    const mine = getStore('mine',{});
+                    mine.miningRank = res.miningRank || 0;
+                    mine.miningKTnum = res.miningKTnum || 0;
+                    setStore('mine',mine);
+                    this.props.rankList = res.rank;
+                    this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
+                    this.props.myRank.userName = userInfo.nickName;
+                    this.props.myRank.rank = res.myNum;
+                    this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                    this.props.myRank.medal = res.myMedal;
+                    this.paint();
+                });
             });
         } else {
             

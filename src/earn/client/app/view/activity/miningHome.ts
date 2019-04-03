@@ -19,15 +19,16 @@ import { HoeType } from '../../xls/hoeType.s';
 // tslint:disable-next-line:no-reserved-keywords
 
 const SEED_MGR = {
-    IRON: new RandomSeedMgr(1),
-    GOLD: new RandomSeedMgr(2),
-    DIAMOND: new RandomSeedMgr(3)
+    IRON: new RandomSeedMgr(555),
+    GOLD: new RandomSeedMgr(666),
+    DIAMOND: new RandomSeedMgr(777)
 };
 
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class MiningHome extends Widget {
+
     public ok:() => void;
     public props:any;
     public hits:number[] = [];
@@ -246,7 +247,7 @@ export class MiningHome extends Widget {
     public initMiningState() {
         this.deleteBoomMine();
 
-        const r = this.props.haveMines[this.props.mineId].reward;
+        const r = this.props.haveMines[this.props.mineId].award;
         if (!r.awards) {
             popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
             this.paint();
@@ -256,7 +257,7 @@ export class MiningHome extends Widget {
         // debugger;
         const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
         const type0 = r.awards[0].value.num;   // 货币类型
-        const number0 = coinUnitchange(type0,r.awards[0].value.count);                
+        const number0 = coinUnitchange(type0,r.awards[0].value.count);
         // 常规奖励
         const routineAward = {
             awardType:awardType0,
