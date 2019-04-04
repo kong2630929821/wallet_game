@@ -2,6 +2,7 @@
  * digging mines home
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { getStore } from '../../../../../app/store/memstore';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -9,7 +10,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
-import { Mine, register, setStore } from '../../store/memstore';
+import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
@@ -361,6 +362,11 @@ register('mine',(mine:Mine) => {
 // 监听嗨豆
 register('balance/KT',(r:number) => {
     STATE.miningNumber = r;
+    // const mineHai = getStore('mine',{});    
+    const mine = getEarnStore('mine',{});
+    // mine.miningRank = mineHai.miningRank || mine.miningRank;
+    mine.miningKTnum = getEarnStore('balance/KT') || 0;                    
+    setEarnStore('mine',mine);
     console.log('ssssssssssssssssssssssssss',STATE);
     forelet.paint(STATE);
 });
