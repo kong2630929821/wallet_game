@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage">
-    {{: topBarTitle = {"zh_Hans":"收集","zh_Hant":"收集","en":""} }}
+    {{: topBarTitle = {"zh_Hans":"特殊勋章","zh_Hant":"特殊勳章","en":""} }}
     <widget style="position: fixed;width: 100%;" w-tag="app-components-topBar-topBar2">{isOne:1,scrollHeight:{{it.scrollHeight}},text:{{topBarTitle}} }</widget>
 
     <div w-class="content" on-scroll="scrollPage">
@@ -10,7 +10,7 @@
                     <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"{{it.myCollect.length}}枚","zh_Hant":"{{it.myCollect.length}}枚","en":""}</widget>
                     <widget w-class="top-small-text" w-tag="pi-ui-lang">{"zh_Hans":"我的收集","zh_Hant":"我的收集","en":""}</widget>
                 </div>
-                <img src="../../res/image1/default_head.png" height="120px" />
+                <widget w-tag="app-components1-img-img" w-class="userHead" on-tap="login">{imgURL:{{it.avatar}},width:"120px;"}</widget>
                 <div w-class="flex-col">
                     <widget w-class="top-big-text" w-tag="pi-ui-lang">{"zh_Hans":"{{it.percentage}}%","zh_Hant":"{{it.percentage}}%","en":""}</widget>
                     <widget w-class="top-small-text" w-tag="pi-ui-lang">{"zh_Hans":"完成度","zh_Hant":"完成度","en":""}</widget>

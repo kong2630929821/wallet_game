@@ -29,3 +29,22 @@
     font-weight:500;
     line-height:28px;
 }
+.successInvite{
+    width: 90%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 72px auto;
+}
+.rewardImg{
+    width: 80px;
+    height: 80px;
+}
+.rewardPeople{
+    font-size:24px;
+    font-family:PingFangSC-Regular;
+    font-weight:400;
+    color:rgba(204,204,204,1);
+    line-height:33px;
+    text-align: center;
+}
