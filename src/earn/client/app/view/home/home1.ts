@@ -128,25 +128,6 @@ export class EarnHome extends Widget {
         // tslint:disable-next-line:ban-comma-operator
         this.props.noviceTask = [
             {
-                img: '2002.png',
-                title: '去备份助记词',
-                desc: '助记词是您找回账号的唯一凭证',
-                btn:'去备份',
-                addOne:true,                
-                components:'backUp',
-                complete: !!flags.helpWord,
-                show:wallet && wallet.setPsw
-            }, {
-                img: '2003.png',
-                title: `去分享秘钥片段`,
-                desc: '分享使保存更安全',
-                btn:'分享片段',
-                addOne:true,                
-                components:'sharePart',
-                complete: !!flags.sharePart,
-                show:wallet && wallet.setPsw
-            }, 
-            {
                 img: '',
                 title: '验证手机号',
                 desc: '凭借手机验证可找回云端资产',
@@ -155,8 +136,16 @@ export class EarnHome extends Widget {
                 components:'app-view-mine-setting-phone',
                 complete: !!getUserInfo().phoneNumber,
                 show:true
-            },
-            {
+            },{
+                img: '2003.png',
+                title: '首次充值成功',
+                desc: '充值玩更多游戏',
+                btn:'去充值',
+                addOne:true,
+                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
+                complete: !!flags.firstRecharge,
+                show:true
+            },{
                 img: '2001.png',
                 title: '参与聊天',
                 desc: '和大家聊一聊最近的热点',
@@ -184,14 +173,23 @@ export class EarnHome extends Widget {
                 complete: !!flags.firstOpenBox,
                 show:true
             },{
+                img: '2002.png',
+                title: '去备份助记词',
+                desc: '助记词是您找回账号的唯一凭证',
+                btn:'去备份',
+                addOne:true,                
+                components:'backUp',
+                complete: !!flags.helpWord,
+                show:wallet && wallet.setPsw
+            }, {
                 img: '2003.png',
-                title: '首次充值成功',
-                desc: '充值玩更多游戏',
-                btn:'去充值',
-                addOne:true,
-                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
-                complete: !!flags.firstRecharge,
-                show:true
+                title: `去分享秘钥片段`,
+                desc: '分享使保存更安全',
+                btn:'分享片段',
+                addOne:true,                
+                components:'sharePart',
+                complete: !!flags.sharePart,
+                show:wallet && wallet.setPsw
             }];
     }
     /**

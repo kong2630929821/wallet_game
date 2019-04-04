@@ -36,13 +36,13 @@ export const initReceive = (uid: number) => {
                 break;
             case 'daily_first_login':
                 const mess = JSON.parse(r.msg);
-                if (!getStore('flags').firstLogin) { // 注册账号第一天签到不从此处弹窗
-                    popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                        title:'签到奖励',
-                        awardType:mess.prop,
-                        awardNum:mess.count
-                    });
-                }
+                // if (!getStore('flags').firstLogin) { // 注册账号第一天签到不从此处弹窗
+                //     popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                //         title:'签到奖励',
+                //         awardType:mess.prop,
+                //         awardNum:mess.count
+                //     });
+                // }
                 break;
             default:
         }

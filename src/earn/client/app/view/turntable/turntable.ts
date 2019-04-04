@@ -261,12 +261,23 @@ export class Turntable extends Widget {
         }, 100);
         switch (eventType) { // 看广告
             case 0:
-                wathcAdGetAward(3,(award) => {
-                    this.props.freeCount = award.freeRotary;
-                    this.props.watchAdAward = award.adAwardRotary;
-                    popNewMessage(this.config.value.turntableTips[2]);
-                    this.setChestTip(2);
-                });
+                if (this.props.watchAdAward < 10) {
+                    wathcAdGetAward(3,(award) => {
+                        this.props.freeCount = award.freeRotary;
+                        this.props.watchAdAward = award.adAwardRotary;
+                        popNewMessage(this.config.value.turntableTips[2]);
+                        this.setChestTip(2);
+                    });
+                } else {
+                    popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
+                        img:'../../res/image/no_chance.png',
+                        btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
+                        btn2:'知道了',// 按钮2
+                        isColor:true
+                    },(num) => {
+                        this.paint();
+                    });
+                }
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {
