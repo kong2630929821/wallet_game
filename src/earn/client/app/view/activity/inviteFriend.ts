@@ -6,7 +6,7 @@ import { shareDownload } from '../../../../../app/config';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getInviteCode } from '../../../../../app/net/pull';
 import { LuckyMoneyType } from '../../../../../app/store/interface';
-import { copyToClipboard, popNew3, popNewMessage } from '../../../../../app/utils/tools';
+import { copyToClipboard, getUserInfo, popNew3, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -33,7 +33,8 @@ export class InviteFriend extends Widget {
             quickInvitation:'',
             meQrcode:'',
             background:'',
-            shareUrl:''
+            shareUrl:'',
+            nickName:`"${getUserInfo().nickName}"`
         };
         this.initData();
     }
