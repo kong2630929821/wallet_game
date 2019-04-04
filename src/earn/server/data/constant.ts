@@ -168,6 +168,12 @@ export const LEVEL2_TREASUREBOX_KTCOST = 50;
 // 高级宝箱消耗KT数
 export const LEVEL3_TREASUREBOX_KTCOST = 500;
 
+// 广告类型ID
+export const MINE_AD_TYPE = 1;
+export const GUESSING_AD_TYPE = 2;
+export const ROTARY_AD_TYPE = 3;
+export const BOX_AD_TYPE = 4;
+
 // 没有奖品
 export const SURPRISE_BRO = 9527;
 export const NO_AWARD_SORRY = 'noaward';
