@@ -106,11 +106,10 @@ export class MineRank extends Widget {
                 });
             });
         } else {
-            const chatIds = new ChatIDs();
-            chatIds.chatIDs = getAllFriendIDs();
+            const  chatIDs = getAllFriendIDs();
             const chatAccID = [];
-            chatIds.chatIDs.forEach(v => {
-                chatAccID.push(v.acc_id);
+            chatIDs.forEach(v => {
+                if (v.acc_id) chatAccID.push(v.acc_id);
             });
             chatAccID.push(userInfo.acc_id);
             getFriendsKTTops(chatAccID).then(async (res: any) => {
@@ -186,7 +185,7 @@ export class MineRank extends Widget {
         this.props.topbarSel = index;
         document.getElementById('rankList').scrollTop = 0;
         this.initData();
-        this.paint();
+        this.paint();   
     }
 
     /**
