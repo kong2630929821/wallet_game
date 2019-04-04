@@ -27,7 +27,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getUserInfo(openId, 'self'); // 获取用户信息
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
-    getRankList();   // 获取挖矿排名
+    // getRankList();   // 获取挖矿排名
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
     // // TODO 测试

@@ -2,14 +2,13 @@
  * 挖矿排名
  */
 
-import { uploadFileUrlPrefix } from '../../../../../app/config';
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
 import { getUserInfo } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
-import { getFriendsKTTop, getMedalest, getRankList } from '../../net/rpc';
+import { getMedalest } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
@@ -22,6 +21,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class MineRank extends Widget {
     public ok: () => void;
     public props: any = {

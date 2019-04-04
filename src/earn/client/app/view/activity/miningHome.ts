@@ -8,7 +8,7 @@ import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
-import { getKTbalance, getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
@@ -20,6 +20,7 @@ import { HoeType } from '../../xls/hoeType.s';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+// tslint:disable-next-line:completed-docs
 export class MiningHome extends Widget {
     public ok:() => void;
     public props:any;
@@ -243,7 +244,6 @@ export class MiningHome extends Widget {
             if (r.resultNum !== 1) return;
             if (r.leftHp <= 0) {
                 this.deleteBoomMine();
-                getRankList();
                 getTodayMineNum();
                 getMiningCoinNum();
                 this.props.mineId = -1;
