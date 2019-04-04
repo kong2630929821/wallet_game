@@ -10,7 +10,7 @@ import { Env } from '../../../pi/lang/env';
 import { randomInt } from '../../../pi/util/math';
 import { TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { ItemInitCfg, MedalCfg, MineHpCfg } from '../../xlsx/item.s';
-import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, SURPRISE_BRO, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
+import { AWARD_SRC_MINE, BTC_ENUM_NUM, BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, DIAMOND_HOE_TYPE, ETH_ENUM_NUM, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, GET_RANDOM_MINE, GOLD_HOE_TYPE, HOE_ENUM_NUM, HUGE_MINE_TYPE, INDEX_PRIZE, IRON_HOE_TYPE, KT_ENUM_NUM, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, MAX_TYPE_NUM, MEDAL_BTC, MEDAL_ETH, MEDAL_KT0, MEDAL_ST, MEMORY_NAME, MESSAGE_TYPE_ADDAWARD, MESSAGE_TYPE_ADDMEDAL, MIDDLE_MINE_TYPE, MINE_ENUM_NUM, SMALL_MINE_TYPE, ST_ENUM_NUM, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, THE_ELDER_SCROLLS, TICKET_ENUM_NUM, WALLET_API_ALTER, WARE_NAME } from '../data/constant';
 import { Achievements, AddMedal, Medals, ShowMedal } from '../data/db/medal.s';
 import { Task, UserTaskTab } from '../data/db/user.s';
 import { get_index_id } from '../data/util';
@@ -20,7 +20,7 @@ import { IsOk } from '../rpc/test.s';
 import { getOpenid, getUid } from '../rpc/user.r';
 import { get_item, item_query, show_medal } from '../rpc/user_item.r';
 import { doAward } from './award.t';
-import { get_cfgAwardid, get_enumType } from './mining_util';
+import { get_enumType } from './mining_util';
 import { oauth_alter_balance, oauth_send } from './oauth_lib';
 import { RandomSeedMgr } from './randomSeedMgr';
 import { send } from './sendMessage';
@@ -106,25 +106,13 @@ export const add_itemCount = (uid:number, itemType:number, count: number): Item 
         }
     }
     const itemBucket = new Bucket('file', Items._$info.name);
-    if (enumNum === 1) { // 添加物品为矿山时
-        if (count > 1) return; // 拒绝批量添加矿山
+    if (enumNum === 1) {
+        if (count > 1) return;
         const mineHp = new MineHp();
         mineHp.hp = get_mine_hp(typeNum);
         const index = `${uid}:${mineHp.hp}`;
         mineHp.num = get_index_id(index);
-        const v = [];
-        const seed = Math.floor(Math.random() * 233280 + 1);
-        const randomMgr = new RandomSeedMgr(seed);
-        const mineType = itemType;
-        const pid = get_cfgAwardid(mineType); // 配置奖励权重主键
-        doAward(pid, randomMgr, v);
-        console.log('award result!!!!!!!!!!!!!!!!!:', v);
-        const itemNum = v[0][0];
-        const itemCount = v[0][1];
-        // 添加矿山的奖励属性
-        mineHp.award = itemNum;
-        mineHp.awardCount = itemCount;
-        if (itemNum !== SURPRISE_BRO) mineHp.enumType = get_enumType(itemNum);
+        console.log('hp:!!!!!!!!!!!!!!', mineHp);
         let hpList = [];
         const mine = <Mine>item.value;
         hpList = mine.hps;
@@ -185,7 +173,7 @@ export const reduce_itemCount = (itemType: number, count: number): Item => {
 };
 
 // 矿山扣血
-export const reduce_mine = (itemType: number, mineNum:number, hits:number): MineHp => {
+export const reduce_mine = (itemType: number, mineNum:number, hits:number): number => {
     console.log('reduce_mine in!!!!!!!!!!!!!!', mineNum);
     const uid = getUid();
     const typeNum = itemType;
@@ -199,8 +187,6 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): Mine
         console.log('mine index!!!!!!!!!!!!!!', i);
         if (hps[i].num === mineNum) {
             console.log('mine HP!!!!!!!!!!!!!!', hps[i]);
-            const award = mine.hps[i].award;
-            const awardCount = mine.hps[i].awardCount;
             leftHp = mine.hps[i].hp;
             leftHp -= hits;
             hps[i].hp = leftHp;
@@ -221,6 +207,7 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): Mine
                 itemInfo.item = items;
                 itemBucket.update(uid, itemInfo);
         
+                return leftHp;
             } else {
                 console.log('mine HP zero!!!!!!!!!!!!!!');
                 mine.count = mine.count - 1;
@@ -230,15 +217,8 @@ export const reduce_mine = (itemType: number, mineNum:number, hits:number): Mine
                 itemInfo.item = items;
                 itemBucket.update(uid, itemInfo);
         
-                leftHp = 0;
+                return 0;
             }
-            const mineHp = new MineHp();
-            mineHp.hp = leftHp;
-            mineHp.award = award;
-            mineHp.awardCount = awardCount;
-            mineHp.num = mineNum;
-
-            return mineHp;
         }
     }
 
