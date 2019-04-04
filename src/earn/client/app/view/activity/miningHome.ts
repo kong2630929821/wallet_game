@@ -17,18 +17,10 @@ import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
-
-const SEED_MGR = {
-    IRON: new RandomSeedMgr(555),
-    GOLD: new RandomSeedMgr(666),
-    DIAMOND: new RandomSeedMgr(777)
-};
-
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 export class MiningHome extends Widget {
-
     public ok:() => void;
     public props:any;
     public hits:number[] = [];
@@ -68,6 +60,7 @@ export class MiningHome extends Widget {
             haveMines:getAllMines(),          // 拥有的矿山
             lossHp:1,           // 当前掉血数
             allAwardType:Item_Enum,// 奖励所有类型
+            awardTypes:{},    // 矿山爆掉的奖励类型
             startMining:false, // 请求挖矿标识
             ktShow:getModulConfig('KT_SHOW')
             
@@ -159,21 +152,11 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             if (this.props.hoeSelectedLeft <= 0) return;
-            let seedMgr = null;
-            if (this.props.hoeSelected === HoeType.IronHoe) {
-                seedMgr = SEED_MGR.IRON;
-            } else if (this.props.hoeSelected === HoeType.GoldHoe) {
-                seedMgr = SEED_MGR.GOLD;
-            } else if (this.props.hoeSelected === HoeType.DiamondHoe) {
-                seedMgr = SEED_MGR.DIAMOND;
-            } else {
-                seedMgr = 0;
-            }
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                // 空调用一下,本质上只是为了触发后端扣掉锄头
+                const hits = calcMiningArray(this.props.hoeSelected,r.seed);
+                this.hits = hits;
+                this.paint();
             });
-            const hits = calcMiningArray(this.props.hoeSelected,seedMgr.seed);
-            this.hits = hits;
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
             this.props.miningCount++;
@@ -248,49 +231,7 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
-        this.deleteBoomMine();
-        // 从矿山数组中获取当前矿山的下标
-        const getCurrentId = (mines, mineid):number => {
-            for (let i = 0; i < mines.length; i++) {
-                if (mines[i].id === mineid) {
-                    return i;
-                }
-            }
-
-            return -1;
-        };
-        const currentMountId = getCurrentId(this.props.haveMines, this.props.mineId);
-        const r = this.props.haveMines[currentMountId];
-
-        if (r.award === 9527) {
-            popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
-            this.paint();
-        } else {
-            // const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
-            // const type0 = r.awards[0].value.num;   // 货币类型
-            // const number0 = coinUnitchange(type0,r.awards[0].value.count);
-            // const awardType0 = r.award;  // 常规奖励类型
-            const type0 = r.award;   // 货币类型
-            const number0 = coinUnitchange(type0,r.awardCount);
-            // 常规奖励
-            const routineAward = {
-                awardType:awardType0,
-                type:type0,
-                number:number0
-            };
-            const extraAward = null;
-            // if (r.awards[1]) {
-            //     extraAward = {
-            //         awardType:r.awards[1].enum_type,
-            //         type:r.awards[1].value.num,
-            //         number:coinUnitchange(r.awards[1].value.num,r.awards[1].value.count)
-            //     };
-            // } 
-            console.log('获得奖励==========================================',extraAward,routineAward);
-            popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
-        }
-        // debugger;        
-
+        // this.deleteBoomMine();
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
@@ -299,21 +240,46 @@ export class MiningHome extends Widget {
             console.log('miningHome ==== ',this.props);
             this.props.miningCount = 0;
             this.props.startMining = false;
-            console.log('xxxxxx');
             if (r.resultNum !== 1) return;
-            console.log('yyyy');
             if (r.leftHp <= 0) {
-                // this.deleteBoomMine();
-                console.log('zzzzzzzzzzzzzzzzzz');
+                this.deleteBoomMine();
                 getRankList();
                 getTodayMineNum();
                 getMiningCoinNum();
                 this.props.mineId = -1;
-                this.props.mineType = -1;                
-                getKTbalance();
+                this.props.mineType = -1;
+                if (!r.awards) {
+                    popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
+                    this.paint();
+
+                    return;
+                }
+                // debugger;
+                const awardType0 = r.awards[0].enum_type;  // 常规奖励类型
+                const type0 = r.awards[0].value.num;   // 货币类型
+                const number0 = coinUnitchange(type0,r.awards[0].value.count);
+                this.props.awardTypes[awardType0] = number0;
+                // 常规奖励
+                const routineAward = {
+                    awardType:awardType0,
+                    type:type0,
+                    number:number0
+                };
+                let extraAward;
+                if (r.awards[1]) {
+                    extraAward = {
+                        awardType:r.awards[1].enum_type,
+                        type:r.awards[1].value.num,
+                        number:coinUnitchange(r.awards[1].value.num,r.awards[1].value.count)
+                    };
+                } 
+                console.log('获得奖励==========================================',extraAward,routineAward);
+                popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
+                if (routineAward) {
+                    getKTbalance();
+                }
                 
             } else {
-                console.log('qqqqqqqqqqqqqqqq');
                 const mine = this.props.haveMines[this.getSelectedMineIndex()];
                 mine.hp = r.leftHp;
             }
@@ -352,16 +318,16 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        popNew('earn-client-app-test-test'); // 测试锄头
+        // popNew('earn-client-app-test-test'); // 测试锄头
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
-        // if (this.props.countDownStart) return;
-        // wathcAdGetAward(1,null,(award:Award) => {
-        //     console.log('广告关闭  奖励内容 = ',award);
-        //     setTimeout(() => {
-        //         popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
-        //     },300);
+        if (this.props.countDownStart) return;
+        wathcAdGetAward(1,null,(award:Award) => {
+            console.log('广告关闭  奖励内容 = ',award);
+            setTimeout(() => {
+                popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+            },300);
             
-        // });
+        });
     }
     public clickTop() {
         console.log('top');
@@ -382,7 +348,7 @@ const STATE = {
 
 };
 register('goods',(goods:Item[]) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);    
+    const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
 });
 
