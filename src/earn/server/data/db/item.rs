@@ -3,7 +3,8 @@ struct MineHp {
     num: u32, // 坐标
     hp: u32, // 血量
     award: u32, // 矿山奖励编号
-    awardCount: u32 //矿山奖励数量
+    awardCount: u32, //矿山奖励数量
+    enumType: Option<u32>  // 枚举类型编号
 }
 
 //矿山
