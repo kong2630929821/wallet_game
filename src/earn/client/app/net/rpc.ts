@@ -5,7 +5,7 @@ import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as getWalletStore } from '../../../../app/store/memstore';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
-import { Achievements } from '../../../server/data/db/medal.s';
+import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum, getInviteAward } from '../../../server/rpc/invite.p';
@@ -15,7 +15,7 @@ import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stPa
 import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
-import { award_query, get_achievements, get_ad_award, get_showMedal, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_ad_award, get_showMedal, get_showMedals, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat, timestampFormatWeek } from '../utils/tools';
@@ -541,6 +541,23 @@ export const getCompleteTask = () => {
             } else {
                 reject(res);
             }
+        });
+    });
+};
+export const getMedalest = (arr:any) => {
+    const getShowArr = new getShowMedals();
+    getShowArr.arr = arr;
+
+    // tslint:disable-next-line:promise-must-complete
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(get_showMedals,getShowArr,(res:ShowMedalResArr) => {
+            console.log('[最高勋章]get_showMedals---------------', res);
+            if (res && res.resultNum === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+            
         });
     });
 };

@@ -18,6 +18,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class InviteFriend extends Widget {
     public ok : () => void;
     public language:any;
