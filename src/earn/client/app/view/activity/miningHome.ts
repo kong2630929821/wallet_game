@@ -2,14 +2,15 @@
  * digging mines home
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { getStore } from '../../../../../app/store/memstore';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
-import { getKTbalance, getMiningCoinNum, getRankList, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
-import { Mine, register, setStore } from '../../store/memstore';
+import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
@@ -20,6 +21,7 @@ import { HoeType } from '../../xls/hoeType.s';
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+// tslint:disable-next-line:completed-docs
 export class MiningHome extends Widget {
     public ok:() => void;
     public props:any;
@@ -243,7 +245,6 @@ export class MiningHome extends Widget {
             if (r.resultNum !== 1) return;
             if (r.leftHp <= 0) {
                 this.deleteBoomMine();
-                getRankList();
                 getTodayMineNum();
                 getMiningCoinNum();
                 this.props.mineId = -1;
@@ -361,6 +362,11 @@ register('mine',(mine:Mine) => {
 // 监听嗨豆
 register('balance/KT',(r:number) => {
     STATE.miningNumber = r;
+    // const mineHai = getStore('mine',{});    
+    const mine = getEarnStore('mine',{});
+    // mine.miningRank = mineHai.miningRank || mine.miningRank;
+    mine.miningKTnum = getEarnStore('balance/KT') || 0;                    
+    setEarnStore('mine',mine);
     console.log('ssssssssssssssssssssssssss',STATE);
     forelet.paint(STATE);
 });
