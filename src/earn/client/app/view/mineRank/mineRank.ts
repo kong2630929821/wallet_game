@@ -3,7 +3,7 @@
  */
 
 import { uploadFileUrlPrefix } from '../../../../../app/config';
-import { getHighTop, getUserList } from '../../../../../app/net/pull';
+import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
 import { getUserInfo } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -107,17 +107,18 @@ export class MineRank extends Widget {
                 });
             });
         } else {
-            
             const chatIds = new ChatIDs();
             chatIds.chatIDs = getAllFriendIDs();
-            getFriendsKTTop(chatIds).then(async (res: any) => {
-                this.props.rankList = await this.processData(res.topList);
-                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                this.props.myRank.userName = userInfo.nickName;
-                this.props.myRank.rank = res.myNum;
-                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                this.props.myRank.medal = res.myMedal;
-                this.paint();
+            chatIds.chatIDs.push(userInfo.acc_id);
+            getFriendsKTTops(chatIds.chatIDs).then(async (res: any) => {
+                console.log('好友排名',res);
+                // this.props.rankList = await this.processData(res.topList);
+                // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
+                // this.props.myRank.userName = userInfo.nickName;
+                // this.props.myRank.rank = res.myNum;
+                // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                // this.props.myRank.medal = res.myMedal;
+                // this.paint();
             });
         }
        
