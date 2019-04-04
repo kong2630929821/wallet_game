@@ -5,7 +5,7 @@
     <div w-class="describe">邀请好友下载app，在兑换中输入邀请码，并绑定手机，即视为成功邀请。快去邀请小伙伴一起挖矿吧~</div>
     <div w-class="userList">
         {{for i,v of it1.invites}}
-        <widget w-tag="earn-client-app-view-components-inviteUser">{{v}}</widget>
+        <widget w-tag="earn-client-app-view-components-inviteUser">{accId:{{v}} }</widget>
         {{end}}
     </div>
 </div>
