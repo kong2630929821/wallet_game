@@ -14,7 +14,10 @@
         <div w-class="flex-col" style="margin-top: -100px;">
             <widget w-class="medal-title" w-tag="pi-ui-lang">{{it.medalTitle}}</widget>
             {{if it.medalType===0}}
-                <widget w-class="medal-desc" w-tag="pi-ui-lang">{"zh_Hans":"挖矿达到{{it.condition}}{{it.ktShow}}","zh_Hant":"挖礦達到{{it.condition}}{{it.ktShow}}","en":""}</widget>
+                {{: tips1 = {"zh_Hans":"挖矿达到" + it.condition + it.ktShow,"zh_Hant":"挖礦達到" + it.condition + it.ktShow,"en":""} }}
+                {{: tips2 = {"zh_Hans":"默认勋章","zh_Hant":"默認勳章","en":"" } }}
+                {{: tips = it.condition ? tips1 : tips2 }}
+                <widget w-class="medal-desc" w-tag="pi-ui-lang">{{tips}}</widget>
             {{else}}
                 <p w-class="medal-desc">{{it.condition}}</p>
             {{end}}
