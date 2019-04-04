@@ -85,34 +85,40 @@ export class MineRank extends Widget {
                 res.rank.forEach((v) => {
                     medalest.push(v.acc_id);
                 });
+                console.log(medalest,userInfo.acc_id,'=========================');         
                 getMedalest(medalest).then((resList:any) => {
                     console.log('最高勋章列表',resList);
                     const mine = getStore('mine',{});
                     mine.miningRank = res.miningRank || 0;
                     mine.miningKTnum = getStore('balance/KT') || 0;
                     setStore('mine',mine);
+                    res.rank.forEach((v,i) => {
+                        if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';
+                        v.medal = resList.arr[i].medalType;
+                    });
                     this.props.rankList = res.rank;
                     this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                     this.props.myRank.userName = userInfo.nickName;
-                    this.props.myRank.rank = res.myNum;
-                    this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                    this.props.myRank.medal = res.myMedal;
+                    this.props.myRank.rank = res.miningRank > resList.arr.length ? 0 :res.miningRank;
+                    this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
+                    this.props.myRank.medal = mine.miningMedalId || '8001';
+                    console.log('我的排名+++++++++++++++++++++++++++',this.props.rankList);
                     this.paint();
                 });
             });
         } else {
             
-            // const chatIds = new ChatIDs();
-            // chatIds.chatIDs = getAllFriendIDs();
-            // getFriendsKTTop(chatIds).then(async (res: any) => {
-                // this.props.rankList = await this.processData(res.topList);
-                // this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                // this.props.myRank.userName = userInfo.nickName;
-                // this.props.myRank.rank = res.myNum;
-                // this.props.myRank.ktNum = formateCurrency(res.myKTNum);
-                // this.props.myRank.medal = res.myMedal;
-                // this.paint();
-            // });
+            const chatIds = new ChatIDs();
+            chatIds.chatIDs = getAllFriendIDs();
+            getFriendsKTTop(chatIds).then(async (res: any) => {
+                this.props.rankList = await this.processData(res.topList);
+                this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
+                this.props.myRank.userName = userInfo.nickName;
+                this.props.myRank.rank = res.myNum;
+                this.props.myRank.ktNum = formateCurrency(res.myKTNum);
+                this.props.myRank.medal = res.myMedal;
+                this.paint();
+            });
         }
        
     }
