@@ -5,6 +5,7 @@
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
+import * as walletStore from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -15,7 +16,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
-import { bind_chatID } from '../../../../server/rpc/user.p';
+import { bind_accID, bind_chatID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -127,25 +128,6 @@ export class EarnHome extends Widget {
         // tslint:disable-next-line:ban-comma-operator
         this.props.noviceTask = [
             {
-                img: '2002.png',
-                title: '去备份助记词',
-                desc: '助记词是您找回账号的唯一凭证',
-                btn:'去备份',
-                addOne:true,                
-                components:'backUp',
-                complete: !!flags.helpWord,
-                show:wallet && wallet.setPsw
-            }, {
-                img: '2003.png',
-                title: `去分享秘钥片段`,
-                desc: '分享使保存更安全',
-                btn:'分享片段',
-                addOne:true,                
-                components:'sharePart',
-                complete: !!flags.sharePart,
-                show:wallet && wallet.setPsw
-            }, 
-            {
                 img: '',
                 title: '验证手机号',
                 desc: '凭借手机验证可找回云端资产',
@@ -154,8 +136,16 @@ export class EarnHome extends Widget {
                 components:'app-view-mine-setting-phone',
                 complete: !!getUserInfo().phoneNumber,
                 show:true
-            },
-            {
+            },{
+                img: '2003.png',
+                title: '首次充值成功',
+                desc: '充值玩更多游戏',
+                btn:'去充值',
+                addOne:true,
+                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
+                complete: !!flags.firstRecharge,
+                show:true
+            },{
                 img: '2001.png',
                 title: '参与聊天',
                 desc: '和大家聊一聊最近的热点',
@@ -183,14 +173,23 @@ export class EarnHome extends Widget {
                 complete: !!flags.firstOpenBox,
                 show:true
             },{
+                img: '2002.png',
+                title: '去备份助记词',
+                desc: '助记词是您找回账号的唯一凭证',
+                btn:'去备份',
+                addOne:true,                
+                components:'backUp',
+                complete: !!flags.helpWord,
+                show:wallet && wallet.setPsw
+            }, {
                 img: '2003.png',
-                title: '首次充值成功',
-                desc: '充值玩更多游戏',
-                btn:'去充值',
-                addOne:true,
-                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
-                complete: !!flags.firstRecharge,
-                show:true
+                title: `去分享秘钥片段`,
+                desc: '分享使保存更安全',
+                btn:'分享片段',
+                addOne:true,                
+                components:'sharePart',
+                complete: !!flags.sharePart,
+                show:wallet && wallet.setPsw
             }];
     }
     /**
@@ -395,28 +394,40 @@ const firstloginAward = () => {
     //     });
     // });
 
-    // 绑定聊天UID
-    const uid = chatStore.getStore('uid',0);
-    if (uid > 0) {
-        clientRpcFunc(bind_chatID,uid,(r:Result) => {
+    // // 绑定聊天UID
+    // const uid = chatStore.getStore('uid',0);
+    // if (uid > 0) {
+    //     clientRpcFunc(bind_chatID,uid,(r:Result) => {
+    //         if (r && r.reslutCode) {
+    //             console.log('绑定聊天UID成功，聊天uid:',uid);
+    //         }
+    //     });
+    // }
+    // 绑定accID
+    const user = walletStore.getStore('user',{ info:{}, id:'' });
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
+    const accID = user.info.acc_id;
+    if (accID) {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+        clientRpcFunc(bind_accID,accID,(r:Result) => {
             if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',uid);
+                console.log('绑定AccUID成功，accuid:',r);
             }
         });
     }
 };
 
-chatStore.register('uid',(r) => {
-    const user = getStore('userInfo');
-    if (user.uid > 0) {
-        // 绑定聊天UID
-        clientRpcFunc(bind_chatID,r,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定聊天UID成功，聊天uid:',r);
-            }
-        });
-    }
-});
+// chatStore.register('uid',(r) => {
+//     const user = getStore('userInfo');
+//     if (user.uid > 0) {
+//         // 绑定聊天UID
+//         clientRpcFunc(bind_chatID,r,(r:Result) => {
+//             if (r && r.reslutCode) {
+//                 console.log('绑定聊天UID成功，聊天uid:',r);
+//             }
+//         });
+//     }
+// });
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',() => {
     const level_3_page_loaded = walletGetStore('flags').level_3_page_loaded;
@@ -519,10 +530,11 @@ register('flags/firstOpenBox',() => {
         }
     });
 });
-walletRegister('flags/firstRecharge',() => {
+
+register('flags/firstRecharge',(firstRecharge:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次充值
-    if (!getStore('flags',{}).firstRecharge) {
+    if (firstRecharge) {
         clientRpcFunc(get_task_award,7,(res:Result) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {

@@ -9,6 +9,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { getStore, register } from '../../store/memstore';
 import { getACHVmedalList } from '../../utils/util';
 import { MedalType } from './medalShow';
+import { getUserInfo } from '../../../../../app/utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -22,12 +23,17 @@ export class Collect extends Widget {
         scrollHeight: 0,
         medalList: [],
         myCollect:[],
-        percentage:0
+        percentage:0,
+        avatar:''
     };
 
     public create() {
         super.create();
         const list = getACHVmedalList('偶然成就','typeNum');
+        const userInfo = getUserInfo();
+        if (userInfo) {  
+            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+        }
         list.forEach(element => {
             const data = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
             this.props.medalList.push(data);

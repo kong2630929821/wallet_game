@@ -49,7 +49,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '20';
+    walletLoginReq.openid = '5';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -121,7 +121,7 @@ export const item_test2 = () => {
 
 // 获取挖矿随机种子
 export const get_seed = () => {
-    const itemType = 2001;
+    const itemType = 2003;
     clientRpcFunc(mining, itemType, (r: SeedResponse) => {
         console.log(r);
     });
@@ -130,9 +130,9 @@ export const get_seed = () => {
 // 挖矿测试
 export const mining_test = () => {
     const miningResult = new MiningResult();
-    miningResult.hit = 100;
-    miningResult.itemType = 1002;
-    miningResult.mineNum = 5;
+    miningResult.hit = 10;
+    miningResult.itemType = 1001;
+    miningResult.mineNum = 1;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });

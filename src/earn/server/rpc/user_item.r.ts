@@ -4,10 +4,11 @@
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
+import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
-import { Achievements, Medals, ShowMedal, ShowMedalRes } from '../data/db/medal.s';
-import { Task, UserTaskTab } from '../data/db/user.s';
+import { Achievements, getShowMedals, Medals, ShowMedal, ShowMedalRes, ShowMedalResArr } from '../data/db/medal.s';
+import { AccIDMap, UserTaskTab } from '../data/db/user.s';
 import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, NOT_LOGIN, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
 import { add_award, add_itemCount, get_award_ids, get_mine_total, get_mine_type, get_today, items_init, task_init } from '../util/item_util.r';
 import { get_enumType } from '../util/mining_util';
@@ -125,6 +126,28 @@ export const get_showMedal = (uid: number):ShowMedalRes => {
     return showMedalRes;
 };
 
+// 批量查看展示的奖章
+// #[rpc=rpcServer]
+export const get_showMedals = (accIDs: getShowMedals):ShowMedalResArr => {
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!accIDs:', accIDs);
+    const accIDMapBucket = new Bucket(CONSTANT.WARE_NAME, AccIDMap._$info.name);
+    // 转换accid为uid
+    const uids = accIDMapBucket.get<string[], AccIDMap[]>(accIDs.arr);
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!uids:', uids);
+    const r = new ShowMedalResArr();
+    const arr = [];
+    
+    // 循环调用获取展示勋章
+    for (let i = 0; i < uids.length; i++) {
+        arr.push(get_showMedal(uids[i].uid));
+    }
+    r.arr = arr;
+    r.resultNum = 1;
+    console.log('!!!!!!!!!!!get_showMedals!!!!!!!r:', r);
+
+    return r;
+};
+
 // 展示奖章
 // #[rpc=rpcServer]
 export const show_medal = (medalType: number):ShowMedalRes => {
@@ -156,6 +179,7 @@ export const get_achievements = ():Achievements => {
 
 // 看广告获得奖励
 // #[rpc=rpcServer]
+// tslint:disable-next-line:max-func-body-length
 export const get_ad_award = (adType: number): Result => {
     const result = new Result();
     const uid = getUid();
@@ -173,11 +197,11 @@ export const get_ad_award = (adType: number): Result => {
     if (!dailyWatchAdNum) {
         dailyWatchAdNum = new DailyWatchAdNum();
         dailyWatchAdNum.id = pid;
-        dailyWatchAdNum.num = 0;
+        dailyWatchAdNum.mineAdNum = 0;
+        dailyWatchAdNum.guessingAdNum = 0;
         dailyWatchAdNum.lastTime = 0;
     }
-    // 判断广告时间间隔是否达到最低时间间隔
-    if (timestamps - dailyWatchAdNum.lastTime < MIN_ADVERTISEMENT_SECONDS) {
+    if (timestamps - dailyWatchAdNum.lastTime < MIN_ADVERTISEMENT_SECONDS) {  // 判断广告时间间隔是否达到最低时间间隔
         result.reslutCode = ADVERTISEMENT_TIME_ERROR;
 
         return result;
@@ -194,9 +218,8 @@ export const get_ad_award = (adType: number): Result => {
     const count = adAward.num;
     const desc = adAward.desc;
     const src = AWARD_SRC_ADVERTISEMENT;
-    // 奖励为免费转盘和宝箱次数
     const freePlayBucket = new Bucket(WARE_NAME, FreePlay._$info.name);
-    if (adAward.prop === LEVEL1_ROTARY_AWARD) {
+    if (adAward.prop === LEVEL1_ROTARY_AWARD) {     // 奖励为免费转盘次数
         const freePlay = freePlayBucket.get<number, [FreePlay]>(uid)[0];
         if (freePlay.adAwardRotary < MAX_FREEPLAY_ADAWARD) {
             freePlay.freeRotary += 1;
@@ -214,7 +237,7 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
     }
-    if (adAward.prop === LEVEL1_TREASUREBOX_AWARD) {
+    if (adAward.prop === LEVEL1_TREASUREBOX_AWARD) { // 奖励为免费宝箱次数
         const freePlay = freePlayBucket.get<number, [FreePlay]>(uid)[0];
         if (freePlay.adAwardBox < MAX_FREEPLAY_ADAWARD) {
             freePlay.freeBox += 1;
@@ -232,13 +255,21 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
     }
-    if (adAward.prop === ST_TYPE) {
-        if (dailyWatchAdNum.num >= MAX_ONEDAY_ADAWARD) {
+    if (adType === CONSTANT.MINE_AD_TYPE) { // 挖矿广告奖励
+        if (dailyWatchAdNum.mineAdNum >= MAX_ONEDAY_ADAWARD) {
             result.reslutCode = ONEDAY_ADAWARD_LIMIT;
 
             return result;
         }
-        dailyWatchAdNum.num += 1;
+        dailyWatchAdNum.mineAdNum += 1;
+    }
+    if (adType === CONSTANT.GUESSING_AD_TYPE) {    // 竞猜广告奖励
+        if (dailyWatchAdNum.guessingAdNum >= MAX_ONEDAY_ADAWARD) {
+            result.reslutCode = ONEDAY_ADAWARD_LIMIT;
+
+            return result;
+        }
+        dailyWatchAdNum.guessingAdNum += 1;
     }
     add_itemCount(uid, awardType, count);
     const award = add_award(uid, awardType, count, src, null, desc);
