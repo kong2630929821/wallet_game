@@ -13,8 +13,6 @@ export const NOT_LOGIN = 900;
 
 // 用户信息为空
 export const NOT_USER_INFO = 901;
-// 已绑定accid
-export const ERROR_BUILD_ACCID = 902;
 
 // 该类型矿山数量不足
 export const MINE_NOT_ENOUGH = 1101;
@@ -28,7 +26,7 @@ export const HOE_NOT_ENOUGH = 1104;
 export const ARE_YOU_SUPERMAN = 1105;
 // 这座矿山不存在
 export const MINE_NOT_EXIST = 1106;
-// 当日看广告获得ST次数已达上限
+// 当日看该类型广告次数已达上限
 export const ONEDAY_ADAWARD_LIMIT = 1107;
 // 广告编号错误
 export const ADVERTISEMENT_NUM_ERROR = 1108;
@@ -45,9 +43,6 @@ export const INVITE_NOT_ENOUGH = 2101;
 export const INVITE_AWARD_ALREADY_TAKEN = 2102; 
 // 已兑换过邀请码
 export const INVITE_CONVERT_REPEAT = 2103;
-
-// 邀请人数不足
-export const INVITE_COUNT_ERROR = 2104;
 
 // ST数量不足
 export const ST_NOT_ENOUGH = 3101;
