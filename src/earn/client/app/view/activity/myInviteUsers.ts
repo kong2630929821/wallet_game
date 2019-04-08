@@ -5,6 +5,7 @@
 import * as walletStore from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
+import { doInvite } from '../../utils/util';
 
 export const forelet = new Forelet();
 

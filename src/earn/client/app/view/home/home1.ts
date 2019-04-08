@@ -548,7 +548,7 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
                 popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                    title:'首冲奖励',
+                    title:'首充奖励',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
                 });
