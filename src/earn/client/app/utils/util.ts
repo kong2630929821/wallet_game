@@ -4,7 +4,7 @@
 import { popNewMessage } from '../../../../app/utils/tools';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
-import { RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
+import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
@@ -158,7 +158,19 @@ const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
 
     return filterCfgs[i].hits;
 };
-
+// 处理邀请奖励
+export const doInvite = (num:number) => {
+    const cfgs = getMap(InviteAwardCfg);
+    console.log(cfgs);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (cfg.id === hoeType) {
+            filterCfgs.push(cfg);
+            maxWeight += cfg.weight;
+            weights.push(maxWeight);
+        }
+    }
+};
 // 获取权重对应的位置
 const getWeightIndex = (weights: number[], seed: number) => {
     const rate = RandomSeedMgr.randomSeed(seed, 1, weights[weights.length - 1]);
