@@ -2,11 +2,13 @@
  * 登录
  */
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
+import { getHighTop } from '../../../../app/net/pull';
+import { getStore as walletGetStore } from '../../../../app/store/memstore';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInvitedNumberOfPerson, getKTbalance, getMiningCoinNum, getRankList, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
+import { getInvitedNumberOfPerson, getKTbalance, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
@@ -28,9 +30,17 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     // getRankList();   // 获取挖矿排名
-    
+    getHighTop(100);
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
+    const medalest = []; 
+    medalest.push(walletGetStore('user/info').acc_id);
+    getMedalest(medalest).then((medal:any) => {
+        const data = medal.arr[0].medalType || '8001';
+        const mine = getStore('mine',{});
+        mine.miningMedalId = data;
+        setStore('mine',mine);
+    });
     // // TODO 测试
     // const getShowArr = new getShowMedals();
     // const arr = ['807017', '425391'];

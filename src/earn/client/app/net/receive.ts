@@ -7,7 +7,7 @@ import * as walletStore from '../../../../app/store/memstore';
 import { popNewMessage } from '../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
-import { getStore, register } from '../store/memstore';
+import { getStore, register, setStore } from '../store/memstore';
 import { subscribe } from './init';
 import { getInviteAwards } from './rpc';
 
@@ -21,6 +21,9 @@ export const initReceive = (uid: number) => {
                     return () => {
                         // tslint:disable-next-line:radix
                         const medalId = parseInt(res.msg);
+                        const mine = getStore('mine',{});
+                        mine.miningMedalId = medalId;
+                        setStore('mine',mine);
                         popNew('earn-client-app-view-components-newMedalAlert', {
                             medalId
                         });
