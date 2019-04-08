@@ -314,7 +314,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 3, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 1, (r: FreePlay) => {
         console.log(r);
     });
 };

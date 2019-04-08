@@ -1,7 +1,6 @@
 /**
  * 用户物品接口
  */
-import { AdAward } from '../../client/app/components/adAward/adAward';
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
