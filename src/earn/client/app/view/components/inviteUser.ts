@@ -18,7 +18,7 @@ export class InviteUser extends Widget {
         super.setProps(props);
         getUsersBasicInfo([],[this.props.accId]).then((r:UserArray) => {
             this.props.name = r.arr[0].name;
-            this.props.avatar = r.arr[0].avatar;
+            this.props.avatar = r.arr[0].avatar || 'app/res/image/default_avater_big.png';
             this.paint();
         });
     }
@@ -26,18 +26,18 @@ export class InviteUser extends Widget {
     // 加好友
     public agreenBtn(e:any) {
         this.props.isagree = true;
-        applyUserFriend(this.props.accId).then((r) => {
+        applyUserFriend(this.props.accId).then(() => {
             // 我邀请的好友
-            const invite = walletStore.getStore('flags').invite_success;
+            const invite = walletStore.getStore('inviteUsers').invite_success;
             const index = invite.findIndex(item => item === this.props.accId);
             invite.splice(index,1);
-            walletStore.setStore('flags/invite_success',invite);
+            walletStore.setStore('inviteUsers/invite_success',invite);
 
             // 邀请我的好友
-            const convert = walletStore.getStore('flags').convert_invite;
+            const convert = walletStore.getStore('inviteUsers').convert_invite;
             const index1 = convert.findIndex(item => item === this.props.accId);
             convert.splice(index1,1);
-            walletStore.setStore('flags/convert_invite',convert);
+            walletStore.setStore('inviteUsers/convert_invite',convert);
         });
         this.paint();
     }
