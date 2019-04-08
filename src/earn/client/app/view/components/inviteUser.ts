@@ -1,6 +1,7 @@
 /**
  * 邀请好友组件
  */
+import { uploadFileUrlPrefix } from '../../../../../app/config';
 import * as walletStore from '../../../../../app/store/memstore';
 import { applyUserFriend, getUsersBasicInfo } from '../../../../../chat/client/app/net/rpc';
 import { UserArray } from '../../../../../chat/server/data/rpc/basic.s';
@@ -18,7 +19,11 @@ export class InviteUser extends Widget {
         super.setProps(props);
         getUsersBasicInfo([],[this.props.accId]).then((r:UserArray) => {
             this.props.name = r.arr[0].name;
-            this.props.avatar = r.arr[0].avatar || 'app/res/image/default_avater_big.png';
+            if (r.arr[0].avatar && r.arr[0].avatar.indexOf('data:image') < 0) {
+                this.props.avatar = `${uploadFileUrlPrefix}${r.arr[0].avatar}`;
+            } else {
+                this.props.avatar = 'app/res/image/default_avater_big.png';
+            }
             this.paint();
         });
     }
