@@ -49,7 +49,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '5';
+    walletLoginReq.openid = '2001';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -314,7 +314,7 @@ export const get_my_guessing = () => {
 
 // 广告奖励
 export const ad_award_test = () => {
-    clientRpcFunc(get_ad_award, 3, (r: FreePlay) => {
+    clientRpcFunc(get_ad_award, 1, (r: FreePlay) => {
         console.log(r);
     });
 };
