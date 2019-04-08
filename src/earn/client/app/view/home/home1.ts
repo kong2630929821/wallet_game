@@ -5,7 +5,6 @@
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
-import * as walletStore from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -16,7 +15,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
-import { bind_accID, bind_chatID } from '../../../../server/rpc/user.p';
+import { bind_accID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -30,6 +29,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class EarnHome extends Widget {
     public ok: () => void;
     public language: any;
@@ -382,9 +382,9 @@ const STATE = {
     miningMedalId:0
 };
 register('mine',(mine:Mine) => {
-    const data = walletGetStore('mine');
+    // const data = walletGetStore('mine');
     STATE.miningKTnum = mine.miningKTnum;
-    STATE.miningRank = data.miningRank;
+    STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
     forelet.paint(STATE);
 });
@@ -414,7 +414,7 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    const user = walletStore.getStore('user',{ info:{}, id:'' });
+    const user = walletGetStore('user',{ info:{}, id:'' });
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
     const accID = user.info.acc_id;
     if (accID) {
