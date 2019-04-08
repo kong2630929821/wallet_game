@@ -2,14 +2,13 @@
  * 挖矿排名
  */
 
-import { uploadFileUrlPrefix } from '../../../../../app/config';
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
 import { getUserInfo } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
-import { getFriendsKTTop, getMedalest, getRankList } from '../../net/rpc';
+import { getMedalest } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
 import { coinUnitchange } from '../../utils/tools';
@@ -22,6 +21,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class MineRank extends Widget {
     public ok: () => void;
     public props: any = {
@@ -90,11 +90,10 @@ export class MineRank extends Widget {
                     console.log('最高勋章列表',resList);
                     const mine = getStore('mine',{});
                     mine.miningRank = res.miningRank || 0;
-                    mine.miningKTnum = getStore('balance/KT') || 0;
-                    setStore('mine',mine);
+                    mine.miningKTnum = getStore('balance/KT') || 0;                                        
                     res.rank.forEach((v,i) => {
                         if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';
-                        v.medal = resList.arr[i].medalType;
+                        v.medal = resList.arr[i].medalType || '8001';
                     });
                     this.props.rankList = res.rank;
                     this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
@@ -107,11 +106,10 @@ export class MineRank extends Widget {
                 });
             });
         } else {
-            const chatIds = new ChatIDs();
-            chatIds.chatIDs = getAllFriendIDs();
+            const  chatIDs = getAllFriendIDs();
             const chatAccID = [];
-            chatIds.chatIDs.forEach(v => {
-                chatAccID.push(v.acc_id);
+            chatIDs.forEach(v => {
+                if (v.acc_id) chatAccID.push(v.acc_id);
             });
             chatAccID.push(userInfo.acc_id);
             getFriendsKTTops(chatAccID).then(async (res: any) => {
@@ -187,7 +185,7 @@ export class MineRank extends Widget {
         this.props.topbarSel = index;
         document.getElementById('rankList').scrollTop = 0;
         this.initData();
-        this.paint();
+        this.paint();   
     }
 
     /**

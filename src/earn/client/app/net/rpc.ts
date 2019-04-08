@@ -518,7 +518,7 @@ export const getMiningCoinNum = () => {
                 mine.miningBTCnum = coinUnitchange(CoinType.BTC,numbers[0]);
                 mine.miningETHnum = coinUnitchange(CoinType.ETH,numbers[1]);
                 mine.miningSTnum = coinUnitchange(CoinType.ST,numbers[2]);
-                mine.miningKTnum = coinUnitchange(CoinType.KT,numbers[3]);
+                // mine.miningKTnum = coinUnitchange(CoinType.KT,numbers[3]);
                 setStore('mine',mine);
                 resolve(numbers);
             } else {
