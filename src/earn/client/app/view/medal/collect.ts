@@ -9,7 +9,9 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { getStore, register } from '../../store/memstore';
 import { getACHVmedalList } from '../../utils/util';
 import { MedalType } from './medalShow';
-import { getUserInfo } from '../../../../../app/utils/tools';
+import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
+import { makeScreenShot } from '../../../../../app/logic/native';
+import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -17,6 +19,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class Collect extends Widget {
     public ok: () => void;
     public props:any = {
@@ -69,16 +72,12 @@ export class Collect extends Widget {
      * 分享
      */
     public shareClick() {
-        popModalBoxs('earn-client-app-view-components-newMedalAlert', {
-            // tslint:disable-next-line:radix
-            medalId:8001,
-            medalType:''
+        makeScreenShot(() => {
+            popNew('app-components-share-share', { shareType: ShareType.TYPE_SCREEN });
+        }, () => {
+            popNewMessage(this.config.value.tips);
         });
-        // makeScreenShot(() => {
-        //     popNew('app-components-share-share',{ shareType:ShareToPlatforms.TYPE_SCREEN });
-        // },() => {
-        //     popNew('app-components1-message-message',{ content:this.config.value.tips });
-        // });
+        
     }
 
     /**

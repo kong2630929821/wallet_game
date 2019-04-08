@@ -3,11 +3,11 @@
  */
 
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
-import { getUserInfo } from '../../../../../app/utils/tools';
+import { getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
+import { getChatUid } from '../../../../../chat/client/app/net/rpc';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
 import { getMedalest } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
@@ -90,7 +90,8 @@ export class MineRank extends Widget {
                     console.log('最高勋章列表',resList);
                     const mine = getStore('mine',{});
                     mine.miningRank = res.miningRank || 0;
-                    mine.miningKTnum = getStore('balance/KT') || 0;                                        
+                    mine.miningKTnum = getStore('balance/KT') || 0;
+                    setStore('mine',mine);                                   
                     res.rank.forEach((v,i) => {
                         if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';
                         v.medal = resList.arr[i].medalType || '8001';
@@ -98,7 +99,7 @@ export class MineRank extends Widget {
                     this.props.rankList = res.rank;
                     this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                     this.props.myRank.userName = userInfo.nickName;
-                    this.props.myRank.rank = res.miningRank > resList.arr.length ? 0 :res.miningRank;
+                    this.props.myRank.rank = res.miningRank;
                     this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
                     this.props.myRank.medal = mine.miningMedalId || '8001';
                     console.log('我的排名+++++++++++++++++++++++++++',this.props);
@@ -109,9 +110,10 @@ export class MineRank extends Widget {
             const  chatIDs = getAllFriendIDs();
             const chatAccID = [];
             chatIDs.forEach(v => {
-                if (v.acc_id) chatAccID.push(v.acc_id);
-            });
+                if (v) chatAccID.push(v);
+            }); 
             chatAccID.push(userInfo.acc_id);
+            console.log('我的好友++++++++++++++++++++++++',chatAccID);
             getFriendsKTTops(chatAccID).then(async (res: any) => {
                 console.log('好友排名',res);
                 const medalest = [];
@@ -129,7 +131,7 @@ export class MineRank extends Widget {
                     this.props.rankList = res.rank;
                     this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                     this.props.myRank.userName = userInfo.nickName;
-                    this.props.myRank.rank = res.miningRank > resList.arr.length ? 0 :res.miningRank;
+                    this.props.myRank.rank = res.miningRank;
                     this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
                     this.props.myRank.medal = mine.miningMedalId || '8001';
                     console.log('我的好友排名+++++++++++++++++++++++++++',this.props);
@@ -199,6 +201,22 @@ export class MineRank extends Widget {
      */
     public backPrePage() {
         this.ok && this.ok();
+    }
+
+    public details(index:number) {
+        const uid = getUserInfo().acc_id;
+        console.log(this.props.rankList);
+        if (this.props.rankList[index].acc_id === uid) {
+            popNew3('chat-client-app-view-info-user');
+        } else {
+            getChatUid(this.props.rankList[index].acc_id).then((res:any) => {
+                popNew3('chat-client-app-view-info-userDetail',{ uid:res });  // 好友详情
+            });
+        }  
+    }
+    // 我的详情
+    public mydetails() {
+        popNew3('chat-client-app-view-info-user');
     }
 }
 

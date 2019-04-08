@@ -39,6 +39,7 @@ export class EarnHome extends Widget {
     public create() {
         super.create();
         this.init();
+        this.state = STATE;
     }
     
     public setProps(props: Json, oldProps: Json) {
@@ -77,9 +78,6 @@ export class EarnHome extends Widget {
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
-            miningKTnum:mine.miningKTnum,
-            miningRank:mine.miningRank,
-            miningMedalId:mine.miningMedalId,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
             signInDays: flags.signInDays || 0,   // 签到总天数
             awards: flags.loginAwards || getSeriesLoginAwards(1),  // 签到奖励
@@ -374,9 +372,21 @@ register('flags/logout',() => {  // 退出钱包时刷新页面
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.init();
 });
+// register('mine',(mine:Mine) => {
+//     const w:any = forelet.getWidget(WIDGET_NAME);
+//     w && w.updateMiningInfo(mine);
+// });
+const STATE = {
+    miningKTnum:0,
+    miningRank:0,
+    miningMedalId:0
+};
 register('mine',(mine:Mine) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateMiningInfo(mine);
+    const data = walletGetStore('mine');
+    STATE.miningKTnum = mine.miningKTnum;
+    STATE.miningRank = data.miningRank;
+    STATE.miningMedalId = mine.miningMedalId;
+    forelet.paint(STATE);
 });
 
 let firstLoginDelay = false;

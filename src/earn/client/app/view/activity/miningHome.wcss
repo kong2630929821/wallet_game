@@ -150,6 +150,9 @@
     font-size:24px;
     color:rgba(34,34,34,1);
 }
+.ad-items{
+    margin: 10px auto;
+}
 .action-tips{
     margin: 30px 0 0 48px;
     font-size:28px;
