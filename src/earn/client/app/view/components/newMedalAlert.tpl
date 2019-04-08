@@ -35,7 +35,7 @@
         </div>
         {{else}}
         <div style="text-align:center;background:#fff;padding: 0 10px 10px;">
-            <app-components-qrcode-qrcode>{value:{{it.shareUrl}},size:"150"}</app-components-qrcode-qrcode>
+            <app-components-qrcode-qrcode>{value:{{it.shareUrl}},size:150}</app-components-qrcode-qrcode>
         </div>
         {{end}}
     </div>
