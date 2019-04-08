@@ -49,7 +49,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '5';
+    walletLoginReq.openid = '2001';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {

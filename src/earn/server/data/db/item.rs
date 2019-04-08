@@ -332,3 +332,9 @@ struct AddConvert {
 struct AddConvertList {
     list: &[AddConvert]
 }
+
+// 广告奖励类型
+struct AdAwardResult {
+    adCount: u32, // 当天观看广告次数
+    award: Award //广告奖励
+}

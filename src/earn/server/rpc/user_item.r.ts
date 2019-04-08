@@ -1,12 +1,13 @@
 /**
  * 用户物品接口
  */
+import { AdAward } from '../../client/app/components/adAward/adAward';
 import { Bucket } from '../../utils/db';
 import { AdAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import { AWARD_SRC_ADVERTISEMENT, AWARD_SRC_TASK, LEVEL1_ROTARY_AWARD, LEVEL1_TREASUREBOX_AWARD, MAX_FREEPLAY_ADAWARD, MAX_ONEDAY_ADAWARD, MAX_ONEDAY_MINING, MEMORY_NAME, MIN_ADVERTISEMENT_SECONDS, NO_AWARD_SORRY, RESULT_SUCCESS, ST_TYPE, SURPRISE_BRO, WARE_NAME } from '../data/constant';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
+import { AdAwardResult, Award, AwardList, AwardQuery, BTC, DailyWatchAdNum, ETH, FreePlay, Hoe, Item, Items, KT, Mine, ST, TodayMineNum } from '../data/db/item.s';
 import { Achievements, getShowMedals, Medals, ShowMedal, ShowMedalRes, ShowMedalResArr } from '../data/db/medal.s';
 import { AccIDMap, UserTaskTab } from '../data/db/user.s';
 import { ADAWARD_FREEPLAY_LIMIT, ADVERTISEMENT_NUM_ERROR, ADVERTISEMENT_TIME_ERROR, CONFIG_ERROR, DB_ERROR, NOT_LOGIN, ONEDAY_ADAWARD_LIMIT, TASK_AWARD_REPEAT } from '../data/errorNum';
@@ -255,6 +256,7 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
     }
+    let adCount: number;
     if (adType === CONSTANT.MINE_AD_TYPE) { // 挖矿广告奖励
         if (dailyWatchAdNum.mineAdNum >= MAX_ONEDAY_ADAWARD) {
             result.reslutCode = ONEDAY_ADAWARD_LIMIT;
@@ -262,6 +264,7 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
         dailyWatchAdNum.mineAdNum += 1;
+        adCount = dailyWatchAdNum.mineAdNum;
     }
     if (adType === CONSTANT.GUESSING_AD_TYPE) {    // 竞猜广告奖励
         if (dailyWatchAdNum.guessingAdNum >= MAX_ONEDAY_ADAWARD) {
@@ -270,6 +273,7 @@ export const get_ad_award = (adType: number): Result => {
             return result;
         }
         dailyWatchAdNum.guessingAdNum += 1;
+        adCount = dailyWatchAdNum.guessingAdNum;
     }
     add_itemCount(uid, awardType, count);
     const award = add_award(uid, awardType, count, src, null, desc);
@@ -280,7 +284,11 @@ export const get_ad_award = (adType: number): Result => {
     }
     dailyWatchAdNum.lastTime = timestamps;
     bucket.put(pid, dailyWatchAdNum);
-    result.msg = JSON.stringify(award);
+    // 返回值为当天观看该广告的次数和本次奖励
+    const adAwardResult = new AdAwardResult();
+    adAwardResult.award = award;
+    adAwardResult.adCount = adCount;
+    result.msg = JSON.stringify(adAwardResult);
     result.reslutCode = RESULT_SUCCESS;
 
     return result;
