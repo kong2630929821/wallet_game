@@ -3,6 +3,8 @@
  */
 
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
+import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { getCloudBalances } from '../../../../../app/store/memstore';
 import { getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { getChatUid } from '../../../../../chat/client/app/net/rpc';
@@ -81,6 +83,7 @@ export class MineRank extends Widget {
         if (this.props.topbarSel === 0) {
             getHighTop(100).then(async (res: any) => {  // TODO排名
                 console.log('排行榜++++++++++++++++++++++',res);
+                
                 const medalest = [];
                 res.rank.forEach((v) => {
                     medalest.push(v.acc_id);

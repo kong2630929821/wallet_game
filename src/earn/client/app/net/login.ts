@@ -3,7 +3,8 @@
  */
 import { loginWallet, logoutWallet } from '../../../../app/net/login';
 import { getHighTop } from '../../../../app/net/pull';
-import { getStore as walletGetStore } from '../../../../app/store/memstore';
+import { CloudCurrencyType } from '../../../../app/store/interface';
+import { getCloudBalances, getStore as walletGetStore } from '../../../../app/store/memstore';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { disconnect, initClient } from './init';
@@ -30,7 +31,12 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     // getRankList();   // 获取挖矿排名
-    getHighTop(100);
+    getHighTop(100).then((data) => {
+        const mine = getStore('mine',{});
+        mine.miningRank = data.miningRank;
+        mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT);
+        setStore('mine',mine);
+    });
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
     const medalest = []; 

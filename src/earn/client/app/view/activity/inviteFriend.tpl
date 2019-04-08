@@ -1,5 +1,5 @@
 <div class="new-page" w-class="new-page" ev-back-click="backPrePage" ev-refresh-click="refreshPage">
-    <div w-class="inviteFrined" style="background-image: url({{it.bgImg}});background-size: 100% 100%;">
+    <div w-class="inviteFrined" style="background-image: url({{it.bgImg}});background-size:contain;">
         <div w-class="inFrined">
             <div>
                 <app-components-topBar-topBar2>{text:{{it.topBarTitle}} }</app-components-topBar-topBar2>

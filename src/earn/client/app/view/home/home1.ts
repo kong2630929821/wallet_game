@@ -29,6 +29,7 @@ declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
 
+// tslint:disable-next-line:completed-docs
 export class EarnHome extends Widget {
     public ok: () => void;
     public language: any;
@@ -381,9 +382,9 @@ const STATE = {
     miningMedalId:0
 };
 register('mine',(mine:Mine) => {
-    const data = walletGetStore('mine');
+    // const data = walletGetStore('mine');
     STATE.miningKTnum = mine.miningKTnum;
-    STATE.miningRank = data.miningRank;
+    STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
     forelet.paint(STATE);
 });
