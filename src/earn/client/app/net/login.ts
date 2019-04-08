@@ -35,6 +35,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     redemptionList();
     const medalest = []; 
     medalest.push(walletGetStore('user/info').acc_id);
+    // 获取最高勋章
     getMedalest(medalest).then((medal:any) => {
         const data = medal.arr[0].medalType || '8001';
         const mine = getStore('mine',{});
