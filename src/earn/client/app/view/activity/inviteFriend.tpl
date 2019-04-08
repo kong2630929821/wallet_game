@@ -19,7 +19,7 @@
                         <div w-class="copy">复制</div>
                     </div>
                     <div w-class="bgLogin">
-                        <app-components-qrcode-qrcode>{value:{{it.shareUrl}},size:"300"}</app-components-qrcode-qrcode>
+                        <app-components-qrcode-qrcode>{value:{{it.shareUrl}},size:300}</app-components-qrcode-qrcode>
                     </div>
                     <div w-class="share_text">
                         <widget w-tag="pi-ui-lang">{{it.quickInvitation}}</widget>

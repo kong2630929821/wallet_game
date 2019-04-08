@@ -114,11 +114,9 @@ export class InviteFriend extends Widget {
     }
 
     public baseShare(platform: number) {
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
+        ShareToPlatforms.makeScreenShot({
             success: (result) => { 
-                stp.shareScreenShot({
+                ShareToPlatforms.shareScreenShot({
                     success: (result) => { 
                         popNewMessage('分享成功');
                     },
