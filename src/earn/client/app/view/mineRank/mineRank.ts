@@ -3,11 +3,11 @@
  */
 
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
-import { getUserInfo } from '../../../../../app/utils/tools';
+import { getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
+import { getChatUid } from '../../../../../chat/client/app/net/rpc';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { ChatIDs } from '../../../../server/rpc/itemQuery.s';
 import { getMedalest } from '../../net/rpc';
 import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
@@ -201,6 +201,22 @@ export class MineRank extends Widget {
      */
     public backPrePage() {
         this.ok && this.ok();
+    }
+
+    public details(index:number) {
+        const uid = getUserInfo().acc_id;
+        console.log(this.props.rankList);
+        if (this.props.rankList[index].acc_id === uid) {
+            popNew3('chat-client-app-view-info-user');
+        } else {
+            getChatUid(this.props.rankList[index].acc_id).then((res:any) => {
+                popNew3('chat-client-app-view-info-userDetail',{ uid:res });  // 好友详情
+            });
+        }  
+    }
+    // 我的详情
+    public mydetails() {
+        popNew3('chat-client-app-view-info-user');
     }
 }
 

@@ -23,7 +23,7 @@
             {{:top2 = it.rankList[1]}}
             <div w-class="top-item" style="{{top2 ? '' : 'visibility: hidden;'}}">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
-                    <div w-class="top2-avatar" style="background-image:url({{top2 && top2.avatar}});background-size:100% 100%"></div>
+                    <div on-tap="details(1)" w-class="top2-avatar" style="background-image:url({{top2 && top2.avatar}});background-size:100% 100%"></div>
                     <img src="../../res/image/crown2.png" w-class="crown2"/>
                 </div>
                 <div w-class="top-name">{{top2 && top2.userName}}</div>
@@ -32,7 +32,7 @@
             {{:top1 = it.rankList[0]}}
             <div w-class="top-item" style="{{top1 ? '' : 'visibility: hidden;'}}padding-top:50px;margin-top: 10px;">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
-                    <div w-class="top1-avatar" style="background-image:url({{top1 && top1.avatar}});background-size:100% 100%"></div>
+                    <div on-tap="details(0)" w-class="top1-avatar" style="background-image:url({{top1 && top1.avatar}});background-size:100% 100%"></div>
                     <img src="../../res/image/crown1.png" w-class="crown1"/>
                 </div>
                 <div w-class="top-name">{{top1 && top1.userName}}</div>
@@ -41,7 +41,7 @@
             {{:top3 = it.rankList[2]}}
             <div w-class="top-item" style="{{top3 ? '' : 'visibility: hidden;'}}">
                 <div style="position:relative;width: 100%;display: flex;justify-content: center;">
-                    <div w-class="top2-avatar" style="background-image:url({{top3 && top3.avatar}});background-size:100% 100%"></div>
+                    <div on-tap="details(2)" w-class="top2-avatar" style="background-image:url({{top3 && top3.avatar}});background-size:100% 100%"></div>
                     <img src="../../res/image/crown3.png" w-class="crown2"/>
                 </div>
                 <div w-class="top-name">{{top3 && top3.userName}}</div>
@@ -52,11 +52,11 @@
     <div w-class="rank-list" id="rankList">
         <div style="margin-bottom:150px;">
             {{for i,item of it.rankList.slice(3)}}
-                <widget w-tag="earn-client-app-view-mineRank-rankItem">{{item}}</widget>
+                <div on-tap="details({{i+3}})"><widget w-tag="earn-client-app-view-mineRank-rankItem">{{item}}</widget></div>
             {{end}}
         </div>
         <div w-class="self-rank">
-            <widget w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
+            <widget on-tap="mydetails" w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
         </div>
     </div>
 </div>
