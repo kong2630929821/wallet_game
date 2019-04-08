@@ -140,7 +140,12 @@ export const get_showMedals = (accIDs: getShowMedals):ShowMedalResArr => {
     
     // 循环调用获取展示勋章
     for (let i = 0; i < uids.length; i++) {
-        arr.push(get_showMedal(uids[i].uid));
+        if (!uids[i]) {
+            const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
+            arr.push(showMedalRes);
+        } else {
+            arr.push(get_showMedal(uids[i].uid));
+        }
     }
     r.arr = arr;
     r.resultNum = 1;

@@ -5,7 +5,6 @@
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
-import * as walletStore from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -16,7 +15,7 @@ import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
-import { bind_accID, bind_chatID } from '../../../../server/rpc/user.p';
+import { bind_accID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask, getLoginDays } from '../../net/rpc';
@@ -39,6 +38,7 @@ export class EarnHome extends Widget {
     public create() {
         super.create();
         this.init();
+        this.state = STATE;
     }
     
     public setProps(props: Json, oldProps: Json) {
@@ -77,9 +77,6 @@ export class EarnHome extends Widget {
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
-            miningKTnum:mine.miningKTnum,
-            miningRank:mine.miningRank,
-            miningMedalId:mine.miningMedalId,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
             signInDays: flags.signInDays || 0,   // 签到总天数
             awards: flags.loginAwards || getSeriesLoginAwards(1),  // 签到奖励
@@ -374,9 +371,21 @@ register('flags/logout',() => {  // 退出钱包时刷新页面
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.init();
 });
+// register('mine',(mine:Mine) => {
+//     const w:any = forelet.getWidget(WIDGET_NAME);
+//     w && w.updateMiningInfo(mine);
+// });
+const STATE = {
+    miningKTnum:0,
+    miningRank:0,
+    miningMedalId:0
+};
 register('mine',(mine:Mine) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.updateMiningInfo(mine);
+    const data = walletGetStore('mine');
+    STATE.miningKTnum = mine.miningKTnum;
+    STATE.miningRank = data.miningRank;
+    STATE.miningMedalId = mine.miningMedalId;
+    forelet.paint(STATE);
 });
 
 let firstLoginDelay = false;
@@ -404,7 +413,7 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    const user = walletStore.getStore('user',{ info:{}, id:'' });
+    const user = walletGetStore('user',{ info:{}, id:'' });
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
     const accID = user.info.acc_id;
     if (accID) {
@@ -539,7 +548,7 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
             console.log('首冲奖励',res);
             if (res && res.reslutCode === 1) {
                 popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                    title:'首冲奖励',
+                    title:'首充奖励',
                     awardType:JSON.parse(res.msg).awardType,
                     awardNum:JSON.parse(res.msg).count
                 });

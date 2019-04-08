@@ -1,5 +1,5 @@
 <div w-class="user">
-    <img src="../../res/image1/default_head.png" w-class="userHead"/>
+    <widget w-tag="app-components1-img-img" w-class="userHead" >{imgURL:{{it.avatar}},width:"74px"}</widget>
     <div w-class="userName">{{it.name}}</div>
-    <div w-class="addUser">加好友</div>
+    <div w-class="addUser" on-tap="agreenBtn">加好友</div>
 </div>

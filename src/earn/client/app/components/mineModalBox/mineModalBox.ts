@@ -8,7 +8,7 @@ import { setStore } from '../../store/memstore';
 import { HoeType } from '../../xls/hoeType.s';
 
 interface Props {
-    miningMax:boolean;  // 挖矿达到上限提示
+     miningMax:boolean;  // 挖矿达到上限提示
     routineAward:Award;    // 常规奖励内容
     extraAward:Award;   // 额外奖励内容
     empty:boolean;

@@ -4,36 +4,36 @@
         <div w-class="topbar-container" ><app-components1-topBar-topBar1>{avatar:{{it.avatar}},scrollHeight:0 }</app-components1-topBar-topBar1></div>
         <app-components1-offlineTip-offlineTip>{ offlienType:{{it.offlienType}} }</app-components1-offlineTip-offlineTip>
         <div w-class="mining-rank-copy" style="{{ !it.animateStart || it.scrollHeight >= 160 ? 'visibility: hidden;' : ''}}bottom: {{ -20 + it.scrollHeight}}px;"> 
-            <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
+            <img src="../../res/image/medals/medal{{it1.miningMedalId}}.png" w-class="medal-img"/>
             <div w-class="mining-result">
                 <div w-class="mining-title">{{it.ktShow}}排名</div>
                 <div w-class="mining-number">
                     <img w-class="ktShowNum" src="../../res/image/KT.png" alt=""/>&nbsp;
-                    {{it.miningKTnum}}
+                    {{it1.miningKTnum}}
                 </div>
             </div>
-            {{if it.miningRank === 0}}
+            {{if it1.miningRank === 0}}
             <div w-class="rank-num">暂无排名</div>
             {{else}}
-            <div w-class="rank-num">{{it.miningRank}}名</div>
+            <div w-class="rank-num">{{it1.miningRank}}名</div>
             {{end}}
         </div>
     </div>
     <div w-class="contain" on-scroll="scrollPage" id="earn-home" class="{{it.downAnimate}}">
         <div w-class="mine-card" on-tap="miningClick">
             <div w-class="mining-rank" style="{{ it.animateStart ? 'visibility: hidden;' : ''}}" on-tap="goMineRank">
-                <img src="../../res/image/medals/medal{{it.miningMedalId}}.png" w-class="medal-img"/>
+                <img src="../../res/image/medals/medal{{it1.miningMedalId}}.png" w-class="medal-img"/>
                 <div w-class="mining-result">
                     <div w-class="mining-title">{{it.ktShow}}排名</div>
                     <div w-class="mining-number">
                         <img w-class="ktShowNum" src="../../res/image/KT.png" alt=""/>&nbsp;
-                        {{it.miningKTnum}}
+                        {{it1.miningKTnum}}
                     </div>
                 </div>
-                {{if it.miningRank === 0}}
+                {{if it1.miningRank === 0}}
                 <div w-class="rank-num">暂无排名</div>
                 {{else}}
-                <div w-class="rank-num">{{it.miningRank}}名</div>
+                <div w-class="rank-num">{{it1.miningRank}}名</div>
                 {{end}}
             </div>
             <div w-class="explanation-box" >
