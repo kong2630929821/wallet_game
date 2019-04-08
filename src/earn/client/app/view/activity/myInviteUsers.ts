@@ -48,6 +48,5 @@ walletStore.register('inviteUsers/invite_success',(r) => {
 // 邀请好友成为真实用户的个数
 walletStore.register('flags/invite_realUser',(r) => {
     STATE.num = r;
-   
     forelet.paint(STATE);
 });

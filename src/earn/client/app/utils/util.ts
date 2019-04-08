@@ -158,19 +158,6 @@ const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
 
     return filterCfgs[i].hits;
 };
-// 处理邀请奖励
-export const doInvite = (num:number) => {
-    const cfgs = getMap(InviteAwardCfg);
-    console.log(cfgs);
-    const filterCfgs = [];
-    for (const [k, cfg] of cfgs) {
-        if (cfg.id === hoeType) {
-            filterCfgs.push(cfg);
-            maxWeight += cfg.weight;
-            weights.push(maxWeight);
-        }
-    }
-};
 // 获取权重对应的位置
 const getWeightIndex = (weights: number[], seed: number) => {
     const rate = RandomSeedMgr.randomSeed(seed, 1, weights[weights.length - 1]);
