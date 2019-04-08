@@ -1,5 +1,6 @@
 /**
  * 活动-邀请好友
+ * 该页面首次加载时walletStore已被赋值，监听无效
  */
 import * as walletStore from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -12,6 +13,8 @@ export class MyInviteUsers extends Widget {
     public ok : () => void;
     public create() {
         super.create();
+        STATE.invites = walletStore.getStore('inviteUsers/invite_success',[]);
+        STATE.num = walletStore.getStore('flags').invite_realUser || 0;
         this.state = STATE;
     }
 
@@ -37,15 +40,12 @@ const STATE = {
     ]
 };
 // 邀请好友成功
-walletStore.register('flags/invite_success',(r) => {
+walletStore.register('inviteUsers/invite_success',(r) => {
     STATE.invites = r;
     forelet.paint(STATE);
 });
 // 邀请好友成为真实用户的个数
 walletStore.register('flags/invite_realUser',(r) => {
     STATE.num = r;
-    // if (r <= 3) {
-
-    // }
     forelet.paint(STATE);
 });
