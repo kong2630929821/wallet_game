@@ -5,7 +5,7 @@
         {{else}}
             <div w-class="rank-num">{{it.rank}}</div>
         {{end}}
-        <div w-class="rank-headImg" style="background-image:url({{it.avatar}});background-size: 100% 100%"></div>
+        <div w-class="rank-headImg" style="background-image:url({{it.avatar}});background-size:cover"></div>
         <div style="display: flex;justify-content: space-between;flex-direction: column;">
             <p w-class="rank-name">{{it.userName}}</p>
             <p w-class="rank-kt"><img src="../../res/image/KT.png" style="width:40px;height:40px;"/>{{it.ktNum}}</p>
