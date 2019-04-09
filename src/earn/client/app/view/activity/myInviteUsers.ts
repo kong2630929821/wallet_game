@@ -5,7 +5,7 @@
 import * as walletStore from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { doInvite } from '../../utils/util';
+import { doInvite, getContinuousInvitation } from '../../utils/util';
 
 export const forelet = new Forelet();
 
@@ -23,6 +23,19 @@ export class MyInviteUsers extends Widget {
     public backPrePage() {
         this.ok && this.ok();
     }
+    public tap() {
+        console.log(1);
+        const r = 10;
+        const arr = getContinuousInvitation(r);
+        arr.forEach(element => {
+            if (element.id <= r) {
+                element.success = true;
+            } else {
+                element.success = false;
+            }
+        });
+        console.log(arr);
+    }
     
 }
 
@@ -31,13 +44,13 @@ const STATE = {
     num:0,
     invites:[],
     successList:[
-        { index:1,src:'../../res/image/virtualGoods/2001.png' },
-        { index:2,src:'../../res/image/virtualGoods/2001.png' },
-        { index:3,src:'../../res/image/virtualGoods/2002.png' },
-        { index:4,src:'../../res/image/virtualGoods/2001.png' },
-        { index:5,src:'../../res/image/virtualGoods/2001.png' },
-        { index:6,src:'../../res/image/virtualGoods/2003.png' },
-        { index:7,src:'../../res/image/virtualGoods/2001.png' }
+        { id:1,prop:2001,success:false },
+        { id:2,prop:2001,success:false },
+        { id:3,prop:2002,success:false },
+        { id:4,prop:2001,success:false },
+        { id:5,prop:2001,success:false },
+        { id:6,prop:2003,success:false },
+        { id:7,prop:2001,success:false }
     ]
 };
 // 邀请好友成功
@@ -48,5 +61,14 @@ walletStore.register('inviteUsers/invite_success',(r) => {
 // 邀请好友成为真实用户的个数
 walletStore.register('flags/invite_realUser',(r) => {
     STATE.num = r;
+    const arr = getContinuousInvitation(r);
+    arr.forEach(element => {
+        if (element.id <= r) {
+            element.success = true;
+        } else {
+            element.success = false;
+        }
+    });
+    STATE.successList = arr;
     forelet.paint(STATE);
 });
