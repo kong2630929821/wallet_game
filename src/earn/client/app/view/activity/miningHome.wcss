@@ -194,3 +194,8 @@
     background:rgba(252,220,60,1);
     border-radius:5px;
 }
+.adItems{
+    font-size: 20px;
+    color:white;
+    margin: 58px 50px;
+}
