@@ -11,6 +11,7 @@ interface Props {
 export class AdAward extends Widget {
     public ok:() => void;
     public setProps(props:any,oldProps:any) {
+        debugger
         let imgUrl = '../../res/image/';
         if (props.hoeType === HoeType.IronHoe) {
             imgUrl = `${imgUrl}2001.png`;
@@ -36,9 +37,9 @@ export class AdAward extends Widget {
             this.paint();
             setTimeout(() => {
                 this.ok && this.ok();
-                this.paint();
             },2400);
         },300);
+       
     }
  
 }

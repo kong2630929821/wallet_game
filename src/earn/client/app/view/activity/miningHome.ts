@@ -10,6 +10,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { isminingHome } from '../../net/rpc_order';
 import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
@@ -297,6 +298,10 @@ export class MiningHome extends Widget {
      * 更新矿山
      */
     public updateMine() {
+        isminingHome(1).then((r:any) => {
+            console.log('观看广告次数++++++！！！！！！！！！！！！！！！！！++++++++++++++++++++++',r);
+            this.props.watchAd = r.msg;
+        });
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
@@ -324,17 +329,20 @@ export class MiningHome extends Widget {
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         if (this.props.watchAd < 10) {
-            wathcAdGetAward(1,null,(award:Award) => {
+            wathcAdGetAward(1,(award:Award) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 this.props.watchAd = award.adCount;
+                this.paint();
+            },(award:Award) => {
+                console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
                 },300);
-                
             });
         } else {
             popNewMessage({ zh_Hans: '次数已用完', zh_Hant: '次數已用完', en: '' });
         }
+        this.paint();
     }
     public clickTop() {
         console.log('top');
