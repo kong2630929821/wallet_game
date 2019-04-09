@@ -21,7 +21,7 @@ import { bigint_test, get_objStr, hit_test, item_add, item_addticket, reset_dayl
 import { Hits, IsOk } from '../../server/rpc/test.s';
 import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_task_award, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_task_award, getAdCount, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
 
 /**
  * 登录
@@ -339,6 +339,13 @@ export const convert_info_test = () => {
     });
 };
 
+// 查询当天观看广告次数
+export const adCount_test = () => {
+    clientRpcFunc(getAdCount, 1, (r: FreePlay) => {
+        console.log(r);
+    });
+};
+
 // 查询免费次数
 export const get_hasFree_test = ()  => {
     clientRpcFunc(get_hasFree, null, (r: FreePlay) => {
@@ -424,6 +431,10 @@ const props = {
         {
             name: '广告奖励',
             func: () => { ad_award_test(); }
+        },
+        {
+            name: '广告次数',
+            func: () => { adCount_test(); }
         },
         {
             name: '免费查询',
