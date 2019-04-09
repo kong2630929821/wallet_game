@@ -11,7 +11,6 @@ interface Props {
 export class AdAward extends Widget {
     public ok:() => void;
     public setProps(props:any,oldProps:any) {
-        debugger
         let imgUrl = '../../res/image/';
         if (props.hoeType === HoeType.IronHoe) {
             imgUrl = `${imgUrl}2001.png`;
