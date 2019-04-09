@@ -298,6 +298,48 @@ export const get_ad_award = (adType: number): Result => {
     return result;
 };
 
+// 查询当天看广告次数
+// #[rpc=rpcServer]
+export const getAdCount = (adType: number): Result => {
+    const result = new Result();
+    const uid = getUid();
+    const freePlayBucket = new Bucket(WARE_NAME, FreePlay._$info.name);
+    const freePlay = freePlayBucket.get<number, [FreePlay]>(uid)[0];
+    const bucket = new Bucket(WARE_NAME, DailyWatchAdNum._$info.name);
+    let dailyWatchAdNum :DailyWatchAdNum;
+    const date = get_today();
+    const pid = `${uid}:${date}`;
+    dailyWatchAdNum = bucket.get<string, [DailyWatchAdNum]>(pid)[0];
+    if (!dailyWatchAdNum) {
+        dailyWatchAdNum = new DailyWatchAdNum();
+        dailyWatchAdNum.id = pid;
+        dailyWatchAdNum.mineAdNum = 0;
+        dailyWatchAdNum.guessingAdNum = 0;
+        dailyWatchAdNum.lastTime = 0;
+    }
+    let adCount: number;
+    switch (adType) {
+        case CONSTANT.ROTARY_AD_TYPE:
+            adCount = freePlay.adAwardRotary;
+            break;
+        case CONSTANT.BOX_AD_TYPE:
+            adCount = freePlay.adAwardBox;
+            break;
+        case CONSTANT.MINE_AD_TYPE:
+            adCount = dailyWatchAdNum.mineAdNum;
+            break;
+        case CONSTANT.GUESSING_AD_TYPE:
+            adCount = dailyWatchAdNum.guessingAdNum;
+            break;
+        default:
+            adCount = 0;
+    }
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = adCount.toString();
+
+    return result;
+};
+
 // 完成任务奖励
 // #[rpc=rpcServer]
 export const get_task_award = (taskID: number): Result => {
