@@ -2,14 +2,15 @@
  * digging mines home
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { getStore } from '../../../../../app/store/memstore';
-import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
+import { popNewMessage } from '../../../../../app/utils/tools';
+import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
+import { isminingHome } from '../../net/rpc_order';
 import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
@@ -64,7 +65,8 @@ export class MiningHome extends Widget {
             allAwardType:Item_Enum,// 奖励所有类型
             awardTypes:{},    // 矿山爆掉的奖励类型
             startMining:false, // 请求挖矿标识
-            ktShow:getModulConfig('KT_SHOW')
+            ktShow:getModulConfig('KT_SHOW'),
+            watchAd:0 // 观看广告的次数
             
         };
         this.mineLocationInit();   // 矿山位置初始化
@@ -250,7 +252,7 @@ export class MiningHome extends Widget {
                 this.props.mineId = -1;
                 this.props.mineType = -1;
                 if (!r.awards) {
-                    popNew('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
+                    popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ empty:true });
                     this.paint();
 
                     return;
@@ -275,7 +277,7 @@ export class MiningHome extends Widget {
                     };
                 } 
                 console.log('获得奖励==========================================',extraAward,routineAward);
-                popNew('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
+                popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ routineAward,extraAward });
                 if (routineAward) {
                     getKTbalance();
                 }
@@ -296,6 +298,10 @@ export class MiningHome extends Widget {
      * 更新矿山
      */
     public updateMine() {
+        isminingHome(1).then((r:any) => {
+            console.log('观看广告次数++++++！！！！！！！！！！！！！！！！！++++++++++++++++++++++',r);
+            this.props.watchAd = r.msg;
+        });
         this.props.ironHoe = getHoeCount(HoeType.IronHoe);
         this.props.goldHoe = getHoeCount(HoeType.GoldHoe);
         this.props.diamondHoe = getHoeCount(HoeType.DiamondHoe);
@@ -322,13 +328,21 @@ export class MiningHome extends Widget {
         // popNew('earn-client-app-test-test'); // 测试锄头
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
-        wathcAdGetAward(1,null,(award:Award) => {
-            console.log('广告关闭  奖励内容 = ',award);
-            setTimeout(() => {
-                popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.awardType });
-            },300);
-            
-        });
+        if (this.props.watchAd < 10) {
+            wathcAdGetAward(1,(award:Award) => {
+                console.log('广告关闭  奖励内容 = ',award);
+                this.props.watchAd = award.adCount;
+                this.paint();
+            },(award:Award) => {
+                console.log('广告关闭  奖励内容 = ',award);
+                setTimeout(() => {
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
+                },300);
+            });
+        } else {
+            popNewMessage({ zh_Hans: '次数已用完', zh_Hant: '次數已用完', en: '' });
+        }
+        this.paint();
     }
     public clickTop() {
         console.log('top');

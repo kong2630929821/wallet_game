@@ -158,6 +158,36 @@ const doMining = (hoeType: number, seedMgr: RandomSeedMgr): number => {
 
     return filterCfgs[i].hits;
 };
+// 获取连续邀请好友的奖励列表
+export const getContinuousInvitation = (index:number) => {
+    console.log('index',index);
+    const cfgs = getMap(InviteAwardCfg);
+    const cfg = [];
+    for (const [k, cf] of cfgs) {
+        cfg.push(cf);
+    }
+    const awards = [];
+    if (index <= 3) {
+    
+        return cfg.slice(0,7);
+    } else if (index > 3 && index < 15) {
+        awards.push(...cfg.slice(index - 3,index));
+
+        return awards.concat(cfg.slice(index,index + 4));
+    } else {
+        let k = 0;
+        for (let i = 18;i < index + 10;i++) {
+            
+                // tslint:disable-next-line:binary-expression-operand-order
+            cfg.push({ id:i + 1,prop:2000 + k % 3 + 1,num:1 });
+            k++;
+        }
+        console.log(cfg);
+        awards.push(...cfg.slice(index - 3,index));
+        
+        return awards.concat(cfg.slice(index,index + 4));
+    }
+};
 // 获取权重对应的位置
 const getWeightIndex = (weights: number[], seed: number) => {
     const rate = RandomSeedMgr.randomSeed(seed, 1, weights[weights.length - 1]);
@@ -381,7 +411,6 @@ export const getSeriesLoginAwards = (serielLoginDays: number) => {
 
     return awards;
 };
-
  /**
   * 获取队伍信息
   * @param teamNum 可选,队伍编号，不填返回所有

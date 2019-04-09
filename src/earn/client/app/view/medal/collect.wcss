@@ -43,9 +43,6 @@
     font-size: 24px;
     color: #ffffff;
 }
-
-
-
 .collect-cabinet{
     width: 100%;
     padding: 0px 50px;
@@ -69,11 +66,6 @@
     font-weight:300;
     color:#FFFFFF;
 }
-
-
-
-
-
 .flex-col{
     display: flex;
     flex-direction: column;

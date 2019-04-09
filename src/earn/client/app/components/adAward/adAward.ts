@@ -7,6 +7,7 @@ import { HoeType } from '../../xls/hoeType.s';
 interface Props {
     hoeType:number;
 }
+// tslint:disable-next-line:completed-docs
 export class AdAward extends Widget {
     public ok:() => void;
     public setProps(props:any,oldProps:any) {
@@ -37,6 +38,7 @@ export class AdAward extends Widget {
                 this.ok && this.ok();
             },2400);
         },300);
+       
     }
  
 }

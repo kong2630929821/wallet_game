@@ -2,7 +2,7 @@
     <div w-class="inviteFrined" style="background-image: url({{it.bgImg}});background-size:contain;">
         <div w-class="inFrined">
             <div>
-                <app-components-topBar-topBar2>{text:{{it.topBarTitle}} }</app-components-topBar-topBar2>
+                <app-components-topBar-topBar2>{isOne:1,text:{{it.topBarTitle}} }</app-components-topBar-topBar2>
             </div>
             <div w-class="content" on-scroll="getMoreList">
                 <div w-class="share_main" on-tap="myInvite">
