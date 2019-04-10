@@ -78,6 +78,7 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
+        this.state = {};
         this.props.moneyName = getModulConfig('KT_SHOW');
         if (isLogin()) {
             this.ledTimer();

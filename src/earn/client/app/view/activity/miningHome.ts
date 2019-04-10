@@ -3,11 +3,11 @@
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { AdAwardResult, Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { isminingHome } from '../../net/rpc_order';
@@ -133,6 +133,7 @@ export class MiningHome extends Widget {
      * 挖矿
      */
     public mineClick(e:any) {
+
         const itype = e.itype;
         const mineId = e.mineId;
         if (this.props.startMining) return;  // 如果正在通信  不响应
@@ -158,14 +159,16 @@ export class MiningHome extends Widget {
             if (this.props.hoeSelectedLeft <= 0) return;
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
+                console.log('hits ====',hits);
                 this.hits = hits;
                 this.paint();
             });
             this.props.countDownStart = true;
             this.startTime = new Date().getTime();
             this.props.miningCount++;
-            this.countDown();
             this.bloodLoss();
+            this.countDown();
+            
             this.paint();
 
             return;
@@ -239,6 +242,7 @@ export class MiningHome extends Widget {
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
+            console.log('传参',this.props.mineType,this.props.mineId,this.props.miningCount);
             console.log('当前矿山的血量', this.props.haveMines);
             console.log('挖完了！！！！！！！！！！！！',r,this.props.miningCount);
             console.log('miningHome ==== ',this.props);
@@ -246,6 +250,7 @@ export class MiningHome extends Widget {
             this.props.startMining = false;
             if (r.resultNum !== 1) return;
             if (r.leftHp <= 0) {
+                this.hits = [];
                 this.deleteBoomMine();
                 getTodayMineNum();
                 getMiningCoinNum();
@@ -329,11 +334,11 @@ export class MiningHome extends Widget {
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
         if (this.props.countDownStart) return;
         if (this.props.watchAd < 10) {
-            wathcAdGetAward(1,(award:Award) => {
+            wathcAdGetAward(1,(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 this.props.watchAd = award.adCount;
                 this.paint();
-            },(award:Award) => {
+            },(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
                     popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
