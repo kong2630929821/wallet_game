@@ -51,8 +51,8 @@
                 </div>
 
                 <div w-class="signIn-container">
-                    {{for i,v of it.awards}}
-                    {{: flag = it.signInDays >= v.days }}
+                    {{for i,v of it1.awards}}
+                    {{: flag = it1.signInDays >= v.days }}
                     <div w-class="signIn-item">
                         <div w-class="signIn-imgDiv" style="background:{{flag?'#CCCCCC':'#FCDC3C'}}">
                             <img src="../../res/image/{{v.prop}}.png" w-class="signIn-img"/>

@@ -79,8 +79,6 @@ export class EarnHome extends Widget {
             downAnimate:'',
             animateStart:false,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
-            signInDays: flags.signInDays || 0,   // 签到总天数
-            awards: flags.loginAwards || getSeriesLoginAwards(1),  // 签到奖励
             animationed:true // 动画完成
         };
         this.initHotActivities();
@@ -379,7 +377,9 @@ register('flags/logout',() => {  // 退出钱包时刷新页面
 const STATE = {
     miningKTnum:0,
     miningRank:0,
-    miningMedalId:0
+    miningMedalId:0,
+    signInDays: 0,   // 签到总天数
+    awards: getSeriesLoginAwards(1) // 签到奖励
 };
 register('mine',(mine:Mine) => {
     // const data = walletGetStore('mine');
@@ -569,4 +569,15 @@ walletRegister('user/info',() => {
         w.initPropsNoviceTask();
         w.paint();
     }
+});
+// 监听签到天数
+register('flags/signInDays',(r:any) => {
+    STATE.signInDays = r;
+    forelet.paint(STATE);
+});
+
+// 监听签到奖励刷新
+register('flags/loginAwards',(r:any) => {
+    STATE.awards = r;
+    forelet.paint(STATE);
 });

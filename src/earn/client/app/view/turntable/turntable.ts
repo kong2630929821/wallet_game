@@ -110,7 +110,6 @@ export class Turntable extends Widget {
                 deg: (-360 / length) * i
             };
             this.props.prizeList.push(prizeItem);
-            console.log('奖品列表++++++++++++++++++++++++++++',this.props.prizeList);
         }
     }
 
