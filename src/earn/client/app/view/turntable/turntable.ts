@@ -70,7 +70,9 @@ export class Turntable extends Widget {
     };
     public create() {
         super.create();
-        this.state = {};
+        this.state = {
+            KTbalance:0
+        };
         if (isLogin()) {
             this.change(0);
             this.initTurntable();
