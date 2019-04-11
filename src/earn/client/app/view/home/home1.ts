@@ -196,16 +196,16 @@ export class EarnHome extends Widget {
         if (getStore('userInfo/uid',0) <= 0) {
             return;
         }
-        if (!getStore('flags').loginAwards) {
-            getLoginDays().then((r:SeriesDaysRes) => {
-                this.props.signInDays = r.days;
-                this.props.awards = getSeriesLoginAwards(r.days);
-                setStore('flags/loginAwards',this.props.awards);
-                setStore('flags/signInDays',this.props.signInDays);
+        // if (!getStore('flags').loginAwards) {
+        //     getLoginDays().then((r:SeriesDaysRes) => {
+        //         this.props.signInDays = r.days;
+        //         this.props.awards = getSeriesLoginAwards(r.days);
+        //         setStore('flags/loginAwards',this.props.awards);
+        //         setStore('flags/signInDays',this.props.signInDays);
 
-                this.paint();
-            });
-        }
+        //         this.paint();
+        //     });
+        // }
         getCompleteTask().then((data:any) => {
             console.log('home1 getCompleteTask',data);
             const flags = getStore('flags');
