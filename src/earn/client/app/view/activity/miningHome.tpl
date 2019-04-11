@@ -35,7 +35,7 @@
                 </div>
                 <div w-class="mining-number-container">
                     <widget w-tag="pi-ui-lang" w-class="mining-number-tips">{"zh_Hans":"今日已挖","zh_Hant":"今日已挖","en":""}</widget>
-                    <div w-class="mining-number">{{ it1.miningedNumber }}/{{ it.mineMax }}</div>
+                    <div w-class="mining-number" >{{ it1.miningedNumber + "/" + it.mineMax }}</div>
                 </div>
             </div>
             <div w-class="mine-area" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">

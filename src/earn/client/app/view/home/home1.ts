@@ -58,7 +58,6 @@ export class EarnHome extends Widget {
      */
     public init() {
         console.log('hom1 init called');
-        const mine = getStore('mine');
         const ktShow = getModulConfig('KT_SHOW');
         const flags = getStore('flags');
         this.props = {
@@ -371,6 +370,7 @@ register('flags/logout',() => {  // 退出钱包时刷新页面
     console.log('home1 -----flags/logout');
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.init();
+    w && w.paint();
 });
 // register('mine',(mine:Mine) => {
 //     const w:any = forelet.getWidget(WIDGET_NAME);
