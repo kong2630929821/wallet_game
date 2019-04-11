@@ -24,7 +24,7 @@ export const initReceive = (uid: number) => {
                         const mine = getStore('mine',{});
                         mine.miningMedalId = medalId;
                         setStore('mine',mine);
-                        popNew('earn-client-app-view-components-newMedalAlert', {
+                        popModalBoxs('earn-client-app-view-components-newMedalAlert', {
                             medalId
                         });
                     };
