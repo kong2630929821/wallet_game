@@ -1,3 +1,5 @@
+import { getStore } from '../../../../../app/store/memstore';
+import { topHeight } from '../../../../../app/utils/constants';
 import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -6,6 +8,7 @@ import { HoeType } from '../../xls/hoeType.s';
  */
 interface Props {
     hoeType:number;
+    moveTop:number;
 }
 // tslint:disable-next-line:completed-docs
 export class AdAward extends Widget {
@@ -27,18 +30,24 @@ export class AdAward extends Widget {
             moveY:0,
             imgScale:1
         };
-        super.setProps(this.props,oldProps);
+        super.setProps(this.props,oldProps);  
+    }
+    public create() {
+        super.create();
+        this.init();
+    }
+    public init() {
         setTimeout(() => {
+            const move = document.getElementById('awardMove').offsetTop;
             this.props.awardOut = true;
             this.props.moveX = -265;
-            this.props.moveY = -549;
+            this.props.moveY = -move - this.props.moveTop - getStore('setting/topHeight',topHeight);
             this.props.imgScale = 0.2;
             this.paint();
             setTimeout(() => {
                 this.ok && this.ok();
             },1200);
         },300);
-       
     }
  
 }

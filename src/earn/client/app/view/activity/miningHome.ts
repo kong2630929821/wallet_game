@@ -330,7 +330,8 @@ export class MiningHome extends Widget {
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test'); // 测试锄头
-        // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
+        // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
+
         if (this.props.countDownStart) return;
         if (this.props.watchAd < 10) {
             wathcAdGetAward(1,(award:AdAwardResult) => {
@@ -340,7 +341,7 @@ export class MiningHome extends Widget {
             },(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
                 },300);
             });
         } else {

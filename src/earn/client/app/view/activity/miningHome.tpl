@@ -3,7 +3,7 @@
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="container">
             <div on-tap="clickTop" w-class="holded-hoes" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
-                <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
+                <div id="stop" ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                     <earn-client-app-components1-holdedHoe-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-components1-holdedHoe-holdedHoe>
                 </div>
                 <div ev-hoe-click="selectHoeClick(e,{{it.hoeType.GoldHoe}})">
