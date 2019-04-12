@@ -6,10 +6,12 @@ import { getHighTop } from '../../../../app/net/pull';
 import { CloudCurrencyType } from '../../../../app/store/interface';
 import { getCloudBalances, getStore as walletGetStore } from '../../../../app/store/memstore';
 import { UserInfo } from '../../../server/data/db/user.s';
+import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
+import { getSeriesLoginAwards } from '../utils/util';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
-import { getInvitedNumberOfPerson, getKTbalance, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
+import { getInvitedNumberOfPerson, getKTbalance, getLoginDays, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
@@ -30,12 +32,16 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getUserInfo(openId, 'self'); // 获取用户信息
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
-    // getRankList();   // 获取挖矿排名
     getHighTop(100).then((data) => {
         const mine = getStore('mine',{});
         mine.miningRank = data.miningRank;
         mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT);
         setStore('mine',mine);
+    });
+    // 获取签到奖励
+    getLoginDays().then((r:SeriesDaysRes) => {
+        setStore('flags/loginAwards',getSeriesLoginAwards(r.days));
+        setStore('flags/signInDays',r.days);
     });
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();

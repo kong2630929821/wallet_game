@@ -70,7 +70,9 @@ export class Turntable extends Widget {
     };
     public create() {
         super.create();
-        this.state = {};
+        this.state = {
+            KTbalance:0
+        };
         if (isLogin()) {
             this.change(0);
             this.initTurntable();
@@ -108,7 +110,6 @@ export class Turntable extends Widget {
                 deg: (-360 / length) * i
             };
             this.props.prizeList.push(prizeItem);
-            console.log('奖品列表++++++++++++++++++++++++++++',this.props.prizeList);
         }
     }
 

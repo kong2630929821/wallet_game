@@ -36,7 +36,7 @@ export class AdAward extends Widget {
             this.paint();
             setTimeout(() => {
                 this.ok && this.ok();
-            },2400);
+            },1200);
         },300);
        
     }
