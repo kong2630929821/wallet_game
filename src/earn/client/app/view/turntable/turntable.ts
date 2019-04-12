@@ -12,6 +12,7 @@ import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openTurntable } from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
+import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
@@ -109,6 +110,7 @@ export class Turntable extends Widget {
                 deg: (-360 / length) * i
             };
             this.props.prizeList.push(prizeItem);
+            console.log('奖品列表++++++++++++++++++++++++++++',this.props.prizeList);
         }
     }
 
@@ -167,12 +169,11 @@ export class Turntable extends Widget {
                 btn2:'知道了'// 按钮2
             },(num) => {
                 if (num === 1) {
-                    // wathcAdGetAward(3,(award) => {
-                    //     this.props.freeCount = award.freeRotary;
-                    //     this.props.watchAdAward = award.adAwardRotary;
-                    //     this.setChestTip(2);
-                    // });
-                    popNewMessage('敬请期待');
+                    wathcAdGetAward(3,(award) => {
+                        this.props.freeCount = award.freeRotary;
+                        this.props.watchAdAward = award.adAwardRotary;
+                        this.setChestTip(2);
+                    });
                 } else {
                     this.paint();
                 }
@@ -263,24 +264,23 @@ export class Turntable extends Widget {
         }, 100);
         switch (eventType) { // 看广告
             case 0:
-                // if (this.props.watchAdAward < 10) {
-                //     wathcAdGetAward(3,(award) => {
-                //         this.props.freeCount = award.freeRotary;
-                //         this.props.watchAdAward = award.adAwardRotary;
-                //         popNewMessage(this.config.value.turntableTips[2]);
-                //         this.setChestTip(2);
-                //     });
-                // } else {
-                //     popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
-                //         img:'../../res/image/no_chance.png',
-                //         btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
-                //         btn2:'知道了',// 按钮2
-                //         isColor:true
-                //     },(num) => {
-                //         this.paint();
-                //     });
-                // }
-                popNewMessage('敬请期待');
+                if (this.props.watchAdAward < 10) {
+                    wathcAdGetAward(3,(award) => {
+                        this.props.freeCount = award.freeRotary;
+                        this.props.watchAdAward = award.adAwardRotary;
+                        popNewMessage(this.config.value.turntableTips[2]);
+                        this.setChestTip(2);
+                    });
+                } else {
+                    popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
+                        img:'../../res/image/no_chance.png',
+                        btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
+                        btn2:'知道了',// 按钮2
+                        isColor:true
+                    },(num) => {
+                        this.paint();
+                    });
+                }
                 break;
             case 1:          // 充值
                 popNew('app-view-wallet-cloudWallet-rechargeKT',null,() => {

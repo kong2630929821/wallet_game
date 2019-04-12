@@ -11,6 +11,7 @@ import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
 import { getStore, register, setStore } from '../../store/memstore';
+import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
@@ -123,7 +124,6 @@ export class OpenBox extends Widget {
             }
         } else if (this.state.KTbalance < this.props.selectChest.needTicketNum) {
             popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
-
             return;
         }
         this.startOpenChest(e);
@@ -154,12 +154,11 @@ export class OpenBox extends Widget {
                 btn2:'知道了'// 按钮2
             },(num) => {
                 if (num === 1) {
-                    // wathcAdGetAward(4,(award) => {
-                    //     this.props.freeCount = award.freeBox;
-                    //     this.props.watchAdAward = award.adAwardBox;
-                    //     this.setChestTip(2);
-                    // });
-                    popNewMessage('敬请期待');
+                    wathcAdGetAward(4,(award) => {
+                        this.props.freeCount = award.freeBox;
+                        this.props.watchAdAward = award.adAwardBox;
+                        this.setChestTip(2);
+                    });
                 } else {
                     this.paint();
                 }
@@ -317,24 +316,23 @@ export class OpenBox extends Widget {
                 this.resetBoxList();
                 break;
             case 1:          // 看广告
-                // if (this.props.watchAdAward < 10) {
-                //     wathcAdGetAward(4,(award) => {
-                //         this.props.freeCount = award.freeBox;
-                //         this.props.watchAdAward = award.adAwardBox;
-                //         popNewMessage(this.config.value.chestTips[2]);
-                //         this.setChestTip(2);
-                //     }); 
-                // } else {
-                //     popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
-                //         img:'../../res/image/no_chance.png',
-                //         btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
-                //         btn2:'知道了',// 按钮2
-                //         isColor:true
-                //     },(num) => {
-                //         this.paint();
-                //     });
-                // }
-                popNewMessage('敬请期待');
+                if (this.props.watchAdAward < 10) {
+                    wathcAdGetAward(4,(award) => {
+                        this.props.freeCount = award.freeBox;
+                        this.props.watchAdAward = award.adAwardBox;
+                        popNewMessage(this.config.value.chestTips[2]);
+                        this.setChestTip(2);
+                    }); 
+                } else {
+                    popModalBoxs('earn-client-app-components-lotteryModal-lotteryModal1', {
+                        img:'../../res/image/no_chance.png',
+                        btn1:`免费机会已用完(${this.props.watchAdAward}/${10})`,// 按钮1 
+                        btn2:'知道了',// 按钮2
+                        isColor:true
+                    },(num) => {
+                        this.paint();
+                    });
+                }
                 
                 break;
             case 2:          // 更换宝箱类型
