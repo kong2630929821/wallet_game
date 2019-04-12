@@ -5,7 +5,7 @@
 
 import * as walletStore from '../../../../app/store/memstore';
 import { popNewMessage } from '../../../../app/utils/tools';
-import { popModalBoxs, popNew } from '../../../../pi/ui/root';
+import { popModalBoxs } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { getStore, register, setStore } from '../store/memstore';
 import { subscribe } from './init';

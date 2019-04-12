@@ -328,25 +328,27 @@ export class MiningHome extends Widget {
      * 看广告
      */
     public watchAdClick() {
+        popNewMessage('敬请期待');
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
         // popNew('earn-client-app-test-test'); // 测试锄头
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe });
-        if (this.props.countDownStart) return;
-        if (this.props.watchAd < 10) {
-            wathcAdGetAward(1,(award:AdAwardResult) => {
-                console.log('广告关闭  奖励内容 = ',award);
-                this.props.watchAd = award.adCount;
-                this.paint();
-            },(award:AdAwardResult) => {
-                console.log('广告关闭  奖励内容 = ',award);
-                setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
-                },300);
-            });
-        } else {
-            popNewMessage({ zh_Hans: '次数已用完', zh_Hant: '次數已用完', en: '' });
-        }
-        this.paint();
+
+        // if (this.props.countDownStart) return;
+        // if (this.props.watchAd < 10) {
+        //     wathcAdGetAward(1,(award:AdAwardResult) => {
+        //         console.log('广告关闭  奖励内容 = ',award);
+        //         this.props.watchAd = award.adCount;
+        //         this.paint();
+        //     },(award:AdAwardResult) => {
+        //         console.log('广告关闭  奖励内容 = ',award);
+        //         setTimeout(() => {
+        //             popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType });
+        //         },300);
+        //     });
+        // } else {
+        //     popNewMessage({ zh_Hans: '次数已用完', zh_Hant: '次數已用完', en: '' });
+        // }
+        // this.paint();
     }
     public clickTop() {
         console.log('top');
