@@ -379,7 +379,7 @@ const STATE = {
     miningRank:0,
     miningMedalId:0,
     signInDays: 0,   // 签到总天数
-    awards: getSeriesLoginAwards(1) // 签到奖励
+    awards:[] // 签到奖励
 };
 register('mine',(mine:Mine) => {
     // const data = walletGetStore('mine');
