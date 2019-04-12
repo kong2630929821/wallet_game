@@ -67,6 +67,7 @@ export class MiningHome extends Widget {
             startMining:false, // 请求挖矿标识
             ktShow:getModulConfig('KT_SHOW'),
             watchAd:0 // 观看广告的次数
+            
         };
         this.mineLocationInit();   // 矿山位置初始化
         console.log('miningHome props----------',this.props);
@@ -375,7 +376,6 @@ register('goods',(goods:Item[]) => {
 // 监听矿山
 register('mine',(mine:Mine) => {
     STATE.miningedNumber = mine.miningedNumber;
-    console.log('mininghome mine -------------------',STATE);
     forelet.paint(STATE);
 });
 
@@ -406,6 +406,5 @@ register('flags/logout',(logout:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (logout) {
         w && w.init();
-        w && w.paint();
     }
 });
