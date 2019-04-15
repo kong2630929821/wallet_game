@@ -342,7 +342,7 @@ export class MiningHome extends Widget {
             },(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType,moveTop:document.querySelector('#stop').offsetTop });
                 },300);
             });
         } else {
