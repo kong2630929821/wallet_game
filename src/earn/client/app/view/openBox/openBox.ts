@@ -2,6 +2,8 @@
  * 开宝箱 - 首页
  */
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -10,7 +12,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
-import { getStore, register, setStore } from '../../store/memstore';
+import { getStore, Mine,register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -78,14 +80,10 @@ export class OpenBox extends Widget {
 
     public create() {
         super.create();
-        this.state = {
-            KTbalance:0
-        };
+        this.state = STATE;
         this.props.moneyName = getModulConfig('KT_SHOW');
         if (isLogin()) {
             this.ledTimer();
-            getKTbalance();
-            this.state.KTbalance = getStore('balance/KT') || 0;
             isFirstFree().then((res: FreePlay) => {
                 this.props.freeCount = res.freeBox;
                 this.props.watchAdAward = res.adAwardBox;
@@ -365,7 +363,10 @@ export class OpenBox extends Widget {
 }
 
 // ===================================================== 立即执行
-
-register('balance/KT', (r: any) => {
-    forelet.paint({ KTbalance:r });
+const STATE = {
+    KTbalance:0
+};
+register('mine',(mine:Mine) => {
+    STATE.KTbalance = getCloudBalances().get(CloudCurrencyType.KT) || 0; 
+    forelet.paint(STATE);
 });

@@ -3,6 +3,8 @@
  */
 
 import { getModulConfig } from '../../../../../app/modulConfig';
+import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -11,7 +13,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openTurntable } from '../../net/rpc_order';
-import { getStore, register, setStore } from '../../store/memstore';
+import { getStore, Mine, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -70,16 +72,12 @@ export class Turntable extends Widget {
     };
     public create() {
         super.create();
-        this.state = {
-            KTbalance:0
-        };
+        this.state = STATE;
         if (isLogin()) {
             this.change(0);
             this.initTurntable();
             this.ledTimer();
-            // getKTbalance();
             this.props.moneyName = getModulConfig('KT_SHOW');
-            this.state.KTbalance = getStore('balance/KT') || 0;
             console.log('我的余额是：--------------------------------',this.state.KTbalance);
             isFirstFree().then((res:FreePlay) => {
                 this.props.freeCount = res.freeRotary;
@@ -220,8 +218,6 @@ export class Turntable extends Widget {
             this.endLottery();
             if (resData.awardType !== 9527) {
                 popNew('earn-client-app-components-lotteryModal-lotteryModal', resData);
-                getKTbalance();  // 更新余额
-                this.state.KTbalance = getStore('balance/KT') || 0;
             }
             this.paint();
         }, 3500);
@@ -364,7 +360,10 @@ export class Turntable extends Widget {
 }
 
 // ===================================================== 立即执行
-
-register('balance/KT',(r:number) => {
-    forelet.paint({ KTbalance:r });
+const STATE = {
+    KTbalance:0
+};
+register('mine',(mine:Mine) => {
+    STATE.KTbalance = getCloudBalances().get(CloudCurrencyType.KT) || 0; 
+    forelet.paint(STATE);
 });
