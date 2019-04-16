@@ -16,6 +16,8 @@ import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
+import { getCloudBalances } from '../../../../../app/store/memstore';
+import { CloudCurrencyType } from '../../../../../app/store/interface';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -376,20 +378,21 @@ register('goods',(goods:Item[]) => {
 // 监听矿山
 register('mine',(mine:Mine) => {
     STATE.miningedNumber = mine.miningedNumber;
+    STATE.miningNumber = getCloudBalances().get(CloudCurrencyType.KT) || 0;
     forelet.paint(STATE);
 });
 
-// 监听嗨豆
-register('balance/KT',(r:number) => {
-    STATE.miningNumber = r;
-    // const mineHai = getStore('mine',{});    
-    const mine = getEarnStore('mine',{});
-    // mine.miningRank = mineHai.miningRank || mine.miningRank;
-    mine.miningKTnum = getEarnStore('balance/KT') || 0;                    
-    setEarnStore('mine',mine);
-    console.log('ssssssssssssssssssssssssss',STATE);
-    forelet.paint(STATE);
-});
+// // 监听嗨豆
+// register('balance/KT',(r:number) => {
+//     STATE.miningNumber = getCloudBalances().get(CloudCurrencyType.KT) || 0;
+//     // const mineHai = getStore('mine',{});    
+//     const mine = getEarnStore('mine',{});
+//     // mine.miningRank = mineHai.miningRank || mine.miningRank;
+//     mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT) || 0;      
+//     setEarnStore('mine',mine);
+//     console.log('ssssssssssssssssssssssssss',STATE);
+//     forelet.paint(STATE);
+// });
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     if (earnHomeHidden) {
         setTimeout(() => {

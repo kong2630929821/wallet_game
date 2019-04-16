@@ -93,7 +93,7 @@ export class MineRank extends Widget {
                     console.log('最高勋章列表',resList);
                     const mine = getStore('mine',{});
                     mine.miningRank = res.miningRank || 0;
-                    mine.miningKTnum = getStore('balance/KT') || 0;
+                    mine.miningKTnum =  getCloudBalances().get(CloudCurrencyType.KT) || 0;
                     setStore('mine',mine);                                   
                     res.rank.forEach((v,i) => {
                         if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';

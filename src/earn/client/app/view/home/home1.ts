@@ -4,7 +4,8 @@
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { getModulConfig } from '../../../../../app/modulConfig';
-import { getStore as walletGetStore,register as walletRegister } from '../../../../../app/store/memstore';
+import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { getCloudBalances,getStore as walletGetStore, register as walletRegister } from '../../../../../app/store/memstore';
 import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -382,7 +383,7 @@ const STATE = {
 };
 register('mine',(mine:Mine) => {
     // const data = walletGetStore('mine');
-    STATE.miningKTnum = mine.miningKTnum;
+    STATE.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT) || 0;
     STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
     forelet.paint(STATE);
