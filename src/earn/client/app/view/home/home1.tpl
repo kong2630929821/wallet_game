@@ -79,7 +79,9 @@
                             <div>
                                 <div w-class="noviceTask-title">
                                     {{item.title}}
+                                    {{if item.img}}
                                     <img src="../../res/image/{{item.img}}" style="width:50px;margin:0 10px;vertical-align: bottom"/>
+                                    {{end}}
                                     {{if item.addOne}}
                                     <span w-class="add-one">+1</span>
                                     {{end}}

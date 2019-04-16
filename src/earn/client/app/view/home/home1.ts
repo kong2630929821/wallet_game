@@ -59,7 +59,6 @@ export class EarnHome extends Widget {
     public init() {
         console.log('hom1 init called');
         const ktShow = getModulConfig('KT_SHOW');
-        const flags = getStore('flags');
         this.props = {
             ...this.props,
             offlienType:OfflienType.EARN,
@@ -377,7 +376,7 @@ register('flags/logout',() => {  // 退出钱包时刷新页面
 const STATE = {
     miningKTnum:0,
     miningRank:0,
-    miningMedalId:0,
+    miningMedalId:8001,
     signInDays: 0,   // 签到总天数
     awards:[] // 签到奖励
 };
