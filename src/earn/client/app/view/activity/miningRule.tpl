@@ -27,7 +27,7 @@
                 </div>
             </div>
             
-            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"锄头的获得","zh_Hant":"鋤頭的獲得","en":""}</widget></div>
+            <div w-class="title"><widget w-tag="pi-ui-lang">{"zh_Hans":"矿镐的获得","zh_Hant":"礦鎬的獲得","en":""}</widget></div>
             <div w-class="get-type">
                 {{for index,item of it.getMethod}}
                 <div w-class="get-item" >
@@ -59,7 +59,7 @@
                         <div w-class="mine-name"><widget w-tag="pi-ui-lang">{"zh_Hans":"稀世矿山","zh_Hant":"稀世礦山","en":""}</widget></div>
                     </div>
                 </div>
-                <div w-class="mine-desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"每日登陆都会赠送矿山，矿场最多储备{{it.mineMax}}座矿山，消耗掉矿山会继续赠送。","zh_Hant":"每日登陸都會贈送礦山，礦場最多儲備{{it.mineMax}}座礦山，消耗掉礦山會繼續贈送。","en":""}</widget></div>
+                <div w-class="mine-desc"><widget w-tag="pi-ui-lang">{"zh_Hans":"每日登录都会赠送矿山，矿场最多储备{{it.mineMax}}座矿山，消耗掉矿山会继续赠送。","zh_Hant":"每日登陸都會贈送礦山，礦場最多儲備{{it.mineMax}}座礦山，消耗掉礦山會繼續贈送。","en":""}</widget></div>
                 <div w-class="mine-desc" style="margin-top:0px;"><widget w-tag="pi-ui-lang">{"zh_Hans":"每种矿山挖出的东西是不一样的","zh_Hant":"每種礦山挖出的東西是不一樣的","en":""}</widget></div>
             </div>
         </div>

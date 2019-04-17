@@ -18,8 +18,8 @@ export class MiningRule extends Widget {
                     desc:{ zh_Hans:'新用户注册即送',zh_Hant:'新用戶註冊即送',en:'' },
                     action:''
                 },{
-                    title:{ zh_Hans:'连续登陆：',zh_Hant:'連續登陸：',en:'' },
-                    desc:{ zh_Hans:'每日登陆赠送镐，连续登陆赠送更多镐。',zh_Hant:'每日登陸贈送鎬，連續登陸贈送更多鎬。',en:'' },
+                    title:{ zh_Hans:'连续登录：',zh_Hant:'連續登陸：',en:'' },
+                    desc:{ zh_Hans:'每日登录赠送镐，连续登录赠送更多镐。',zh_Hant:'每日登陸贈送鎬，連續登陸贈送更多鎬。',en:'' },
                     action:''
                 },{
                     title:{ zh_Hans:'邀请好友：',zh_Hant:'邀請好友：',en:'' },
@@ -31,10 +31,6 @@ export class MiningRule extends Widget {
                     desc:{ zh_Hans:'被邀请人会获得邀请人同等的额外奖励，但是同一个账号只能被邀请一次。',zh_Hant:'被邀請人會獲得邀請人同等的額外獎勵，但是同一個賬號只能被邀請一次。',en:'' },
                     action:{ zh_Hans:'去填写邀请码',zh_Hant:'去填寫邀請碼',en:'' },
                     page:'app-view-earn-exchange-exchange'
-                },{
-                    title:{ zh_Hans:'提建议：',zh_Hant:'提建議：',en:'' },
-                    desc:[{ zh_Hans:'5字以上的建议，即可获得铜镐1-5把',zh_Hant:'5字以上的建議，即可獲得銅鎬1-5把',en:'' },{ zh_Hans:'有效建议可获得银镐5把',zh_Hant:'有效建議可獲得銀鎬5把',en:'' },{ zh_Hans:'建议被采纳获得金镐5把',zh_Hant:'建議被採納獲得金鎬5把',en:'' }],
-                    action:''
                 },{
                     title:{ zh_Hans:'观看广告：',zh_Hant:'觀看廣告：',en:'' },
                     desc:{ zh_Hans:'每个广告奖励铜镐一把，但是有可能会遇上金银镐哦。',zh_Hant:'每個廣告獎勵銅鎬一把，但是有可能會遇上金銀鎬哦。',en:'' },

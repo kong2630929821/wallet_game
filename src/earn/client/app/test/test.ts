@@ -170,7 +170,7 @@ export const bigInt_test = () => {
     });
 };
 
-// 连续登陆天数
+// 连续登录天数
 export const get_series_days = () => {
     clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
         console.log(r);

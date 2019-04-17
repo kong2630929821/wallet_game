@@ -68,7 +68,7 @@ export const chatRegister = () => {
     });
 };
 
-// 聊天登陆
+// 聊天登录
 export const chatLogin = () => {
     const userType = new chatBasic.UserType();
     userType.enum_type = chatBasic.UserType_Enum.DEF;
@@ -200,7 +200,7 @@ export const bigInt_test = () => {
     });
 };
 
-// 连续登陆天数
+// 连续登录天数
 export const get_series_days = () => {
     clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
         console.log(r);
@@ -409,15 +409,15 @@ const props = {
             func: () => { groupEditor(); }
         },
         {
-            name: '登陆',
+            name: '登录',
             func: () => { loginTest(); }
         },
         {
-            name: '登陆天数',
+            name: '登录天数',
             func: () => { get_series_days(); }
         },
         // {
-        //     name: '退出登陆',
+        //     name: '退出登录',
         //     func: () => { quit_test(); }
         // },
         // {

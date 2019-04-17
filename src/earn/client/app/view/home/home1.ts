@@ -77,7 +77,7 @@ export class EarnHome extends Widget {
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
-            isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登陆成功
+            isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登录成功
             animationed:true // 动画完成
         };
         this.initHotActivities();
@@ -390,7 +390,7 @@ register('mine',(mine:Mine) => {
 });
 
 let firstLoginDelay = false;
-// 首次登陆奖励
+// 首次登录奖励
 const firstloginAward = () => {
     // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
     //     title:'新用户',
