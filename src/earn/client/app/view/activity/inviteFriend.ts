@@ -77,7 +77,7 @@ export class InviteFriend extends Widget {
         this.initData();
     }
     public copyAddr() {
-        copyToClipboard(this.props.address);
+        copyToClipboard(this.props.inviteCode);
         popNewMessage(this.language.tips[0]);
     }
     // 我的邀请
