@@ -3,25 +3,26 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { getStoreData } from '../../../../../app/middleLayer/memBridge';
+import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { getCloudBalances,getStore as walletGetStore, register as walletRegister } from '../../../../../app/store/memstore';
-import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
-import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
+import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
 import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
-import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { bind_accID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
-import { getCompleteTask, getLoginDays } from '../../net/rpc';
+import { getCompleteTask } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
-import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
+import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -66,7 +67,7 @@ export class EarnHome extends Widget {
             ktShow,
             scrollHeight: 0,            
             refresh: false,
-            avatar: getUserInfo().avatar ||  '../../res/image1/default_avatar.png',
+            avatar: '../../res/image1/default_avatar.png',
             // 热门活动
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
@@ -78,10 +79,15 @@ export class EarnHome extends Widget {
             downAnimate:'',
             animateStart:false,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登录成功
-            animationed:true // 动画完成
+            animationed:true, // 动画完成
+            noviceTask:[]
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
+        callGetUserInfo().then(userInfo => {
+            this.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
+            this.paint();
+        });
     }
 
     public initHotActivities() {
@@ -118,74 +124,76 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask() {
-        const wallet = walletGetStore('wallet');
-        const flags = getStore('flags');
-        // tslint:disable-next-line:ban-comma-operator
-        this.props.noviceTask = [
-            {
-                img: '',
-                title: '验证手机号',
-                desc: '凭借手机验证可找回云端资产',
-                btn:'去绑定',
-                addOne:false,
-                components:'app-view-mine-setting-phone',
-                complete: !!getUserInfo().phoneNumber,
-                show:true
-            },{
-                img: '2003.png',
-                title: '首次充值成功',
-                desc: '充值玩更多游戏',
-                btn:'去充值',
-                addOne:true,
-                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
-                complete: !!flags.firstRecharge,
-                show:true
-            },{
-                img: '2001.png',
-                title: '参与聊天',
-                desc: '和大家聊一聊最近的热点',
-                btn:'去聊天',
-                addOne:true,                
-                components:'goChat',
-                complete:!!flags.firstChat,
-                show:true
-            },{
-                img: 'task_gift.png',
-                title: '玩一把大转盘',
-                desc: '每天赠送初级大转盘一次抽奖机会',
-                btn:'去抽奖',
-                addOne:false,
-                components:'earn-client-app-view-turntable-turntable',
-                complete: !!flags.firstTurntable,
-                show:true
-            },{
-                img: 'task_gift.png',
-                title: '开个初级宝箱',
-                desc: '每天免费开初级宝箱一次',
-                btn:'开个宝箱',
-                addOne:false,                
-                components:'earn-client-app-view-openBox-openBox',
-                complete: !!flags.firstOpenBox,
-                show:true
-            },{
-                img: '2002.png',
-                title: '去备份助记词',
-                desc: '助记词是您找回账号的唯一凭证',
-                btn:'去备份',
-                addOne:true,                
-                components:'backUp',
-                complete: !!flags.helpWord,
-                show:wallet && wallet.setPsw
-            }, {
-                img: '2003.png',
-                title: `去分享秘钥片段`,
-                desc: '分享使保存更安全',
-                btn:'分享片段',
-                addOne:true,                
-                components:'sharePart',
-                complete: !!flags.sharePart,
-                show:wallet && wallet.setPsw
-            }];
+        Promise.all([getStoreData('wallet'),callGetUserInfo()]).then(([wallet,userInfo]) => {
+            const flags = getStore('flags');
+            // tslint:disable-next-line:ban-comma-operator
+            this.props.noviceTask = [
+                {
+                    img: '',
+                    title: '验证手机号',
+                    desc: '凭借手机验证可找回云端资产',
+                    btn:'去绑定',
+                    addOne:false,
+                    components:'app-view-mine-setting-phone',
+                    complete: !!userInfo.phoneNumber,
+                    show:true
+                },{
+                    img: '2003.png',
+                    title: '首次充值成功',
+                    desc: '充值玩更多游戏',
+                    btn:'去充值',
+                    addOne:true,
+                    components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
+                    complete: !!flags.firstRecharge,
+                    show:true
+                },{
+                    img: '2001.png',
+                    title: '参与聊天',
+                    desc: '和大家聊一聊最近的热点',
+                    btn:'去聊天',
+                    addOne:true,                
+                    components:'goChat',
+                    complete:!!flags.firstChat,
+                    show:true
+                },{
+                    img: 'task_gift.png',
+                    title: '玩一把大转盘',
+                    desc: '每天赠送初级大转盘一次抽奖机会',
+                    btn:'去抽奖',
+                    addOne:false,
+                    components:'earn-client-app-view-turntable-turntable',
+                    complete: !!flags.firstTurntable,
+                    show:true
+                },{
+                    img: 'task_gift.png',
+                    title: '开个初级宝箱',
+                    desc: '每天免费开初级宝箱一次',
+                    btn:'开个宝箱',
+                    addOne:false,                
+                    components:'earn-client-app-view-openBox-openBox',
+                    complete: !!flags.firstOpenBox,
+                    show:true
+                },{
+                    img: '2002.png',
+                    title: '去备份助记词',
+                    desc: '助记词是您找回账号的唯一凭证',
+                    btn:'去备份',
+                    addOne:true,                
+                    components:'backUp',
+                    complete: !!flags.helpWord,
+                    show:wallet && wallet.setPsw
+                }, {
+                    img: '2003.png',
+                    title: `去分享秘钥片段`,
+                    desc: '分享使保存更安全',
+                    btn:'分享片段',
+                    addOne:true,                
+                    components:'sharePart',
+                    complete: !!flags.sharePart,
+                    show:wallet && wallet.setPsw
+                }];
+            this.paint();
+        });
     }
     /**
      * 刷新任务数据
@@ -236,7 +244,6 @@ export class EarnHome extends Widget {
      * 热门活动进入
      */
     public goHotActivity(ind: number) {
-        if (!hasWallet()) return;
         const page = this.props.hotActivities[ind].components;
         popNew3(page);
     }
@@ -245,22 +252,19 @@ export class EarnHome extends Widget {
      * 新手任务
      */
     public async goNoviceTask(ind:number) {
-        if (!hasWallet()) return;
         const page = this.props.noviceTask[ind].components;
         if (page === 'backUp') {  // 去备份
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletToolsMod();
-            const ret = await walletToolsMod.backupMnemonic(psw);
+            const ret = await exportMnemonic(psw);
             if (ret) {
-                popNew3('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
+                popNew3('app-view-wallet-backup-index',{ ...ret });
                 // this.backPrePage();
             }
         } else if (page === 'sharePart') { // 分享片段
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletToolsMod();
-            const ret = await walletToolsMod.backupMnemonic(psw);
+            const ret = await exportMnemonic(psw);
             if (ret) {
                 popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
             }
@@ -276,7 +280,6 @@ export class EarnHome extends Widget {
      */
     public miningClick() {
         if (!this.props.animationed) return;  // 如果没完成就禁用打开挖矿
-        if (!hasWallet()) return;
         this.props.upAnimate = 'put-out-up';
         this.props.downAnimate = 'put-out-down';
         this.props.animateStart = true;
@@ -318,7 +321,6 @@ export class EarnHome extends Widget {
     }
 
     public goMineRank() {
-        if (!hasWallet()) return;
         popNew3('earn-client-app-view-mineRank-mineRank');
     }
     
@@ -520,6 +522,7 @@ chatStore.register('flags/firstChat',() => {
         });
     }
 });
+
 register('flags/firstTurntable',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次玩大转盘
@@ -564,10 +567,12 @@ walletRegister('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         // tslint:disable-next-line:ban-comma-operator
-        w.props.avatar = getUserInfo().avatar ||  '../../res/image1/default_avatar.png';
-        w.initHotActivities();
-        w.initPropsNoviceTask();
-        w.paint();
+        callGetUserInfo().then(userInfo => {
+            w.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
+            w.initHotActivities();
+            w.initPropsNoviceTask();
+            w.paint();
+        });
     }
 });
 // 监听签到天数

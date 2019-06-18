@@ -2,8 +2,8 @@
  * 大转盘 - 首页
  */
 
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';

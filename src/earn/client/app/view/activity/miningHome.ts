@@ -1,7 +1,9 @@
 /**
  * digging mines home
  */
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -16,8 +18,6 @@ import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
-import { getCloudBalances } from '../../../../../app/store/memstore';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

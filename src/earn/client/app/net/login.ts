@@ -1,16 +1,17 @@
 /**
  * 登录
  */
-import { loginWallet, logoutWallet } from '../../../../app/net/login';
-import { getHighTop } from '../../../../app/net/pull';
-import { CloudCurrencyType } from '../../../../app/store/interface';
+import { callGetHighTop } from '../../../../app/middleLayer/netBridge';
+import { CloudCurrencyType } from '../../../../app/publicLib/interface';
 import { getCloudBalances, getStore as walletGetStore } from '../../../../app/store/memstore';
+import { loginWallet, logoutWallet } from '../../../../app/viewLogic/login';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { getSeriesLoginAwards } from '../utils/util';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
+// tslint:disable-next-line:max-line-length
 import { getInvitedNumberOfPerson, getKTbalance, getLoginDays, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
@@ -32,7 +33,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getUserInfo(openId, 'self'); // 获取用户信息
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
-    getHighTop(100).then((data) => {
+    callGetHighTop(100).then((data) => {
         const mine = getStore('mine',{});
         mine.miningRank = data.miningRank;
         mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT);

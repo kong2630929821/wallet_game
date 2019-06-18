@@ -2,7 +2,7 @@
  * 兑换虚拟奖品列表
  */
 
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 

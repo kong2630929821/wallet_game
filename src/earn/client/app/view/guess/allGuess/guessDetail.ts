@@ -2,7 +2,7 @@
  * 竞猜详情-下单
  */
 
-import { getModulConfig } from '../../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../../app/utils/tools';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';

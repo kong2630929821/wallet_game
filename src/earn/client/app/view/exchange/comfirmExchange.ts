@@ -2,10 +2,10 @@
  * 兑换确认
  */
 
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { exchangeVirtual, queryExchangeOrder } from '../../net/rpc_order';
-import { popNew } from '../../../../../pi/ui/root';
 
 interface Props {
     STcout:number;
