@@ -2,11 +2,10 @@
  * 挖矿排名
  */
 
-import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
 import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getCloudBalances } from '../../../../../app/store/memstore';
-import {  popNew3 } from '../../../../../app/utils/tools';
+import {  getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { getChatUid } from '../../../../../chat/client/app/net/rpc';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -80,7 +79,7 @@ export class MineRank extends Widget {
      * 更新props数据
      */
     public initData() {
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             if (this.props.topbarSel === 0) {
                 getHighTop(100).then(async (res: any) => {  // TODO排名
                     console.log('排行榜++++++++++++++++++++++',res);
@@ -208,7 +207,7 @@ export class MineRank extends Widget {
     }
 
     public details(index:number) {
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             const uid = userInfo.acc_id;
             console.log(this.props.rankList);
             if (this.props.rankList[index].acc_id === uid) {

@@ -3,11 +3,10 @@
  */
 
 import { shareDownload } from '../../../../../app/config';
-import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
 import { getInviteCode } from '../../../../../app/net/pull';
 import { LuckyMoneyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { copyToClipboard, popNew3, popNewMessage } from '../../../../../app/utils/tools';
+import { copyToClipboard, getUserInfo, popNew3, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -59,7 +58,7 @@ export class InviteFriend extends Widget {
             this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
             this.paint();
         });
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.nickName = `"${userInfo.nickName}"`;
             this.paint();
         });

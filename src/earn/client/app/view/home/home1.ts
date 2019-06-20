@@ -3,12 +3,11 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getStoreData } from '../../../../../app/middleLayer/memBridge';
-import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
+import { getStoreData } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { getCloudBalances,getStore as walletGetStore, register as walletRegister } from '../../../../../app/store/memstore';
-import { popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { getUserInfo, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
@@ -84,7 +83,7 @@ export class EarnHome extends Widget {
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
             this.paint();
         });
@@ -124,7 +123,7 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask() {
-        Promise.all([getStoreData('wallet'),callGetUserInfo()]).then(([wallet,userInfo]) => {
+        Promise.all([getStoreData('wallet'),getUserInfo()]).then(([wallet,userInfo]) => {
             const flags = getStore('flags');
             // tslint:disable-next-line:ban-comma-operator
             this.props.noviceTask = [
@@ -567,7 +566,7 @@ walletRegister('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         // tslint:disable-next-line:ban-comma-operator
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             w.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
             w.initHotActivities();
             w.initPropsNoviceTask();

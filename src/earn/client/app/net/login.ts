@@ -1,7 +1,7 @@
 /**
  * 登录
  */
-import { callGetHighTop } from '../../../../app/middleLayer/netBridge';
+import { callGetHighTop } from '../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../app/publicLib/interface';
 import { getCloudBalances, getStore as walletGetStore } from '../../../../app/store/memstore';
 import { loginWallet, logoutWallet } from '../../../../app/viewLogic/login';

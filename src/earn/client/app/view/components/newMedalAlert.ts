@@ -3,7 +3,6 @@
  */
 
 import { shareDownload } from '../../../../../app/config';
-import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
@@ -49,7 +48,7 @@ export class NewMedalAlert extends Widget {
         };
         console.log(this.props);
         super.setProps(this.props);
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             this.props.userInfo = userInfo;
         });
     }

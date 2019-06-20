@@ -2,8 +2,7 @@
  * 我的收藏 --主页
  */
 
-import { callGetUserInfo } from '../../../../../app/middleLayer/toolsBridge';
-import { popNewMessage } from '../../../../../app/utils/tools';
+import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
 import { makeScreenShot } from '../../../../../app/viewLogic/native';
 import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
@@ -34,7 +33,7 @@ export class Collect extends Widget {
     public create() {
         super.create();
         const list = getACHVmedalList('偶然成就','typeNum');
-        callGetUserInfo().then(userInfo => {
+        getUserInfo().then(userInfo => {
             if (userInfo) {  
                 this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
             }
