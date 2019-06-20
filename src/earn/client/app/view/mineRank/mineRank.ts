@@ -2,9 +2,8 @@
  * 挖矿排名
  */
 
-import { getFriendsKTTops, getHighTop, getUserList } from '../../../../../app/net/pull';
+import { getUserList } from '../../../../../app/net/pull';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import { getCloudBalances } from '../../../../../app/store/memstore';
 import {  getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { getChatUid } from '../../../../../chat/client/app/net/rpc';

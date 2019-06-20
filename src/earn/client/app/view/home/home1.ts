@@ -3,12 +3,12 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getStoreData } from '../../../../../app/middleLayer/wrap';
+import { callGetCloudBalances, getStoreData, registerStore } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getCloudBalances,getStore as walletGetStore, register as walletRegister } from '../../../../../app/store/memstore';
 import { getUserInfo, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
+import { getSourceLoaded } from '../../../../../app/view/base/main';
 import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
@@ -384,10 +384,12 @@ const STATE = {
 };
 register('mine',(mine:Mine) => {
     // const data = walletGetStore('mine');
-    STATE.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT) || 0;
-    STATE.miningRank = mine.miningRank;
-    STATE.miningMedalId = mine.miningMedalId;
-    forelet.paint(STATE);
+    callGetCloudBalances().then(cloudBalances => {
+        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+        STATE.miningRank = mine.miningRank;
+        STATE.miningMedalId = mine.miningMedalId;
+        forelet.paint(STATE);
+    });
 });
 
 let firstLoginDelay = false;
@@ -415,17 +417,19 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    const user = walletGetStore('user',{ info:{}, id:'' });
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
-    const accID = user.info.acc_id;
-    if (accID) {
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
-        clientRpcFunc(bind_accID,accID,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定AccUID成功，accuid:',r);
-            }
-        });
-    }
+    getStoreData('user',{ info:{}, id:'' }).then(user => {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
+        const accID = user.info.acc_id;
+        if (accID) {
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+            clientRpcFunc(bind_accID,accID,(r:Result) => {
+                if (r && r.reslutCode) {
+                    console.log('绑定AccUID成功，accuid:',r);
+                }
+            });
+        }
+    });
+    
 };
 
 // chatStore.register('uid',(r) => {
@@ -441,8 +445,7 @@ const firstloginAward = () => {
 // });
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',() => {
-    const level_3_page_loaded = walletGetStore('flags').level_3_page_loaded;
-    if (level_3_page_loaded) {
+    if (getSourceLoaded()) {
         firstloginAward();
     } else {
         firstLoginDelay = true;
@@ -450,14 +453,14 @@ register('flags/firstLogin',() => {
         
 });
 
-walletRegister('wallet', () => {
+registerStore('wallet', () => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initPropsNoviceTask();
     w && w.paint();
 });
 
 // 二级目录资源加载完成
-walletRegister('flags/level_3_page_loaded', (loaded: boolean) => {
+registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
     if (firstLoginDelay) {
         firstloginAward();
         firstLoginDelay = false;
@@ -466,7 +469,7 @@ walletRegister('flags/level_3_page_loaded', (loaded: boolean) => {
 
 // ================================================新手活动奖励
 
-walletRegister('wallet/helpWord',() => {
+registerStore('wallet/helpWord',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
     if (!getStore('flags',{}).helpWord) { 
@@ -485,7 +488,7 @@ walletRegister('wallet/helpWord',() => {
     }
     
 });
-walletRegister('wallet/sharePart',() => {
+registerStore('wallet/sharePart',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 分享密钥
     if (!getStore('flags',{}).sharePart) {  
@@ -562,7 +565,7 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
-walletRegister('user/info',() => {
+registerStore('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         // tslint:disable-next-line:ban-comma-operator

@@ -1,9 +1,8 @@
 /**
  * 登录
  */
-import { callGetHighTop } from '../../../../app/middleLayer/wrap';
+import { callGetCloudBalances, callGetHighTop, getStoreData } from '../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../app/publicLib/interface';
-import { getCloudBalances, getStore as walletGetStore } from '../../../../app/store/memstore';
 import { loginWallet, logoutWallet } from '../../../../app/viewLogic/login';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -34,10 +33,13 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     callGetHighTop(100).then((data) => {
-        const mine = getStore('mine',{});
-        mine.miningRank = data.miningRank;
-        mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT);
-        setStore('mine',mine);
+        callGetCloudBalances().then(cloudBalances => {
+            const mine = getStore('mine',{});
+            mine.miningRank = data.miningRank;
+            mine.miningKTnum = cloudBalances.get(CloudCurrencyType.KT);
+            setStore('mine',mine);
+        });
+        
     });
     // 获取签到奖励
     getLoginDays().then((r:SeriesDaysRes) => {
@@ -46,15 +48,18 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     });
     getMiningCoinNum(); // 获取累积挖矿
     redemptionList();
-    const medalest = []; 
-    medalest.push(walletGetStore('user/info').acc_id);
-    // 获取最高勋章
-    getMedalest(medalest).then((medal:any) => {
-        const data = medal.arr[0].medalType || '8001';
-        const mine = getStore('mine',{});
-        mine.miningMedalId = data;
-        setStore('mine',mine);
+    getStoreData('user/info').then(userInfo => {
+        const medalest = []; 
+        medalest.push(userInfo.acc_id);
+        // 获取最高勋章
+        getMedalest(medalest).then((medal:any) => {
+            const data = medal.arr[0].medalType || '8001';
+            const mine = getStore('mine',{});
+            mine.miningMedalId = data;
+            setStore('mine',mine);
+        });
     });
+   
     // // TODO 测试
     // const getShowArr = new getShowMedals();
     // const arr = ['807017', '425391'];

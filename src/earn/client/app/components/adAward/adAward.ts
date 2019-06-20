@@ -1,4 +1,4 @@
-import { getStore } from '../../../../../app/store/memstore';
+import { getStoreData } from '../../../../../app/middleLayer/wrap';
 import { topHeight } from '../../../../../app/utils/constants';
 import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
@@ -38,15 +38,18 @@ export class AdAward extends Widget {
     }
     public init() {
         setTimeout(() => {
-            const move = document.getElementById('awardMove').offsetTop;
-            this.props.awardOut = true;
-            this.props.moveX = -265;
-            this.props.moveY = -move - this.props.moveTop - getStore('setting/topHeight',topHeight);
-            this.props.imgScale = 0.2;
-            this.paint();
-            setTimeout(() => {
-                this.ok && this.ok();
-            },1200);
+            getStoreData('setting/topHeight',topHeight).then(topHeight => {
+                const move = document.getElementById('awardMove').offsetTop;
+                this.props.awardOut = true;
+                this.props.moveX = -265;
+                this.props.moveY = -move - this.props.moveTop - topHeight;
+                this.props.imgScale = 0.2;
+                this.paint();
+                setTimeout(() => {
+                    this.ok && this.ok();
+                },1200);
+            });
+           
         },300);
     }
  

@@ -2,10 +2,10 @@
  * 活动-邀请好友
  * 该页面首次加载时walletStore已被赋值，监听无效
  */
-import * as walletStore from '../../../../../app/store/memstore';
+import { getStoreData, registerStore } from '../../../../../app/middleLayer/wrap';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { doInvite, getContinuousInvitation } from '../../utils/util';
+import { getContinuousInvitation } from '../../utils/util';
 
 export const forelet = new Forelet();
 
@@ -14,9 +14,15 @@ export class MyInviteUsers extends Widget {
     public ok : () => void;
     public create() {
         super.create();
-        STATE.invites = walletStore.getStore('inviteUsers/invite_success',[]);
-        STATE.num = walletStore.getStore('flags').invite_realUser || 0;
+        STATE.invites = [];
+        STATE.num = 0;
         this.state = STATE;
+        Promise.all([getStoreData('inviteUsers/invite_success',[]),getStoreData('flags')]).then(([invites,flags]) => {
+            STATE.invites = invites;
+            STATE.num = flags.invite_realUser || 0;
+            this.state = STATE;
+            this.paint();
+        });
     }
 
     // 返回上一页
@@ -54,12 +60,12 @@ const STATE = {
     ]
 };
 // 邀请好友成功
-walletStore.register('inviteUsers/invite_success',(r) => {
+registerStore('inviteUsers/invite_success',(r) => {
     STATE.invites = r;
     forelet.paint(STATE);
 });
 // 邀请好友成为真实用户的个数
-walletStore.register('flags/invite_realUser',(r) => {
+registerStore('flags/invite_realUser',(r) => {
     STATE.num = r;
     const arr = getContinuousInvitation(r);
     arr.forEach(element => {

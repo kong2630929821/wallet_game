@@ -1,9 +1,9 @@
 /**
  * 开宝箱 - 首页
  */
+import { callGetCloudBalances } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -12,7 +12,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
-import { getStore, Mine,register, setStore } from '../../store/memstore';
+import { Mine,register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -367,6 +367,9 @@ const STATE = {
     KTbalance:0
 };
 register('mine',(mine:Mine) => {
-    STATE.KTbalance = getCloudBalances().get(CloudCurrencyType.KT) || 0; 
-    forelet.paint(STATE);
+    callGetCloudBalances().then(cloudBalances => {
+        STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+        forelet.paint(STATE);
+    });
+    
 });

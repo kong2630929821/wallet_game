@@ -1,9 +1,9 @@
 /**
  * digging mines home
  */
+import { callGetCloudBalances } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getCloudBalances } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -377,9 +377,12 @@ register('goods',(goods:Item[]) => {
 
 // 监听矿山
 register('mine',(mine:Mine) => {
-    STATE.miningedNumber = mine.miningedNumber;
-    STATE.miningNumber = getCloudBalances().get(CloudCurrencyType.KT) || 0;
-    forelet.paint(STATE);
+    callGetCloudBalances().then(cloudBalances => {
+        STATE.miningedNumber = mine.miningedNumber;
+        STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
+        forelet.paint(STATE);
+    });
+    
 });
 
 // // 监听嗨豆
