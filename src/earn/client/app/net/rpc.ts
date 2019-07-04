@@ -1,8 +1,7 @@
 /**
  * rpc通信
  */
-import { getStoreData } from '../../../../app/middleLayer/wrap';
-import { getOneUserInfo } from '../../../../app/net/pull';
+import { callGetOneUserInfo, getStoreData } from '../../../../app/middleLayer/wrap';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/data/db/medal.s';
@@ -47,7 +46,7 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
  * 获取用户信息
  */
 export const getUserInfo = async (openid: number, self?: string) => {
-    const userInfo = await getOneUserInfo([openid], 1);
+    const userInfo = await callGetOneUserInfo([openid], 1);
     if (self) {   // 钱包用户
         const walletUserInfo = await getStoreData('user/info');
         let activityUserInfo = getStore('userInfo');

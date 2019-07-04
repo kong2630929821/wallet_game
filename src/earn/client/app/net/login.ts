@@ -1,8 +1,9 @@
 /**
  * 登录
  */
-import { callGetCloudBalances, callGetHighTop, getStoreData } from '../../../../app/middleLayer/wrap';
+import { callGetHighTop, getStoreData } from '../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../app/publicLib/interface';
+import { getCloudBalances } from '../../../../app/viewLogic/common';
 import { loginWallet, logoutWallet } from '../../../../app/viewLogic/login';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -33,7 +34,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     callGetHighTop(100).then((data) => {
-        callGetCloudBalances().then(cloudBalances => {
+        getCloudBalances().then(cloudBalances => {
             const mine = getStore('mine',{});
             mine.miningRank = data.miningRank;
             mine.miningKTnum = cloudBalances.get(CloudCurrencyType.KT);

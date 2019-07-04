@@ -1,10 +1,10 @@
 /**
  * 开宝箱 - 首页
  */
-import { callGetCloudBalances } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
+import { getCloudBalances } from '../../../../../app/viewLogic/common';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -367,7 +367,7 @@ const STATE = {
     KTbalance:0
 };
 register('mine',(mine:Mine) => {
-    callGetCloudBalances().then(cloudBalances => {
+    getCloudBalances().then(cloudBalances => {
         STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
         forelet.paint(STATE);
     });

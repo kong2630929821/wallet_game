@@ -3,16 +3,17 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { callGetCloudBalances, getStoreData, registerStore } from '../../../../../app/middleLayer/wrap';
+import { callGetAccountDetail, callGoRecharge, getStoreData } from '../../../../../app/middleLayer/wrap';
+import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getUserInfo, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { getUserInfo, goRecharge, popNew3, popNewMessage, popPswBox, rippleShow } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { getSourceLoaded } from '../../../../../app/view/base/main';
+import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
-import { popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
@@ -106,7 +107,7 @@ export class EarnHome extends Widget {
             img: 'btn_yun_7.png',
             title: `充${scShow}送${ktShow}`,
             desc: '赠品可以玩游戏',
-            components:'app-view-wallet-cloudWalletCustomize-rechargeSC'
+            components:'goRecharge'
         }, {
             img: 'btn_yun_8.png',
             title: '兑换码',
@@ -142,7 +143,7 @@ export class EarnHome extends Widget {
                     desc: '充值玩更多游戏',
                     btn:'去充值',
                     addOne:true,
-                    components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
+                    components:'goRecharge',
                     complete: !!flags.firstRecharge,
                     show:true
                 },{
@@ -244,7 +245,12 @@ export class EarnHome extends Widget {
      */
     public goHotActivity(ind: number) {
         const page = this.props.hotActivities[ind].components;
-        popNew3(page);
+        if (page === 'goRecharge') {
+            goRecharge();
+        } else {
+            popNew3(page);
+        }
+        
     }
 
     /**
@@ -252,7 +258,9 @@ export class EarnHome extends Widget {
      */
     public async goNoviceTask(ind:number) {
         const page = this.props.noviceTask[ind].components;
-        if (page === 'backUp') {  // 去备份
+        if (page === 'goRecharge') {  // 去充值
+            goRecharge();
+        } else if (page === 'backUp') {  // 去备份
             const psw = await popPswBox();
             if (!psw) return;
             const ret = await exportMnemonic(psw);
@@ -384,7 +392,7 @@ const STATE = {
 };
 register('mine',(mine:Mine) => {
     // const data = walletGetStore('mine');
-    callGetCloudBalances().then(cloudBalances => {
+    getCloudBalances().then(cloudBalances => {
         STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
         STATE.miningRank = mine.miningRank;
         STATE.miningMedalId = mine.miningMedalId;
@@ -453,14 +461,14 @@ register('flags/firstLogin',() => {
         
 });
 
-registerStore('wallet', () => {
+registerStoreData('wallet', () => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initPropsNoviceTask();
     w && w.paint();
 });
 
 // 二级目录资源加载完成
-registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
+setSourceLoadedCallbackList(() => {
     if (firstLoginDelay) {
         firstloginAward();
         firstLoginDelay = false;
@@ -469,7 +477,7 @@ registerStore('flags/level_3_page_loaded', (loaded: boolean) => {
 
 // ================================================新手活动奖励
 
-registerStore('wallet/helpWord',() => {
+registerStoreData('wallet/helpWord',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
     if (!getStore('flags',{}).helpWord) { 
@@ -488,7 +496,7 @@ registerStore('wallet/helpWord',() => {
     }
     
 });
-registerStore('wallet/sharePart',() => {
+registerStoreData('wallet/sharePart',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 分享密钥
     if (!getStore('flags',{}).sharePart) {  
@@ -565,7 +573,7 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
-registerStore('user/info',() => {
+registerStoreData('user/info',() => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     if (w) {
         // tslint:disable-next-line:ban-comma-operator

@@ -1,19 +1,19 @@
 /**
  * digging mines home
  */
-import { callGetCloudBalances } from '../../../../../app/middleLayer/wrap';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
+import { getCloudBalances } from '../../../../../app/viewLogic/common';
+import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { AdAwardResult, Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { AdAwardResult, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { isminingHome } from '../../net/rpc_order';
-import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
+import {  Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
@@ -377,7 +377,7 @@ register('goods',(goods:Item[]) => {
 
 // 监听矿山
 register('mine',(mine:Mine) => {
-    callGetCloudBalances().then(cloudBalances => {
+    getCloudBalances().then(cloudBalances => {
         STATE.miningedNumber = mine.miningedNumber;
         STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
         forelet.paint(STATE);

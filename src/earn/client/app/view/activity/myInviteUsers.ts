@@ -2,7 +2,8 @@
  * 活动-邀请好友
  * 该页面首次加载时walletStore已被赋值，监听无效
  */
-import { getStoreData, registerStore } from '../../../../../app/middleLayer/wrap';
+import { getStoreData } from '../../../../../app/middleLayer/wrap';
+import { registerStoreData } from '../../../../../app/viewLogic/common';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getContinuousInvitation } from '../../utils/util';
@@ -60,12 +61,12 @@ const STATE = {
     ]
 };
 // 邀请好友成功
-registerStore('inviteUsers/invite_success',(r) => {
+registerStoreData('inviteUsers/invite_success',(r) => {
     STATE.invites = r;
     forelet.paint(STATE);
 });
 // 邀请好友成为真实用户的个数
-registerStore('flags/invite_realUser',(r) => {
+registerStoreData('flags/invite_realUser',(r) => {
     STATE.num = r;
     const arr = getContinuousInvitation(r);
     arr.forEach(element => {
