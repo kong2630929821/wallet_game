@@ -5,7 +5,7 @@ import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { getCloudBalances } from '../../../../../app/viewLogic/common';
-import { popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -240,7 +240,6 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
-        // this.deleteBoomMine();
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
@@ -332,7 +331,8 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test'); // 测试锄头
+        popNew('earn-client-app-test-test'); // 测试锄头
+        return;
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
 
         if (this.props.countDownStart) return;
@@ -344,7 +344,7 @@ export class MiningHome extends Widget {
             },(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType,moveTop:document.querySelector('#stop').offsetTop });
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType,moveTop:(<any>document.querySelector('#stop')).offsetTop });
                 },300);
             });
         } else {

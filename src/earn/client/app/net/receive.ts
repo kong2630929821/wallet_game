@@ -63,6 +63,7 @@ register('flags/startMining',(startMining:boolean) => {
 });
 // 邀请的好友成为真实用户的个数
 registerStoreData('flags/invite_realUser',(r) => {
+    console.log('邀请好友成为真实用户',r);
     getInviteAwards(r).then((res:any) => {
         if (res && res.award.length > 0) {
             const awa = res.award[0];

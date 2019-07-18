@@ -50,6 +50,7 @@ export class NewMedalAlert extends Widget {
         super.setProps(this.props);
         getUserInfo().then(userInfo => {
             this.props.userInfo = userInfo;
+            this.paint();
         });
     }
 
@@ -60,13 +61,11 @@ export class NewMedalAlert extends Widget {
     }
 
     public baseShare(platform: number) {
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
+        ShareToPlatforms.makeScreenShot({
             success: (result) => { 
                 this.ok && this.ok();
 
-                stp.shareScreenShot({
+                ShareToPlatforms.shareScreenShot({
                     success: (result) => { 
                         popNewMessage('分享成功');
                     },

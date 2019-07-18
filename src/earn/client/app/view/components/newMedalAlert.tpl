@@ -23,7 +23,7 @@
                     <widget style="font-size: 32px;" w-tag="pi-ui-lang">{"zh_Hans":"成功就是比别人优秀一点点","zh_Hant":"成功就是比別人優秀一點點","en":"Success is a little better than others."}</widget>
                     <span style="font-size: 26px;text-align: right;">by {{it.userInfo.nickName}}</span>
                 </div>
-                <div w-class="avatar" style="background-image:url({{it.userInfo.avatar?it.userInfo.avatar:'../../res/image1/default_head.png'}});background-size:100% 100%"></div>
+                <div w-class="avatar" style="background-image:url({{it.userInfo.avatar}});background-size:100% 100%"></div>
               
             </div>
         </div>

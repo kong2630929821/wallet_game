@@ -7,7 +7,7 @@ import { getStoreData } from '../../../../../app/middleLayer/wrap';
 import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getUserInfo, goRecharge, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { getUserInfo, goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
@@ -37,6 +37,8 @@ export class EarnHome extends Widget {
     public language: any;
     public props: any;
     public config: any;
+    public $earnHome:any;
+    public scrollCb:Function;
     
     public create() {
         super.create();
@@ -292,7 +294,10 @@ export class EarnHome extends Widget {
         this.props.animateStart = true;
         setStore('flags/earnHomeHidden',true);
         setTimeout(() => {
-            document.getElementById('earn-home').scrollTop = 0;
+            if (!this.$earnHome) {
+                this.$earnHome = document.getElementById('earn-home');
+            }
+            this.$earnHome.scrollTop = 0;
         },500);
         this.paint();
     }
@@ -335,9 +340,19 @@ export class EarnHome extends Widget {
      * 屏幕滑动
      */
     public scrollPage() {
-        const scrollTop = document.getElementById('earn-home').scrollTop;
-        this.props.scrollHeight = scrollTop;
-        this.paint();
+        if (!this.scrollCb) {
+            this.scrollCb = throttle(() => {
+                
+                if (!this.$earnHome) {
+                    this.$earnHome = document.getElementById('earn-home');
+                }
+                const scrollTop = this.$earnHome.scrollTop;
+                this.props.scrollHeight = scrollTop;
+                console.log('scroll page------------------',scrollTop);
+                this.paint();
+            });
+        }
+        this.scrollCb();
     }
 
     // 动画效果执行
@@ -376,8 +391,17 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 register('flags/logout',() => {  // 退出钱包时刷新页面
     console.log('home1 -----flags/logout');
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.init();
-    w && w.paint();
+    if (w) {
+        w.state = {
+            miningKTnum:0,
+            miningRank:0,
+            miningMedalId:8001,
+            signInDays: 0,   // 签到总天数
+            awards:[] // 签到奖励
+        };
+        w.init();
+        w.paint();
+    }
 });
 // register('mine',(mine:Mine) => {
 //     const w:any = forelet.getWidget(WIDGET_NAME);

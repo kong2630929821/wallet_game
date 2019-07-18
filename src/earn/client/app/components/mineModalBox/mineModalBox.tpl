@@ -1,7 +1,7 @@
 <div class="new-page" w-class="new-page">
-    <div w-class="modal-box" class="popBoxFadeIn {{it.fadeOut ? 'popBoxFadeOut' : ''}}">
+    <div w-class="modal-box" class="popBoxFadeIn {{it.fadeOut ? 'popBoxFadeOut' : ''}}" >
         <img src="../../res/image/modal_box_close.png" w-class="close" on-tap="closeClick" class="popBoxShake"/>
-        <div w-class="modal-box-content">
+        <div w-class="modal-box-content" style="transform: perspective(1000);">
             {{if it.miningMax}}
                 <img src="../../res/image/mine_text.png" class="popBoxZoomIn" />
             {{elseif it.empty}}
