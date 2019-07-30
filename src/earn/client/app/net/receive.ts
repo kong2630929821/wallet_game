@@ -3,8 +3,8 @@
  * 接受后端推送事件
  */
 
-import * as walletStore from '../../../../app/store/memstore';
 import { popNewMessage } from '../../../../app/utils/tools';
+import { registerStoreData } from '../../../../app/viewLogic/common';
 import { popModalBoxs } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { getStore, register, setStore } from '../store/memstore';
@@ -62,7 +62,8 @@ register('flags/startMining',(startMining:boolean) => {
     }
 });
 // 邀请的好友成为真实用户的个数
-walletStore.register('flags/invite_realUser',(r) => {
+registerStoreData('flags/invite_realUser',(r) => {
+    console.log('邀请好友成为真实用户',r);
     getInviteAwards(r).then((res:any) => {
         if (res && res.award.length > 0) {
             const awa = res.award[0];

@@ -1,20 +1,22 @@
 /**
  * rpc通信
  */
-import { getOneUserInfo } from '../../../../app/net/pull';
-import { getStore as getWalletStore } from '../../../../app/store/memstore';
+import { callGetOneUserInfo, getStoreData } from '../../../../app/middleLayer/wrap';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
+// tslint:disable-next-line:max-line-length
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query } from '../../../server/rpc/guessingCompetition.p';
 import { get_invite_awards, get_inviteNum, getInviteAward } from '../../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
+// tslint:disable-next-line:max-line-length
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
 import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
+// tslint:disable-next-line:max-line-length
 import { award_query, get_achievements, get_ad_award, get_showMedal, get_showMedals, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
@@ -44,9 +46,9 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
  * 获取用户信息
  */
 export const getUserInfo = async (openid: number, self?: string) => {
-    const userInfo = await getOneUserInfo([openid], 1);
+    const userInfo = await callGetOneUserInfo([openid], 1);
     if (self) {   // 钱包用户
-        const walletUserInfo = getWalletStore('user/info');
+        const walletUserInfo = await getStoreData('user/info');
         let activityUserInfo = getStore('userInfo');
         console.log('[活动]localUserInfo---------------', walletUserInfo);
 

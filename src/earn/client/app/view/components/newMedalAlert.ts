@@ -3,7 +3,7 @@
  */
 
 import { shareDownload } from '../../../../../app/config';
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -23,7 +23,7 @@ export class NewMedalAlert extends Widget {
         medalImg: '',
         condition: 0, // 勋章获得条件
         medalTitle: {}, // 勋章称号,
-        userInfo:getUserInfo(),
+        userInfo:{},
         shareUrl:''
     };
 
@@ -48,6 +48,10 @@ export class NewMedalAlert extends Widget {
         };
         console.log(this.props);
         super.setProps(this.props);
+        getUserInfo().then(userInfo => {
+            this.props.userInfo = userInfo;
+            this.paint();
+        });
     }
 
     public shareWX() {
@@ -57,13 +61,11 @@ export class NewMedalAlert extends Widget {
     }
 
     public baseShare(platform: number) {
-        const stp = new ShareToPlatforms();
-        stp.init();
-        stp.makeScreenShot({
+        ShareToPlatforms.makeScreenShot({
             success: (result) => { 
                 this.ok && this.ok();
 
-                stp.shareScreenShot({
+                ShareToPlatforms.shareScreenShot({
                     success: (result) => { 
                         popNewMessage('分享成功');
                     },

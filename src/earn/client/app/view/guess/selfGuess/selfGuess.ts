@@ -2,7 +2,7 @@
  * 竞猜主页-我的
  */
 
-import { getModulConfig } from '../../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../../app/publicLib/modulConfig';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';
 import { getMyGuess } from '../../../net/rpc';

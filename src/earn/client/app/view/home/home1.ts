@@ -3,25 +3,26 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
-import { getCloudBalances,getStore as walletGetStore, register as walletRegister } from '../../../../../app/store/memstore';
-import { getWalletToolsMod } from '../../../../../app/utils/commonjsTools';
-import { getUserInfo, hasWallet, popNew3, popPswBox, rippleShow } from '../../../../../app/utils/tools';
+import { getStoreData } from '../../../../../app/middleLayer/wrap';
+import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
+import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
+import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
 import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
-import { SeriesDaysRes } from '../../../../server/rpc/itemQuery.s';
 import { bind_accID } from '../../../../server/rpc/user.p';
 import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
-import { getCompleteTask, getLoginDays } from '../../net/rpc';
+import { getCompleteTask } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
-import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
+import { getHoeCount, getMaxMineType } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -36,6 +37,8 @@ export class EarnHome extends Widget {
     public language: any;
     public props: any;
     public config: any;
+    public $earnHome:any;
+    public scrollCb:Function;
     
     public create() {
         super.create();
@@ -51,6 +54,10 @@ export class EarnHome extends Widget {
         super.setProps(this.props, oldProps);
         if (props.isActive) {
             this.updateTasks();
+            const item0 = this.props.noviceTask[0];
+            if (item0) {
+                item0.complete =  !!this.props.userInfo.phoneNumber;
+            }
         }
     }
 
@@ -66,7 +73,6 @@ export class EarnHome extends Widget {
             ktShow,
             scrollHeight: 0,            
             refresh: false,
-            avatar: getUserInfo().avatar ||  '../../res/image1/default_avatar.png',
             // 热门活动
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
@@ -78,7 +84,8 @@ export class EarnHome extends Widget {
             downAnimate:'',
             animateStart:false,
             isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登录成功
-            animationed:true // 动画完成
+            animationed:true, // 动画完成
+            noviceTask:[]
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
@@ -101,7 +108,7 @@ export class EarnHome extends Widget {
             img: 'btn_yun_7.png',
             title: `充${scShow}送${ktShow}`,
             desc: '赠品可以玩游戏',
-            components:'app-view-wallet-cloudWalletCustomize-rechargeSC'
+            components:'goRecharge'
         }, {
             img: 'btn_yun_8.png',
             title: '兑换码',
@@ -118,74 +125,76 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask() {
-        const wallet = walletGetStore('wallet');
-        const flags = getStore('flags');
-        // tslint:disable-next-line:ban-comma-operator
-        this.props.noviceTask = [
-            {
-                img: '',
-                title: '验证手机号',
-                desc: '凭借手机验证可找回云端资产',
-                btn:'去绑定',
-                addOne:false,
-                components:'app-view-mine-setting-phone',
-                complete: !!getUserInfo().phoneNumber,
-                show:true
-            },{
-                img: '2003.png',
-                title: '首次充值成功',
-                desc: '充值玩更多游戏',
-                btn:'去充值',
-                addOne:true,
-                components:'app-view-wallet-cloudWalletCustomize-rechargeSC',
-                complete: !!flags.firstRecharge,
-                show:true
-            },{
-                img: '2001.png',
-                title: '参与聊天',
-                desc: '和大家聊一聊最近的热点',
-                btn:'去聊天',
-                addOne:true,                
-                components:'goChat',
-                complete:!!flags.firstChat,
-                show:true
-            },{
-                img: 'task_gift.png',
-                title: '玩一把大转盘',
-                desc: '每天赠送初级大转盘一次抽奖机会',
-                btn:'去抽奖',
-                addOne:false,
-                components:'earn-client-app-view-turntable-turntable',
-                complete: !!flags.firstTurntable,
-                show:true
-            },{
-                img: 'task_gift.png',
-                title: '开个初级宝箱',
-                desc: '每天免费开初级宝箱一次',
-                btn:'开个宝箱',
-                addOne:false,                
-                components:'earn-client-app-view-openBox-openBox',
-                complete: !!flags.firstOpenBox,
-                show:true
-            },{
-                img: '2002.png',
-                title: '去备份助记词',
-                desc: '助记词是您找回账号的唯一凭证',
-                btn:'去备份',
-                addOne:true,                
-                components:'backUp',
-                complete: !!flags.helpWord,
-                show:wallet && wallet.setPsw
-            }, {
-                img: '2003.png',
-                title: `去分享秘钥片段`,
-                desc: '分享使保存更安全',
-                btn:'分享片段',
-                addOne:true,                
-                components:'sharePart',
-                complete: !!flags.sharePart,
-                show:wallet && wallet.setPsw
-            }];
+        getStoreData('wallet').then((wallet) => {
+            const flags = getStore('flags');
+            // tslint:disable-next-line:ban-comma-operator
+            this.props.noviceTask = [
+                {
+                    img: '',
+                    title: '验证手机号',
+                    desc: '凭借手机验证可找回云端资产',
+                    btn:'去绑定',
+                    addOne:false,
+                    components:'app-view-mine-setting-phone',
+                    complete: !!this.props.userInfo.phoneNumber,
+                    show:true
+                },{
+                    img: '2003.png',
+                    title: '首次充值成功',
+                    desc: '充值玩更多游戏',
+                    btn:'去充值',
+                    addOne:true,
+                    components:'goRecharge',
+                    complete: !!flags.firstRecharge,
+                    show:true
+                },{
+                    img: '2001.png',
+                    title: '参与聊天',
+                    desc: '和大家聊一聊最近的热点',
+                    btn:'去聊天',
+                    addOne:true,                
+                    components:'goChat',
+                    complete:!!flags.firstChat,
+                    show:true
+                },{
+                    img: 'task_gift.png',
+                    title: '玩一把大转盘',
+                    desc: '每天赠送初级大转盘一次抽奖机会',
+                    btn:'去抽奖',
+                    addOne:false,
+                    components:'earn-client-app-view-turntable-turntable',
+                    complete: !!flags.firstTurntable,
+                    show:true
+                },{
+                    img: 'task_gift.png',
+                    title: '开个初级宝箱',
+                    desc: '每天免费开初级宝箱一次',
+                    btn:'开个宝箱',
+                    addOne:false,                
+                    components:'earn-client-app-view-openBox-openBox',
+                    complete: !!flags.firstOpenBox,
+                    show:true
+                },{
+                    img: '2002.png',
+                    title: '去备份助记词',
+                    desc: '助记词是您找回账号的唯一凭证',
+                    btn:'去备份',
+                    addOne:true,                
+                    components:'backUp',
+                    complete: !!flags.helpWord,
+                    show:wallet && wallet.setPsw
+                }, {
+                    img: '2003.png',
+                    title: `去分享秘钥片段`,
+                    desc: '分享使保存更安全',
+                    btn:'分享片段',
+                    addOne:true,                
+                    components:'sharePart',
+                    complete: !!flags.sharePart,
+                    show:wallet && wallet.setPsw
+                }];
+            this.paint();
+        });
     }
     /**
      * 刷新任务数据
@@ -236,31 +245,34 @@ export class EarnHome extends Widget {
      * 热门活动进入
      */
     public goHotActivity(ind: number) {
-        if (!hasWallet()) return;
         const page = this.props.hotActivities[ind].components;
-        popNew3(page);
+        if (page === 'goRecharge') {
+            goRecharge();
+        } else {
+            popNew3(page);
+        }
+        
     }
 
     /**
      * 新手任务
      */
     public async goNoviceTask(ind:number) {
-        if (!hasWallet()) return;
         const page = this.props.noviceTask[ind].components;
-        if (page === 'backUp') {  // 去备份
+        if (page === 'goRecharge') {  // 去充值
+            goRecharge();
+        } else if (page === 'backUp') {  // 去备份
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletToolsMod();
-            const ret = await walletToolsMod.backupMnemonic(psw);
+            const ret = await exportMnemonic(psw);
             if (ret) {
-                popNew3('app-view-wallet-backup-index',{ ...ret,pi_norouter:true });
+                popNew3('app-view-wallet-backup-index',{ ...ret });
                 // this.backPrePage();
             }
         } else if (page === 'sharePart') { // 分享片段
             const psw = await popPswBox();
             if (!psw) return;
-            const walletToolsMod = await getWalletToolsMod();
-            const ret = await walletToolsMod.backupMnemonic(psw);
+            const ret = await exportMnemonic(psw);
             if (ret) {
                 popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
             }
@@ -276,13 +288,15 @@ export class EarnHome extends Widget {
      */
     public miningClick() {
         if (!this.props.animationed) return;  // 如果没完成就禁用打开挖矿
-        if (!hasWallet()) return;
         this.props.upAnimate = 'put-out-up';
         this.props.downAnimate = 'put-out-down';
         this.props.animateStart = true;
         setStore('flags/earnHomeHidden',true);
         setTimeout(() => {
-            document.getElementById('earn-home').scrollTop = 0;
+            if (!this.$earnHome) {
+                this.$earnHome = document.getElementById('earn-home');
+            }
+            this.$earnHome.scrollTop = 0;
         },500);
         this.paint();
     }
@@ -318,7 +332,6 @@ export class EarnHome extends Widget {
     }
 
     public goMineRank() {
-        if (!hasWallet()) return;
         popNew3('earn-client-app-view-mineRank-mineRank');
     }
     
@@ -326,9 +339,19 @@ export class EarnHome extends Widget {
      * 屏幕滑动
      */
     public scrollPage() {
-        const scrollTop = document.getElementById('earn-home').scrollTop;
-        this.props.scrollHeight = scrollTop;
-        this.paint();
+        if (!this.scrollCb) {
+            this.scrollCb = throttle(() => {
+                
+                if (!this.$earnHome) {
+                    this.$earnHome = document.getElementById('earn-home');
+                }
+                const scrollTop = this.$earnHome.scrollTop;
+                this.props.scrollHeight = scrollTop;
+                console.log('scroll page------------------',scrollTop);
+                this.paint();
+            });
+        }
+        this.scrollCb();
     }
 
     // 动画效果执行
@@ -367,8 +390,17 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 register('flags/logout',() => {  // 退出钱包时刷新页面
     console.log('home1 -----flags/logout');
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.init();
-    w && w.paint();
+    if (w) {
+        w.state = {
+            miningKTnum:0,
+            miningRank:0,
+            miningMedalId:8001,
+            signInDays: 0,   // 签到总天数
+            awards:[] // 签到奖励
+        };
+        w.init();
+        w.paint();
+    }
 });
 // register('mine',(mine:Mine) => {
 //     const w:any = forelet.getWidget(WIDGET_NAME);
@@ -381,12 +413,20 @@ const STATE = {
     signInDays: 0,   // 签到总天数
     awards:[] // 签到奖励
 };
+
+// 监听矿山
 register('mine',(mine:Mine) => {
-    // const data = walletGetStore('mine');
-    STATE.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT) || 0;
     STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
     forelet.paint(STATE);
+});
+
+// 云端余额变化
+registerStoreData('cloud/cloudWallets',() => {
+    getCloudBalances().then(cloudBalances => {
+        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+        forelet.paint(STATE);
+    });
 });
 
 let firstLoginDelay = false;
@@ -414,17 +454,19 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    const user = walletGetStore('user',{ info:{}, id:'' });
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
-    const accID = user.info.acc_id;
-    if (accID) {
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
-        clientRpcFunc(bind_accID,accID,(r:Result) => {
-            if (r && r.reslutCode) {
-                console.log('绑定AccUID成功，accuid:',r);
-            }
-        });
-    }
+    getStoreData('user',{ info:{}, id:'' }).then(user => {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
+        const accID = user.info.acc_id;
+        if (accID) {
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+            clientRpcFunc(bind_accID,accID,(r:Result) => {
+                if (r && r.reslutCode) {
+                    console.log('绑定AccUID成功，accuid:',r);
+                }
+            });
+        }
+    });
+    
 };
 
 // chatStore.register('uid',(r) => {
@@ -440,8 +482,7 @@ const firstloginAward = () => {
 // });
 // 监听活动第一次登录 创建钱包
 register('flags/firstLogin',() => {
-    const level_3_page_loaded = walletGetStore('flags').level_3_page_loaded;
-    if (level_3_page_loaded) {
+    if (getSourceLoaded()) {
         firstloginAward();
     } else {
         firstLoginDelay = true;
@@ -449,14 +490,14 @@ register('flags/firstLogin',() => {
         
 });
 
-walletRegister('wallet', () => {
+registerStoreData('wallet', () => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initPropsNoviceTask();
     w && w.paint();
 });
 
 // 二级目录资源加载完成
-walletRegister('flags/level_3_page_loaded', (loaded: boolean) => {
+setSourceLoadedCallbackList(() => {
     if (firstLoginDelay) {
         firstloginAward();
         firstLoginDelay = false;
@@ -465,7 +506,7 @@ walletRegister('flags/level_3_page_loaded', (loaded: boolean) => {
 
 // ================================================新手活动奖励
 
-walletRegister('wallet/helpWord',() => {
+registerStoreData('wallet/helpWord',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
     if (!getStore('flags',{}).helpWord) { 
@@ -484,7 +525,7 @@ walletRegister('wallet/helpWord',() => {
     }
     
 });
-walletRegister('wallet/sharePart',() => {
+registerStoreData('wallet/sharePart',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 分享密钥
     if (!getStore('flags',{}).sharePart) {  
@@ -520,6 +561,7 @@ chatStore.register('flags/firstChat',() => {
         });
     }
 });
+
 register('flags/firstTurntable',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次玩大转盘
@@ -560,16 +602,6 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
-walletRegister('user/info',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        // tslint:disable-next-line:ban-comma-operator
-        w.props.avatar = getUserInfo().avatar ||  '../../res/image1/default_avatar.png';
-        w.initHotActivities();
-        w.initPropsNoviceTask();
-        w.paint();
-    }
-});
 // 监听签到天数
 register('flags/signInDays',(r:any) => {
     STATE.signInDays = r;

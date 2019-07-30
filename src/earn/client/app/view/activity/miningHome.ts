@@ -1,23 +1,23 @@
 /**
  * digging mines home
  */
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
+import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
-import { AdAwardResult, Award, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
+import { AdAwardResult, Item, Item_Enum, MiningResponse } from '../../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../../server/util/randomSeedMgr';
 import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMining } from '../../net/rpc';
 import { isminingHome } from '../../net/rpc_order';
-import { getStore as getEarnStore, Mine, register, setStore, setStore as setEarnStore } from '../../store/memstore';
+import {  Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
 import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
 import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
-import { getCloudBalances } from '../../../../../app/store/memstore';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -240,7 +240,6 @@ export class MiningHome extends Widget {
     }
 
     public initMiningState() {
-        // this.deleteBoomMine();
         setStore('flags/startMining',true);  // 挖矿的时候勋章延迟弹出 (在点击奖励关闭后弹出)
         this.props.startMining = true;   // 请求挖矿过程中不能挖矿
         startMining(this.props.mineType,this.props.mineId,this.props.miningCount).then((r:MiningResponse) => {
@@ -332,7 +331,8 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        // popNew('earn-client-app-test-test'); // 测试锄头
+        popNew('earn-client-app-test-test'); // 测试锄头
+        return;
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
 
         if (this.props.countDownStart) return;
@@ -344,7 +344,7 @@ export class MiningHome extends Widget {
             },(award:AdAwardResult) => {
                 console.log('广告关闭  奖励内容 = ',award);
                 setTimeout(() => {
-                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType,moveTop:document.querySelector('#stop').offsetTop });
+                    popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:award.award.awardType,moveTop:(<any>document.querySelector('#stop')).offsetTop });
                 },300);
             });
         } else {
@@ -378,8 +378,16 @@ register('goods',(goods:Item[]) => {
 // 监听矿山
 register('mine',(mine:Mine) => {
     STATE.miningedNumber = mine.miningedNumber;
-    STATE.miningNumber = getCloudBalances().get(CloudCurrencyType.KT) || 0;
     forelet.paint(STATE);
+    
+});
+
+// 云端余额变化
+registerStoreData('cloud/cloudWallets',() => {
+    getCloudBalances().then(cloudBalances => {
+        STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
+        forelet.paint(STATE);
+    });
 });
 
 // // 监听嗨豆

@@ -1,10 +1,10 @@
 /**
  * 开宝箱 - 首页
  */
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
-import { getCloudBalances } from '../../../../../app/store/memstore';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
+import { getCloudBalances } from '../../../../../app/viewLogic/common';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -12,7 +12,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
-import { getStore, Mine,register, setStore } from '../../store/memstore';
+import { Mine,register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -366,7 +366,10 @@ export class OpenBox extends Widget {
 const STATE = {
     KTbalance:0
 };
-register('mine',(mine:Mine) => {
-    STATE.KTbalance = getCloudBalances().get(CloudCurrencyType.KT) || 0; 
-    forelet.paint(STATE);
+register('cloud/cloudWallets',(mine:Mine) => {
+    getCloudBalances().then(cloudBalances => {
+        STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+        forelet.paint(STATE);
+    });
+    
 });

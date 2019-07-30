@@ -3,9 +3,9 @@
  */
 
 import { shareDownload } from '../../../../../app/config';
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { getInviteCode } from '../../../../../app/net/pull';
-import { LuckyMoneyType } from '../../../../../app/store/interface';
+import { callGetInviteCode } from '../../../../../app/middleLayer/wrap';
+import { LuckyMoneyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { copyToClipboard, getUserInfo, popNew3, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { getLang } from '../../../../../pi/util/lang';
@@ -35,7 +35,7 @@ export class InviteFriend extends Widget {
             meQrcode:'',
             background:'',
             shareUrl:'',
-            nickName:`"${getUserInfo().nickName}"`
+            nickName:''
         };
         this.initData();
     }
@@ -54,8 +54,12 @@ export class InviteFriend extends Widget {
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
-        getInviteCode().then(inviteCodeInfo => {
+        callGetInviteCode().then(inviteCodeInfo => {
             this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+            this.paint();
+        });
+        getUserInfo().then(userInfo => {
+            this.props.nickName = `"${userInfo.nickName}"`;
             this.paint();
         });
     }

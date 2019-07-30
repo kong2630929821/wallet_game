@@ -2,7 +2,7 @@
  * 我的物品 --物品详情
  */
 
-import { getModulConfig } from '../../../../../app/modulConfig';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { copyToClipboard } from '../../../../../app/utils/tools';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';

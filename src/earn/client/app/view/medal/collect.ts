@@ -2,6 +2,9 @@
  * 我的收藏 --主页
  */
 
+import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
+import { makeScreenShot } from '../../../../../app/viewLogic/native';
+import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -9,9 +12,6 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { getStore, register } from '../../store/memstore';
 import { getACHVmedalList } from '../../utils/util';
 import { MedalType } from './medalShow';
-import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
-import { makeScreenShot } from '../../../../../app/logic/native';
-import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -33,10 +33,12 @@ export class Collect extends Widget {
     public create() {
         super.create();
         const list = getACHVmedalList('偶然成就','typeNum');
-        const userInfo = getUserInfo();
-        if (userInfo) {  
-            this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
-        }
+        getUserInfo().then(userInfo => {
+            if (userInfo) {  
+                this.props.avatar = userInfo.avatar ? userInfo.avatar : 'app/res/image/default_avater_big.png';
+            }
+        });
+        
         list.forEach(element => {
             const data = { title: { zh_Hans: element.desc, zh_Hant: element.descHant, en: '' }, img: `medal${element.id}`, id: element.id ,isHave:false };
             this.props.medalList.push(data);

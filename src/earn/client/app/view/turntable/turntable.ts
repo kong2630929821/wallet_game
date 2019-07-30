@@ -2,10 +2,10 @@
  * 大转盘 - 首页
  */
 
-import { getModulConfig } from '../../../../../app/modulConfig';
-import { CloudCurrencyType } from '../../../../../app/store/interface';
-import { getCloudBalances } from '../../../../../app/store/memstore';
+import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
+import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
+import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -13,7 +13,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openTurntable } from '../../net/rpc_order';
-import { getStore, Mine, register, setStore } from '../../store/memstore';
+import { Mine, register, setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -129,7 +129,6 @@ export class Turntable extends Widget {
         }
         this.props.isTurn = true;
         // this.startLottery();
-        
         openTurntable(this.props.selectTurntable.type).then((order:any) => {
             console.log('11111111111',order);
             if (this.props.selectTurntable.type !== ActivityType.PrimaryTurntable) { // 非免费机会开奖
@@ -363,7 +362,22 @@ export class Turntable extends Widget {
 const STATE = {
     KTbalance:0
 };
-register('mine',(mine:Mine) => {
-    STATE.KTbalance = getCloudBalances().get(CloudCurrencyType.KT) || 0; 
-    forelet.paint(STATE);
+
+/**
+ * 云端余额变化
+ */
+registerStoreData('cloud/cloudWallets',() => {
+    getCloudBalances().then(cloudBalances => {
+        const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+        if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
+            STATE.KTbalance = KTbalance;
+            forelet.paint(STATE);
+        } else {
+            setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
+                STATE.KTbalance = KTbalance;
+                forelet.paint(STATE);
+            },3500);
+        }
+        
+    });
 });
