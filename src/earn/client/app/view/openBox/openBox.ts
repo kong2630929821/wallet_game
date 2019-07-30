@@ -366,7 +366,7 @@ export class OpenBox extends Widget {
 const STATE = {
     KTbalance:0
 };
-register('mine',(mine:Mine) => {
+register('cloud/cloudWallets',(mine:Mine) => {
     getCloudBalances().then(cloudBalances => {
         STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
         forelet.paint(STATE);

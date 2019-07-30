@@ -7,7 +7,7 @@ import { getStoreData } from '../../../../../app/middleLayer/wrap';
 import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { getUserInfo, goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
+import { goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
@@ -54,6 +54,10 @@ export class EarnHome extends Widget {
         super.setProps(this.props, oldProps);
         if (props.isActive) {
             this.updateTasks();
+            const item0 = this.props.noviceTask[0];
+            if (item0) {
+                item0.complete =  !!this.props.userInfo.phoneNumber;
+            }
         }
     }
 
@@ -69,7 +73,6 @@ export class EarnHome extends Widget {
             ktShow,
             scrollHeight: 0,            
             refresh: false,
-            avatar: '../../res/image1/default_avatar.png',
             // 热门活动
             ironHoe: getHoeCount(HoeType.IronHoe),
             goldHoe: getHoeCount(HoeType.GoldHoe),
@@ -86,10 +89,6 @@ export class EarnHome extends Widget {
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
-        getUserInfo().then(userInfo => {
-            this.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
-            this.paint();
-        });
     }
 
     public initHotActivities() {
@@ -126,7 +125,7 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask() {
-        Promise.all([getStoreData('wallet'),getUserInfo()]).then(([wallet,userInfo]) => {
+        getStoreData('wallet').then((wallet) => {
             const flags = getStore('flags');
             // tslint:disable-next-line:ban-comma-operator
             this.props.noviceTask = [
@@ -137,7 +136,7 @@ export class EarnHome extends Widget {
                     btn:'去绑定',
                     addOne:false,
                     components:'app-view-mine-setting-phone',
-                    complete: !!userInfo.phoneNumber,
+                    complete: !!this.props.userInfo.phoneNumber,
                     show:true
                 },{
                     img: '2003.png',
@@ -414,12 +413,18 @@ const STATE = {
     signInDays: 0,   // 签到总天数
     awards:[] // 签到奖励
 };
+
+// 监听矿山
 register('mine',(mine:Mine) => {
-    // const data = walletGetStore('mine');
+    STATE.miningRank = mine.miningRank;
+    STATE.miningMedalId = mine.miningMedalId;
+    forelet.paint(STATE);
+});
+
+// 云端余额变化
+registerStoreData('cloud/cloudWallets',() => {
     getCloudBalances().then(cloudBalances => {
         STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
-        STATE.miningRank = mine.miningRank;
-        STATE.miningMedalId = mine.miningMedalId;
         forelet.paint(STATE);
     });
 });
@@ -597,18 +602,6 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
-registerStoreData('user/info',() => {
-    const w: any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        // tslint:disable-next-line:ban-comma-operator
-        getUserInfo().then(userInfo => {
-            w.props.avatar = userInfo.avatar ||  '../../res/image1/default_avatar.png';
-            w.initHotActivities();
-            w.initPropsNoviceTask();
-            w.paint();
-        });
-    }
-});
 // 监听签到天数
 register('flags/signInDays',(r:any) => {
     STATE.signInDays = r;

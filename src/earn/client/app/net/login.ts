@@ -34,13 +34,14 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     getInvitedNumberOfPerson();  // 获取邀请成功人数
     getTodayMineNum();  // 获取今天已挖矿山数
     callGetHighTop(100).then((data) => {
-        getCloudBalances().then(cloudBalances => {
-            const mine = getStore('mine',{});
-            mine.miningRank = data.miningRank;
-            mine.miningKTnum = cloudBalances.get(CloudCurrencyType.KT);
-            setStore('mine',mine);
-        });
-        
+        const mine = getStore('mine',{});
+        mine.miningRank = data.miningRank;
+        setStore('mine',mine);
+    });
+    getCloudBalances().then(cloudBalances => {
+        const mine = getStore('mine',{});
+        mine.miningKTnum = cloudBalances.get(CloudCurrencyType.KT);
+        setStore('mine',mine);
     });
     // 获取签到奖励
     getLoginDays().then((r:SeriesDaysRes) => {
