@@ -293,6 +293,9 @@ export class MiningHome extends Widget {
                 mine.hp = r.leftHp;
             }
             this.paint();
+        }).catch(err => {
+            this.init();
+            this.paint();
         });
         this.props.countDownStart = false;
         this.props.countDown = hoeUseDuration;
@@ -331,8 +334,8 @@ export class MiningHome extends Widget {
      */
     public watchAdClick() {
         // popModalBoxs('earn-client-app-components-mineModalBox-mineModalBox',{ miningMax:true });
-        popNew('earn-client-app-test-test'); // 测试锄头
-        return;
+        // popNew('earn-client-app-test-test'); // 测试锄头
+        // return;
         // popModalBoxs('earn-client-app-components-adAward-adAward',{ hoeType:HoeType.GoldHoe,moveTop:document.querySelector('#stop').offsetTop });
 
         if (this.props.countDownStart) return;
@@ -370,6 +373,14 @@ const STATE = {
     zIndex:-1
 
 };
+register('userInfo/isLogin',(isLogin:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (isLogin && w) {
+        w.init();
+        w.paint();
+    }
+});
+
 register('goods',(goods:Item[]) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.updateMine();
@@ -416,6 +427,10 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 register('flags/logout',(logout:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (logout) {
+        STATE.miningNumber = 0;
+        STATE.miningedNumber = 0;
+        STATE.zIndex = -1;
         w && w.init();
+        forelet.paint(STATE);
     }
 });

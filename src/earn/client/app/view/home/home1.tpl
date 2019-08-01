@@ -37,7 +37,7 @@
                 {{end}}
             </div>
             <div w-class="explanation-box" >
-                <div w-class="explanation" on-down="onShow" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
+                <div w-class="explanation" on-tap="miningInstructionsClick"><span>采矿说明</span><img src="../../res/image1/explanation.png" w-class="explanation-icon"/></div>
             </div>
         </div>
         <div w-class="card-container">
@@ -75,7 +75,7 @@
                 <div w-class="welfare-container">
                     {{for i,item of it.noviceTask}}
                         {{if !item.complete && item.show}}
-                        <div w-class="welfare-noviceTask-item"  on-tap="goNoviceTask({{i}})" on-down="onShow">
+                        <div w-class="welfare-noviceTask-item"  on-tap="goNoviceTask(e,{{i}})" on-down="onShow">
                             <div>
                                 <div w-class="noviceTask-title">
                                     {{item.title}}

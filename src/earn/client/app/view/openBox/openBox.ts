@@ -90,6 +90,10 @@ export class OpenBox extends Widget {
                 this.setChestTip(2);
             });
         }
+        getCloudBalances().then(cloudBalances => {
+            STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+            forelet.paint(STATE);
+        });
     }
 
     public attach() {
@@ -122,6 +126,7 @@ export class OpenBox extends Widget {
             }
         } else if (this.state.KTbalance < this.props.selectChest.needTicketNum) {
             popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
+
             return;
         }
         this.startOpenChest(e);
@@ -366,10 +371,9 @@ export class OpenBox extends Widget {
 const STATE = {
     KTbalance:0
 };
-register('cloud/cloudWallets',(mine:Mine) => {
+register('cloud/cloudWallets',() => {
     getCloudBalances().then(cloudBalances => {
         STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
         forelet.paint(STATE);
     });
-    
 });
