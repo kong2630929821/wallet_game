@@ -57,7 +57,15 @@ export class Mine extends Widget {
             hoeImgUrl
         };
         super.setProps(this.props,oldProps);
-
+    }
+    public attach() {
+        super.attach();
+        // 不知道为啥执行以下代码后活动首页滑动不卡顿了   神奇 神奇 神奇
+        this.$imgContainer = this.$imgContainer || getRealNode((<any>(this.tree)).children[0]);
+        this.$imgContainer.className = '';
+        requestAnimationFrame(() => {
+            this.$imgContainer.className = `mine-animated`;
+        });
     }
 
     public mineClick(event:any) {

@@ -5,7 +5,7 @@ import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
 import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
-import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
+import { pop, popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -294,6 +294,7 @@ export class MiningHome extends Widget {
             }
             this.paint();
         }).catch(err => {
+            popNewMessage('出错了');
             this.init();
             this.paint();
         });

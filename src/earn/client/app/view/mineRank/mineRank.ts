@@ -48,18 +48,18 @@ export class MineRank extends Widget {
     public create() {
         super.create();
         this.initData();
-        subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
-            if (r) {
-                console.log('[活动]挖矿特殊奖励公告----------------', r);
-                const userInfo:any = await getUserList([r.openid],1);
-                console.log('=====================',userInfo);
-                const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
-                this.props.notice.push(dataStr);
-                // this.props.notice.shift();
-                console.log('this.props.notice----------------', this.props.notice);
-            }
+        // subscribeSpecialAward(async (r) => {  // 监听新挖矿通告
+        //     if (r) {
+        //         console.log('[活动]挖矿特殊奖励公告----------------', r);
+        //         const userInfo:any = await getUserList([r.openid],1);
+        //         console.log('=====================',userInfo);
+        //         const dataStr = `${userInfo[0].nickName}挖到了${coinUnitchange(r.awardType,r.count)}${CoinType[r.awardType]}`;
+        //         this.props.notice.push(dataStr);
+        //         // this.props.notice.shift();
+        //         console.log('this.props.notice----------------', this.props.notice);
+        //     }
 
-        });
+        // });
         this.noticeChange();
     }
 

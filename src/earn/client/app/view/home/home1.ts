@@ -87,6 +87,10 @@ export class EarnHome extends Widget {
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
+        getCloudBalances().then(cloudBalances => {
+            STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+            forelet.paint(STATE);
+        });
     }
 
     public initHotActivities() {
@@ -406,7 +410,7 @@ const STATE = {
     miningRank:0,
     miningMedalId:8001,
     signInDays: 0,   // 签到总天数
-    awards:getSeriesLoginAwards(1) // 签到奖励
+    awards:[] // 签到奖励
 };
 
 // 监听矿山

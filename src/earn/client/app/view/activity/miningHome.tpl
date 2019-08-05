@@ -40,7 +40,7 @@
             </div>
             <div w-class="mine-area" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
                 {{for index,item of it.haveMines}}
-                <div on-tap="clickImg" ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
+                <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                     <earn-client-app-components1-mine-mine>{ 
                         mineType:{{ item.type }},
                         mineId:{{ item.id }}

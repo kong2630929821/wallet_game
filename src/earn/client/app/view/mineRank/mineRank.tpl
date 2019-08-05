@@ -55,8 +55,8 @@
                 <div on-tap="details({{i+3}})"><widget w-tag="earn-client-app-view-mineRank-rankItem">{{item}}</widget></div>
             {{end}}
         </div>
-        <div w-class="self-rank">
-            <widget on-tap="mydetails" w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
-        </div>
+    </div>
+    <div w-class="self-rank">
+        <widget on-tap="mydetails" w-tag="earn-client-app-view-mineRank-rankItem">{{it.myRank}}</widget>
     </div>
 </div>

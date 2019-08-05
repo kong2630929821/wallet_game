@@ -3,9 +3,9 @@
         <img src="../../res/image/modal_box_close.png" w-class="close" on-tap="closeClick" class="popBoxShake"/>
         <div w-class="modal-box-content" style="transform: perspective(1000);">
             {{if it.miningMax}}
-                <img src="../../res/image/mine_text.png" class="popBoxZoomIn" />
+                <img src="../../res/image/mine_text.png" class="popBoxShake" />
             {{elseif it.empty}}
-                <img src="../../res/image/notDig.png"  class="popBoxZoomIn"/>
+                <img src="../../res/image/notDig.png"  class="popBoxShake"/>
             {{else}}
                 <div w-class="item">
                     <img src="{{it.routineAwardImgUrl}}" style="width:150px;height:150px;" class="popBoxShake"/>
