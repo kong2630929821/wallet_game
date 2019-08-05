@@ -1,5 +1,5 @@
 import { getStoreData } from '../../../../../app/middleLayer/wrap';
-import { topHeight } from '../../../../../app/utils/constants';
+import { topHeight } from '../../../../../app/publicLib/config';
 import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -13,7 +13,7 @@ interface Props {
 // tslint:disable-next-line:completed-docs
 export class AdAward extends Widget {
     public ok:() => void;
-    public setProps(props:any,oldProps:any) {
+    public setProps(props:Props,oldProps:any) {
         let imgUrl = '../../res/image/';
         if (props.hoeType === HoeType.IronHoe) {
             imgUrl = `${imgUrl}2001.png`;

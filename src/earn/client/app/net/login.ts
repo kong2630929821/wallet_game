@@ -80,6 +80,6 @@ loginWallet('11',(openid:number) => {
 // 登出
 logoutWallet(() => {
     disconnect();
-    initEarnStore();
+    initEarnStore();   // 清空活动数据
     setStore('flags/logout',true);
 });

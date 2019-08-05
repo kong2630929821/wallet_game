@@ -61,17 +61,21 @@ export const clientRpcFunc = (name: string, req: any, callback: Function, timeou
         if (mqtt && mqtt.getState()) {
             clientRpc = mqtt.getRpc();
         } else {
+            callback({});
+            
             return;
         }
     }
     if (mqtt && !mqtt.getState()) {
         console.log(`网络连接中！！！！`);
+        callback({});
 
         return;
     }
     clientRpc(name, req, (r: Struct) => {
         if (!r) {
             console.log(`${name} 失败了，返回结果 ${r}`);
+            callback({});
         } else {
             return callback(r);
         }

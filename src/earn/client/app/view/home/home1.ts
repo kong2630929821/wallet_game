@@ -22,7 +22,7 @@ import { get_task_award } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
 import { getCompleteTask } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
-import { getHoeCount, getMaxMineType } from '../../utils/util';
+import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -52,12 +52,10 @@ export class EarnHome extends Widget {
             ...props
         };
         super.setProps(this.props, oldProps);
-        if (props.isActive) {
-            this.updateTasks();
-            const item0 = this.props.noviceTask[0];
-            if (item0) {
-                item0.complete =  !!this.props.userInfo.phoneNumber;
-            }
+        this.updateTasks();
+        const item0 = this.props.noviceTask[0];
+        if (item0) {
+            item0.complete =  !!this.props.userInfo.phoneNumber;
         }
     }
 
@@ -89,6 +87,10 @@ export class EarnHome extends Widget {
         };
         this.initHotActivities();
         this.initPropsNoviceTask();
+        getCloudBalances().then(cloudBalances => {
+            STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+            forelet.paint(STATE);
+        });
     }
 
     public initHotActivities() {
@@ -237,7 +239,6 @@ export class EarnHome extends Widget {
             }
             setStore('flags',flags);
             this.initPropsNoviceTask();
-            this.paint();
         });
     }
 
@@ -257,7 +258,8 @@ export class EarnHome extends Widget {
     /**
      * 新手任务
      */
-    public async goNoviceTask(ind:number) {
+    public async goNoviceTask(e:any,ind:number) {
+        console.log('on-tap');
         const page = this.props.noviceTask[ind].components;
         if (page === 'goRecharge') {  // 去充值
             goRecharge();
@@ -348,7 +350,6 @@ export class EarnHome extends Widget {
                 const scrollTop = this.$earnHome.scrollTop;
                 this.props.scrollHeight = scrollTop;
                 console.log('scroll page------------------',scrollTop);
-                this.paint();
             });
         }
         this.scrollCb();
@@ -356,6 +357,7 @@ export class EarnHome extends Widget {
 
     // 动画效果执行
     public onShow(e:any) {
+        console.log('on-down');
         rippleShow(e);
     }
 }
@@ -366,6 +368,7 @@ register('userInfo/isLogin',(isLogin:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (isLogin && w) {
         w.props.isLogin = true;
+        w.updateTasks();
         w.paint();
     }
 });
@@ -390,17 +393,13 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 register('flags/logout',() => {  // 退出钱包时刷新页面
     console.log('home1 -----flags/logout');
     const w:any = forelet.getWidget(WIDGET_NAME);
-    if (w) {
-        w.state = {
-            miningKTnum:0,
-            miningRank:0,
-            miningMedalId:8001,
-            signInDays: 0,   // 签到总天数
-            awards:[] // 签到奖励
-        };
-        w.init();
-        w.paint();
-    }
+    STATE.miningKTnum = 0;
+    STATE.miningRank = 0;
+    STATE.miningMedalId = 8001;
+    STATE.signInDays = 0;
+    STATE.awards = getSeriesLoginAwards(1);
+    w.init();
+    forelet.paint(STATE);
 });
 // register('mine',(mine:Mine) => {
 //     const w:any = forelet.getWidget(WIDGET_NAME);

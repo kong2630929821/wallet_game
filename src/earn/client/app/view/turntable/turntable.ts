@@ -86,6 +86,11 @@ export class Turntable extends Widget {
 
             });    
         }
+        getCloudBalances().then(cloudBalances => {
+            const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+            STATE.KTbalance = KTbalance;
+            forelet.paint(STATE);
+        });
     }
     public attach() {
         if (!isLogin()) {
@@ -378,6 +383,5 @@ registerStoreData('cloud/cloudWallets',() => {
                 forelet.paint(STATE);
             },3500);
         }
-        
     });
 });

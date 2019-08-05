@@ -4,7 +4,7 @@
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { popNewMessage } from '../../../../../app/utils/tools';
-import { getCloudBalances } from '../../../../../app/viewLogic/common';
+import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -90,6 +90,10 @@ export class OpenBox extends Widget {
                 this.setChestTip(2);
             });
         }
+        getCloudBalances().then(cloudBalances => {
+            STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+            forelet.paint(STATE);
+        });
     }
 
     public attach() {
@@ -122,9 +126,9 @@ export class OpenBox extends Widget {
             }
         } else if (this.state.KTbalance < this.props.selectChest.needTicketNum) {
             popNewMessage({ zh_Hans: '余额不足', zh_Hant: '餘額不足', en: '' });
+
             return;
         }
-        this.startOpenChest(e);
         openChest(this.props.selectChest.type).then((order: any) => {
             if (this.props.selectChest.type !== ActivityType.PrimaryChest) {
                 this.goLottery(e,boxIndex,order);
@@ -137,6 +141,7 @@ export class OpenBox extends Widget {
         }).catch((err) => {
             this.endOpenChest(e,boxIndex,BoxState.unOpenBox);
         });
+        this.startOpenChest(e);
     }
     
     /**
@@ -366,10 +371,21 @@ export class OpenBox extends Widget {
 const STATE = {
     KTbalance:0
 };
-register('cloud/cloudWallets',(mine:Mine) => {
+
+/**
+ * 云端余额变化
+ */
+registerStoreData('cloud/cloudWallets',() => {
     getCloudBalances().then(cloudBalances => {
-        STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
-        forelet.paint(STATE);
+        const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+        if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
+            STATE.KTbalance = KTbalance;
+            forelet.paint(STATE);
+        } else {
+            setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
+                STATE.KTbalance = KTbalance;
+                forelet.paint(STATE);
+            },500);
+        }
     });
-    
 });
