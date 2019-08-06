@@ -128,12 +128,15 @@ export class EarnHome extends Widget {
     /**
      * 初始化任务列表
      */
-    public initPropsNoviceTask() { 
-        Promise.all([getStoreData('wallet'),getCompleteTask()]).then(([wallet,data]) => {
+    public initPropsNoviceTask(wallet?:any) {
+        let walletPromise = getStoreData('wallet');
+        if (wallet) {
+            walletPromise = Promise.resolve(wallet);
+        } 
+        Promise.all([walletPromise,getCompleteTask()]).then(([wallet,data]) => {
             const flags:any = {};
             for (const v of data.taskList) {
                 if (v.state) {
-                    this.props.noviceTask[v.id - 1].complete = true;
                     if (v.id === 2) {
                         flags.helpWord = true;
                     } else if (v.id === 3) {
@@ -467,9 +470,9 @@ register('flags/firstLogin',() => {
         
 });
 
-registerStoreData('wallet', () => {
+registerStoreData('wallet', (wallet) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.initPropsNoviceTask();
+    w && w.initPropsNoviceTask(wallet);
 });
 
 // 二级目录资源加载完成
