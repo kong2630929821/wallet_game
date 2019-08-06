@@ -64,6 +64,7 @@ export class EarnHome extends Widget {
     public init() {
         console.log('hom1 init called');
         const ktShow = getModulConfig('KT_SHOW');
+        const isLogin = getStore('userInfo/uid', 0) > 0;
         this.props = {
             ...this.props,
             offlienType:OfflienType.EARN,
@@ -80,12 +81,14 @@ export class EarnHome extends Widget {
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
-            isLogin:getStore('userInfo/uid', 0) > 0,  // 活动是否登录成功
+            isLogin,  // 活动是否登录成功
             animationed:true, // 动画完成
             noviceTask:[]
         };
         this.initHotActivities();
-        this.initPropsNoviceTask();
+        if (isLogin) {
+            this.initPropsNoviceTask();
+        }
         getCloudBalances().then(cloudBalances => {
             STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
             forelet.paint(STATE);
@@ -213,8 +216,6 @@ export class EarnHome extends Widget {
                     show:wallet && wallet.setPsw
                 }];
             this.paint();
-        }).catch(err => {
-            this.initPropsNoviceTask();
         });
     }
 
