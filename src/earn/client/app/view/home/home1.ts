@@ -213,6 +213,8 @@ export class EarnHome extends Widget {
                     show:wallet && wallet.setPsw
                 }];
             this.paint();
+        }).catch(err => {
+            this.initPropsNoviceTask();
         });
     }
 
