@@ -249,7 +249,7 @@ export class MiningHome extends Widget {
             console.log('miningHome ==== ',this.props);
             this.props.miningCount = 0;
             this.props.startMining = false;
-            if (r.resultNum !== 1) return;
+            // if (r.resultNum === 8102) return; 向钱包服务器请求数据失败  表现就是没有挖到
             if (r.leftHp <= 0) {
                 this.hits = [];
                 this.deleteBoomMine();
