@@ -392,6 +392,7 @@ register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
 
 register('flags/logout',() => {  // 退出钱包时刷新页面
     console.log('home1 -----flags/logout');
+    setStore('flags',{});
     const w:any = forelet.getWidget(WIDGET_NAME);
     STATE.miningKTnum = 0;
     STATE.miningRank = 0;

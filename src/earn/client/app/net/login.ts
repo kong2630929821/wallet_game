@@ -19,10 +19,10 @@ import { initSubscribeInfo } from './subscribedb';
 const loginSuccess = (openId:number,res:UserInfo) => {
     console.timeEnd('login');
     console.log('[活动] 登录成功');
-    setStore('userInfo/isLogin',true);
     const userInfo = getStore('userInfo');
     setStore('userInfo',{ ...userInfo,...res });
     setStore('userInfo/uid',res.uid);
+    setStore('userInfo/isLogin',true);
     initReceive(res.uid);
     initSubscribeInfo(); // 监听数据表变化 
     if (res.loginCount === 0) {  // 新用户第一次登录
