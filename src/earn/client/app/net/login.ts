@@ -12,7 +12,7 @@ import { getSeriesLoginAwards } from '../utils/util';
 import { disconnect, initClient } from './init';
 import { initReceive } from './receive';
 // tslint:disable-next-line:max-line-length
-import { getInvitedNumberOfPerson, getKTbalance, getLoginDays, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
+import { getAllGoods, getInvitedNumberOfPerson, getKTbalance, getLoginDays, getMedalest, getMiningCoinNum, getSTbalance, getTodayMineNum, getUserInfo, redemptionList } from './rpc';
 import { initSubscribeInfo } from './subscribedb';
 
 // 登录成功
@@ -28,6 +28,7 @@ const loginSuccess = (openId:number,res:UserInfo) => {
     if (res.loginCount === 0) {  // 新用户第一次登录
         setStore('flags/firstLogin',true);
     }
+    getAllGoods();
     getSTbalance();  // 获取ST余额
     getKTbalance();  // 获取KT余额   
     getUserInfo(openId, 'self'); // 获取用户信息
