@@ -52,7 +52,6 @@ export class EarnHome extends Widget {
             ...props
         };
         super.setProps(this.props, oldProps);
-        this.updateTasks();
         const item0 = this.props.noviceTask[0];
         if (item0) {
             item0.complete =  !!this.props.userInfo.phoneNumber;
@@ -126,10 +125,28 @@ export class EarnHome extends Widget {
     /**
      * 初始化任务列表
      */
-    public initPropsNoviceTask() {
-        getStoreData('wallet').then((wallet) => {
-            const flags = getStore('flags');
-            // tslint:disable-next-line:ban-comma-operator
+    public initPropsNoviceTask() { 
+        Promise.all([getStoreData('wallet'),getCompleteTask()]).then(([wallet,data]) => {
+            const flags:any = {};
+            for (const v of data.taskList) {
+                if (v.state) {
+                    this.props.noviceTask[v.id - 1].complete = true;
+                    if (v.id === 2) {
+                        flags.helpWord = true;
+                    } else if (v.id === 3) {
+                        flags.sharePart = true;
+                    } else if (v.id === 4) {
+                        flags.firstChat = true;
+                    } else if (v.id === 5) {
+                        flags.firstTurntable = true;
+                    } else if (v.id === 6) {
+                        flags.firstOpenBox = true;
+                    } else if (v.id === 7) {
+                        flags.firstRecharge = true;
+                    }
+                }
+            }
+
             this.props.noviceTask = [
                 {
                     img: '',
@@ -196,49 +213,6 @@ export class EarnHome extends Widget {
                     show:wallet && wallet.setPsw
                 }];
             this.paint();
-        });
-    }
-    /**
-     * 刷新任务数据
-     */
-
-    public async updateTasks() {
-        if (getStore('userInfo/uid',0) <= 0) {
-            return;
-        }
-        // if (!getStore('flags').loginAwards) {
-        //     getLoginDays().then((r:SeriesDaysRes) => {
-        //         this.props.signInDays = r.days;
-        //         this.props.awards = getSeriesLoginAwards(r.days);
-        //         setStore('flags/loginAwards',this.props.awards);
-        //         setStore('flags/signInDays',this.props.signInDays);
-
-        //         this.paint();
-        //     });
-        // }
-        getCompleteTask().then((data:any) => {
-            console.log('home1 getCompleteTask',data);
-            const flags = getStore('flags');
-            for (const v of data.taskList) {
-                if (v.state) {
-                    this.props.noviceTask[v.id - 1].complete = true;
-                    if (v.id === 2) {
-                        flags.helpWord = true;
-                    } else if (v.id === 3) {
-                        flags.sharePart = true;
-                    } else if (v.id === 4) {
-                        flags.firstChat = true;
-                    } else if (v.id === 5) {
-                        flags.firstTurntable = true;
-                    } else if (v.id === 6) {
-                        flags.firstOpenBox = true;
-                    } else if (v.id === 7) {
-                        flags.firstRecharge = true;
-                    }
-                }
-            }
-            setStore('flags',flags);
-            this.initPropsNoviceTask();
         });
     }
 
@@ -368,7 +342,7 @@ register('userInfo/isLogin',(isLogin:boolean) => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     if (isLogin && w) {
         w.props.isLogin = true;
-        w.updateTasks();
+        w.initPropsNoviceTask();
         w.paint();
     }
 });
@@ -493,7 +467,6 @@ register('flags/firstLogin',() => {
 registerStoreData('wallet', () => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     w && w.initPropsNoviceTask();
-    w && w.paint();
 });
 
 // 二级目录资源加载完成
@@ -519,7 +492,7 @@ registerStoreData('wallet/helpWord',() => {
                     awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/helpWord',true);
-                w.updateTasks();
+                w.initPropsNoviceTask();
             }
         });
     }
@@ -538,7 +511,7 @@ registerStoreData('wallet/sharePart',() => {
                     awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/sharePart',true);
-                w.updateTasks();
+                w.initPropsNoviceTask();
             }
         });
     }
@@ -556,7 +529,7 @@ chatStore.register('flags/firstChat',() => {
                     awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/firstChat',true);
-                w.updateTasks();
+                w.initPropsNoviceTask();
             }
         });
     }
@@ -568,7 +541,7 @@ register('flags/firstTurntable',() => {
     clientRpcFunc(get_task_award,5,(res:Result) => {
         console.log('大转盘',res);
         if (res && res.reslutCode === 1) {
-            w.updateTasks();
+            w.initPropsNoviceTask();
         }
     });
 });
@@ -578,7 +551,7 @@ register('flags/firstOpenBox',() => {
     clientRpcFunc(get_task_award,6,(res:Result) => {
         console.log('开宝箱',res);
         if (res && res.reslutCode === 1) {
-            w.updateTasks();
+            w.initPropsNoviceTask();
         }
     });
 });
@@ -596,7 +569,7 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
                     awardNum:JSON.parse(res.msg).count
                 });
                 setStore('flags/firstRecharge',true);
-                w.updateTasks();
+                w.initPropsNoviceTask();
             }
         });
     }

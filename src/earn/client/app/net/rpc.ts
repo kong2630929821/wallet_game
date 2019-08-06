@@ -533,7 +533,7 @@ export const getMiningCoinNum = () => {
 /**
  * 获取用户已完成的任务
  */
-export const getCompleteTask = () => {
+export const getCompleteTask = ():Promise<any> => {
     return new Promise((resolve, reject) => {
         clientRpcFunc(task_query,null,(res:Result) => {
             console.log('[活动]rpc-getCompleteTask---------------', res);
