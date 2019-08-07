@@ -7,7 +7,7 @@ import { popNewMessage } from '../../../../app/utils/tools';
 import { registerStoreData } from '../../../../app/viewLogic/common';
 import { popModalBoxs } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
-import { getStore, register, setStore } from '../store/memstore';
+import { getStore, register, setStore, unregister } from '../store/memstore';
 import { subscribe } from './init';
 import { getInviteAwards } from './rpc';
 
@@ -64,6 +64,20 @@ register('flags/startMining',(startMining:boolean) => {
 // 邀请的好友成为真实用户的个数
 registerStoreData('flags/invite_realUser',(r) => {
     console.log('邀请好友成为真实用户',r);
+    const isLogin = getStore('userInfo/uid', 0) > 0;
+    if (isLogin) {
+        getInviteAwardsPop(r);
+    } else {
+        const isLogin = () => {
+            getInviteAwardsPop(r);
+            unregister('userInfo/uid',isLogin);
+        };
+        register('userInfo/uid',isLogin);
+    }
+    
+});
+
+const getInviteAwardsPop = (r) => {
     getInviteAwards(r).then((res:any) => {
         if (res && res.award.length > 0) {
             const awa = res.award[0];
@@ -76,4 +90,4 @@ registerStoreData('flags/invite_realUser',(r) => {
             popNewMessage('获取奖励失败');
         }
     });
-});
+};
