@@ -9,7 +9,7 @@ import { Widget } from '../../../pi/widget/widget';
 import { clientRpcFunc, subscribe } from '../../client/app/net/init';
 import { GuessingReq, Result } from '../../server/data/db/guessing.s';
 import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse } from '../../server/data/db/item.s';
-import { Achievements, Medals, ShowMedalRes } from '../../server/data/db/medal.s';
+import { Achievements, getShowMedals, Medals, ShowMedalRes, ShowMedalResArr } from '../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
 import { cdkey, get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
@@ -19,9 +19,9 @@ import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, kt_rotary, kt_treasurebox, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
 import { bigint_test, get_objStr, hit_test, item_add, item_addticket, reset_dayliTask_test } from '../../server/rpc/test.p';
 import { Hits, IsOk } from '../../server/rpc/test.s';
-import { close_connect, get_loginDays, login } from '../../server/rpc/user.p';
+import { bind_accID, close_connect, get_loginDays, login } from '../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../server/rpc/user.s';
-import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_task_award, getAdCount, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
+import { add_mine, award_query, get_achievements, get_ad_award, get_item, get_medals, get_showMedal, get_showMedals, get_task_award, getAdCount, item_query, show_medal, task_query } from '../../server/rpc/user_item.p';
 
 /**
  * 登录
@@ -132,7 +132,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 10;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 1;
+    miningResult.mineNum = 3;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -266,6 +266,23 @@ export const get_medal_test = () => {
     });
 };
 
+// 批量查看展示的奖章
+export const get_showMedals_test = () => {
+    const accIds = new getShowMedals();
+    accIds.arr = ['10001'];
+    clientRpcFunc(get_showMedals, accIds, (r: ShowMedalResArr) => {
+        console.log(r);
+    });
+};
+
+// 绑定accID
+export const bind_accID_test = () => {
+    const accID = '10001';
+    clientRpcFunc(bind_accID, accID, (r: Result) => {
+        console.log(r);
+    });
+};
+
 export const initReceive = (uid: number) => {
     subscribe(`send/${uid}`, SendMsg, (r: any) => {
         console.log('勋章弹窗！！！！！！！',r);
@@ -395,19 +412,6 @@ export const input_cdkey = ()  => {
 
 const props = {
     bts: [
-        
-        {
-            name: '添加比赛',
-            func: () => { competitionEditor(); }
-        },
-        {
-            name: '编辑商品',
-            func: () => { pruductEditor(); }
-        },
-        {
-            name: '创建群组',
-            func: () => { groupEditor(); }
-        },
         {
             name: '登录',
             func: () => { loginTest(); }
@@ -416,18 +420,6 @@ const props = {
             name: '登录天数',
             func: () => { get_series_days(); }
         },
-        // {
-        //     name: '退出登录',
-        //     func: () => { quit_test(); }
-        // },
-        // {
-        //     name: '聊天注册',
-        //     func: () => { chatRegister(); }
-        // },
-        // {
-        //     name: '聊天登录',
-        //     func: () => { chatLogin(); }
-        // },
         {
             name: '广告奖励',
             func: () => { ad_award_test(); }
@@ -440,33 +432,9 @@ const props = {
             name: '免费查询',
             func: () => { get_hasFree_test(); }
         },
-        // {
-        //     name: '商品信息',
-        //     func: () => { convert_info_test(); }
-        // },
         {
             name: '奖励查询',
             func: () => { award_query_test(); }
-        },
-        // {
-        //     name: '挖矿货币奖励查询',
-        //     func: () => { get_miningCoin_test(); }
-        // },
-        // {
-        //     name: '加ST',
-        //     func: () => { bigInt_test(); }
-        // },
-        {
-            name: '查ST',
-            func: () => { get_stNum_test(); }
-        },
-        {
-            name: '转盘下单',
-            func: () => { rotary_test(); }
-        },
-        {
-            name: '宝箱下单',
-            func: () => { box_test(); }
         },
         {
             name: '订单查询',
@@ -519,6 +487,14 @@ const props = {
         {
             name: '兑换邀请码',
             func: () => { input_cdkey(); }
+        },
+        {
+            name: '批量查看奖章',
+            func: () => { get_showMedals_test(); }
+        },
+        {
+            name: '绑定AccID',
+            func: () => { bind_accID_test(); }
         }
     ] // 按钮数组
 };
