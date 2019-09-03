@@ -6,7 +6,7 @@
 declare var pi_modules;
 
 // ================================================ 导入
-import { activeLogicIp, activeLogicPort } from '../../../../app/ipConfig';
+import { activeLogicIp, activeLogicPort } from '../../../../app/publicLib/config';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { BonBuffer } from '../../../../pi/util/bon';

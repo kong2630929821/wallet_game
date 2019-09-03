@@ -546,6 +546,11 @@ export const getCompleteTask = ():Promise<any> => {
         });
     });
 };
+
+/**
+ * 获取勋章列表
+ * @param arr acc_id数组
+ */
 export const getMedalest = (arr:any) => {
     const getShowArr = new getShowMedals();
     getShowArr.arr = arr;
