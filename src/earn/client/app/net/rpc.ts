@@ -17,7 +17,7 @@ import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
 import { UserType, UserType_Enum, WalletLoginReq } from '../../../server/rpc/user.s';
 // tslint:disable-next-line:max-line-length
-import { award_query, get_achievements, get_ad_award, get_showMedal, get_showMedals, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
+import { award_query, get_achievements, get_ad_award, get_medals, get_showMedal, get_showMedals, item_query, show_medal, task_query } from '../../../server/rpc/user_item.p';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { coinUnitchange, st2ST, timestampFormat, timestampFormatWeek } from '../utils/tools';
@@ -565,6 +565,16 @@ export const getMedalest = (arr:any) => {
                 reject(res);
             }
             
+        });
+    });
+};
+
+// 获取全部勋章
+export const getAllMedal = () => {
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(get_medals,'',(r:any) => {
+            console.log('全部勋章',r);
+            resolve(r);
         });
     });
 };
