@@ -101,6 +101,7 @@ export class MineRank extends Widget {
                         });
                         if (JSON.stringify(this.props.rankList) !== JSON.stringify(res.rank)) {
                             this.props.rankList = res.rank;
+                            setStore('rankList',res.rank);
                         }
                         this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                         this.props.myRank.userName = userInfo.nickName;
@@ -137,7 +138,10 @@ export class MineRank extends Widget {
                             if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';
                             v.medal = resList.arr[i].medalType || '8001';
                         });
-                        this.props.rankList = res.rank;
+                        if (JSON.stringify(this.props.rankList) !== JSON.stringify(res.rank)) {
+                            this.props.rankList = res.rank;
+                            setStore('rankList',res.rank);
+                        }
                         this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
                         this.props.myRank.userName = userInfo.nickName;
                         this.props.myRank.rank = res.miningRank;
