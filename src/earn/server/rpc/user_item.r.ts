@@ -117,7 +117,7 @@ export const get_medals = ():Medals => {
 // #[rpc=rpcServer]
 export const get_showMedal = (uid: number):ShowMedalRes => {
     if (!uid) return;
-    const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, null);
+    const showMedalRes = new ShowMedalRes(RESULT_SUCCESS, CONSTANT.MEDAL_KT0);
     const bucket = new Bucket(WARE_NAME, ShowMedal._$info.name);
     const showMedal = bucket.get<number, [ShowMedal]>(uid)[0];
     if (!showMedal) return showMedalRes;
