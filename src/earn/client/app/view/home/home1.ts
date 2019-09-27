@@ -329,7 +329,7 @@ export class EarnHome extends Widget {
                 }
                 const scrollTop = this.$earnHome.scrollTop;
                 this.props.scrollHeight = scrollTop;
-                console.log('scroll page------------------',scrollTop);
+                // console.log('scroll page------------------',scrollTop);
             });
         }
         this.scrollCb();

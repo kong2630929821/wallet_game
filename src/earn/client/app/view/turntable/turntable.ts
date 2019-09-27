@@ -93,6 +93,7 @@ export class Turntable extends Widget {
         });
     }
     public attach() {
+        super.attach();
         if (!isLogin()) {
             this.backPrePage();
         }

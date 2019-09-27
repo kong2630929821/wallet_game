@@ -97,6 +97,7 @@ export class OpenBox extends Widget {
     }
 
     public attach() {
+        super.attach();
         if (!isLogin()) {
             this.backPrePage();
         } else {
