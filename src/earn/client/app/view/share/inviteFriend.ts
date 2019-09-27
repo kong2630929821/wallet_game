@@ -8,6 +8,7 @@ import { LuckyMoneyType } from '../../../../../app/publicLib/interface';
 import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
 import { copyToClipboard, getUserInfo, popNew3, popNewMessage } from '../../../../../app/utils/tools';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
+import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -86,7 +87,7 @@ export class InviteFriend extends Widget {
     }
     // 我的邀请
     public myInvite() {
-        popNew3('earn-client-app-view-activity-myInviteUsers');
+        popNew('earn-client-app-view-share-myInviteUsers');
     }
     /**
      * 切换显示页面

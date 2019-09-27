@@ -40,7 +40,7 @@ export class ProductDetail extends Widget {
             popNewMessage(this.props.btnName);
             return;
         }
-        popNew('earn-client-app-view-exchange-comfirmExchange',{ detail:this.props });
+        popNew('earn-client-app-view-mall-comfirmExchange',{ detail:this.props });
     }
 
     /**

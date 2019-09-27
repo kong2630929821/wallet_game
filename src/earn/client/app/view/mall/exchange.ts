@@ -5,8 +5,8 @@
 import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
-import { isLogin } from '../../utils/util';
 import { getStore, register } from '../../store/memstore';
+import { isLogin } from '../../utils/util';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
@@ -35,7 +35,7 @@ export class Exchange extends Widget {
      * 查看历史记录
      */
     public goHistory() {
-        popNew('earn-client-app-view-exchange-exchangeHistory');
+        popNew('earn-client-app-view-mall-exchangeHistory');
     }
 
     /**
@@ -49,5 +49,5 @@ export class Exchange extends Widget {
 // ===================================================== 立即执行
 
 register('redemption',(r:any) => {
-    forelet.paint({list:r})
+    forelet.paint({ list:r });
 });

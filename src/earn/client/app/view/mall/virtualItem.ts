@@ -38,6 +38,6 @@ export class VirtualItem extends Widget {
      * @param index 序号
      */
     public goProductDetail(index:number) {
-        popNew('earn-client-app-view-exchange-exchangeDetail',this.props);
+        popNew('earn-client-app-view-mall-exchangeDetail',this.props);
     }
 }

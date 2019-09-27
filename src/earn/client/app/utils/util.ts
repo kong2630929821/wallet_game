@@ -456,6 +456,8 @@ export const canInviteAward = (invited:Invited) => {
 
 export const isLogin = () => {
     const uid = getStore('userInfo/uid');
+
+    return true;
     if (uid === -1) {
         popNewMessage('请登录再玩');
         

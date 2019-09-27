@@ -177,15 +177,18 @@ export const getAwardHistory = (itype?: number) => {
         clientRpcFunc(award_query, awardQuery, (r: any) => {
             console.log('[活动]rpc-getAwardHistory-resData---------------', r);
             const resData = [];
-            r.awards.forEach(element => {
-                const data = {
-                    ...element,
-                    ...getPrizeInfo(element.awardType),
-                    time: timestampFormat(element.time),
-                    count: coinUnitchange(element.awardType,element.count)
-                };
-                resData.push(data);
-            });
+            if (r.awards) {
+                r.awards.forEach(element => {
+                    const data = {
+                        ...element,
+                        ...getPrizeInfo(element.awardType),
+                        time: timestampFormat(element.time),
+                        count: coinUnitchange(element.awardType,element.count)
+                    };
+                    resData.push(data);
+                });
+            }
+           
             resolve(resData);
         });
     });

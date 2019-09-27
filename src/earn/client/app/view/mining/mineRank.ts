@@ -3,7 +3,6 @@
  */
 
 import { callGetFriendsKTTops, callGetHighTop } from '../../../../../app/middleLayer/wrap';
-import { getUserList } from '../../../../../app/net/pull';
 import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
 import {  getUserInfo, popNew3 } from '../../../../../app/utils/tools';
 import { getCloudBalances } from '../../../../../app/viewLogic/common';
@@ -12,11 +11,8 @@ import { getChatUid } from '../../../../../chat/client/app/net/rpc';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getMedalest } from '../../net/rpc';
-import { subscribeSpecialAward } from '../../net/subscribedb';
 import { getStore, setStore } from '../../store/memstore';
-import { coinUnitchange } from '../../utils/tools';
 import { formateCurrency } from '../../utils/util';
-import { CoinType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

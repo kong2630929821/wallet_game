@@ -51,7 +51,7 @@ export class Collect extends Widget {
      */
     public initData() {
 
-        this.props.myCollect = getStore('ACHVmedals');
+        this.props.myCollect = getStore('ACHVmedals') || [];
         this.props.medalList.forEach(element => {
             element.isHave = this.props.myCollect.includes(element.id);
         });

@@ -371,7 +371,7 @@ export class MiningHome extends Widget {
 const STATE = {
     miningNumber:0, // 嗨豆数量
     miningedNumber:0,  // 已挖矿山
-    zIndex:-1
+    zIndex:0
 
 };
 register('userInfo/isLogin',(isLogin:boolean) => {
