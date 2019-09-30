@@ -2,13 +2,14 @@
  * 兑换确认
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getModulConfig } from '../../../../../app/public/config';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { exchangeVirtual, queryExchangeOrder } from '../../net/rpc_order';
 
 interface Props {
     STcout:number;
+    detail:any;
 }
 
 export class ComfirmExchange extends Widget {
@@ -16,7 +17,7 @@ export class ComfirmExchange extends Widget {
     public cancel:() => void;
     public props:any;
 
-    public setProps(props:any) {
+    public setProps(props:Props) {
         this.props = {
             ...this.props,
             detail:props.detail,

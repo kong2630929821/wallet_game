@@ -32,7 +32,6 @@ export class MyProduct extends Widget {
      * 初始化数据
      */
     public initData() {
-        
         getAwardHistory(this.props.historyType).then((res:any) => {
             if (this.props.historyType === 0) {
                 const dealData = [];

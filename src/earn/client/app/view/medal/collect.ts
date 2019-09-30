@@ -2,8 +2,8 @@
  * 我的收藏 --主页
  */
 
-import { getUserInfo, popNewMessage } from '../../../../../app/utils/tools';
-import { makeScreenShot } from '../../../../../app/viewLogic/native';
+import { makeScreenShot } from '../../../../../app/utils/native';
+import { getUserInfo, popNewMessage } from '../../../../../app/utils/pureUtils';
 import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -51,7 +51,7 @@ export class Collect extends Widget {
      */
     public initData() {
 
-        this.props.myCollect = getStore('ACHVmedals');
+        this.props.myCollect = getStore('ACHVmedals') || [];
         this.props.medalList.forEach(element => {
             element.isHave = this.props.myCollect.includes(element.id);
         });

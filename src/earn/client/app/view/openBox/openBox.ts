@@ -1,10 +1,10 @@
 /**
  * 开宝箱 - 首页
  */
-import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../app/utils/tools';
-import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
+import { getModulConfig } from '../../../../../app/public/config';
+import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { getCloudBalances, register } from '../../../../../app/store/memstore';
+import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
@@ -12,7 +12,7 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
-import { Mine,register, setStore } from '../../store/memstore';
+import { setStore } from '../../store/memstore';
 import { wathcAdGetAward } from '../../utils/tools';
 import { getTicketNum, isLogin } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
@@ -90,13 +90,12 @@ export class OpenBox extends Widget {
                 this.setChestTip(2);
             });
         }
-        getCloudBalances().then(cloudBalances => {
-            STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
-            forelet.paint(STATE);
-        });
+        const cloudBalances = getCloudBalances();
+        STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
     }
 
     public attach() {
+        super.attach();
         if (!isLogin()) {
             this.backPrePage();
         } else {
@@ -375,17 +374,16 @@ const STATE = {
 /**
  * 云端余额变化
  */
-registerStoreData('cloud/cloudWallets',() => {
-    getCloudBalances().then(cloudBalances => {
-        const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
-        if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
+register('cloud/cloudWallets',() => {
+    const cloudBalances = getCloudBalances();
+    const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+    if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
+        STATE.KTbalance = KTbalance;
+        forelet.paint(STATE);
+    } else {
+        setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
             STATE.KTbalance = KTbalance;
             forelet.paint(STATE);
-        } else {
-            setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
-                STATE.KTbalance = KTbalance;
-                forelet.paint(STATE);
-            },500);
-        }
-    });
+        },500);
+    }
 });

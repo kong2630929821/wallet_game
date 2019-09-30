@@ -2,7 +2,7 @@
  * 兑换虚拟奖品列表
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getModulConfig } from '../../../../../app/public/config';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 
@@ -38,6 +38,6 @@ export class VirtualItem extends Widget {
      * @param index 序号
      */
     public goProductDetail(index:number) {
-        popNew('earn-client-app-view-exchange-exchangeDetail',this.props);
+        popNew('earn-client-app-view-mall-exchangeDetail',this.props);
     }
 }

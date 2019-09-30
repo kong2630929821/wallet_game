@@ -1,13 +1,16 @@
 /**
  * common util
  */
-import { popNewMessage } from '../../../../app/utils/tools';
-import { Item_Enum } from '../../../server/data/db/item.s';
+import { chooseAdType, watchAd } from '../../../../app/utils/native';
+import { popNewLoading, popNewMessage } from '../../../../app/utils/pureUtils';
+import { PlayEvent } from '../../../../pi/browser/ad_unoin';
+import { Award, Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';
 import { LOLTeamInfosCfg, LOLTypeCfg } from '../../../xlsx/competition.s';
 import { ErrorNumCfg } from '../../../xlsx/errorNum.s';
 import { AchievementMedalCfg, MedalCfg, MineHpCfg } from '../../../xlsx/item.s';
+import { getAdRewards } from '../net/rpc';
 import { getMap } from '../store/cfgMap';
 import { getStore, Invited } from '../store/memstore';
 import { ActTicketNumCfg, PrizeCfg } from '../xls/dataCfg.s';
@@ -15,6 +18,7 @@ import { ActivityType, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
 import { miningMaxHits } from './constants';
+import { btc2BTC, eth2ETH, st2ST } from './tools';
 
 /**
  * 获取用户单个物品数量  kt/st等
@@ -24,21 +28,6 @@ export const getGoodCount = (itemType: CoinType) => {
     for (let i = 0; i < goods.length; i++) {
         const good = goods[i];
         if (good.value.num === itemType) {
-            return good.value.count;
-        }
-    }
-
-    return 0;
-};
-
-/**
- * 获取锄头对象
- */
-export const getHoeCount = (hoeType: HoeType) => {
-    const goods = getStore('goods');
-    for (let i = 0; i < goods.length; i++) {
-        const good = goods[i];
-        if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
             return good.value.count;
         }
     }
@@ -72,25 +61,6 @@ export const getAllMines = () => {
     return mines;
 };
 
-/**
- * 获取拥有的品质最高的矿山类型
- */
-export const getMaxMineType = () => {
-    const goods = getStore('goods');
-    let mineType = MineType.SmallMine;
-    for (let i = 0; i < goods.length; i++) {
-        const good = goods[i];
-        if (good.enum_type === Item_Enum.MINE) {
-            if (good.value.count > 0 && good.value.num > mineType) {
-                mineType = good.value.num;
-            }
-        }
-    }
-
-    // console.log('getMaxMineType',mineType);
-
-    return mineType;
-};
 /**
  * 获取随机显示的矿山列表
  */
@@ -314,22 +284,6 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
     return filterCfgs;
 };
 
-/**
- * 获取勋章列表
- * @param typeNum 查询参数
- * @param typeStr 查询列名
- */
-export const getMedalList = (typeNum: string | number, typeStr: string): any => {
-    const cfgs = getMap(MedalCfg);
-    const filterCfgs = [];
-    for (const [k, cfg] of cfgs) {
-        if (typeNum === cfg[typeStr]) {
-            filterCfgs.push(cfg);
-        }
-    }
-
-    return filterCfgs;
-};
 
 /**
  * 获取成就勋章列表
@@ -393,24 +347,40 @@ export const showActError = (errorNum: number) => {
 };
 
 /**
- * 获取连续登录奖励
+ * 获取锄头对象
  */
-export const getSeriesLoginAwards = (serielLoginDays: number) => {
-    const resetDays = 15; // 奖励重置天数
-    const showAwardsDays = 7; // 同时展示几天的奖励
-    const multiple = Math.ceil(serielLoginDays / showAwardsDays);
-    const showAwardsDaysStart = (multiple - 1) * showAwardsDays + 1 ;
-    const cfgs = getMap(SeriesLoginAwardCfg);
-    const awards = [];
-    for (let i = 0;i < showAwardsDays;i++) {
-        const index = (showAwardsDaysStart + i - 1) % resetDays;
-        const cfg = JSON.parse(JSON.stringify(cfgs.get(index + 1)));
-        cfg.days = showAwardsDaysStart + i;
-        awards[i] = cfg;
+export const getHoeCount = (hoeType: HoeType) => {
+    const goods = getStore('goods');
+    for (let i = 0; i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.HOE && good.value.num === hoeType) {
+            return good.value.count;
+        }
     }
 
-    return awards;
+    return 0;
 };
+
+/**
+ * 获取拥有的品质最高的矿山类型
+ */
+export const getMaxMineType = () => {
+    const goods = getStore('goods');
+    let mineType = MineType.SmallMine;
+    for (let i = 0; i < goods.length; i++) {
+        const good = goods[i];
+        if (good.enum_type === Item_Enum.MINE) {
+            if (good.value.count > 0 && good.value.num > mineType) {
+                mineType = good.value.num;
+            }
+        }
+    }
+
+    // console.log('getMaxMineType',mineType);
+
+    return mineType;
+};
+
  /**
   * 获取队伍信息
   * @param teamNum 可选,队伍编号，不填返回所有
@@ -456,6 +426,8 @@ export const canInviteAward = (invited:Invited) => {
 
 export const isLogin = () => {
     const uid = getStore('userInfo/uid');
+
+    return true;
     if (uid === -1) {
         popNewMessage('请登录再玩');
         
@@ -470,4 +442,48 @@ export const isLogin = () => {
  */
 export const formateCurrency = (value:number) => {
     return `${value.toLocaleString()}.00`;
+};
+
+/**
+ * 观看广告并且获取奖励
+ * @param awardId 从哪个模块进入广告
+ * 1 挖矿 2 竞猜 3 大转盘 4 宝箱
+ */
+export const wathcAdGetAward = (awardId:number,getAwardCB?:Function,closeCB?:Function) => {
+    const close = popNewLoading('加载中...');
+    let adAard:Award = null;
+    chooseAdType((adType) => {
+        watchAd(adType,(isSuccess,event,info) => {
+            console.log('ad isSuccess',isSuccess);
+            console.log('ad info',info);
+            close.callback(close.widget);
+            if (event === PlayEvent.Reward) {// 发放奖励
+                getAdRewards(awardId).then((award:Award) => {
+                    adAard = award;
+                    // popNewMessage('获取到广告奖励');
+                    console.log('观看广告获取到的奖励',award);
+                    getAwardCB && getAwardCB(award);
+                });
+            } else if (event === PlayEvent.Close) { // 关闭广告 
+                adAard && closeCB && closeCB(adAard);
+            }
+        });
+    });
+};
+
+/**
+ * 显示货币单位转换
+ */
+export const coinUnitchange = (coinType:CoinType,count:number) => {
+    switch (coinType) {
+        case CoinType.BTC:
+            return btc2BTC(count); 
+        case CoinType.ETH:
+            return eth2ETH(count); 
+        case CoinType.ST:
+            return st2ST(count); 
+    
+        default:
+            return count;
+    }
 };

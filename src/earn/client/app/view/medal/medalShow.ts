@@ -2,7 +2,7 @@
  * 勋章成就 --主页
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getModulConfig } from '../../../../../app/public/config';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getACHVmedalList, getMedalList } from '../../utils/util';
 

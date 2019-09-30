@@ -1,5 +1,5 @@
-import { getStoreData } from '../../../../../app/middleLayer/wrap';
-import { topHeight } from '../../../../../app/publicLib/config';
+import { topHeight } from '../../../../../app/public/config';
+import { getStore } from '../../../../../app/store/memstore';
 import { Widget } from '../../../../../pi/widget/widget';
 import { HoeType } from '../../xls/hoeType.s';
 
@@ -38,7 +38,7 @@ export class AdAward extends Widget {
     }
     public init() {
         setTimeout(() => {
-            getStoreData('setting/topHeight',topHeight).then(topHeight => {
+            getStore('setting/topHeight',topHeight).then(topHeight => {
                 const move = document.getElementById('awardMove').offsetTop;
                 this.props.awardOut = true;
                 this.props.moveX = -265;

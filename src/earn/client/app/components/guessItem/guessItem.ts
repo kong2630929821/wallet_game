@@ -2,7 +2,7 @@
  * 竞猜组件
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getModulConfig } from '../../../../../app/public/config';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 

@@ -3,8 +3,7 @@
  */
 
 import { Widget } from '../../../../../pi/widget/widget';
-import { coinUnitchange } from '../../utils/tools';
-import { getPrizeInfo } from '../../utils/util';
+import { coinUnitchange, getPrizeInfo } from '../../utils/util';
 
 interface Props {
     fadeOut:boolean;

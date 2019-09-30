@@ -1,9 +1,6 @@
-import { popNewLoading } from '../../../../app/utils/tools';
-import { chooseAdType, watchAd } from '../../../../app/viewLogic/native';
-import { PlayEvent } from '../../../../pi/browser/ad_unoin';
-import { Award } from '../../../server/data/db/item.s';
-import { getAdRewards } from '../net/rpc';
-import { CoinType } from '../xls/dataEnum.s';
+import { SeriesLoginAwardCfg } from '../../../xlsx/awardCfg.s';
+import { MedalCfg } from '../../../xlsx/item.s';
+import { getMap } from '../store/cfgMap';
 
 /**
  * 工具类函数
@@ -89,45 +86,38 @@ export const btc2BTC = (btcNum:number) => {
 };
 
 /**
- * 显示货币单位转换
+ * 获取连续登录奖励
  */
-export const coinUnitchange = (coinType:CoinType,count:number) => {
-    switch (coinType) {
-        case CoinType.BTC:
-            return btc2BTC(count); 
-        case CoinType.ETH:
-            return eth2ETH(count); 
-        case CoinType.ST:
-            return st2ST(count); 
-    
-        default:
-            return count;
+export const getSeriesLoginAwards = (serielLoginDays: number) => {
+    const resetDays = 15; // 奖励重置天数
+    const showAwardsDays = 7; // 同时展示几天的奖励
+    const multiple = Math.ceil(serielLoginDays / showAwardsDays);
+    const showAwardsDaysStart = (multiple - 1) * showAwardsDays + 1 ;
+    const cfgs = getMap(SeriesLoginAwardCfg);
+    const awards = [];
+    for (let i = 0;i < showAwardsDays;i++) {
+        const index = (showAwardsDaysStart + i - 1) % resetDays;
+        const cfg = JSON.parse(JSON.stringify(cfgs.get(index + 1)));
+        cfg.days = showAwardsDaysStart + i;
+        awards[i] = cfg;
     }
+
+    return awards;
 };
 
 /**
- * 观看广告并且获取奖励
- * @param awardId 从哪个模块进入广告
- * 1 挖矿 2 竞猜 3 大转盘 4 宝箱
+ * 获取勋章列表
+ * @param typeNum 查询参数
+ * @param typeStr 查询列名
  */
-export const wathcAdGetAward = (awardId:number,getAwardCB?:Function,closeCB?:Function) => {
-    const close = popNewLoading('加载中...');
-    let adAard:Award = null;
-    chooseAdType((adType) => {
-        watchAd(adType,(isSuccess,event,info) => {
-            console.log('ad isSuccess',isSuccess);
-            console.log('ad info',info);
-            close.callback(close.widget);
-            if (event === PlayEvent.Reward) {// 发放奖励
-                getAdRewards(awardId).then((award:Award) => {
-                    adAard = award;
-                    // popNewMessage('获取到广告奖励');
-                    console.log('观看广告获取到的奖励',award);
-                    getAwardCB && getAwardCB(award);
-                });
-            } else if (event === PlayEvent.Close) { // 关闭广告 
-                adAard && closeCB && closeCB(adAard);
-            }
-        });
-    });
+export const getMedalList = (typeNum: string | number, typeStr: string): any => {
+    const cfgs = getMap(MedalCfg);
+    const filterCfgs = [];
+    for (const [k, cfg] of cfgs) {
+        if (typeNum === cfg[typeStr]) {
+            filterCfgs.push(cfg);
+        }
+    }
+
+    return filterCfgs;
 };

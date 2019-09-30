@@ -2,7 +2,7 @@
  * 竞猜主页
  */
 
-import { registerStoreData } from '../../../../../app/viewLogic/common';
+import { register } from '../../../../../app/store/memstore';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import * as store from '../../store/memstore';
@@ -98,7 +98,7 @@ export class GuessHome extends Widget {
 
 // ==============================================立即执行
 
-registerStoreData('flags/noPassword',(r:any) => {
+register('flags/noPassword',(r:any) => {
     const w: any = forelet.getWidget(WIDGET_NAME);
     w &&  w.initNoPsw(r);
 });
