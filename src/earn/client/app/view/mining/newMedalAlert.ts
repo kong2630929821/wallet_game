@@ -2,13 +2,12 @@
  * 勋章成就 -- 新获勋章提示
  */
 
-import { shareDownload } from '../../../../../app/config';
-import { getModulConfig } from '../../../../../app/public/config';
+import { getModulConfig, shareDownload } from '../../../../../app/public/config';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/pureUtils';
 import { SharePlatform, ShareToPlatforms } from '../../../../../pi/browser/shareToPlatforms';
 import { Widget } from '../../../../../pi/widget/widget';
-import { coinUnitchange } from '../../utils/tools';
-import { getMedalList } from '../../utils/util';
+import { getMedalList } from '../../utils/tools';
+import { coinUnitchange } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from '../medal/medalShow';
 
