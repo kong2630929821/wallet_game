@@ -50,8 +50,8 @@ export class MiningHome extends Widget {
         this.props = {
             mineMax:MineMax,                     // 每天最多挖的矿山数
             ironHoe:getHoeCount(HoeType.IronHoe),     // 铁锄头数量
-            goldHoe:getHoeCount(HoeType.GoldHoe),     // 金锄头数量
-            diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 钻石锄头数量
+            goldHoe:getHoeCount(HoeType.GoldHoe),     // 银锄头数量
+            diamondHoe:getHoeCount(HoeType.DiamondHoe),     // 金锄头数量
             hoeSelectedLeft:0,
             hoeType:HoeType,   // 锄头类型
             hoeSelected:-1,    // 选中的锄头
@@ -76,7 +76,7 @@ export class MiningHome extends Widget {
     }
 
     public closeClick() {
-        setStore('flags/earnHomeHidden',false);
+        this.ok && this.ok();
     }
 
     /**

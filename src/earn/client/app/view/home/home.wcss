@@ -1,0 +1,162 @@
+.new-page{
+    display: flex;
+    flex-direction: column;
+}
+.topBack{
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+}
+.body{
+    padding-bottom: 120px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+}
+.walefareBox{
+    position: relative;
+}
+.walefare{
+    width:700px;
+    height:400px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 2px 0px rgba(0,0,0,0.2);
+    border-radius:25px;
+    margin: 12px 25px;
+}
+.walefareMark{
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width:690px;
+    height:60px;
+    background:rgba(255,255,255,0.8);
+    border-radius:30px;
+    font-size:28px;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(34,34,34,1);
+    line-height: 60px;
+    text-indent: 2rem;
+}
+.todayLogin{
+    font-size:36px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(34,34,34,1);
+    margin: 54px 25px 0 25px;
+}
+.signIn-container{
+    margin: 30px 40px 11px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.signIn-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+}
+.signIn-imgDiv{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+.signIn-img{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin: 5px;
+}
+.activeList{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 30px 25px;
+}
+.activeItem{
+    width: 340px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 10px 0 0;
+}
+.activeImg{
+    width: 340px;
+    height: 240px;
+}
+.descBox{
+    width:340px;
+    height:110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.activeTitle{
+    font-size:32px;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:550;
+    color:rgba(34,34,34,1);
+    text-indent: 2rem;
+}
+.desc{
+    font-size:28px;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    font-weight:400;
+    color:rgba(136,136,136,1);
+    text-indent: 2rem;
+}
+.welfare-container{
+    margin: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.welfare-noviceTask-item{
+    width: 100%;
+    justify-content: space-between;
+    height:180px;
+    display: flex;
+    padding-left: 30px;
+    align-items: center;
+    margin-top: 15px;
+}
+.noviceTask-title{
+    font-size: 32px;
+    font-weight: 600;
+    color: rgb(34, 34, 34);
+    line-height: 40px;
+}
+.add-one{
+    width:40px;
+    height:40px;
+    display: inline-block;
+    background:rgba(252,220,60,1);
+    border-radius:50%;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 40px;
+    text-align: center;
+}
+.welfare-desc{
+    font-size:24px;
+    color:rgba(136,136,136,1);
+    line-height:33px;
+    margin-top: 10px;
+}
+.welfare-btn{
+    width: 150px;
+    height: 60px;
+    background:rgba(255,244,101,1);
+    border-radius: 30px;
+    margin-right: 30px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    color:rgba(34,34,34,1);
+    line-height: 60px;
+}
