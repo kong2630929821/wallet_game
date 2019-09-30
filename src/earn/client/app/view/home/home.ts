@@ -3,33 +3,45 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getStoreData } from '../../../../../app/middleLayer/wrap';
-import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
-import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
+import { getModulConfig } from '../../../../../app/public/config';
+import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
+import { piRequire } from '../../../../../app/utils/commonjsTools';
+import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
-import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
-import { Json } from '../../../../../pi/lang/type';
-import { popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
 import { bind_accID } from '../../../../server/rpc/user.p';
-import { get_task_award } from '../../../../server/rpc/user_item.p';
+import { get_task_award, task_query } from '../../../../server/rpc/user_item.p';
 import { clientRpcFunc } from '../../net/init';
-import { getCompleteTask } from '../../net/rpc';
 import { getStore, Mine, register, setStore } from '../../store/memstore';
-import { getHoeCount, getMaxMineType, getSeriesLoginAwards } from '../../utils/util';
-import { HoeType } from '../../xls/hoeType.s';
+import { getSeriesLoginAwards } from '../../utils/tools';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords
 declare var module: any;
 export const forelet = new Forelet();
 export const WIDGET_NAME = module.id.replace(/\//g, '-');
+
+/**
+ * 获取用户已完成的任务
+ */
+export const getCompleteTask = ():Promise<any> => {
+    return new Promise((resolve, reject) => {
+        clientRpcFunc(task_query,null,(res:Result) => {
+            console.log('[活动]rpc-getCompleteTask---------------', res);
+            if (res && res.reslutCode === 1) {
+                const data = JSON.parse(res.msg);
+                resolve(data);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
 
 // tslint:disable-next-line:completed-docs
 export class EarnHome extends Widget {
@@ -46,7 +58,7 @@ export class EarnHome extends Widget {
         this.state = STATE;
     }
     
-    public setProps(props: Json, oldProps: Json) {
+    public setProps(props: any, oldProps: any) {
         this.props = {
             ...this.props,
             ...props
@@ -72,12 +84,7 @@ export class EarnHome extends Widget {
             scrollHeight: 0,            
             refresh: false,
             // 热门活动
-            ironHoe: getHoeCount(HoeType.IronHoe),
-            goldHoe: getHoeCount(HoeType.GoldHoe),
-            diamondHoe: getHoeCount(HoeType.DiamondHoe),
-            hoeType: HoeType,
             hoeSelected:-1,
-            maxMineType:getMaxMineType(),
             upAnimate:'',
             downAnimate:'',
             animateStart:false,
@@ -89,10 +96,9 @@ export class EarnHome extends Widget {
         if (isLogin) {
             this.initPropsNoviceTask();
         }
-        getCloudBalances().then(cloudBalances => {
-            STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
-            forelet.paint(STATE);
-        });
+        const cloudBalances = getCloudBalances();
+        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+        forelet.paint(STATE);
     }
 
     public initHotActivities() {
@@ -124,11 +130,7 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask(wallet?:any) {
-        let walletPromise = getStoreData('wallet');
-        if (wallet) {
-            walletPromise = Promise.resolve(wallet);
-        } 
-        Promise.all([walletPromise,getCompleteTask()]).then(([wallet,data]) => {
+        Promise.all([getCompleteTask()]).then(([data]) => {
             const flags:any = {};
             for (const v of data.taskList) {
                 if (v.state) {
@@ -205,9 +207,12 @@ export class EarnHome extends Widget {
     public goHotActivity(ind: number) {
         const page = this.props.hotActivities[ind].components;
         if (page === 'goRecharge') {
-            goRecharge();
+            piRequire(['app/utils/recharge']).then(mods => {
+                mods[0].goRecharge();
+            });
+            
         } else {
-            popNew3(page);
+            popNew(page);
         }
         
     }
@@ -219,26 +224,13 @@ export class EarnHome extends Widget {
         console.log('on-tap');
         const page = this.props.noviceTask[ind].components;
         if (page === 'goRecharge') {  // 去充值
-            goRecharge();
-        } else if (page === 'backUp') {  // 去备份
-            const psw = await popPswBox();
-            if (!psw) return;
-            const ret = await exportMnemonic(psw);
-            if (ret) {
-                popNew3('app-view-wallet-backup-index',{ ...ret });
-                // this.backPrePage();
-            }
-        } else if (page === 'sharePart') { // 分享片段
-            const psw = await popPswBox();
-            if (!psw) return;
-            const ret = await exportMnemonic(psw);
-            if (ret) {
-                popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
-            }
+            piRequire(['app/utils/recharge']).then(mods => {
+                mods[0].goRecharge();
+            });
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            popNew3(page);            
+            popNew(page);            
         }
     }
 
@@ -265,15 +257,8 @@ export class EarnHome extends Widget {
         this.paint();
     }
 
-    /**
-     * 采矿说明点击..
-     */
-    public miningInstructionsClick() {
-        popNew3('earn-client-app-view-activity-miningRule');
-    }
-
     public goMineRank() {
-        popNew3('earn-client-app-view-mineRank-mineRank');
+        popNew('earn-client-app-view-mineRank-mineRank');
     }
     
     /**
@@ -344,14 +329,13 @@ register('mine',(mine:Mine) => {
 });
 
 // 云端余额变化
-registerStoreData('cloud/cloudWallets',() => {
-    getCloudBalances().then(cloudBalances => {
-        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
-        forelet.paint(STATE);
-    });
+walletRegister('cloud/cloudWallets',(cloudBalances:any) => {
+
+    STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    forelet.paint(STATE);
 });
 
-let firstLoginDelay = false;
+const firstLoginDelay = false;
 // 首次登录奖励
 const firstloginAward = () => {
     // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
@@ -376,11 +360,12 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    getStoreData('user',{ info:{}, id:'' }).then(user => {
+    getStore('user',{ info:{}, id:'' }).then(user => {
         console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
         const accID = user.info.acc_id;
         if (accID) {
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo accid:', accID);
+            
             clientRpcFunc(bind_accID,accID,(r:Result) => {
                 if (r && r.reslutCode) {
                     console.log('绑定AccUID成功，accuid:',r);
@@ -402,28 +387,22 @@ const firstloginAward = () => {
 //         });
 //     }
 // });
-// 监听活动第一次登录 创建钱包
-register('flags/firstLogin',() => {
-    if (getSourceLoaded()) {
-        firstloginAward();
-    } else {
-        firstLoginDelay = true;
-    }
-        
-});
+// // 监听活动第一次登录 创建钱包
+// register('flags/firstLogin',() => {
+//     if (getSourceLoaded()) {
+//         firstloginAward();
+//     } else {
+//         firstLoginDelay = true;
+//     }
+// });
 
-registerStoreData('wallet', (wallet) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.initPropsNoviceTask(wallet);
-});
-
-// 二级目录资源加载完成
-setSourceLoadedCallbackList(() => {
-    if (firstLoginDelay) {
-        firstloginAward();
-        firstLoginDelay = false;
-    }
-});
+// // 二级目录资源加载完成
+// setSourceLoadedCallbackList(() => {
+//     if (firstLoginDelay) {
+//         firstloginAward();
+//         firstLoginDelay = false;
+//     }
+// });
 
 // ================================================新手活动奖励
 chatStore.register('flags/firstChat',() => {

@@ -5,7 +5,6 @@
 import { gotoEarn } from '../../../../../app/view/base/app';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getPrizeInfo } from '../../utils/util';
-import { forelet,WIDGET_NAME } from '../../view/home/home1';
 
 export class NewUserLogin extends Widget {
     public ok: () => void;
