@@ -2,7 +2,7 @@
  * 单个排名列表组件
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
+import { getModulConfig } from '../../../../../app/public/config';
 import { Widget } from '../../../../../pi/widget/widget';
 
 export class RankItem extends Widget {

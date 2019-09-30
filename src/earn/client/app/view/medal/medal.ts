@@ -2,9 +2,9 @@
  * 勋章成就 --主页
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../app/utils/tools';
-import { makeScreenShot } from '../../../../../app/viewLogic/native';
+import { getModulConfig } from '../../../../../app/public/config';
+import { makeScreenShot } from '../../../../../app/utils/native';
+import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { ShareType } from '../../../../../pi/browser/shareToPlatforms';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';

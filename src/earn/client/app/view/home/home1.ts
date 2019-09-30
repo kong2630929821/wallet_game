@@ -3,17 +3,15 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getStoreData } from '../../../../../app/middleLayer/wrap';
-import { getSourceLoaded, setSourceLoadedCallbackList } from '../../../../../app/postMessage/localLoaded';
-import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { goRecharge, popNew3, popPswBox, rippleShow, throttle } from '../../../../../app/utils/tools';
+import { getModulConfig } from '../../../../../app/public/config';
+import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
+import { rippleShow } from '../../../../../app/utils/pureUtils';
+import { goRecharge, throttle } from '../../../../../app/utils/tools';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
-import { exportMnemonic } from '../../../../../app/viewLogic/localWallet';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { Json } from '../../../../../pi/lang/type';
-import { popModalBoxs } from '../../../../../pi/ui/root';
+import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { Result } from '../../../../server/data/db/guessing.s';
@@ -89,10 +87,8 @@ export class EarnHome extends Widget {
         if (isLogin) {
             this.initPropsNoviceTask();
         }
-        getCloudBalances().then(cloudBalances => {
-            STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
-            forelet.paint(STATE);
-        });
+        const cloudBalances = getCloudBalances();
+        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
     }
 
     public initHotActivities() {
@@ -129,7 +125,7 @@ export class EarnHome extends Widget {
      * 初始化任务列表
      */
     public initPropsNoviceTask(wallet?:any) {
-        let walletPromise = getStoreData('wallet');
+        let walletPromise = getStore('wallet');
         if (wallet) {
             walletPromise = Promise.resolve(wallet);
         } 
@@ -230,7 +226,7 @@ export class EarnHome extends Widget {
         if (page === 'goRecharge') {
             goRecharge();
         } else {
-            popNew3(page);
+            popNew(page);
         }
         
     }
@@ -243,25 +239,10 @@ export class EarnHome extends Widget {
         const page = this.props.noviceTask[ind].components;
         if (page === 'goRecharge') {  // 去充值
             goRecharge();
-        } else if (page === 'backUp') {  // 去备份
-            const psw = await popPswBox();
-            if (!psw) return;
-            const ret = await exportMnemonic(psw);
-            if (ret) {
-                popNew3('app-view-wallet-backup-index',{ ...ret });
-                // this.backPrePage();
-            }
-        } else if (page === 'sharePart') { // 分享片段
-            const psw = await popPswBox();
-            if (!psw) return;
-            const ret = await exportMnemonic(psw);
-            if (ret) {
-                popNew3('app-view-wallet-backup-shareMnemonic',{ fragments:ret.fragments });
-            }
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            popNew3(page);            
+            popNew(page);            
         }
     }
 
@@ -310,11 +291,11 @@ export class EarnHome extends Widget {
      * 采矿说明点击..
      */
     public miningInstructionsClick() {
-        popNew3('earn-client-app-view-activity-miningRule');
+        popNew('earn-client-app-view-activity-miningRule');
     }
 
     public goMineRank() {
-        popNew3('earn-client-app-view-mineRank-mineRank');
+        popNew('earn-client-app-view-mineRank-mineRank');
     }
     
     /**
@@ -402,14 +383,13 @@ register('mine',(mine:Mine) => {
 });
 
 // 云端余额变化
-registerStoreData('cloud/cloudWallets',() => {
-    getCloudBalances().then(cloudBalances => {
-        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
-        forelet.paint(STATE);
-    });
+walletRegister('cloud/cloudWallets',() => {
+    const cloudBalances = getCloudBalances();
+    STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    forelet.paint(STATE);
 });
 
-let firstLoginDelay = false;
+const firstLoginDelay = false;
 // 首次登录奖励
 const firstloginAward = () => {
     // popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
@@ -434,7 +414,7 @@ const firstloginAward = () => {
     //     });
     // }
     // 绑定accID
-    getStoreData('user',{ info:{}, id:'' }).then(user => {
+    getStore('user',{ info:{}, id:'' }).then(user => {
         console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!get userinfo:', user);
         const accID = user.info.acc_id;
         if (accID) {
@@ -461,31 +441,31 @@ const firstloginAward = () => {
 //     }
 // });
 // 监听活动第一次登录 创建钱包
-register('flags/firstLogin',() => {
-    if (getSourceLoaded()) {
-        firstloginAward();
-    } else {
-        firstLoginDelay = true;
-    }
+// register('flags/firstLogin',() => {
+//     if (getSourceLoaded()) {
+//         firstloginAward();
+//     } else {
+//         firstLoginDelay = true;
+//     }
         
-});
+// });
 
-registerStoreData('wallet', (wallet) => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    w && w.initPropsNoviceTask(wallet);
-});
+// registerStoreData('wallet', (wallet) => {
+//     const w:any = forelet.getWidget(WIDGET_NAME);
+//     w && w.initPropsNoviceTask(wallet);
+// });
 
-// 二级目录资源加载完成
-setSourceLoadedCallbackList(() => {
-    if (firstLoginDelay) {
-        firstloginAward();
-        firstLoginDelay = false;
-    }
-});
+// // 二级目录资源加载完成
+// setSourceLoadedCallbackList(() => {
+//     if (firstLoginDelay) {
+//         firstloginAward();
+//         firstLoginDelay = false;
+//     }
+// });
 
 // ================================================新手活动奖励
 
-registerStoreData('wallet/helpWord',() => {
+walletRegister('wallet/helpWord',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 备份
     if (!getStore('flags',{}).helpWord) { 
@@ -504,7 +484,7 @@ registerStoreData('wallet/helpWord',() => {
     }
     
 });
-registerStoreData('wallet/sharePart',() => {
+register('wallet/sharePart',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 分享密钥
     if (!getStore('flags',{}).sharePart) {  
@@ -522,6 +502,7 @@ registerStoreData('wallet/sharePart',() => {
         });
     }
 });
+
 chatStore.register('flags/firstChat',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
     // 首次聊天

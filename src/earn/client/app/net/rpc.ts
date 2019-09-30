@@ -1,7 +1,7 @@
 /**
  * rpc通信
  */
-import { callGetOneUserInfo, getStoreData } from '../../../../app/middleLayer/wrap';
+import { getStore as walletGetStore } from '../../../../app/store/memstore';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/data/db/medal.s';
@@ -46,9 +46,9 @@ export const loginActivity = (userid:string,sign:string,cb: (r: UserInfo) => voi
  * 获取用户信息
  */
 export const getUserInfo = async (openid: number, self?: string) => {
-    const userInfo = await callGetOneUserInfo([openid], 1);
+    const userInfo = await getOneUserInfo([openid], 1);
     if (self) {   // 钱包用户
-        const walletUserInfo = await getStoreData('user/info');
+        const walletUserInfo = await walletGetStore('user/info');
         let activityUserInfo = getStore('userInfo');
         console.log('[活动]localUserInfo---------------', walletUserInfo);
 
@@ -97,8 +97,6 @@ export const getSTbalance = () => {
         console.log('rpc-getSTbalance--ST余额---------------', r);
         if (r.resultNum === 1) {
             setStore('balance/ST', st2ST(r.num) || 0);
-        } else {
-            showActError(r.resultNum);
         }
     });
 };
@@ -110,8 +108,6 @@ export const getKTbalance = () => {
         console.log('rpc-getSTbalance--KT余额---------------', r);
         if (r.resultNum === 1) {
             setStore('balance/KT', coinUnitchange(CoinType.KT,r.num) || 0);
-        } else {
-            showActError(r.resultNum);
         }
     });
 };

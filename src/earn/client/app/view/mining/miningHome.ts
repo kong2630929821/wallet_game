@@ -1,11 +1,11 @@
 /**
  * digging mines home
  */
-import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../app/utils/tools';
-import { getCloudBalances, registerStoreData } from '../../../../../app/viewLogic/common';
-import { pop, popModalBoxs, popNew } from '../../../../../pi/ui/root';
+import { getModulConfig } from '../../../../../app/public/config';
+import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
+import { popNewMessage } from '../../../../../app/utils/pureUtils';
+import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -395,11 +395,10 @@ register('mine',(mine:Mine) => {
 });
 
 // 云端余额变化
-registerStoreData('cloud/cloudWallets',() => {
-    getCloudBalances().then(cloudBalances => {
-        STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
-        forelet.paint(STATE);
-    });
+walletRegister('cloud/cloudWallets',() => {
+    const cloudBalances = getCloudBalances();
+    STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    forelet.paint(STATE);
 });
 
 // // 监听嗨豆

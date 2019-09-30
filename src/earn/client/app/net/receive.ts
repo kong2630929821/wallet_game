@@ -3,13 +3,12 @@
  * 接受后端推送事件
  */
 
-import { popNewMessage } from '../../../../app/utils/tools';
-import { registerStoreData } from '../../../../app/viewLogic/common';
-import { popModalBoxs } from '../../../../pi/ui/root';
+import { register as walletRegister } from '../../../../app/store/memstore';
+import { piRequire } from '../../../../app/utils/commonjsTools';
+import { popModalBoxs, popNew } from '../../../../pi/ui/root';
 import { SendMsg } from '../../../server/rpc/send_message.s';
 import { getStore, register, setStore, unregister } from '../store/memstore';
 import { subscribe } from './init';
-import { getInviteAwards } from './rpc';
 
 // 监听topic
 export const initReceive = (uid: number) => {
@@ -62,7 +61,7 @@ register('flags/startMining',(startMining:boolean) => {
     }
 });
 // 邀请的好友成为真实用户的个数
-registerStoreData('flags/invite_realUser',(r) => {
+walletRegister('flags/invite_realUser',(r) => {
     console.log('邀请好友成为真实用户',r);
     const isLogin = getStore('userInfo/uid', 0) > 0;
     if (isLogin) {
@@ -78,16 +77,19 @@ registerStoreData('flags/invite_realUser',(r) => {
 });
 
 const getInviteAwardsPop = (r) => {
-    getInviteAwards(r).then((res:any) => {
-        if (res && res.award.length > 0) {
-            const awa = res.award[0];
-            popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                title: '邀请奖励',
-                awardType: awa.awardType,
-                awardNum: awa.count
-            });
-        } else {
-            popNewMessage('获取奖励失败');
-        }
+    piRequire(['earn/client/app/net/rpc']).then(mods => {
+        mods[0].getInviteAwards(r).then((res:any) => {
+            if (res && res.award.length > 0) {
+                const awa = res.award[0];
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title: '邀请奖励',
+                    awardType: awa.awardType,
+                    awardNum: awa.count
+                });
+            } else {
+                popNew('app-components-message-message', { content:'获取奖励失败' });
+            }
+        });
     });
+    
 };

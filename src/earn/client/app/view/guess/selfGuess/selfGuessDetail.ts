@@ -2,9 +2,9 @@
  * 竞猜主页-我的-详情
  */
 
-import { getModulConfig } from '../../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../../app/utils/tools';
-import { makeScreenShot } from '../../../../../../app/viewLogic/native';
+import { getModulConfig } from '../../../../../../app/public/config';
+import { makeScreenShot } from '../../../../../../app/utils/native';
+import { popNewMessage } from '../../../../../../app/utils/pureUtils';
 import { ShareType } from '../../../../../../pi/browser/shareToPlatforms';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Widget } from '../../../../../../pi/widget/widget';

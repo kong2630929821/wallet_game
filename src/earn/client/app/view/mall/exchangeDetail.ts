@@ -2,8 +2,8 @@
  * 奖券兑换 --商品详情
  */
 
-import { getModulConfig } from '../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../app/utils/tools';
+import { getModulConfig } from '../../../../../app/public/config';
+import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { popNew } from '../../../../../pi/ui/root';
 import { Widget } from '../../../../../pi/widget/widget';
 import { exchangeVirtual } from '../../net/rpc_order';
@@ -25,6 +25,7 @@ export class ProductDetail extends Widget {
     }
     public init() {
         exchangeVirtual(this.props.id).then((order:any) => {
+            console.log(order);
         }).catch(err => {
             console.log(err);
             this.props.btnName = err;
@@ -38,6 +39,7 @@ export class ProductDetail extends Widget {
     public comfirmExchange() {
         if (this.props.isClick) {
             popNewMessage(this.props.btnName);
+            
             return;
         }
         popNew('earn-client-app-view-mall-comfirmExchange',{ detail:this.props });

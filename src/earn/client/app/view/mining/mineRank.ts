@@ -2,12 +2,13 @@
  * 挖矿排名
  */
 
-import { callGetFriendsKTTops, callGetHighTop } from '../../../../../app/middleLayer/wrap';
-import { CloudCurrencyType } from '../../../../../app/publicLib/interface';
-import {  getUserInfo, popNew3 } from '../../../../../app/utils/tools';
-import { getCloudBalances } from '../../../../../app/viewLogic/common';
+import { getFriendsKTTops, getHighTop } from '../../../../../app/net/pull';
+import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { getCloudBalances } from '../../../../../app/store/memstore';
+import { getUserInfo } from '../../../../../app/utils/pureUtils';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { getChatUid } from '../../../../../chat/client/app/net/rpc';
+import { popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getMedalest } from '../../net/rpc';
@@ -78,7 +79,7 @@ export class MineRank extends Widget {
     public initData() {
         getUserInfo().then(userInfo => {
             if (this.props.topbarSel === 0) {
-                callGetHighTop(100).then(async (res: any) => {  // TODO排名
+                getHighTop(100).then(async (res: any) => {  // TODO排名
                     console.log('排行榜++++++++++++++++++++++',res);
                     
                     const medalest = [];
@@ -104,12 +105,10 @@ export class MineRank extends Widget {
                         this.props.myRank.rank = res.miningRank;
                         this.props.myRank.medal = mine.miningMedalId || '8001';
                         console.log('我的排名+++++++++++++++++++++++++++',this.props);
+                        const balances = getCloudBalances();
+                        mine.miningKTnum = balances.get(CloudCurrencyType.KT) || 0;
+                        this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
                         this.paint();
-                        getCloudBalances().then(balances => {
-                            mine.miningKTnum = balances.get(CloudCurrencyType.KT) || 0;
-                            this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
-                            this.paint();
-                        });
                     });
                 });
             } else {
@@ -120,7 +119,7 @@ export class MineRank extends Widget {
                 }); 
                 chatAccID.push(userInfo.acc_id);
                 console.log('我的好友++++++++++++++++++++++++',chatAccID);
-                callGetFriendsKTTops(chatAccID).then(async (res: any) => {
+                getFriendsKTTops(chatAccID).then(async (res: any) => {
                     console.log('好友排名',res);
                     const medalest = [];
                     res.rank.forEach((v) => {
@@ -217,10 +216,10 @@ export class MineRank extends Widget {
             const uid = userInfo.acc_id;
             console.log(this.props.rankList);
             if (this.props.rankList[index].acc_id === uid) {
-                popNew3('chat-client-app-view-info-user');
+                popNew('chat-client-app-view-info-user');
             } else {
                 getChatUid(this.props.rankList[index].acc_id).then((res:any) => {
-                    popNew3('chat-client-app-view-info-userDetail',{ uid:res });  // 好友详情
+                    popNew('chat-client-app-view-info-userDetail',{ uid:res });  // 好友详情
                 });
             }  
         });
@@ -228,7 +227,7 @@ export class MineRank extends Widget {
     }
     // 我的详情
     public mydetails() {
-        popNew3('chat-client-app-view-info-user');
+        popNew('chat-client-app-view-info-user');
     }
 }
 

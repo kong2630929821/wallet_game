@@ -1,8 +1,8 @@
 /**
  * 邀请好友组件
  */
-import { getStoreData, setStoreData } from '../../../../../app/middleLayer/wrap';
-import { uploadFileUrlPrefix } from '../../../../../app/publicLib/config';
+import { uploadFileUrlPrefix } from '../../../../../app/public/config';
+import { getStore, setStore } from '../../../../../app/store/memstore';
 import { applyUserFriend, getUsersBasicInfo } from '../../../../../chat/client/app/net/rpc';
 import { UserArray } from '../../../../../chat/server/data/rpc/basic.s';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -32,23 +32,22 @@ export class InviteUser extends Widget {
     public agreenBtn(e:any) {
         this.props.isagree = true;
         applyUserFriend(this.props.accId).then(() => {
-            getStoreData('inviteUsers').then(inviteUsers => {
+            const inviteUsers = getStore('inviteUsers');
                 // 我邀请的好友
                  // 我邀请的好友
 
-                const invite = inviteUsers.invite_success;
-                let index = null;
-                invite.forEach((v,i) => {
-                    if (v[0] === this.props.accId) {
-                        index = i;
-                    }
-                });
-                invite.splice(index,1);
-                setStoreData('inviteUsers/invite_success',invite);
+            const invite = inviteUsers.invite_success;
+            let index = null;
+            invite.forEach((v,i) => {
+                if (v[0] === this.props.accId) {
+                    index = i;
+                }
+            });
+            invite.splice(index,1);
+            setStore('inviteUsers/invite_success',invite);
  
                  // 邀请我的好友
-                setStoreData('inviteUsers/convert_invite',[]);
-            });
+            setStore('inviteUsers/convert_invite',[]);
             
         });
         this.paint();

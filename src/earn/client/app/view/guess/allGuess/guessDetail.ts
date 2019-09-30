@@ -2,8 +2,8 @@
  * 竞猜详情-下单
  */
 
-import { getModulConfig } from '../../../../../../app/publicLib/modulConfig';
-import { popNewMessage } from '../../../../../../app/utils/tools';
+import { getModulConfig } from '../../../../../../app/public/config';
+import { popNewMessage } from '../../../../../../app/utils/pureUtils';
 import { popNew } from '../../../../../../pi/ui/root';
 import { Forelet } from '../../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../../pi/widget/painter';

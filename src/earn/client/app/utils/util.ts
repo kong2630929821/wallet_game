@@ -1,7 +1,7 @@
 /**
  * common util
  */
-import { popNewMessage } from '../../../../app/utils/tools';
+import { popNewMessage } from '../../../../app/utils/pureUtils';
 import { Item_Enum } from '../../../server/data/db/item.s';
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { InviteAwardCfg, RegularAwardCfg, SeriesLoginAwardCfg, WeightAwardCfg, WeightMiningCfg } from '../../../xlsx/awardCfg.s';

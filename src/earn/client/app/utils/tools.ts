@@ -1,5 +1,5 @@
-import { popNewLoading } from '../../../../app/utils/tools';
-import { chooseAdType, watchAd } from '../../../../app/viewLogic/native';
+import { chooseAdType, watchAd } from '../../../../app/utils/native';
+import { popNewLoading } from '../../../../app/utils/pureUtils';
 import { PlayEvent } from '../../../../pi/browser/ad_unoin';
 import { Award } from '../../../server/data/db/item.s';
 import { getAdRewards } from '../net/rpc';
