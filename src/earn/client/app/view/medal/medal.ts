@@ -13,7 +13,8 @@ import { Widget } from '../../../../../pi/widget/widget';
 import { Item } from '../../../../server/data/db/item.s';
 import { getACHVmedal, getKTbalance } from '../../net/rpc';
 import { getStore, register } from '../../store/memstore';
-import { getACHVmedalList, getMedalList } from '../../utils/util';
+import { getMedalList } from '../../utils/tools';
+import { getACHVmedalList } from '../../utils/util';
 import { CoinType } from '../../xls/dataEnum.s';
 import { MedalType } from './medalShow';
 

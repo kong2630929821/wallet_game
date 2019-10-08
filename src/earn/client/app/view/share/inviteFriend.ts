@@ -2,9 +2,8 @@
  * 活动-邀请好友
  */
 
-import { shareDownload } from '../../../../../app/config';
 import { getInviteCode } from '../../../../../app/net/pull';
-import { getModulConfig } from '../../../../../app/public/config';
+import { getModulConfig, shareDownload } from '../../../../../app/public/config';
 import { LuckyMoneyType } from '../../../../../app/public/interface';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/pureUtils';
 import { copyToClipboard } from '../../../../../app/utils/tools';
