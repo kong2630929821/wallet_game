@@ -9,6 +9,7 @@ import { getCloudBalances, register as walletRegister } from '../../../../../app
 import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
+import { loadExchaneSource, loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -102,8 +103,6 @@ export class EarnHome extends Widget {
     }
 
     public initHotActivities() {
-        const ktShow = getModulConfig('KT_SHOW');
-        const scShow = getModulConfig('SC_SHOW');
         this.props.hotActivities =  [{
             img: '../../res/image/task/mining.png',
             title: '极限挖矿',
@@ -205,14 +204,33 @@ export class EarnHome extends Widget {
      * 热门活动进入
      */
     public goHotActivity(ind: number) {
-        const page = this.props.hotActivities[ind].components;
-        if (page === 'goRecharge') {
-            piRequire(['app/utils/recharge']).then(mods => {
-                mods[0].goRecharge();
-            });
-            
-        } else {
-            popNew(page);
+        const loading = popNew('app-components1-loading-loading1');
+        switch (ind) {
+            case 0:
+                loadMiningSource().then(() => {
+                    popNew('earn-client-app-view-mining-miningHome');
+                    loading.callback(loading.widget);
+                });
+                break;
+            case 1:
+                loadRedEnvelopeSource().then(() => {
+                    popNew('app-view-redEnvelope-exchange');
+                    loading.callback(loading.widget);
+                });
+                break;
+            case 2:
+                loadRedEnvelopeSource().then(() => {
+                    popNew('app-view-redEnvelope-writeRedEnv');
+                    loading.callback(loading.widget);
+                });
+                break;
+            case 3:
+                loadShareSource().then(() => {
+                    popNew('earn-client-app-view-share-inviteFriend');
+                    loading.callback(loading.widget);
+                });
+                break;
+            default:
         }
         
     }
@@ -224,13 +242,45 @@ export class EarnHome extends Widget {
         console.log('on-tap');
         const page = this.props.noviceTask[ind].components;
         if (page === 'goRecharge') {  // 去充值
-            piRequire(['app/utils/recharge']).then(mods => {
-                mods[0].goRecharge();
-            });
+           
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            popNew(page);            
+            const loading = popNew('app-components1-loading-loading1');
+            switch (ind) {
+                case 0:
+                    // 绑定手机号码
+                    loadSettingSource().then(() => {
+                        popNew('app-view-setting-phone');
+                        loading.callback(loading.widget);
+                    });
+                    break;
+                case 1:
+                    // 充值
+                    piRequire(['app/utils/recharge']).then(mods => {
+                        mods[0].goRecharge();
+                    });
+                    break;
+                case 2:
+                    // 去聊天
+                    gotoChat();
+                    break;
+                case 3:
+                    // 大转盘
+                    loadTurntableSource().then(() => {
+                        popNew('earn-client-app-view-turntable-turntable');
+                        loading.callback(loading.widget);
+                    });
+                    break;
+                case 4:
+                    // 开宝箱
+                    loadOpenBoxSource().then(() => {
+                        popNew('earn-client-app-view-openBox-openBox');
+                        loading.callback(loading.widget);
+                    });
+                    break;
+                default:
+            }            
         }
     }
 
