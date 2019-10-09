@@ -1,8 +1,8 @@
-<div class="new-page" w-class="new-page" style="z-index: {{it1.zIndex}};">
+<div class="new-page" w-class="new-page">
     <div w-class="body">
         <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
         <div w-class="container">
-            <div on-tap="clickTop" w-class="holded-hoes" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
+            <div on-tap="clickTop" w-class="holded-hoes" >
                 <div id="stop" ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">
                     <earn-client-app-view-mining-holdedHoe>{ holdedNumber:{{ it.ironHoe }},hoeType:{{ it.hoeType.IronHoe }},selected:{{ it.hoeSelected }} }</earn-client-app-view-mining-holdedHoe>
                 </div>
@@ -14,18 +14,18 @@
                 </div>
             </div>
             {{if it.countDownStart || (it.hoeSelected !== -1 && it.hoeSelectedLeft !== 0) }}
-            <div w-class="count-down-container" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
+            <div w-class="count-down-container" >
                 <div w-class="stopwatch-container"><img src="../../res/image/{{it.countDownStart ? 'stopwatch.gif' : 'stopwatch.png'}}" w-class="stopwatch"/></div>
                 <div w-class="count-down-bg">
                     <div w-class="count-down" style="width:{{ (it.countDown / it.countDownMax * 100) + '%'}}; "></div>
                 </div>
             </div>
             {{else}}
-            <div style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
+            <div >
                 <img src="../../res/image/select_hoe_tip.png" style="margin: 20px 0 0 21px;"/>
             </div>
             {{end}}
-            <div on-tap="rightClick" w-class="award-container" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
+            <div on-tap="rightClick" w-class="award-container" >
                 <div w-class="award-title"><widget w-tag="pi-ui-lang">{"zh_Hans":"我的{{it.ktShow}}","zh_Hant":"我的{{it.ktShow}}","en":""}</widget></div>
                 <div w-class="award-item">
                     <img src="../../res/image/KT.png" w-class="award-icon"/>
@@ -38,7 +38,7 @@
                     <div w-class="mining-number" >{{ it1.miningedNumber + "/" + it.mineMax }}</div>
                 </div>
             </div>
-            <div w-class="mine-area" style="{{it1.zIndex ? 'visibility: hidden;' : ''}}">
+            <div w-class="mine-area" >
                 {{for index,item of it.haveMines}}
                 <div ev-mine-click="mineClick" w-class="mine-item" style="{{ item.location }}">
                     <earn-client-app-view-mining-mine>{ 

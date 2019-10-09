@@ -12,7 +12,7 @@ import { Props } from '../../../components/guessItem/guessItem';
 import { getOneGuessInfo, getSTbalance, queryBetGuess } from '../../../net/rpc';
 import { betGuess } from '../../../net/rpc_order';
 import { getStore, register } from '../../../store/memstore';
-import { wathcAdGetAward } from '../../../utils/tools';
+import { wathcAdGetAward } from '../../../utils/util';
 
 // ================================ 导出
 // tslint:disable-next-line:no-reserved-keywords

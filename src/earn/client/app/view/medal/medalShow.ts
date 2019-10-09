@@ -4,7 +4,8 @@
 
 import { getModulConfig } from '../../../../../app/public/config';
 import { Widget } from '../../../../../pi/widget/widget';
-import { getACHVmedalList, getMedalList } from '../../utils/util';
+import { getACHVmedalList } from '../../utils/util';
+import { getMedalList } from '../../utils/tools';
 
 export enum MedalType {
     rankMedal = 0,  // 等级勋章

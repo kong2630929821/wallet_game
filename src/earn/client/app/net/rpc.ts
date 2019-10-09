@@ -21,7 +21,7 @@ import { award_query, get_achievements, get_ad_award, get_medals, get_showMedal,
 import { RandomSeedMgr } from '../../../server/util/randomSeedMgr';
 import { getStore, Invited, setStore } from '../store/memstore';
 import { st2ST, timestampFormat, timestampFormatWeek } from '../utils/tools';
-import { getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
+import { coinUnitchange, getMacthTypeCfg, getPrizeInfo, getTeamCfg, showActError } from '../utils/util';
 import { AwardSrcNum, CoinType } from '../xls/dataEnum.s';
 import { HoeType } from '../xls/hoeType.s';
 import { MineType } from '../xls/mineType.s';
@@ -116,6 +116,7 @@ export const getKTbalance = () => {
  * 准备挖矿
  */
 export const readyMining = (hoeType:HoeType) => {
+
     return new Promise(resolve => {
         console.log('beginMining hoeType = ',hoeType);
         clientRpcFunc(mining, hoeType, (r: RandomSeedMgr) => {

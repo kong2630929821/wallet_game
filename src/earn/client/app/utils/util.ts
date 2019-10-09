@@ -284,7 +284,6 @@ export const getRegularPrizeList = (activityType: ActivityType): any => {
     return filterCfgs;
 };
 
-
 /**
  * 获取成就勋章列表
  */
