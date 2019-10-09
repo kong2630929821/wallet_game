@@ -13,8 +13,7 @@ import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openChest } from '../../net/rpc_order';
 import { setStore } from '../../store/memstore';
-import { wathcAdGetAward } from '../../utils/tools';
-import { getTicketNum, isLogin } from '../../utils/util';
+import { getTicketNum, isLogin, wathcAdGetAward } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出

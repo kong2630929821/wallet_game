@@ -2,7 +2,6 @@
  * 新手任务奖励弹窗
  */
 
-import { gotoEarn } from '../../../../../app/view/base/app';
 import { Widget } from '../../../../../pi/widget/widget';
 import { getPrizeInfo } from '../../utils/util';
 
@@ -32,11 +31,11 @@ export class NewUserLogin extends Widget {
         },300);
     }
 
-    // 去挖矿
-    public goMining() {
-        gotoEarn();
-        const w:any = forelet.getWidget(WIDGET_NAME);
-        w.miningClick();
-        this.close();
-    }
+    // // 去挖矿
+    // public goMining() {
+    //     gotoEarn();
+    //     const w:any = forelet.getWidget(WIDGET_NAME);
+    //     w.miningClick();
+    //     this.close();
+    // }
 }

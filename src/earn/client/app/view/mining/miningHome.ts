@@ -15,8 +15,7 @@ import { getKTbalance, getMiningCoinNum, getTodayMineNum, readyMining, startMini
 import { isminingHome } from '../../net/rpc_order';
 import {  Mine, register, setStore } from '../../store/memstore';
 import { hoeUseDuration, MineMax } from '../../utils/constants';
-import { coinUnitchange, wathcAdGetAward } from '../../utils/tools';
-import { calcMiningArray, getAllMines, getHoeCount, shuffle } from '../../utils/util';
+import { calcMiningArray, coinUnitchange, getAllMines, getHoeCount, shuffle, wathcAdGetAward } from '../../utils/util';
 import { HoeType } from '../../xls/hoeType.s';
 
 // ================================ 导出
@@ -135,7 +134,6 @@ export class MiningHome extends Widget {
      * 挖矿
      */
     public mineClick(e:any) {
-
         const itype = e.itype;
         const mineId = e.mineId;
         if (this.props.startMining) return;  // 如果正在通信  不响应
@@ -159,7 +157,9 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             if (this.props.hoeSelectedLeft <= 0) return;
+            debugger;
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
+                debugger;
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 console.log('hits ====',hits);
                 this.hits = hits;

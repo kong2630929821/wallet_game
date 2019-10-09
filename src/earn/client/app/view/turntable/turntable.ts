@@ -14,8 +14,7 @@ import { FreePlay } from '../../../../server/data/db/item.s';
 import { getKTbalance } from '../../net/rpc';
 import { isFirstFree, openTurntable } from '../../net/rpc_order';
 import { setStore } from '../../store/memstore';
-import { wathcAdGetAward } from '../../utils/tools';
-import { getPrizeList, getTicketNum, isLogin } from '../../utils/util';
+import { getPrizeList, getTicketNum, isLogin, wathcAdGetAward } from '../../utils/util';
 import { ActivityType } from '../../xls/dataEnum.s';
 
 // ================================ 导出
@@ -371,6 +370,7 @@ const STATE = {
  * 云端余额变化
  */
 register('cloud/cloudWallets',() => {
+    debugger;
     const cloudBalances = getCloudBalances();
     const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
     if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示

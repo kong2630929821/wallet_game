@@ -9,7 +9,7 @@ import { getCloudBalances, register as walletRegister } from '../../../../../app
 import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
-import { loadExchaneSource, loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
+import { loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
 import * as chatStore from '../../../../../chat/client/app/data/store';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
