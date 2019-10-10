@@ -345,6 +345,10 @@ register('userInfo/isLogin',(isLogin:boolean) => {
         w.initPropsNoviceTask();
         w.paint();
     }
+    // 这里的数据是死的，登录天数还没能获取到。只需要将用户信息中的登录天数拿到就行了
+    STATE.signInDays = 1;
+    STATE.awards = getSeriesLoginAwards(STATE.signInDays);
+    
 });
 
 register('flags/logout',() => {  // 退出钱包时刷新页面
