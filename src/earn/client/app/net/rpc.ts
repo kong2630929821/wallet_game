@@ -1,6 +1,7 @@
 /**
  * rpc通信
  */
+import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as walletGetStore } from '../../../../app/store/memstore';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
@@ -229,27 +230,13 @@ export const getFriendsKTTop = (chatIDs:ChatIDs) => {
         });
     });
 };
-/**
- * 获取连续登录天数
- */
-export const getLoginDays = () => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
-            console.log('[活动]rpc-getLoginDays---------------', r);
-            if (r.resultNum === 1) {
-                resolve(r);
-            } else {
-                // showActError(r.resultNum);TODO
-                reject(r);
-            }
-        });
-    });
-};
+
 
 /**
  * 获取拥有的成就勋章
  */
 export const getACHVmedal = () => {
+
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_achievements, null, (r: Achievements) => {
             console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);

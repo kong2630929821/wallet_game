@@ -2,6 +2,7 @@
  * 大转盘 - 首页
  */
 
+import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register } from '../../../../../app/store/memstore';
@@ -369,10 +370,9 @@ const STATE = {
 /**
  * 云端余额变化
  */
-register('cloud/cloudWallets',() => {
+registerStoreData('cloud',(r) => {
     debugger;
-    const cloudBalances = getCloudBalances();
-    const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+    const KTbalance = r;
     if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
         STATE.KTbalance = KTbalance;
         forelet.paint(STATE);

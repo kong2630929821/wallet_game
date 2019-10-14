@@ -1,6 +1,7 @@
 /**
  * digging mines home
  */
+import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
@@ -157,9 +158,7 @@ export class MiningHome extends Widget {
         // 准备开始挖矿
         if (!this.props.countDownStart) {
             if (this.props.hoeSelectedLeft <= 0) return;
-            debugger;
             readyMining(this.props.hoeSelected).then((r:RandomSeedMgr) => {
-                debugger;
                 const hits = calcMiningArray(this.props.hoeSelected,r.seed);
                 console.log('hits ====',hits);
                 this.hits = hits;
@@ -395,8 +394,9 @@ register('mine',(mine:Mine) => {
 });
 
 // 云端余额变化
-walletRegister('cloud/cloudWallets',() => {
-    const cloudBalances = getCloudBalances();
+registerStoreData('cloud/KT',(r:any) => {
+    debugger;
+    const cloudBalances = r;
     STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
     forelet.paint(STATE);
 });

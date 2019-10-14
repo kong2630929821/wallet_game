@@ -10,7 +10,6 @@ import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
-import * as chatStore from '../../../../../chat/client/app/data/store';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -345,6 +344,7 @@ register('userInfo/isLogin',(isLogin:boolean) => {
         w.initPropsNoviceTask();
         w.paint();
     }
+
 });
 
 register('flags/logout',() => {  // 退出钱包时刷新页面
@@ -455,24 +455,24 @@ const firstloginAward = () => {
 // });
 
 // ================================================新手活动奖励
-chatStore.register('flags/firstChat',() => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    // 首次聊天
-    if (!getStore('flags',{}).firstChat) {
-        clientRpcFunc(get_task_award,4,(res:Result) => {
-            console.log('参与聊天',res);
-            if (res && res.reslutCode === 1) {
-                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                    title:'参与聊天',
-                    awardType:JSON.parse(res.msg).awardType,
-                    awardNum:JSON.parse(res.msg).count
-                });
-                setStore('flags/firstChat',true);
-                w.initPropsNoviceTask();
-            }
-        });
-    }
-});
+// chatStore.register('flags/firstChat',() => {
+//     const w:any = forelet.getWidget(WIDGET_NAME);
+//     // 首次聊天
+//     if (!getStore('flags',{}).firstChat) {
+//         clientRpcFunc(get_task_award,4,(res:Result) => {
+//             console.log('参与聊天',res);
+//             if (res && res.reslutCode === 1) {
+//                 popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+//                     title:'参与聊天',
+//                     awardType:JSON.parse(res.msg).awardType,
+//                     awardNum:JSON.parse(res.msg).count
+//                 });
+//                 setStore('flags/firstChat',true);
+//                 w.initPropsNoviceTask();
+//             }
+//         });
+//     }
+// });
 
 register('flags/firstTurntable',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
