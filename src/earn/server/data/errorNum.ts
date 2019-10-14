@@ -43,6 +43,28 @@ export const INVITE_NOT_ENOUGH = 2101;
 export const INVITE_AWARD_ALREADY_TAKEN = 2102; 
 // 已兑换过邀请码
 export const INVITE_CONVERT_REPEAT = 2103;
+// 邀请数量错误
+export const INVITE_COUNT_ERROR = 2104;
+// 邀请码不存在
+export const INVITE_CODE_ERROR = 2105;
+// 扣除余额失败
+export const REDUCE_PRICE_FAIL = 2106;
+// 生成红包失败
+export const CREATE_RED_BAG_ERROR = 2107;
+// 红包码错误
+export const RED_BAG_CODE_ERROR = 2108;
+// 红包已过期
+export const RED_BAG_TIMEOUT = 2109;
+// 无法重复领取
+export const GET_RED_BAG_REPEAT = 2110;
+// 不能兑换自己的邀请码
+export const CANT_INVITE_SELF = 2111;
+// 红包兑换码错误
+export const RED_BAG_CONVERT_ERROR = 2112;
+// 兑换码已使用
+export const RED_BAG_CONVERT_USED = 2113;
+// 添加金额失败
+export const RED_BAG_ADD_MONEY_FAIL = 2114;
 
 // ST数量不足
 export const ST_NOT_ENOUGH = 3101;

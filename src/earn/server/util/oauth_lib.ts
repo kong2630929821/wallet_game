@@ -7,7 +7,7 @@ import { randomInt } from '../../../pi/util/math';
 import { ab2hex } from '../../../pi/util/util';
 import { digest, DigestAlgorithm } from '../../../pi_pt/rust/pi_crypto/digest';
 import { ECDSASecp256k1 } from '../../../pi_pt/rust/pi_crypto/signature';
-import { BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WALLET_API_UNIFIEDORDER, WALLET_APPID, WALLET_MCH_ID, WALLET_ORDER_QUERY, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
+import { BTC_TYPE, BTC_UNIT_NUM, BTC_WALLET_TYPE, ETH_TYPE, ETH_UNIT_NUM, ETH_WALLET_TYPE, KT_TYPE, KT_UNIT_NUM, KT_WALLET_TYPE, ST_TYPE, ST_UNIT_NUM, ST_WALLET_TYPE, WALLET_API_ALTER, WALLET_API_UNIFIEDORDER, WALLET_APPID, WALLET_GET_ACCID, WALLET_MCH_ID, WALLET_ORDER_QUERY, WALLET_SERVER_KEY, WALLET_SERVER_URL } from '../data/constant';
 import { getOpenid } from '../rpc/user.r';
 import * as http from './http_client';
 
@@ -65,6 +65,29 @@ const DecodeHexStringToByteArray = (hexString:string) => {
     }
     
     return new Uint8Array(result);
+};
+
+// 根据openid获取acc_id
+export const getAccIds = (openid_list: number[]) => {
+    const url = `${WALLET_SERVER_URL}${WALLET_GET_ACCID}`;
+    const body:any = { openid_list: openid_list };
+    const client = http.createClient();
+    console.log('11111111111111111111');
+    http.addHeader(client, 'content-type', 'application/json');
+    const r = http.post(client, url, body);
+    let accidList = [];
+    if (r.ok) {
+        const json = JSON.parse(r.ok);
+        if (json.return_code === 1) {
+            accidList = json.accid_list;
+            
+            return accidList;
+        } else {
+            return accidList;
+        }
+    } else {
+        return accidList;
+    }
 };
 
 export const oauth_send = (uri: string, body) => {
