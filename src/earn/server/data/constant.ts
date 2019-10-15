@@ -61,6 +61,8 @@ export const MEDAL_BTC = 8018;
 export const MESSAGE_TYPE_ADDMEDAL = 'add_medal'; // 添加奖章
 export const MESSAGE_TYPE_ADDAWARD = 'add_award'; // 添加奖励
 export const MESSAGE_TYPE_DAILY_FIREST_LOGIN = 'daily_first_login'; // 当天首次登陆
+export const MESSAGE_TYPE_INVITE = 'invite_success'; // 邀请成功
+export const MESSAGE_TYPE_CONVERT_INVITE_CODE = 'convert_invite_code_success'; // 兑换邀请码成功
 
 // 标准单位转换为数据库储存单位的比例
 // BTC单位 10^4 精度为小数点后4位
@@ -204,9 +206,26 @@ export const WALLET_API_INVITENUM_REAL = '/oAuth/invite_real';
 export const WALLET_API_UNIFIEDORDER = '/pay/unifiedorder';
 // 订单查询
 export const WALLET_ORDER_QUERY = '/pay/orderquery';
+// 获取AccId
+export const WALLET_GET_ACCID = 'user/get_accIds';
 
 // 货币类型
 export const KT_WALLET_TYPE = 100;
 export const ETH_WALLET_TYPE = 101;
 export const BTC_WALLET_TYPE = 102;
 export const ST_WALLET_TYPE = 103;
+
+// 邀请码起始长度
+export const CODE_START_LENGTH = 6;
+// 邀请码最大冲突数
+export const CODE_MAX_CONFLICTS = 5;
+// 红包Rid起始长度
+export const RID_START_LENGTH = 11;
+// 红包兑换码起始长度
+export const CID_START_LENGTH = 13;
+
+// 红包类型
+export const NORMAL_RED_BAG = 1; // 普通红包
+export const RANDOM_RED_BAG = 2; // 拼手气红包
+// 红包过期时间
+export const RED_BAG_TIMEOUT = 1; //单位 天

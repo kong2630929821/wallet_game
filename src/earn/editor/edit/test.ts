@@ -12,9 +12,11 @@ import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, Invit
 import { Achievements, getShowMedals, Medals, ShowMedalRes, ShowMedalResArr } from '../../server/data/db/medal.s';
 import { InviteNumTab, UserInfo } from '../../server/data/db/user.s';
 import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../server/rpc/guessingCompetition.p';
-import { cdkey, get_invite_awards, get_inviteNum } from '../../server/rpc/invite.p';
+import { cdkey, convertInviteCode, get_invite_awards, get_inviteNum, getInviteCode } from '../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
+import { convertRedBag, emitRedBag, getRedBagConvert } from '../../server/rpc/redBag.p';
+import { EmitRedBag } from '../../server/rpc/redBag.s';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, kt_rotary, kt_treasurebox, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
 import { bigint_test, get_objStr, hit_test, item_add, item_addticket, reset_dayliTask_test } from '../../server/rpc/test.p';
@@ -49,7 +51,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2001';
+    walletLoginReq.openid = '2006';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -396,16 +398,53 @@ export const get_task_test = ()  => {
 
 // 获取任务奖励
 export const get_taskAward_test = ()  => {
-    const taskID = 1;
+    const taskID = 8;
     clientRpcFunc(get_task_award, taskID, (r: Result) => {
         console.log(r);
     });
 };
 
+// 生成邀请码
+export const getInviteCodeTest = ()  => {
+    const arg = null;
+    clientRpcFunc(getInviteCode, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
 // 兑换邀请码
-export const input_cdkey = ()  => {
-    const key = 'IWFUSI';
-    clientRpcFunc(cdkey, key, (r: Result) => {
+export const convertInviteCodeTest = ()  => {
+    const arg = '39IU24';
+    clientRpcFunc(convertInviteCode, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 发红包
+export const emitRedBagTest = ()  => {
+    const arg = new EmitRedBag();
+    arg.coin_type = 6001;
+    arg.count = 10;
+    arg.total_amount = 100;
+    arg.redBag_type = 2;
+    arg.desc = 'test';
+    clientRpcFunc(emitRedBag, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 领取红包兑换码
+export const getRedBagConvertTest = ()  => {
+    const arg = 'FFZPT10PVFT';
+    clientRpcFunc(getRedBagConvert, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 兑换红包
+export const convertRedBagTest = ()  => {
+    const arg = '7T7XWL8YG6N2F';
+    clientRpcFunc(convertRedBag, arg, (r: Result) => {
         console.log(r);
     });
 };
@@ -419,6 +458,30 @@ const props = {
         {
             name: '登录天数',
             func: () => { get_series_days(); }
+        },
+        {
+            name: '发红包',
+            func: () => { emitRedBagTest(); }
+        },
+        {
+            name: '领取兑换码',
+            func: () => { getRedBagConvertTest(); }
+        },
+        {
+            name: '兑换红包',
+            func: () => { convertRedBagTest(); }
+        },
+        {
+            name: '邀请人数',
+            func: () => { get_inviteNum_test(); }
+        },
+        {
+            name: '生成邀请码',
+            func: () => { getInviteCodeTest(); }
+        },
+        {
+            name: '兑换邀请码',
+            func: () => { convertInviteCodeTest(); }
         },
         {
             name: '广告奖励',
@@ -483,10 +546,6 @@ const props = {
         {
             name: '查KT',
             func: () => { get_KT_test(); }
-        },
-        {
-            name: '兑换邀请码',
-            func: () => { input_cdkey(); }
         },
         {
             name: '批量查看奖章',

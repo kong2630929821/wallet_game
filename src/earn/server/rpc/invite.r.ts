@@ -1,16 +1,113 @@
 /**
  * 邀请用户
  */
+import { randomInt } from '../../../pi/util/math';
 import { Bucket } from '../../utils/db';
-import { AWARD_INVITE, INVITE_AWARD_CIRCLE_LEVEL2, MIN_INVITE_NUM, RESULT_SUCCESS, WALLET_API_CDKEY, WALLET_API_INVITENUM, WALLET_API_INVITENUM_REAL, WARE_NAME } from '../data/constant';
+import { AWARD_INVITE, CODE_MAX_CONFLICTS, CODE_START_LENGTH, INVITE_AWARD_CIRCLE_LEVEL2, MESSAGE_TYPE_CONVERT_INVITE_CODE, MESSAGE_TYPE_INVITE, RESULT_SUCCESS, WALLET_API_INVITENUM_REAL, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { Invite, InviteInfo, InviteKey } from '../data/db/invite.s';
+import { InviteCodeTab, InviteInfo, InviteKey, UserInviteTab } from '../data/db/invite.s';
 import { InviteAwardRes } from '../data/db/item.s';
 import { InviteNumTab, InviteTab, UserAcc, UserAccMap } from '../data/db/user.s';
-import { DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_CONVERT_REPEAT, INVITE_COUNT_ERROR, INVITE_NOT_ENOUGH, NOT_LOGIN, REQUEST_WALLET_FAIL } from '../data/errorNum';
+import { CANT_INVITE_SELF, DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_CODE_ERROR, INVITE_CONVERT_REPEAT, INVITE_COUNT_ERROR, INVITE_NOT_ENOUGH, NOT_LOGIN } from '../data/errorNum';
 import { oauth_send } from '../util/oauth_lib';
 import { invite_award } from '../util/regularAward';
-import { getOpenid, getUid } from './user.r';
+import { send } from '../util/sendMessage';
+import { get_userInfo, getOpenid, getUid } from './user.r';
+
+// 生成邀请码
+// #[rpc=rpcServer]
+export const getInviteCode = (): Result => {
+    const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
+    const userInviteBucket = new Bucket(WARE_NAME, UserInviteTab._$info.name);
+    let userInvite = userInviteBucket.get<number, UserInviteTab[]>(uid)[0];
+    if (!userInvite) {
+        userInvite = new UserInviteTab();
+        userInvite.uid = uid;
+        userInvite.code = createCid(CODE_MAX_CONFLICTS, CODE_START_LENGTH);
+        userInvite.inviter = 0;
+        userInvite.invited_time = '0';
+        userInvite.invite_list = [];
+    }
+    userInviteBucket.put(uid, userInvite);
+    const inviteCodeBucket = new Bucket(WARE_NAME, InviteCodeTab._$info.name);
+    const inviteCode = new InviteCodeTab();
+    inviteCode.code = userInvite.code;
+    inviteCode.uid = uid;
+    inviteCodeBucket.put(inviteCode.code, inviteCode);
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = userInvite.code;
+
+    return result;
+};
+
+// 兑换邀请码
+// #[rpc=rpcServer]
+export const convertInviteCode = (code: string): Result => {
+    const result = new Result();
+    const uid = getUid();
+    if (!uid) {
+        result.reslutCode = NOT_LOGIN;
+
+        return result;
+    }
+    const userInviteBucket = new Bucket(WARE_NAME, UserInviteTab._$info.name);
+    let userInvite = userInviteBucket.get<number, UserInviteTab[]>(uid)[0];
+    if (!userInvite) {
+        userInvite = new UserInviteTab();
+        userInvite.uid = uid;
+        userInvite.code = createCid(CODE_MAX_CONFLICTS, CODE_START_LENGTH);
+        userInvite.inviter = 0;
+        userInvite.invited_time = '0';
+        userInvite.invite_list = [];
+    }
+    // 该用户已兑换过邀请码
+    if (userInvite.inviter !== 0) {
+        result.reslutCode = INVITE_CONVERT_REPEAT;
+
+        return result;
+    }
+    // 获取邀请人邀请信息
+    const inviteCodeBucket = new Bucket(WARE_NAME, InviteCodeTab._$info.name);
+    const inviteCode = inviteCodeBucket.get<string, InviteCodeTab[]>(code)[0];
+    if (!inviteCode) {  // 邀请码错误
+        result.reslutCode = INVITE_CODE_ERROR;
+
+        return result;
+    }
+    // 无法兑换自己的邀请码
+    if (inviteCode.uid === uid) {
+        result.reslutCode = CANT_INVITE_SELF;
+
+        return result;
+    }
+    const inviter = inviteCode.uid;
+    const inviterUserInvite = userInviteBucket.get<number, UserInviteTab[]>(inviter)[0];
+    if (!inviterUserInvite) {  // 邀请码错误
+        result.reslutCode = INVITE_CODE_ERROR;
+
+        return result;
+    }
+    // 更新邀请人信息 
+    inviterUserInvite.invite_list.push(uid);
+    userInviteBucket.put(inviter, inviterUserInvite);
+    // 更新被邀请人邀请信息
+    userInvite.inviter = inviter;
+    userInvite.invited_time = Date.now().toString();
+    userInviteBucket.put(uid, userInvite);
+    // 分别向邀请人和被邀请人推送对方的AccId
+    result.reslutCode = RESULT_SUCCESS;
+    if (!get_userInfo(inviter).accID || !get_userInfo(uid).accID) return result;
+    send(uid, MESSAGE_TYPE_CONVERT_INVITE_CODE, get_userInfo(uid).accID);
+    send(inviter, MESSAGE_TYPE_INVITE, get_userInfo(uid).accID);
+
+    return result;
+};
 
 // 获取邀请人数(真实用户)
 // #[rpc=rpcServer]
@@ -18,20 +115,12 @@ export const get_inviteNum = (): InviteNumTab => {
     console.log('get_inviteNum in !!!!!!!!!!!!!!!!!!!!!!!!');
     const uid = getUid();
     if (!uid) return;
-    // 获取openid
-    const openid = Number(getOpenid());
-    // 去钱包服务器获取已邀请人数
     let inviteNum = 0;
-    console.log('get_inviteNum 222222222222');
-    const r = oauth_send(WALLET_API_INVITENUM_REAL, { openid: openid });
-    console.log('get_inviteNum 3333333333333333', r);
-    if (r.ok) {
-        const json = JSON.parse(r.ok);
-        if (json.return_code === 1) {
-            inviteNum = <number>json.num;
-        }
+    const userInviteBucket = new Bucket(WARE_NAME, UserInviteTab._$info.name);
+    const userInvite = userInviteBucket.get<number, UserInviteTab[]>(uid)[0];
+    if (userInvite) {
+        inviteNum = userInvite.invite_list.length;
     }
-
     const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
     let inviteNumInfo = bucket.get<number, [InviteNumTab]>(uid)[0];
     if (!inviteNumInfo) {
@@ -140,106 +229,26 @@ export const getInviteAward = (code: string): InviteAwardRes => {
     return result;
 };
 
-// 兑换邀请码
-// #[rpc=rpcServer]
-// export const cdkey = (code: string): Result => {
-//     const result = new Result();
-//     const uid = getUid();
-//     if (!uid) {
-//         result.reslutCode = NOT_LOGIN;
+// =====================本地方法==============================
 
-//         return result;
-//     }
-//     // 获取openid
-//     const openid = Number(getOpenid());
-//     const cdkey = getcdkey(uid, code);
-//     const InviteBucket = new Bucket('file', Invite._$info.name);
-//     const v = InviteBucket.get(cdkey)[0];
-//     const invite = new Invite();
-//     if (!v) {
-//         // 去钱包服务器兑换邀请码
-//         const r = oauth_send(WALLET_API_CDKEY, { openid: openid, code: code });
-//         if (r.ok) {
-//             const json = JSON.parse(r.ok);
-//             if (json.return_code === 1) {
-//                 // 增加邀请奖励
-//                 const inviteOpenid = <string>json.openid; // 邀请人openid
-//                 // 获取邀请人uid
-//                 const bucket = new Bucket(WARE_NAME, UserAcc._$info.name);
-//                 const iuser = bucket.get<string, [UserAcc]>(inviteOpenid)[0];
-//                 let iuid; // 邀请人uid
-//                 let friendsNum; // 邀请人已邀请人数
-//                 if (!iuser) {
-//                     iuid = -1;
-//                     friendsNum = 1;
-//                 } else {
-//                     iuid = iuser.uid;
-//                     // 获取邀请人已邀请人数
-//                     const invites = get_invite_friends(inviteOpenid, iuid);
-//                     console.log('----------------inviteNum--------------', invites.inviteNum);
-//                     invites.inviteNum += 1;
-//                     friendsNum = invites.inviteNum;
-//                     // 添加邀请人邀请记录
-//                     const inviteBucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
-//                     inviteBucket.put(iuid, invites);
-//                 }
-//                 invite.code = cdkey;
-//                 invite.items = []; // 奖品列表
-//                 const item = invite_award(iuid, friendsNum);
-//                 invite.items.push(item);
-//                 InviteBucket.put(cdkey, invite);
-//                 result.msg = JSON.stringify(invite);
-//                 result.reslutCode = RESULT_SUCCESS;
-
-//                 return result;
-//             } else {
-//                 result.reslutCode = json.return_code;
-
-//                 return result;
-//             }
-//         } else {
-//             result.reslutCode = REQUEST_WALLET_FAIL;
-
-//             return result;
-//         }
-//     } else {
-//         result.reslutCode = INVITE_CONVERT_REPEAT;
-
-//         return result;
-//     }
-// };
-
-// // 获取已邀请的好友
-// export const get_invite_friends = (openid: string, uid: number): InviteNumTab => {
-//     // 去钱包服务器获取已邀请人数
-//     let inviteNum = 0;
-//     const r = oauth_send(WALLET_API_INVITENUM, { openid: openid });
-//     if (r.ok) {
-//         const json = JSON.parse(r.ok);
-//         if (json.return_code === 1) {
-//             inviteNum = <number>json.num;
-//         }
-//     }
-//     const bucket = new Bucket(WARE_NAME, InviteNumTab._$info.name);
-//     let inviteNumTab = bucket.get<number, [InviteNumTab]>(uid)[0];
-//     if (!inviteNumTab) {
-//         inviteNumTab = new InviteNumTab();
-//         inviteNumTab.uid = uid;
-//         inviteNumTab.inviteNum = 0;
-//         inviteNumTab.usedNum = [];
-//     }
-//     // 更新数据库中的邀请人数
-//     const length = inviteNumTab.usedNum.length; // 可领取邀请奖励宝箱的个数
-//     const awardCount = Math.floor(inviteNum / MIN_INVITE_NUM);  // 每三个邀请人数添加一个可领取宝箱
-//     console.log('awardCount!!!!!!!!!!!!!!!!!!!!!!!!', awardCount);
-//     if (length < awardCount) {
-//         for (let i = 0; i < awardCount - length; i ++) {
-//             inviteNumTab.usedNum.push(1);
-//             continue;
-//         }
-//     }
-//     inviteNumTab.inviteNum = inviteNum;
-//     bucket.put(uid, inviteNumTab);
-    
-//     return inviteNumTab;
-// };
+// 生成邀请码
+export const createCid = (count: number, length: number): string => {
+    const inviteCodeBucket = new Bucket(WARE_NAME, InviteCodeTab._$info.name);
+    const chars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I',
+        'J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+    let cid = '';
+    for (let i = 0; i < length; i++) {
+        cid += chars[randomInt(0, chars.length - 1)];
+    }
+    console.log('!!!!!!!!!!!!!!!!!cid:', cid);
+    const inviteCode = inviteCodeBucket.get<string, InviteCodeTab[]>(cid)[0];
+    if (!inviteCode) {
+        return cid;
+    } else {
+        if (count > 0) {
+            return createCid(count - 1, length);
+        } else {
+            return createCid(CODE_MAX_CONFLICTS, length + 1);
+        }
+    }
+};
