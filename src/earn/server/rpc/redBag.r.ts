@@ -6,7 +6,7 @@ import { randomInt, round } from '../../../pi/util/math';
 import { Bucket } from '../../utils/db';
 import { CID_START_LENGTH, CODE_MAX_CONFLICTS, NORMAL_RED_BAG, RANDOM_RED_BAG, RED_BAG_TIMEOUT, RESULT_SUCCESS, RID_START_LENGTH, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { CidAmount, RedBagConvert, RedBagInfo, UserRedBag } from '../data/db/redBag.s';
+import { CidAmount, RedBagConvert, RedBagConvertList, RedBagData, RedBagInfo, RedBagInfoList, UserRedBag } from '../data/db/redBag.s';
 import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, REDUCE_PRICE_FAIL } from '../data/errorNum';
 import { oauth_alter_balance } from '../util/oauth_lib';
 import { EmitRedBag } from './redBag.s';
@@ -111,6 +111,15 @@ export const convertRedBag = (cid: string): Result => {
     const redBagConvertBucket = new Bucket(WARE_NAME, RedBagConvert._$info.name); 
     console.log('============cid', cid);
     const redBagConvert = redBagConvertBucket.get<string, RedBagConvert[]>(cid)[0];
+    const userRedBagBucket = new Bucket(WARE_NAME, UserRedBag._$info.name);
+    let userRedBag = userRedBagBucket.get<number, UserRedBag[]>(uid)[0];
+    if (!userRedBag) {
+        userRedBag = new UserRedBag();
+        userRedBag.uid = uid;
+        userRedBag.rid_list = [];
+        userRedBag.get_rid_list = [];
+        userRedBag.cid_list = [];
+    }
     console.log('============redBagConvert', redBagConvert);
     // 兑换码错误
     if (!redBagConvert) {
@@ -146,7 +155,70 @@ export const convertRedBag = (cid: string): Result => {
     redBagInfoBucket.put(redBagInfo.rid, redBagInfo);
     redBagConvert.convert_time = time.toString();
     redBagConvertBucket.put(redBagConvert.cid, redBagConvert);
+    userRedBag.cid_list.push(cid);
+    userRedBagBucket.put(cid, userRedBag);
     result.msg = JSON.stringify(redBagConvert);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
+// 用户发红包记录
+// #[rpc=rpcServer]
+export const queryEmitLog = (): Result => {
+    const result = new Result();
+    const uid = getUid();
+    const userRedBagBucket = new Bucket(WARE_NAME, UserRedBag._$info.name);
+    const userRedBag = userRedBagBucket.get<number, UserRedBag[]>(uid)[0];
+    if (!userRedBag) {
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    }
+    const redBagInfoList = new RedBagInfoList();
+    const list = [];
+    for (let i = 0; i < userRedBag.rid_list.length; i++) {
+        const redBagData = getRedBagData(userRedBag.rid_list[i]);
+        if (redBagData) list.push(redBagData);
+    }
+    redBagInfoList.list = list;
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = JSON.stringify(redBagInfoList);
+
+    return result;
+};
+
+// 用户兑换红包记录
+// #[rpc=rpcServer]
+export const queryConvertLog = (): Result => {
+    const result = new Result();
+    const uid = getUid();
+    const redBagConvertBucket = new Bucket(WARE_NAME, RedBagConvert._$info.name); 
+    const userRedBagBucket = new Bucket(WARE_NAME, UserRedBag._$info.name);
+    const userRedBag = userRedBagBucket.get<number, UserRedBag[]>(uid)[0];
+    if (!userRedBag) {
+        result.reslutCode = RESULT_SUCCESS;
+
+        return result;
+    }
+    const convertInfoList = new RedBagConvertList();
+    convertInfoList.list = [];
+    for (let i = 0; i < userRedBag.cid_list.length; i++) {
+        const convertInfo = redBagConvertBucket.get<string, RedBagConvert[]>(userRedBag.cid_list[i])[0];
+        if (convertInfo) convertInfoList.list.push(convertInfo);
+    }
+    result.reslutCode = RESULT_SUCCESS;
+    result.msg = JSON.stringify(convertInfoList);
+
+    return result;
+};
+
+// 获取指定红包的详情
+// #[rpc=rpcServer]
+export const queryRedBagDetail = (rid: string): Result => {
+    const result = new Result();
+    const redBagData = getRedBagData(rid);
+    if (redBagData) result.msg = JSON.stringify(redBagData);
     result.reslutCode = RESULT_SUCCESS;
 
     return result;
@@ -235,6 +307,37 @@ export const returnTimeout = (rid: string): boolean => {
     oauth_alter_balance(redBagInfo.coin_type, oid, redBagInfo.left_amount);
     
     return true;
+};
+
+// 获取红包详情
+export const getRedBagData = (rid: string): RedBagData => {
+    const redBagInfoBucket = new Bucket(WARE_NAME, RedBagInfo._$info.name);
+    const redBagConvertBucket = new Bucket(WARE_NAME, RedBagConvert._$info.name);
+    const redBagInfo = redBagInfoBucket.get<string, RedBagInfo[]>(rid)[0];
+    if (redBagInfo) {
+        const redBagData = new RedBagData();
+        redBagData.rid = redBagInfo.rid;
+        redBagData.uid = redBagInfo.uid;
+        redBagData.redBag_type = redBagInfo.redBag_type;
+        redBagData.coin_type = redBagInfo.coin_type;
+        redBagData.desc = redBagInfo.desc;
+        redBagData.total_amount = redBagInfo.total_amount;
+        redBagData.left_amount = redBagInfo.left_amount;
+        redBagData.send_time = redBagInfo.send_time;
+        redBagData.update_time = redBagInfo.update_time;
+        redBagData.timeout = redBagInfo.timeout;
+        redBagData.cid_list = redBagInfo.cid_list;
+        redBagData.left_cid_list = redBagInfo.left_cid_list;
+        redBagData.convert_info_list = [];
+        for (let j = 0; j < redBagInfo.cid_list.length; j++) {
+            const convertInfo = redBagConvertBucket.get<string, RedBagConvert[]>(redBagInfo.cid_list[j].cid)[0];
+            if (convertInfo) redBagData.convert_info_list.push(convertInfo);
+        }
+
+        return redBagData;
+    }
+
+    return;
 };
 
 export const createRid = (count: number, length: number): string => {
