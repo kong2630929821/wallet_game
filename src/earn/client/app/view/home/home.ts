@@ -3,6 +3,7 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
+import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
@@ -147,14 +148,16 @@ export class EarnHome extends Widget {
                     }
                 }
             }
-
+            if (!!this.props.userInfo.phoneNumber && data.taskList[7].state === 0) {
+                setStore('flags/firstBindPhone',true);
+            }
             this.props.noviceTask = [
                 {
-                    img: '',
+                    img: '2003.png',
                     title: '绑定手机号',
                     desc: '凭借手机验证可找回云端资产',
                     btn:'做任务',
-                    addOne:false,
+                    addOne:true,
                     components:'app-view-mine-setting-phone',
                     complete: !!this.props.userInfo.phoneNumber,
                     show:true
@@ -514,6 +517,25 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
+// 监听第一次绑定手机号码
+register('flags/firstBindPhone',(firstBindPhone:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (firstBindPhone) {
+        clientRpcFunc(get_task_award,8,(res:Result) => {
+            console.log('首次绑定手机号奖励',res);
+            if (res && res.reslutCode === 1) {
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'首充奖励',
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
+                });
+                setStore('flags/firstBindPhone',true);
+                w.initPropsNoviceTask();
+            }
+        });
+    }
+});
+
 // 监听签到天数
 register('flags/signInDays',(r:any) => {
     STATE.signInDays = r;
@@ -525,3 +547,13 @@ register('flags/loginAwards',(r:any) => {
     STATE.awards = r;
     forelet.paint(STATE);
 });
+
+registerStoreData('user/info',(r => {
+    if (!!r.phoneNumber) {
+        getCompleteTask().then(r => {
+            if (r.taskList[7].state === 0) {
+                setStore('flags/firstBindPhone',true);
+            }
+        });
+    }
+}));

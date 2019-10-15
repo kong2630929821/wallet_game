@@ -21,7 +21,8 @@ export const sourcePort = activeLogicPort;
 /**
  * 客户端初始化
  */
-export const initClient = (openId:number,loginSuccess:Function) => {
+export const initClient = (result:any,loginSuccess:Function) => {
+    const openId = result.openid;
     if (!rootClient) {
         console.log('initClient -----------');
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
@@ -31,7 +32,7 @@ export const initClient = (openId:number,loginSuccess:Function) => {
             const user = openId.toString();
             const pwd = 'sign';
             login(userType,user,pwd,(res:UserInfo) => {
-                loginSuccess(openId,res);
+                loginSuccess(result,res);
             });
             setStore('userInfo/offline',false);
         },() => {

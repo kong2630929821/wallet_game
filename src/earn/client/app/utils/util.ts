@@ -451,12 +451,13 @@ export const formateCurrency = (value:number) => {
 export const wathcAdGetAward = (awardId:number,getAwardCB?:Function,closeCB?:Function) => {
     const close = popNewLoading('加载中...');
     let adAard:Award = null;
-    chooseAdType((adType) => {
-        watchAd(adType,(isSuccess,event,info) => {
-            console.log('ad isSuccess',isSuccess);
-            console.log('ad info',info);
+    // tslint:disable-next-line:no-reserved-keywords
+    chooseAdType(type => {
+        watchAd(type, (fg,event,info) => {
+            console.log(`watchAd fg ${fg}, event ${event}, info ${info}`);
             close.callback(close.widget);
-            if (event === PlayEvent.Reward) {// 发放奖励
+            if (event === PlayEvent.Reward) {
+                console.log('发奖励了');
                 getAdRewards(awardId).then((award:Award) => {
                     adAard = award;
                     // popNewMessage('获取到广告奖励');

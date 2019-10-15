@@ -4,7 +4,6 @@
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
-import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -394,7 +393,7 @@ register('mine',(mine:Mine) => {
 });
 
 // 云端余额变化
-registerStoreData('cloud/KT',(r:any) => {
+registerStoreData('cloud',(r:any) => {
     debugger;
     const cloudBalances = r;
     STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
