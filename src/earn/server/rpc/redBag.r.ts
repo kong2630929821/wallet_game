@@ -243,7 +243,7 @@ export const createRid = (count: number, length: number): string => {
         'J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
     let rid = '';
     for (let i = 0; i < length; i++) {
-        rid += chars[randomInt(0, chars.length)];
+        rid += chars[randomInt(0, chars.length - 1)];
     }
     const redBagInfo = redBagInfoBucket.get<string, RedBagInfo[]>(rid)[0];
     if (redBagInfo) {
@@ -263,7 +263,7 @@ export const createCid = (count: number, length: number): string => {
         'J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
     let cid = '';
     for (let i = 0; i < length; i++) {
-        cid += chars[randomInt(0, chars.length)];
+        cid += chars[randomInt(0, chars.length - 1)];
     }
     const redBagConvert = redBagConvertBucket.get<string, RedBagConvert[]>(cid)[0];
     if (redBagConvert) {

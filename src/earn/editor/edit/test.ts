@@ -51,7 +51,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2005';
+    walletLoginReq.openid = '2006';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -398,16 +398,8 @@ export const get_task_test = ()  => {
 
 // 获取任务奖励
 export const get_taskAward_test = ()  => {
-    const taskID = 1;
+    const taskID = 8;
     clientRpcFunc(get_task_award, taskID, (r: Result) => {
-        console.log(r);
-    });
-};
-
-// 兑换邀请码
-export const input_cdkey = ()  => {
-    const key = 'IWFUSI';
-    clientRpcFunc(cdkey, key, (r: Result) => {
         console.log(r);
     });
 };
@@ -480,6 +472,10 @@ const props = {
             func: () => { convertRedBagTest(); }
         },
         {
+            name: '邀请人数',
+            func: () => { get_inviteNum_test(); }
+        },
+        {
             name: '生成邀请码',
             func: () => { getInviteCodeTest(); }
         },
@@ -550,10 +546,6 @@ const props = {
         {
             name: '查KT',
             func: () => { get_KT_test(); }
-        },
-        {
-            name: '兑换邀请码',
-            func: () => { input_cdkey(); }
         },
         {
             name: '批量查看奖章',
