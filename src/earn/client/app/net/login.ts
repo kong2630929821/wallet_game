@@ -1,7 +1,7 @@
 /**
  * 登录
  */
-import { loginWallet, logoutWallet } from '../../../../app/net/login';
+import { logoutWallet } from '../../../../app/net/login';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 import { get_loginDays } from '../../../server/rpc/user.p';

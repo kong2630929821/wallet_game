@@ -394,6 +394,7 @@ register('mine',(mine:Mine) => {
 
 // 云端余额变化
 registerStoreData('cloud',(r:any) => {
+    console.log('监听余额',r);
     debugger;
     const cloudBalances = r;
     STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
