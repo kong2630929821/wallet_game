@@ -8,8 +8,7 @@ import { Result } from '../../server/data/db/guessing.s';
 
 import { RESULT_SUCCESS } from '../../server/data/constant';
 
-import { uploadFileUrl } from '../../../app/config';
-import { base64ToFile } from '../../../app/utils/tools';
+import { uploadFileUrl } from '../../../app/public/config';
 import { AddConvert, AddConvertList, ConvertAwardList, ProductInfo } from '../../server/data/db/item.s';
 
 /**
@@ -331,4 +330,31 @@ export const uploadFile = async (base64) => {
         }).catch(err => {
             console.log('uploadFile fail ',err);
         });
+};
+
+/**
+ * 图片base64转file格式
+ */
+export const base64ToFile = (base64: string) => {
+    const blob = base64ToBlob(base64);
+    const newFile = new File([blob], 'avatar.jpeg', { type: blob.type });
+    console.log(newFile);
+
+    return newFile;
+};
+
+/**
+ * base64 to blob
+ */
+export const base64ToBlob = (base64: string) => {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], { type: mime });
 };
