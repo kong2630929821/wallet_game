@@ -10,7 +10,7 @@ import { Bucket } from '../../utils/db';
 import { SeriesLoginAwardCfg, TaskAwardCfg } from '../../xlsx/awardCfg.s';
 import * as CONSTANT from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { AccIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
+import { AccID, AccIDMap, DayliLogin, DayliLoginKey, Online, OnlineMap, SeriesLogin, Task, TotalLogin, UserAcc, UserAccMap, UserInfo, UserTaskTab } from '../data/db/user.s';
 import { CHAT_NOT_REGISTER, DB_ERROR, ERROR_BUILD_ACCID, NOT_LOGIN, NOT_USER_INFO } from '../data/errorNum';
 import { get_index_id } from '../data/util';
 import { add_medal, get_today, task_init } from '../util/item_util.r';
@@ -143,7 +143,7 @@ export const bind_accID = (accID: string): Result => {
         return result;
     }
     const accIDMapBucket = new Bucket(CONSTANT.WARE_NAME, AccIDMap._$info.name);
-    // const userInfoBucket = new Bucket(CONSTANT.WARE_NAME, UserInfo._$info.name);
+    const accIDBucket = new Bucket(CONSTANT.WARE_NAME, AccID._$info.name);
     const uid2 = accIDMapBucket.get(accID)[0];
     console.log('!!!!!!!!!!!!!!!!!uid2:', uid2);
     if (uid2) {
@@ -153,15 +153,10 @@ export const bind_accID = (accID: string): Result => {
         return result;
     }
     console.log('!!!!!!!!!!!!!!!!4444444444444444444444');
-    // const userInfo = userInfoBucket.get<number, [UserInfo]>(uid)[0];
-    // console.log('userInfo:', userInfo);
-    // if (!userInfo) {
-    //     result.reslutCode = NOT_USER_INFO;
-
-    //     return result;
-    // }
-    // userInfo.accID = accID;
-    // userInfoBucket.put(uid, userInfo);
+    const accIDTab = new AccID();
+    accIDTab.uid = uid;
+    accIDTab.accID = accID;
+    accIDBucket.put(uid, accIDTab);
     const accIDMap = new AccIDMap();
     accIDMap.uid = uid;
     accIDMap.accID = accID;
