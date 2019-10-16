@@ -7,7 +7,7 @@ import { AWARD_INVITE, CODE_MAX_CONFLICTS, CODE_START_LENGTH, INVITE_AWARD_CIRCL
 import { Result } from '../data/db/guessing.s';
 import { InviteCodeTab, InviteInfo, InviteKey, UserInviteTab } from '../data/db/invite.s';
 import { InviteAwardRes } from '../data/db/item.s';
-import { InviteNumTab, InviteTab, UserAcc, UserAccMap } from '../data/db/user.s';
+import { AccID, InviteNumTab, InviteTab, UserAcc, UserAccMap } from '../data/db/user.s';
 import { CANT_INVITE_SELF, DB_ERROR, INVITE_AWARD_ALREADY_TAKEN, INVITE_CODE_ERROR, INVITE_CONVERT_REPEAT, INVITE_COUNT_ERROR, INVITE_NOT_ENOUGH, NOT_LOGIN } from '../data/errorNum';
 import { oauth_send } from '../util/oauth_lib';
 import { invite_award } from '../util/regularAward';
@@ -102,9 +102,12 @@ export const convertInviteCode = (code: string): Result => {
     userInviteBucket.put(uid, userInvite);
     // 分别向邀请人和被邀请人推送对方的AccId
     result.reslutCode = RESULT_SUCCESS;
-    if (!get_userInfo(inviter).accID || !get_userInfo(uid).accID) return result;
-    send(uid, MESSAGE_TYPE_CONVERT_INVITE_CODE, get_userInfo(uid).accID);
-    send(inviter, MESSAGE_TYPE_INVITE, get_userInfo(uid).accID);
+    const accIDBucket = new Bucket(WARE_NAME, AccID._$info.name);
+    const userAccID = accIDBucket.get<number, AccID[]>(uid)[0];
+    const inviterAccID = accIDBucket.get<number, AccID[]>(inviter)[0];
+    if (!userAccID || !inviterAccID || userAccID.accID || inviterAccID.accID) return result;
+    send(uid, MESSAGE_TYPE_CONVERT_INVITE_CODE, userAccID.accID);
+    send(inviter, MESSAGE_TYPE_INVITE, inviterAccID.accID);
 
     return result;
 };

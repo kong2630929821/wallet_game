@@ -41,6 +41,15 @@ struct AccIDMap {
 }
 
 /**
+*AccID表
+*/
+#[primary=uid,db=file,dbMonitor=true,hasmgr=false]
+struct AccID {
+    uid: u32,
+    accID: String,
+}
+
+/**
 *生成唯一ID表
 */
 #[primary=index,db=file,dbMonitor=true,hasmgr=false]
