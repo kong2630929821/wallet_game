@@ -1,9 +1,9 @@
 /**
  * digging mines home
  */
+import { getStoreData } from '../../../../../app/api/walletApi';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
-import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { popModalBoxs } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
@@ -72,6 +72,11 @@ export class MiningHome extends Widget {
         };
         this.mineLocationInit();   // 矿山位置初始化
         console.log('miningHome props----------',this.props);
+
+        getStoreData('cloud').then(r => {
+            this.state.miningNumber = r.KT;
+            this.paint();
+        });        
     }
 
     public closeClick() {
@@ -395,9 +400,7 @@ register('mine',(mine:Mine) => {
 // 云端余额变化
 registerStoreData('cloud',(r:any) => {
     console.log('监听余额',r);
-    debugger;
-    const cloudBalances = r;
-    STATE.miningNumber = cloudBalances.get(CloudCurrencyType.KT) || 0;
+    STATE.miningNumber = r.KT;
     forelet.paint(STATE);
 });
 

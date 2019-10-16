@@ -2,9 +2,7 @@
  * rpc通信
  */
 import { getOneUserInfo } from '../../../../app/net/pull';
-import { CloudCurrencyType } from '../../../../app/public/interface';
 import { getStore as walletGetStore } from '../../../../app/store/memstore';
-import { largeUnit2SmallUnit } from '../../../../app/utils/unitTools';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
 import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/data/db/medal.s';
@@ -601,10 +599,9 @@ export const sendRedEnvlope = (rtype: number, ctype: number, totalAmount: number
     const arg = new EmitRedBag();
     arg.redBag_type = rtype + 1;
     arg.coin_type = ctype;
-    arg.total_amount = Number(largeUnit2SmallUnit(CloudCurrencyType[ctype], totalAmount));
+    arg.total_amount = totalAmount;
     arg.count = redEnvelopeNumber;
     arg.desc = lm;
-    debugger;
     
     return new Promise((resolve,reject) => {
         clientRpcFunc(emitRedBag,arg,(res:Result) => {
