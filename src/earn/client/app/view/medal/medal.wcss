@@ -45,6 +45,7 @@
     height: 10px;
     background: white;
     border-radius: 5px;
+    margin-top:10px;
 }
 .now-linear{
     height: 100%;

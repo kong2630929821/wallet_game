@@ -15,7 +15,7 @@ import { get_compJackpots, get_user_guessingInfo, start_guessing } from '../../s
 import { cdkey, convertInviteCode, get_invite_awards, get_inviteNum, getInviteCode } from '../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeedResponse, SeriesDaysRes } from '../../server/rpc/itemQuery.s';
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, mining, mining_result } from '../../server/rpc/mining.p';
-import { convertRedBag, emitRedBag, getRedBagConvert } from '../../server/rpc/redBag.p';
+import { convertRedBag, emitRedBag, getRedBagConvert, queryConvertLog, queryEmitLog, queryRedBagDetail } from '../../server/rpc/redBag.p';
 import { EmitRedBag } from '../../server/rpc/redBag.s';
 import { SendMsg } from '../../server/rpc/send_message.s';
 import { add_convert, box_pay_query, get_convert_info, get_convert_list, get_hasFree, get_KTNum, get_STNum, kt_rotary, kt_treasurebox, st_convert, st_rotary, st_treasurebox } from '../../server/rpc/stParties.p';
@@ -51,7 +51,7 @@ export const loginTest = () => {
     const userType = new UserType();
     userType.enum_type = UserType_Enum.WALLET;
     const walletLoginReq = new WalletLoginReq();
-    walletLoginReq.openid = '2006';
+    walletLoginReq.openid = '2007';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
     clientRpcFunc(login, userType, (r: UserInfo) => {
@@ -449,6 +449,30 @@ export const convertRedBagTest = ()  => {
     });
 };
 
+// 用户发红包记录
+export const queryEmitLogTest = ()  => {
+    const arg = null;
+    clientRpcFunc(queryEmitLog, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 用户兑换红包记录
+export const queryConvertLogTest = ()  => {
+    const arg = null;
+    clientRpcFunc(queryConvertLog, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
+// 获取指定红包的详情
+export const queryRedBagDetailTest = ()  => {
+    const arg = 'VDGJDMFPRLN';
+    clientRpcFunc(queryRedBagDetail, arg, (r: Result) => {
+        console.log(r);
+    });
+};
+
 const props = {
     bts: [
         {
@@ -458,6 +482,18 @@ const props = {
         {
             name: '登录天数',
             func: () => { get_series_days(); }
+        },
+        {
+            name: '发红包记录',
+            func: () => { queryEmitLogTest(); }
+        },
+        {
+            name: '兑换红包记录',
+            func: () => { queryConvertLogTest(); }
+        },
+        {
+            name: '红包详情',
+            func: () => { queryRedBagDetailTest(); }
         },
         {
             name: '发红包',

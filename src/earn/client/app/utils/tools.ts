@@ -1,6 +1,7 @@
 import { SeriesLoginAwardCfg } from '../../../xlsx/awardCfg.s';
 import { MedalCfg } from '../../../xlsx/item.s';
 import { getMap } from '../store/cfgMap';
+import { getSeriesLoginAwards } from './tools';
 
 /**
  * 工具类函数
@@ -101,7 +102,7 @@ export const getSeriesLoginAwards = (serielLoginDays: number) => {
         cfg.days = showAwardsDaysStart + i;
         awards[i] = cfg;
     }
-
+    
     return awards;
 };
 

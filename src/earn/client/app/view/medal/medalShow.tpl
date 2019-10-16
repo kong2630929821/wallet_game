@@ -22,6 +22,7 @@
                 <p w-class="medal-desc">{{it.condition}}</p>
             {{end}}
         </div>
-        <span></span>
+        <div on-tap="backPrePage()" w-class = "medal-closeBox"><img src="../../res/image/pop_close.png" style="height: 36px;width:36px;"/></div>
+        <div></div>
     </div>
 </div>
