@@ -13,7 +13,7 @@ import { convertInviteCode, get_invite_awards, get_inviteNum, getInviteAward, ge
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 // tslint:disable-next-line:max-line-length
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
-import { emitRedBag } from '../../../server/rpc/redBag.p';
+import { convertRedBag, emitRedBag, getRedBagConvert } from '../../../server/rpc/redBag.p';
 import { EmitRedBag } from '../../../server/rpc/redBag.s';
 import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
@@ -610,6 +610,39 @@ export const sendRedEnvlope = (rtype: number, ctype: number, totalAmount: number
                 resolve(res);
             } else {
                 reject(res);
+            }
+        });
+    });
+};
+
+/**
+ * 获取红包兑换码
+ */
+export const getRedCode = (redCode:string) => {
+
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(getRedBagConvert,redCode,(res:Result) => {
+            console.log('[获取红包兑换码]getRedBagConvert---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
+
+/**
+ * 兑换码兑换红包
+ */
+export const getConvertRedBag = (exchangeCode:string) => {
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(convertRedBag,exchangeCode,(res:Result) => {
+            console.log('[兑换码兑换红包]convertRedBag---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject();
             }
         });
     });
