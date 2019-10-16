@@ -122,7 +122,8 @@ export const initEarnStore = () => {
             sex:0,
             tel:'',
             isLogin:true,
-            offline:false
+            offline:false,
+            acc_id:''
         },
         flags:{},
         mine:{
@@ -197,4 +198,5 @@ export interface UserInfo {
     tel:string;  // user tel
     isLogin:boolean;   // 登录
     offline:boolean;   //  离线
+    acc_id:string;
 }

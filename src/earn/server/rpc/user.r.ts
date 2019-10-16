@@ -148,7 +148,7 @@ export const bind_accID = (accID: string): Result => {
     console.log('!!!!!!!!!!!!!!!!!uid2:', uid2);
     if (uid2) {
         console.log('!!!!!!!!!!!!!!!!3333333333333333333333333322222222222');
-        result.reslutCode = ERROR_BUILD_ACCID;
+        result.reslutCode = -1;
 
         return result;
     }

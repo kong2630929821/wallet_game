@@ -1,10 +1,12 @@
 /**
  * 登录
  */
+import { getStoreData } from '../../../../app/api/walletApi';
 import { logoutWallet } from '../../../../app/net/login';
+import { Result } from '../../../server/data/db/guessing.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
-import { get_loginDays } from '../../../server/rpc/user.p';
+import { bind_accID, get_loginDays } from '../../../server/rpc/user.p';
 import { getStore, initEarnStore, setStore } from '../store/memstore';
 import { getSeriesLoginAwards } from '../utils/tools';
 import { getCompleteTask } from '../view/home/home';
@@ -25,6 +27,14 @@ const loginSuccess = (result:any,res:UserInfo) => {
     initSubscribeInfo(); // 监听数据表变化 
     if (res.loginCount === 0) {  // 新用户第一次登录
         setStore('flags/firstLogin',true);
+        // 绑定acc_Id
+        getStoreData('user').then((r:any) => {
+            clientRpcFunc(bind_accID,r.acc_id,(r:Result) => {
+                if (r && r.reslutCode) {
+                    console.log('绑定AccUID成功，accuid:',r);
+                }
+            });
+        });
     }
     // 获取登录天数
     getLoginDays().then((r:SeriesDaysRes) => {

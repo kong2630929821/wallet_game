@@ -228,4 +228,4 @@ export const CID_START_LENGTH = 13;
 export const NORMAL_RED_BAG = 1; // 普通红包
 export const RANDOM_RED_BAG = 2; // 拼手气红包
 // 红包过期时间
-export const RED_BAG_TIMEOUT = 1; //单位 天
+export const RED_BAG_TIMEOUT = 1; // 单位 天

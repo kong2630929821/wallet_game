@@ -2,7 +2,6 @@
  * 活动-邀请好友
  */
 
-import { getInviteCode } from '../../../../../app/net/pull';
 import { getModulConfig, shareDownload } from '../../../../../app/public/config';
 import { LuckyMoneyType } from '../../../../../app/public/interface';
 import { getUserInfo, popNewMessage } from '../../../../../app/utils/pureUtils';
@@ -12,6 +11,7 @@ import { popNew } from '../../../../../pi/ui/root';
 import { getLang } from '../../../../../pi/util/lang';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
+import { getInviteCodes } from '../../net/rpc';
 import { inviteAwardsMultiple } from '../../utils/constants';
 
 // tslint:disable-next-line:no-reserved-keywords
@@ -55,8 +55,8 @@ export class InviteFriend extends Widget {
         this.props.topBarTitle = this.props.topBarTitle || '';
         this.props.bgImg = this.props.bgImg || 'app/res/image/bgintive.png';
         this.props.shareUrl = shareDownload;
-        getInviteCode().then(inviteCodeInfo => {
-            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.cid}`;
+        getInviteCodes().then((inviteCodeInfo:any) => {
+            this.props.inviteCode = `${LuckyMoneyType.Invite}${inviteCodeInfo.msg}`;
             this.paint();
         });
         getUserInfo().then(userInfo => {
