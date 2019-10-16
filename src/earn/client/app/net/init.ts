@@ -22,7 +22,7 @@ export const sourcePort = activeLogicPort;
  * 客户端初始化
  */
 export const initClient = (result:any,loginSuccess:Function) => {
-    const openId = result.openid;
+    const openId = result.openId;
     if (!rootClient) {
         console.log('initClient -----------');
         mqtt = new AutoLoginMgr(sourceIp, sourcePort);
