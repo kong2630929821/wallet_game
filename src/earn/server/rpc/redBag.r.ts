@@ -6,7 +6,7 @@ import { randomInt, round } from '../../../pi/util/math';
 import { Bucket } from '../../utils/db';
 import { CID_START_LENGTH, CODE_MAX_CONFLICTS, NORMAL_RED_BAG, RANDOM_RED_BAG, RED_BAG_TIMEOUT, RESULT_SUCCESS, RID_START_LENGTH, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
-import { CidAmount, RedBagConvert, RedBagConvertList, RedBagData, RedBagInfo, RedBagInfoList, UserRedBag } from '../data/db/redBag.s';
+import { CidAmount, RedBagConvert, RedBagConvertData, RedBagConvertList, RedBagData, RedBagInfo, RedBagInfoList, UserRedBag } from '../data/db/redBag.s';
 import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, REDUCE_PRICE_FAIL } from '../data/errorNum';
 import { oauth_alter_balance } from '../util/oauth_lib';
 import { EmitRedBag } from './redBag.s';
@@ -204,7 +204,20 @@ export const convertRedBag = (cid: string): Result => {
     redBagConvertBucket.put(redBagConvert.cid, redBagConvert);
     userRedBag.cid_list.push(cid);
     userRedBagBucket.put(cid, userRedBag);
-    result.msg = JSON.stringify(redBagConvert);
+
+    const redBagConvertData = new RedBagConvertData();
+    redBagConvertData.uid = redBagConvert.uid;
+    redBagConvertData.send_uid = redBagConvert.send_uid;
+    redBagConvertData.rid = redBagConvert.rid;
+    redBagConvertData.cid = redBagConvert.cid;
+    redBagConvertData.coin_type = redBagConvert.coin_type;
+    redBagConvertData.amount = redBagConvert.amount;
+    redBagConvertData.get_time = redBagConvert.get_time;
+    redBagConvertData.convert_time = redBagConvert.convert_time;
+    redBagConvertData.timeout = redBagConvert.timeout;
+    redBagConvertData.desc = redBagInfo.desc;
+
+    result.msg = JSON.stringify(redBagConvertData);
     result.reslutCode = RESULT_SUCCESS;
 
     return result;
