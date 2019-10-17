@@ -185,7 +185,7 @@ export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
 
 // 钱包服务器地址
-export const WALLET_SERVER_URL = 'http://127.0.0.1:8099';
+export const WALLET_SERVER_URL = 'http://39.98.200.23:8099';
 // appid
 export const WALLET_APPID = '11';
 // mch_id
@@ -228,4 +228,4 @@ export const CID_START_LENGTH = 13;
 export const NORMAL_RED_BAG = 1; // 普通红包
 export const RANDOM_RED_BAG = 2; // 拼手气红包
 // 红包过期时间
-export const RED_BAG_TIMEOUT = 1; //单位 天
+export const RED_BAG_TIMEOUT = 1; // 单位 天
