@@ -61,6 +61,20 @@ struct RedBagData {
     convert_info_list: &[RedBagConvert], // 已领取兑换码详情
 }
 
+// 兑换码详情
+struct RedBagConvertData {
+    cid: String, // 兑换码id
+    rid: String, // 红包id
+    send_uid: u32, // 发送者uid
+    uid: u32, // 领取用户uid
+    coin_type: u32, // 货币类型
+    amount: u32, // 兑换金额
+    get_time: String, // 领取时间
+    convert_time: String, // 兑换时间
+    timeout: String, // 过期时间
+    desc: String, // 红包描述
+}
+
 // 红包信息列表
 struct RedBagInfoList {
     list: &[RedBagData]
