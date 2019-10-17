@@ -103,6 +103,52 @@ export const getRedBagConvert = (rid: string): Result => {
     return result;
 };
 
+// 外部应用领取红包兑换码
+// #[rpc=rpcServer]
+export const OutgetRedBagConvert = (rid: string): Result => {
+    const result = new Result();
+    const redBagInfoBucket = new Bucket(WARE_NAME, RedBagInfo._$info.name);
+    const redBagInfo = redBagInfoBucket.get<string, RedBagInfo[]>(rid)[0];
+    // 红包不存在
+    if (!redBagInfo) {
+        result.reslutCode = RED_BAG_CODE_ERROR;
+
+        return result;
+    }
+    // 红包已超时失效
+    const time = Date.now();
+    if (time > parseInt(redBagInfo.timeout, 10)) {
+        result.reslutCode = RED_BAG_TIMEOUT;
+
+        return result;
+    }
+
+    // 获取兑换码
+    const cidIndex = randomInt(0, redBagInfo.left_cid_list.length - 1);
+    const cid = redBagInfo.left_cid_list[cidIndex].cid;
+    const amount = redBagInfo.left_cid_list[cidIndex].amount;
+    redBagInfo.left_cid_list.splice(cidIndex, 1);
+    redBagInfoBucket.put(redBagInfo.rid, redBagInfo);
+
+    // 生成兑换码信息
+    const redBagConvertBucket = new Bucket(WARE_NAME, RedBagConvert._$info.name);
+    const convertInfo = new RedBagConvert();
+    convertInfo.cid = cid;
+    convertInfo.rid = rid;
+    convertInfo.uid = 0;
+    convertInfo.send_uid = redBagInfo.uid;
+    convertInfo.amount = amount;
+    convertInfo.coin_type = redBagInfo.coin_type;
+    convertInfo.get_time = time.toString();
+    convertInfo.convert_time = '0';
+    convertInfo.timeout = redBagInfo.timeout;
+    redBagConvertBucket.put(cid, convertInfo);
+    result.msg = JSON.stringify(convertInfo);
+    result.reslutCode = RESULT_SUCCESS;
+
+    return result;
+};
+
 // 兑换红包
 // #[rpc=rpcServer]
 export const convertRedBag = (cid: string): Result => {
@@ -153,6 +199,7 @@ export const convertRedBag = (cid: string): Result => {
     // 更新红包和兑换码信息
     redBagInfo.left_amount -= redBagConvert.amount;
     redBagInfoBucket.put(redBagInfo.rid, redBagInfo);
+    redBagConvert.uid = uid;
     redBagConvert.convert_time = time.toString();
     redBagConvertBucket.put(redBagConvert.cid, redBagConvert);
     userRedBag.cid_list.push(cid);
