@@ -4,11 +4,11 @@
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
-import { getModulConfig } from '../../../../../app/public/config';
+import { getModulConfig, uploadFileUrlPrefix } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
 import { piRequire } from '../../../../../app/utils/commonjsTools';
-import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
+import { getUserInfo, rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
@@ -335,6 +335,10 @@ export class EarnHome extends Widget {
     public onShow(e:any) {
         console.log('on-down');
         rippleShow(e);
+    }
+
+    public test() {
+        console.log('活动首页用户信息',this.props.avatar);
     }
 }
 
