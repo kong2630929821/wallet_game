@@ -248,13 +248,11 @@ export class EarnHome extends Widget {
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            const loading = popNew('app-components1-loading-loading1');
             switch (ind) {
                 case 0:
                     // 绑定手机号码
                     loadSettingSource().then(() => {
                         popNew('app-view-setting-phone');
-                        loading.callback(loading.widget);
                     });
                     break;
                 case 1:
@@ -271,14 +269,12 @@ export class EarnHome extends Widget {
                     // 大转盘
                     loadTurntableSource().then(() => {
                         popNew('earn-client-app-view-turntable-turntable');
-                        loading.callback(loading.widget);
                     });
                     break;
                 case 4:
                     // 开宝箱
                     loadOpenBoxSource().then(() => {
                         popNew('earn-client-app-view-openBox-openBox');
-                        loading.callback(loading.widget);
                     });
                     break;
                 default:
