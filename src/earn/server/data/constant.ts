@@ -185,7 +185,7 @@ export const WARE_NAME = 'file';
 export const MEMORY_NAME = 'memory';
 
 // 钱包服务器地址
-export const WALLET_SERVER_URL = 'http://127.0.0.1:8099';
+export const WALLET_SERVER_URL = 'http://39.98.200.23:8099';
 // appid
 export const WALLET_APPID = '11';
 // mch_id
