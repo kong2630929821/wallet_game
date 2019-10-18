@@ -92,8 +92,9 @@ winit.initNext = function () {
 
 		//初始化rpc服务
 		var registerStruct = function () {
-			util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {
-				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);
+			
+			util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {	
+				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);			
 				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
 				loadEmoji();
 			}, function (r) {
