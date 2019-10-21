@@ -1,0 +1,116 @@
+.detail-new-page{
+    display: flex;
+    flex-direction: column;
+    font-family: "PingFangSC-Regular";
+    font-size: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color:white;
+}
+.ga-new-page{
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+.ga-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "PingFangSC-Regular";
+}
+.ga-logo{
+    width: 150px;
+    height: 150px;
+    margin-top: 220px;
+}
+.ga-iosCode{
+    margin-top: 40px;
+    width: 200px;
+    height: 200px;
+}
+.ga-title{
+    line-height: 40px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 28px;
+    text-align: center;
+    margin-top: 40px;
+}
+.ga-download-btn{
+    width: 400px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: #318DE6;
+    margin-top: 60px;
+    margin-bottom: 100px;
+    font-size: 32px;
+    color: rgba(255, 255, 255, .87);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ga-iosText{
+    margin-top: 20px;
+    line-height: 40px;
+    font-size: 32px;
+
+}
+.ga-installation-tutorial{
+    border-top: 1px solid #e5e5ee;
+    margin-top: 55px;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+.ga-install-title{
+    line-height: 45px;
+    color: rgba(17, 17, 17, 1);
+    font-size: 32px;
+    text-align: center;
+    font-weight: 400;
+    margin-top: 80px;
+}
+.ga-steps{
+    display: flex;
+    flex-direction: column;
+    font-size: 28px;
+    line-height: 40px;
+}
+.ga-step-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.ga-box{
+    align-self: stretch;
+    padding-left: 100px;
+}
+.ga-step-tag{
+    color: #a0acc0;
+    margin-right: 20px;
+}
+.ga-step-content{
+    color: #111;
+}
+.ga-step-img{
+    width: 358px;
+    height: 188px;
+    margin-top: 56px;
+}
+.tipsPage{
+    background-image: url(../icon/tips.png);
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, .6);
+    background-size: contain;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+}

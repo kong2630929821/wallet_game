@@ -7,14 +7,15 @@ declare var pi_modules;
 
 // ================================================ 导入
 // import { activeLogicIp, activeLogicPort } from '../../../../app/public/config';
+import { activeLogicIp, activeLogicPort } from '../../../../app/public/config';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { ConMgr } from './con_mgr';
 import { handle } from './rpc';
 
 // ================================================ 导出
-export const sourceIp = '127.0.0.1';
-export const sourcePort = 2234;
+export const sourceIp = activeLogicIp;
+export const sourcePort = activeLogicPort;
 
 /**
  * 客户端初始化
@@ -25,7 +26,7 @@ export const initClient = () => {
         mqtt = new ConMgr(sourceIp, sourcePort);
         rootClient = mqtt.connection(() => {
             // 获取红包
-            handle();
+            // handle();
         },() => {
             console.log('connection failed');
         });

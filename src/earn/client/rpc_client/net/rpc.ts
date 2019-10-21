@@ -3,27 +3,37 @@
  */
 
 import { Result } from '../../../server/data/db/guessing.s';
-import { OutgetRedBagConvert } from '../../../server/rpc/redBag.p';
+import { OutgetRedBagConvert, queryRedBagDetail } from '../../../server/rpc/redBag.p';
 import { clientRpcFunc } from './init';
-
-/**
- * 
- */
-export const handle = () => {
-    console.log('!!!!!!!!!!!!!!!!handle!!!!!!');
-    // 获取uri参数
-    const uri = window.location.search;
-    // 获取参数 TODO
-    getRedBagConvert('xxxx');
-};
 
 /**
  * 获取红包兑换码
  */
 export const getRedBagConvert = (rid: string) => {
-    clientRpcFunc(OutgetRedBagConvert , rid, (res: Result) => {
-        console.log('!!!!!!!!!!!!!!!redBagConvert:', res);
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(OutgetRedBagConvert,rid,(res:Result) => {
+            console.log('[获取红包兑换码]OutgetRedBagConvert---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
 
-        return res;
+/**
+ * 获取红包详情
+ */
+export const getQueryRedBagDetail = (rid:string) => {
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(queryRedBagDetail,rid,(res:Result) => {
+            console.log('[获取红包详情]queryRedBagDetail---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
     });
 };
