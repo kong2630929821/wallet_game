@@ -34,7 +34,7 @@ export class InviteUser extends Widget {
         applyUserFriend(this.props.accId).then(() => {
             const inviteUsers = getStore('inviteUsers');
                 // 我邀请的好友
-                 // 我邀请的好友
+                // 我邀请的好友
 
             const invite = inviteUsers.invite_success;
             let index = null;

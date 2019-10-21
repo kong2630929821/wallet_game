@@ -13,9 +13,6 @@
     overflow-y: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 0;
 }
 .walefareBox{
     position: relative;

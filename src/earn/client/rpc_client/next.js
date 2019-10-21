@@ -56,8 +56,9 @@ winit.initNext = function () {
 
 		//加载框架代码
 		var loadFramework = function () {
-			util.loadDir(["earn/client/rpc/", "earn/xlsx/","pi/lang/", "pi/net/", "pi/ui/", "pi/util/"], flags, fm, undefined, function (fileMap) {
-				loadApp()
+			util.loadDir(["pi/net/"], flags, fm, undefined, function (fileMap) {
+				// loadApp()
+				registerStruct();
 			}, function (r) {
 				alert("加载目录失败, " + r.error + ":" + r.reason);
 			}, dirProcess.handler);
@@ -66,7 +67,7 @@ winit.initNext = function () {
 		//加载APP部分代码，实际项目中会分的更细致
 
 		var loadApp = function () {
-			util.loadDir(["earn/editor/edit/"], flags, fm, undefined, function (fileMap) {
+			util.loadDir(["earn/client/app/test/"], flags, fm, undefined, function (fileMap) {
 				console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
 				var tab = util.loadCssRes(fileMap);
 				// 将预加载的资源缓冲90秒，释放
@@ -79,7 +80,7 @@ winit.initNext = function () {
 				root.cfg.height = 1334;
 				root.cfg.hscale = 0.25;
 				root.cfg.wscale = 0;
-				var index = pi_modules.commonjs.exports.relativeGet("earn/editor/edit/main").exports;
+				var index = pi_modules.commonjs.exports.relativeGet("earn/client/app/test/main").exports;
 				
 				index.run();
 
@@ -92,33 +93,29 @@ winit.initNext = function () {
 
 		//初始化rpc服务
 		var registerStruct = function () {
-			
-			util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {	
-				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);			
-				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
-				loadEmoji();
+			util.loadDir(["earn/client/rpc_client/net/", 'pi/ui/', 'earn/client/rpc_client/view/'], flags, fm, undefined, function (fileMap, mods) {
+				console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
+				var tab = util.loadCssRes(fileMap);
+				// 将预加载的资源缓冲90秒，释放
+				tab.timeout = 90000;
+				tab.release();
+				console.log("res time:", Date.now() - startTime);
+
+				var root = pi_modules.commonjs.exports.relativeGet("pi/ui/root").exports;
+				root.cfg.width = 750;
+				root.cfg.height = 1334;
+				root.cfg.hscale = 0.25;
+				root.cfg.wscale = 0;
+
+				var index = pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/view/main").exports;
+				index.run();
+
+				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.registerRpcStruct(fm);
+				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.initClient();
 			}, function (r) {
 				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 			}, dirProcess.handler);
 		};
-
-		var loadEmoji = function() {
-			util.loadDir(["client/app/res/emoji/"],flags,fm,undefined,function(fileMap,mods){
-				//TODO: 可以长期放在缓存中达到更快的显示效果
-				loadChatImg();
-			},function (r) {
-				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-			}, dirProcess.handler)
-		}
-
-		var loadChatImg = function () {
-			util.loadDir(["client/app/res/chatImg/"],flags,fm,undefined,function(fileMap,mods){
-				//TODO: 可以长期放在缓存中达到更快的显示效果
-
-			},function (r) {
-				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
-			}, dirProcess.handler)
-		}
 
 		html.checkWebpFeature(function (r) {
 			flags.webp = flags.webp || r;

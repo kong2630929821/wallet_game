@@ -3,14 +3,14 @@
  */
 // ================================ 导入
 import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
-import { getModulConfig } from '../../../../../app/public/config';
+import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
+import { getModulConfig, uploadFileUrlPrefix } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
 import { piRequire } from '../../../../../app/utils/commonjsTools';
-import { rippleShow, throttle } from '../../../../../app/utils/pureUtils';
+import { getUserInfo, rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
 import { loadMiningSource ,loadOpenBoxSource, loadRedEnvelopeSource, loadSettingSource, loadShareSource, loadTurntableSource } from '../../../../../app/view/base/sourceLoaded';
-import * as chatStore from '../../../../../chat/client/app/data/store';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { Widget } from '../../../../../pi/widget/widget';
@@ -148,14 +148,16 @@ export class EarnHome extends Widget {
                     }
                 }
             }
-
+            if (!!this.props.userInfo.phoneNumber && data.taskList[7].state === 0) {
+                setStore('flags/firstBindPhone',true);
+            }
             this.props.noviceTask = [
                 {
-                    img: '',
+                    img: '2003.png',
                     title: '绑定手机号',
                     desc: '凭借手机验证可找回云端资产',
                     btn:'做任务',
-                    addOne:false,
+                    addOne:true,
                     components:'app-view-mine-setting-phone',
                     complete: !!this.props.userInfo.phoneNumber,
                     show:true
@@ -246,13 +248,11 @@ export class EarnHome extends Widget {
         } else if (page === 'goChat') { // 去聊天
             gotoChat();
         } else {
-            const loading = popNew('app-components1-loading-loading1');
             switch (ind) {
                 case 0:
                     // 绑定手机号码
                     loadSettingSource().then(() => {
                         popNew('app-view-setting-phone');
-                        loading.callback(loading.widget);
                     });
                     break;
                 case 1:
@@ -269,14 +269,12 @@ export class EarnHome extends Widget {
                     // 大转盘
                     loadTurntableSource().then(() => {
                         popNew('earn-client-app-view-turntable-turntable');
-                        loading.callback(loading.widget);
                     });
                     break;
                 case 4:
                     // 开宝箱
                     loadOpenBoxSource().then(() => {
                         popNew('earn-client-app-view-openBox-openBox');
-                        loading.callback(loading.widget);
                     });
                     break;
                 default:
@@ -334,6 +332,10 @@ export class EarnHome extends Widget {
         console.log('on-down');
         rippleShow(e);
     }
+
+    public test() {
+        console.log('活动首页用户信息',this.props.avatar);
+    }
 }
 
 // ===================================================== 本地
@@ -345,10 +347,7 @@ register('userInfo/isLogin',(isLogin:boolean) => {
         w.initPropsNoviceTask();
         w.paint();
     }
-    // 这里的数据是死的，登录天数还没能获取到。只需要将用户信息中的登录天数拿到就行了
-    STATE.signInDays = 1;
-    STATE.awards = getSeriesLoginAwards(STATE.signInDays);
-    
+
 });
 
 register('flags/logout',() => {  // 退出钱包时刷新页面
@@ -459,24 +458,24 @@ const firstloginAward = () => {
 // });
 
 // ================================================新手活动奖励
-chatStore.register('flags/firstChat',() => {
-    const w:any = forelet.getWidget(WIDGET_NAME);
-    // 首次聊天
-    if (!getStore('flags',{}).firstChat) {
-        clientRpcFunc(get_task_award,4,(res:Result) => {
-            console.log('参与聊天',res);
-            if (res && res.reslutCode === 1) {
-                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
-                    title:'参与聊天',
-                    awardType:JSON.parse(res.msg).awardType,
-                    awardNum:JSON.parse(res.msg).count
-                });
-                setStore('flags/firstChat',true);
-                w.initPropsNoviceTask();
-            }
-        });
-    }
-});
+// chatStore.register('flags/firstChat',() => {
+//     const w:any = forelet.getWidget(WIDGET_NAME);
+//     // 首次聊天
+//     if (!getStore('flags',{}).firstChat) {
+//         clientRpcFunc(get_task_award,4,(res:Result) => {
+//             console.log('参与聊天',res);
+//             if (res && res.reslutCode === 1) {
+//                 popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+//                     title:'参与聊天',
+//                     awardType:JSON.parse(res.msg).awardType,
+//                     awardNum:JSON.parse(res.msg).count
+//                 });
+//                 setStore('flags/firstChat',true);
+//                 w.initPropsNoviceTask();
+//             }
+//         });
+//     }
+// });
 
 register('flags/firstTurntable',() => {
     const w:any = forelet.getWidget(WIDGET_NAME);
@@ -518,6 +517,25 @@ register('flags/firstRecharge',(firstRecharge:boolean) => {
     }
 });
 
+// 监听第一次绑定手机号码
+register('flags/firstBindPhone',(firstBindPhone:boolean) => {
+    const w:any = forelet.getWidget(WIDGET_NAME);
+    if (firstBindPhone) {
+        clientRpcFunc(get_task_award,8,(res:Result) => {
+            console.log('首次绑定手机号奖励',res);
+            if (res && res.reslutCode === 1) {
+                popModalBoxs('earn-client-app-components-noviceTaskAward-noviceTaskAward',{
+                    title:'首充奖励',
+                    awardType:JSON.parse(res.msg).awardType,
+                    awardNum:JSON.parse(res.msg).count
+                });
+                setStore('flags/firstBindPhone',true);
+                w.initPropsNoviceTask();
+            }
+        });
+    }
+});
+
 // 监听签到天数
 register('flags/signInDays',(r:any) => {
     STATE.signInDays = r;
@@ -529,3 +547,13 @@ register('flags/loginAwards',(r:any) => {
     STATE.awards = r;
     forelet.paint(STATE);
 });
+
+registerStoreData('user/info',(r => {
+    if (!!r.phoneNumber) {
+        getCompleteTask().then(r => {
+            if (r.taskList[7].state === 0) {
+                setStore('flags/firstBindPhone',true);
+            }
+        });
+    }
+}));

@@ -91,6 +91,7 @@ export class Medal extends Widget {
         }
         console.log(this.props.medalList);
         console.log(this.props.mineMedal);
+        
         this.props.totalMedal = getACHVmedalList('偶然成就','typeNum').length;
         getACHVmedal().then((res:any) => {
             this.props.collectMedal = res.achievements.length;

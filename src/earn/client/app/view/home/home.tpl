@@ -1,9 +1,9 @@
 <div class="new-page" w-class="new-page" ev-refresh-click="refreshPage">
     <div w-class="topBack">
-        <app-components1-topBar-topBar1>{avatar:"../../res/image1/default_avatar.png",title:"任务" }</app-components1-topBar-topBar1>
+        <app-components1-topBar-topBar1>{avatar:{{it.userInfo.avatar}},title:"任务" }</app-components1-topBar-topBar1>
     </div>
     <div w-class="body">
-        <div w-class="walefareBox">
+        <div w-class="walefareBox" on-tap="test">
             <img src="../../res/image/welfare_bg.png" alt="" w-class="walefare"/>
             <div w-class="walefareMark">我已成功邀请 0 人</div>
         </div>

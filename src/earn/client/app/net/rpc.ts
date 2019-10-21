@@ -1,6 +1,7 @@
 /**
  * rpc通信
  */
+import { getOneUserInfo } from '../../../../app/net/pull';
 import { getStore as walletGetStore } from '../../../../app/store/memstore';
 import { MainPageCompList, Result } from '../../../server/data/db/guessing.s';
 import { Award, AwardQuery, InviteAwardRes, Items, MineKTTop, MiningResponse, TodayMineNum } from '../../../server/data/db/item.s';
@@ -8,10 +9,12 @@ import { Achievements, getShowMedals, ShowMedalResArr } from '../../../server/da
 import { InviteNumTab, UserInfo } from '../../../server/data/db/user.s';
 // tslint:disable-next-line:max-line-length
 import { get_compJackpots, get_main_competitions, get_user_guessingInfo, guessing_pay_query } from '../../../server/rpc/guessingCompetition.p';
-import { get_invite_awards, get_inviteNum, getInviteAward } from '../../../server/rpc/invite.p';
+import { convertInviteCode, get_invite_awards, get_inviteNum, getInviteAward, getInviteCode } from '../../../server/rpc/invite.p';
 import { ChatIDs, CoinQueryRes, MiningResult, SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
 // tslint:disable-next-line:max-line-length
 import { get_friends_KTTop, get_miningCoinNum, get_miningKTTop, get_todayMineNum, mining, mining_result } from '../../../server/rpc/mining.p';
+import { convertRedBag, emitRedBag, getRedBagConvert } from '../../../server/rpc/redBag.p';
+import { EmitRedBag } from '../../../server/rpc/redBag.s';
 import { get_convert_list, get_KTNum, get_STNum } from '../../../server/rpc/stParties.p';
 import { bigint_test } from '../../../server/rpc/test.p';
 import { get_loginDays, login } from '../../../server/rpc/user.p';
@@ -229,27 +232,12 @@ export const getFriendsKTTop = (chatIDs:ChatIDs) => {
         });
     });
 };
-/**
- * 获取连续登录天数
- */
-export const getLoginDays = () => {
-    return new Promise((resolve, reject) => {
-        clientRpcFunc(get_loginDays, null, (r: SeriesDaysRes) => {
-            console.log('[活动]rpc-getLoginDays---------------', r);
-            if (r.resultNum === 1) {
-                resolve(r);
-            } else {
-                // showActError(r.resultNum);TODO
-                reject(r);
-            }
-        });
-    });
-};
 
 /**
  * 获取拥有的成就勋章
  */
 export const getACHVmedal = () => {
+
     return new Promise((resolve, reject) => {
         clientRpcFunc(get_achievements, null, (r: Achievements) => {
             console.log('[活动]rpc-getACHVmedal--成就勋章---------------', r);
@@ -558,6 +546,104 @@ export const getAllMedal = () => {
         clientRpcFunc(get_medals,'',(r:any) => {
             console.log('全部勋章',r);
             resolve(r);
+        });
+    });
+};
+
+// =======================================================================================================
+// =======================================================================================================
+// =======================================================================================================
+// =======================================================================================================
+
+/**
+ * 生成邀请码
+ */
+export const getInviteCodes = () => {
+    const arg = null;
+
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(getInviteCode,arg,(res:Result) => {
+            console.log('[邀请码]getInviteCode---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
+
+/**
+ * 兑换邀请码
+ */
+export const inputInviteCdKey = (code:string) => {
+    const arg = code;
+
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(convertInviteCode,arg,(res:Result) => {
+            console.log('[兑换]convertInviteCode---------------', res);
+            resolve(res);
+        });
+    });
+};
+
+/**
+ * 发送红包
+ * @param rtype 红包类型
+ * @param ctype 货币类型
+ * @param totalAmount 总金额
+ * @param count 红包数量
+ * @param lm 留言
+ */
+export const sendRedEnvlope = (rtype: number, ctype: number, totalAmount: number, redEnvelopeNumber: number, lm: string) => {
+    const arg = new EmitRedBag();
+    arg.redBag_type = rtype + 1;
+    arg.coin_type = ctype;
+    arg.total_amount = totalAmount;
+    arg.count = redEnvelopeNumber;
+    arg.desc = lm;
+    
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(emitRedBag,arg,(res:Result) => {
+            console.log('[发红包]emitRedBag---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
+
+/**
+ * 获取红包兑换码
+ */
+export const getRedCode = (redCode:string) => {
+
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(getRedBagConvert,redCode,(res:Result) => {
+            console.log('[获取红包兑换码]getRedBagConvert---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
+
+/**
+ * 兑换码兑换红包
+ */
+export const getConvertRedBag = (exchangeCode:string) => {
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(convertRedBag,exchangeCode,(res:Result) => {
+            console.log('[兑换码兑换红包]convertRedBag---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject();
+            }
         });
     });
 };

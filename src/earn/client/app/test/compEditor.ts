@@ -1,4 +1,3 @@
-import { uploadFileUrl } from '../../../../app/config';
 import { base64ToFile, popNewMessage } from '../../../../app/utils/tools';
 import { popModalBoxs } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';

@@ -1,6 +1,8 @@
 /**
  * 开宝箱 - 首页
  */
+import { getStoreData } from '../../../../../app/api/walletApi';
+import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { getCloudBalances, register } from '../../../../../app/store/memstore';
@@ -89,8 +91,11 @@ export class OpenBox extends Widget {
                 this.setChestTip(2);
             });
         }
-        const cloudBalances = getCloudBalances();
-        STATE.KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+        // 获取嗨豆
+        getStoreData('cloud').then(r => {
+            this.state.KTbalance = r.KT;
+            this.paint();
+        });
     }
 
     public attach() {
@@ -373,9 +378,8 @@ const STATE = {
 /**
  * 云端余额变化
  */
-register('cloud/cloudWallets',() => {
-    const cloudBalances = getCloudBalances();
-    const KTbalance = cloudBalances.get(CloudCurrencyType.KT) || 0; 
+registerStoreData('cloud',(r:any) => {
+    const KTbalance = r.KT;
     if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
         STATE.KTbalance = KTbalance;
         forelet.paint(STATE);
