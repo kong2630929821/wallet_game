@@ -1,3 +1,6 @@
+#[path=../db/]
+use user.s::{UserInfo};
+
 struct CidAmount {
     cid: String, // 兑换码
     amount: u32, // 金额
@@ -44,6 +47,21 @@ struct UserRedBag {
     cid_list: &[String],        // 已兑换红包兑换码id列表
 }
 
+// 兑换码详情
+struct RedBagConvertData {
+    cid: String, // 兑换码id
+    rid: String, // 红包id
+    send_uid: u32, // 发送者uid
+    uid: u32, // 领取用户uid
+    coin_type: u32, // 货币类型
+    amount: u32, // 兑换金额
+    get_time: String, // 领取时间
+    convert_time: String, // 兑换时间
+    timeout: String, // 过期时间
+    desc: String, // 红包描述
+    user_info: UserInfo, // 用户信息
+}
+
 // 红包详情
 struct RedBagData {
     rid: String,   // 红包id
@@ -58,21 +76,8 @@ struct RedBagData {
     timeout: String, // 过期时间
     cid_list: &[CidAmount], // 兑换码和金额列表
     left_cid_list: &[CidAmount], // 剩余兑换码和金额列表
-    convert_info_list: &[RedBagConvert], // 已领取兑换码详情
-}
-
-// 兑换码详情
-struct RedBagConvertData {
-    cid: String, // 兑换码id
-    rid: String, // 红包id
-    send_uid: u32, // 发送者uid
-    uid: u32, // 领取用户uid
-    coin_type: u32, // 货币类型
-    amount: u32, // 兑换金额
-    get_time: String, // 领取时间
-    convert_time: String, // 兑换时间
-    timeout: String, // 过期时间
-    desc: String, // 红包描述
+    convert_info_list: &[RedBagConvertData], // 已领取兑换码详情
+    user_info: UserInfo, // 用户信息
 }
 
 // 红包信息列表

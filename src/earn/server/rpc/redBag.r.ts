@@ -10,7 +10,7 @@ import { CidAmount, RedBagConvert, RedBagConvertData, RedBagConvertList, RedBagD
 import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, REDUCE_PRICE_FAIL } from '../data/errorNum';
 import { oauth_alter_balance } from '../util/oauth_lib';
 import { EmitRedBag } from './redBag.s';
-import { getUid } from './user.r';
+import { get_userInfo, getUid } from './user.r';
 
 // 发红包
 // #[rpc=rpcServer]
@@ -205,17 +205,7 @@ export const convertRedBag = (cid: string): Result => {
     userRedBag.cid_list.push(cid);
     userRedBagBucket.put(cid, userRedBag);
 
-    const redBagConvertData = new RedBagConvertData();
-    redBagConvertData.uid = redBagConvert.uid;
-    redBagConvertData.send_uid = redBagConvert.send_uid;
-    redBagConvertData.rid = redBagConvert.rid;
-    redBagConvertData.cid = redBagConvert.cid;
-    redBagConvertData.coin_type = redBagConvert.coin_type;
-    redBagConvertData.amount = redBagConvert.amount;
-    redBagConvertData.get_time = redBagConvert.get_time;
-    redBagConvertData.convert_time = redBagConvert.convert_time;
-    redBagConvertData.timeout = redBagConvert.timeout;
-    redBagConvertData.desc = redBagInfo.desc;
+    const redBagConvertData = getConvertData(redBagConvert, redBagInfo.desc);
 
     result.msg = JSON.stringify(redBagConvertData);
     result.reslutCode = RESULT_SUCCESS;
@@ -391,13 +381,34 @@ export const getRedBagData = (rid: string): RedBagData => {
         redBagData.convert_info_list = [];
         for (let j = 0; j < redBagInfo.cid_list.length; j++) {
             const convertInfo = redBagConvertBucket.get<string, RedBagConvert[]>(redBagInfo.cid_list[j].cid)[0];
-            if (convertInfo) redBagData.convert_info_list.push(convertInfo);
+            if (convertInfo) {
+                const convertData = getConvertData(convertInfo, redBagInfo.desc);
+                redBagData.convert_info_list.push(convertData);
+            }
         }
 
         return redBagData;
     }
 
     return;
+};
+
+// 获取兑换码详情
+export const getConvertData = (redBagConvert: RedBagConvert, desc: string): RedBagConvertData => {
+    const redBagConvertData = new RedBagConvertData();
+    redBagConvertData.uid = redBagConvert.uid;
+    redBagConvertData.send_uid = redBagConvert.send_uid;
+    redBagConvertData.rid = redBagConvert.rid;
+    redBagConvertData.cid = redBagConvert.cid;
+    redBagConvertData.coin_type = redBagConvert.coin_type;
+    redBagConvertData.amount = redBagConvert.amount;
+    redBagConvertData.get_time = redBagConvert.get_time;
+    redBagConvertData.convert_time = redBagConvert.convert_time;
+    redBagConvertData.timeout = redBagConvert.timeout;
+    redBagConvertData.desc = desc;
+    redBagConvertData.user_info = get_userInfo(redBagConvert.uid);
+
+    return redBagConvertData;
 };
 
 export const createRid = (count: number, length: number): string => {
