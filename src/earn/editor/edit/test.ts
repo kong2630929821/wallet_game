@@ -467,7 +467,7 @@ export const queryConvertLogTest = ()  => {
 
 // 获取指定红包的详情
 export const queryRedBagDetailTest = ()  => {
-    const arg = 'VDGJDMFPRLN';
+    const arg = 'L95UX874GSF';
     clientRpcFunc(queryRedBagDetail, arg, (r: Result) => {
         console.log(r);
     });

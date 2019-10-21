@@ -54,7 +54,7 @@ export const CREATE_RED_BAG_ERROR = 2107;
 // 红包码错误
 export const RED_BAG_CODE_ERROR = 2108;
 // 红包已过期
-export const RED_BAG_TIMEOUT = 2109;
+export const RED_BAG_TIMEOUT_ERROR = 2109;
 // 无法重复领取
 export const GET_RED_BAG_REPEAT = 2110;
 // 不能兑换自己的邀请码
@@ -65,6 +65,8 @@ export const RED_BAG_CONVERT_ERROR = 2112;
 export const RED_BAG_CONVERT_USED = 2113;
 // 添加金额失败
 export const RED_BAG_ADD_MONEY_FAIL = 2114;
+// 红包已领完
+export const RED_BAG_FINISH = 2115;
 
 // ST数量不足
 export const ST_NOT_ENOUGH = 3101;

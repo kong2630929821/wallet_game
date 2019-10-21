@@ -92,11 +92,16 @@ winit.initNext = function () {
 
 		//初始化rpc服务
 		var registerStruct = function () {
-			
-			util.loadDir(["earn/client/app/net/", "pi/struct/"], flags, fm, undefined, function (fileMap, mods) {	
-				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.registerRpcStruct(fm);			
-				pi_modules.commonjs.exports.relativeGet("earn/client/app/net/init").exports.initClient();
-				loadEmoji();
+			util.loadDir(["earn/client/rpc_client/net/", 'pi/ui/', 'earn/client/rpc_client/view/'], flags, fm, undefined, function (fileMap, mods) {
+				console.log("first load dir time:", Date.now() - startTime, fileMap, Date.now());
+				var tab = util.loadCssRes(fileMap);
+				// 将预加载的资源缓冲90秒，释放
+				tab.timeout = 90000;
+				tab.release();
+				console.log("res time:", Date.now() - startTime);
+
+				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.registerRpcStruct(fm);
+				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.initClient();
 			}, function (r) {
 				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 			}, dirProcess.handler);
