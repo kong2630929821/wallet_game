@@ -365,8 +365,17 @@ export const getUid = () => {
     return parseInt(getSession('uid'), 10);
 };
 
-// 获取openid
+// 从session获取openid
 export const getOpenid = () => {
 
     return getSession('openid');
+};
+
+// 从数据库获取openid
+export const get_openid = (uid: number) => {
+    const userAccountMapBucket = new Bucket(CONSTANT.WARE_NAME, UserAccMap._$info.name);
+    const userAccMap = userAccountMapBucket.get<number, [UserAccMap]>(uid)[0];
+    if (!userAccMap) return;
+    
+    return userAccMap.openid;
 };
