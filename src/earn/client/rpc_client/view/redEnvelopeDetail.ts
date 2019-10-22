@@ -1,5 +1,4 @@
 import { LuckyMoneyType } from '../../../../app/public/interface';
-import { popNewMessage } from '../../../../app/utils/pureUtils';
 import { popNew } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { getRedBagConvert, getUserList } from '../net/rpc';
@@ -63,7 +62,7 @@ export class RedEnvelopeDetail extends Widget {
     }
     public copyBtnClick() {
         copyToClipboard(this.props.code);
-        popNewMessage('复制成功');
+        popMessage('复制成功');
     }
 
     /**
@@ -90,4 +89,45 @@ export const copyToClipboard = (copyText) => {
         document.execCommand('copy');
     }
     document.body.removeChild(input);
+};
+
+// 弹出提示框
+const popMessage = (str) => {
+    const element = document.createElement('div');
+    element.className = 'messageMain';
+    element.innerHTML = str;
+    element.style = `
+    position: fixed;
+    left: 50%;
+    bottom: 100px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 0 25px;
+    transform: translateX(-50%);
+    animation: popUpMess 0.3s forwards
+    `;
+    document.body.appendChild(element);
+    setTimeout(() => {
+        element.style = `
+    position: fixed;
+    left: 50%;
+    bottom: 100px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 0 25px;
+    transform: translateX(-50%);
+    animation: removeMess 0.3s forwards;
+    `;
+        setTimeout(() => {
+            document.body.removeChild(element);
+        }, 500);
+    }, 1000);
 };

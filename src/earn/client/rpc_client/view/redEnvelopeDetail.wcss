@@ -9,6 +9,7 @@
     top: 0;
     bottom: 0;
     background-color: #F8F8F8;
+    overflow: auto;
 }
 .detail-main{
     overflow-x: hidden;
@@ -164,4 +165,17 @@
     font-family:PingFangSC-Medium,PingFang SC;
     font-weight:500;
     color:rgba(247,147,26,1);
+}
+.messageMain{
+    position: fixed;
+    left: 50%;
+    bottom: 100px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.87);
+    font-size: 16px;
+    text-align: center;
+    padding: 18px 25px;
+    transform: translateX(-50%);
 }
