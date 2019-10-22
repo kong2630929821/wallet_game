@@ -59,7 +59,7 @@ struct RedBagConvertData {
     convert_time: String, // 兑换时间
     timeout: String, // 过期时间
     desc: String, // 红包描述
-    user_info: UserInfo, // 用户信息
+    openid: String, // 用户信息
 }
 
 // 红包详情
@@ -77,7 +77,7 @@ struct RedBagData {
     cid_list: &[CidAmount], // 兑换码和金额列表
     left_cid_list: &[CidAmount], // 剩余兑换码和金额列表
     convert_info_list: &[RedBagConvertData], // 已领取兑换码详情
-    user_info: UserInfo, // 用户信息
+    openid: String, // 用户信息
 }
 
 // 红包信息列表

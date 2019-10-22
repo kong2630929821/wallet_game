@@ -10,7 +10,7 @@ import { CidAmount, RedBagConvert, RedBagConvertData, RedBagConvertList, RedBagD
 import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, REDUCE_PRICE_FAIL } from '../data/errorNum';
 import { oauth_alter_balance } from '../util/oauth_lib';
 import { EmitRedBag } from './redBag.s';
-import { get_userInfo, getUid } from './user.r';
+import { get_openid, get_userInfo, getOpenid, getUid } from './user.r';
 
 // 发红包
 // #[rpc=rpcServer]
@@ -379,6 +379,7 @@ export const getRedBagData = (rid: string): RedBagData => {
         redBagData.cid_list = redBagInfo.cid_list;
         redBagData.left_cid_list = redBagInfo.left_cid_list;
         redBagData.convert_info_list = [];
+        redBagData.openid = get_openid(redBagInfo.uid);
         for (let j = 0; j < redBagInfo.cid_list.length; j++) {
             const convertInfo = redBagConvertBucket.get<string, RedBagConvert[]>(redBagInfo.cid_list[j].cid)[0];
             if (convertInfo) {
@@ -406,7 +407,7 @@ export const getConvertData = (redBagConvert: RedBagConvert, desc: string): RedB
     redBagConvertData.convert_time = redBagConvert.convert_time;
     redBagConvertData.timeout = redBagConvert.timeout;
     redBagConvertData.desc = desc;
-    redBagConvertData.user_info = get_userInfo(redBagConvert.uid);
+    redBagConvertData.openid = get_openid(redBagConvert.uid);
 
     return redBagConvertData;
 };
