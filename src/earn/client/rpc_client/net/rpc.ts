@@ -2,28 +2,91 @@
  * rpc通信
  */
 
+import { erlangLogicIp, erlangLogicPayPort, sourceIp } from '../../../../app/public/config';
 import { Result } from '../../../server/data/db/guessing.s';
-import { OutgetRedBagConvert } from '../../../server/rpc/redBag.p';
+import { OutgetRedBagConvert, queryRedBagDetail } from '../../../server/rpc/redBag.p';
 import { clientRpcFunc } from './init';
-
-/**
- * 
- */
-export const handle = () => {
-    console.log('!!!!!!!!!!!!!!!!handle!!!!!!');
-    // 获取uri参数
-    const uri = window.location.search;
-    // 获取参数 TODO
-    getRedBagConvert('xxxx');
-};
-
+// 上传的文件url前缀
+export const uploadFileUrlPrefix = `http://${sourceIp}/service/get_file?sid=`;
 /**
  * 获取红包兑换码
  */
 export const getRedBagConvert = (rid: string) => {
-    clientRpcFunc(OutgetRedBagConvert , rid, (res: Result) => {
-        console.log('!!!!!!!!!!!!!!!redBagConvert:', res);
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(OutgetRedBagConvert,rid,(res:Result) => {
+            console.log('[获取红包兑换码]OutgetRedBagConvert---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            } else {
+                reject(res);
+            }
+        });
+    });
+};
 
-        return res;
+/**
+ * 获取红包详情
+ */
+export const getQueryRedBagDetail = (rid:string) => {
+    return new Promise((resolve,reject) => {
+        clientRpcFunc(queryRedBagDetail,rid,(res:Result) => {
+            console.log('[获取红包详情]queryRedBagDetail---------------', res);
+            if (res && res.reslutCode === 1) {
+                resolve(res);
+            }
+        });
+    });
+};
+
+/**
+ * 批量获取用户信息
+ */
+export const getUserList = async (uid: any[], isOpenid?: number) => {
+    let src = null;
+    const uids = [];
+    let max = 0;
+    uid.forEach((v,i) => {
+        uids.push(v.openid);
+        if (v.sum >= max) {
+            max = i;
+        }
+    });
+    if (isOpenid) {
+        src = `http://${erlangLogicIp}:${erlangLogicPayPort}/user/get_infos?list=${JSON.stringify(uids)}&isOpenid=${isOpenid}`;
+    } else {
+        src = `http://${erlangLogicIp}:${erlangLogicPayPort}/user/get_infos?list=${JSON.stringify(uids)}`;
+    }
+
+    return fetch(src).then(res => {
+        return res.json().then(r => {
+            const userInfo = [];
+            r.value.forEach((v,i) => {
+                const item = JSON.parse(v);
+                let avatar = '';
+                if (item.avatar && item.avatar.indexOf('data:image') < 0) {
+                    if (item.avatar.slice(0,4) === 'http') {
+                        avatar = item.avatar;   
+                    } else {
+                        avatar = `${uploadFileUrlPrefix}${item.avatar}`;
+                    }
+                    
+                } else {
+                    avatar = '../icon/img_avatar1.png';
+                }
+                const data = {
+                    nickName:item.nickName ? item.nickName :'昵称未设置',
+                    avatar,
+                    time:uid[i].time,
+                    sum:uid[i].sum,
+                    fg:i === max ? true :false
+                };
+                userInfo.push(data);
+            });
+
+            return userInfo;
+        }). catch (e => {
+            return ;
+        });
+      
     });
 };

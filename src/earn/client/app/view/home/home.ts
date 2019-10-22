@@ -2,10 +2,10 @@
  * earn home 
  */
 // ================================ 导入
-import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig, uploadFileUrlPrefix } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
+import { OfflienType } from '../../../../../app/publicComponents/offlineTip/offlineTip';
 import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
 import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, rippleShow, throttle } from '../../../../../app/utils/pureUtils';
@@ -206,7 +206,7 @@ export class EarnHome extends Widget {
      * 热门活动进入
      */
     public goHotActivity(ind: number) {
-        const loading = popNew('app-components1-loading-loading1');
+        const loading = popNew('app-publicComponents-loading-loading1');
         switch (ind) {
             case 0:
                 loadMiningSource().then(() => {

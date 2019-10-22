@@ -27,22 +27,16 @@ winit.initNext = function () {
 	pi_modules.depend.exports.init(winit.deps, winit.path);
 	var flags = winit.flags;
 	winit = undefined;//一定要立即释放，保证不会重复执行
-	var div = document.createElement('div');
-	div.setAttribute("pi", "1");
-	div.setAttribute("style", "position:absolute;bottom:10px;left: 2%;width: 95%;height: 10px;background: #262626;padding: 1px;border-radius: 20px;border-top: 1px solid #000;border-bottom: 1px solid #7992a8;");
-	var divProcess = document.createElement('div');
-	divProcess.setAttribute("style", "width: 0%;height: 100%;background-color: rgb(162, 131, 39);border-radius: 20px;");
-	div.appendChild(divProcess);
-	document.body.appendChild(div);
+	
 	var modProcess = pi_modules.commonjs.exports.getProcess();
 	var dirProcess = pi_modules.commonjs.exports.getProcess();
 	modProcess.show(function (r) {
-		modProcess.value = r * 0.2;
-		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+		// modProcess.value = r * 0.2;
+		// divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 	dirProcess.show(function (r) {
-		dirProcess.value = r * 0.8;
-		divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
+		// dirProcess.value = r * 0.8;
+		// divProcess.style.width = (modProcess.value + dirProcess.value) * 100 + "%";
 	});
 
 	var DOWNLOAD_CFG = { png: "download", jpg: "download", jpeg: "download", webp: "download", gif: "download", svg: "download", mp3: "download", ogg: "download", aac: "download" }
