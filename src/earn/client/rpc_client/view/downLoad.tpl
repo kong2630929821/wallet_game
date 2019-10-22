@@ -16,5 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="tipsPage" on-tap="closeTips"></div>
+    {{if it.show}}
+    <div w-class="tipsPage" on-tap="closeTips"></div>
+    {{end}}
 </div>

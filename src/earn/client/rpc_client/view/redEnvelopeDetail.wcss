@@ -48,7 +48,6 @@
     width: 177px;
     height: 177px;
     border-radius: 50%;
-    background-image: url(../icon/img_avatar1.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 177px 177px;
@@ -88,6 +87,7 @@
 .input-father{
     flex: 1 0 0;
     margin-left: 40px;
+    font-size: 25px;
 }
 .detail-copy-btn{
     width: 150px;

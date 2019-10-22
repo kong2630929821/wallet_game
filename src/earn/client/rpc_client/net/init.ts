@@ -11,7 +11,6 @@ import { activeLogicIp, activeLogicPort } from '../../../../app/public/config';
 import { Client } from '../../../../pi/net/mqtt_c';
 import { Struct, StructMgr } from '../../../../pi/struct/struct_mgr';
 import { ConMgr } from './con_mgr';
-import { handle } from './rpc';
 
 // ================================================ 导出
 export const sourceIp = activeLogicIp;
