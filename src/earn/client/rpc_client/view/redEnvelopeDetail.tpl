@@ -9,8 +9,12 @@
         </div>
         <div w-class="detail-leave-message" id="message"></div>
         <div w-class="detail-input-father">
+            {{if it.code}}
             <div w-class="input-father" id="code">{{it.code}}</div>
             <div w-class="detail-copy-btn" on-tap="copyBtnClick" >复制</div>
+            {{else}}
+            已领完
+            {{end}}
         </div>
         <div w-class="detail-receive" on-tap="receiveClick">立即领取</div>
     </div>
