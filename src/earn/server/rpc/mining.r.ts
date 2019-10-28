@@ -47,6 +47,7 @@ export const mining = (itemType:number):SeedResponse => {
 
 // 返回挖矿结果
 // #[rpc=rpcServer]
+// tslint:disable-next-line:max-func-body-length
 export const mining_result = (result:MiningResult):MiningResponse => {
     console.log('!!!!!!!!!!!!!!mining_result in');
     const miningResponse = new MiningResponse();
@@ -116,8 +117,16 @@ export const mining_result = (result:MiningResult):MiningResponse => {
             const award = add_award(uid, itemNum, itemCount, AWARD_SRC_MINE);
             // 像钱包添加挖矿得到的货币失败
             if (award.desc === '-1') {
+                // 锄头回滚
+                add_itemCount(uid, hoeType, 1);
+                // 矿山回滚
+                if (leftHp > 0) {
+                    reduce_mine(itemType, mineNum, -sumHits);
+                } else {
+                    add_itemCount(uid, itemType, 1);
+                }
+
                 miningResponse.resultNum = REQUEST_WALLET_FAIL;
-                // TODO 矿山和锄头数据回滚
 
                 return miningResponse;
             }

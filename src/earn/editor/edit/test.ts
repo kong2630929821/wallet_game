@@ -6,7 +6,8 @@ import { createGroup } from '../../../chat/server/data/rpc/group.p';
 import { GroupCreate } from '../../../chat/server/data/rpc/group.s';
 import { popNew } from '../../../pi/ui/root';
 import { Widget } from '../../../pi/widget/widget';
-import { clientRpcFunc, subscribe } from '../../client/app/net/init';
+import { clientRpcFunc, initClient, subscribe } from '../../client/app/net/init';
+import { earnLogin } from '../../client/app/net/login';
 import { GuessingReq, Result } from '../../server/data/db/guessing.s';
 import { AwardList, AwardQuery, AwardResponse, ConvertAwardList, FreePlay, InviteAwardRes, Item, Items, Mine, MineTop, MiningResponse } from '../../server/data/db/item.s';
 import { Achievements, getShowMedals, Medals, ShowMedalRes, ShowMedalResArr } from '../../server/data/db/medal.s';
@@ -46,6 +47,21 @@ export const groupEditor = () => {
     popNew('earn-editor-edit-chatGroupEditor');
 };
 
+export const creat = () => {
+    // 钱包登录
+    const userType = new UserType();
+    userType.enum_type = UserType_Enum.WALLET;
+    const walletLoginReq = new WalletLoginReq();
+    walletLoginReq.openid = '2007';
+    walletLoginReq.sign = '';
+    userType.value = walletLoginReq;
+    console.log('11111111111111111111');
+    initClient(userType, (r) => {
+        // initReceive(r.uid);
+        console.log(r);
+    });
+};
+
 export const loginTest = () => {
     // 钱包登录
     const userType = new UserType();
@@ -54,6 +70,7 @@ export const loginTest = () => {
     walletLoginReq.openid = '2007';
     walletLoginReq.sign = '';
     userType.value = walletLoginReq;
+    console.log('11111111111111111111');
     clientRpcFunc(login, userType, (r: UserInfo) => {
         initReceive(r.uid);
         console.log(r);
@@ -134,7 +151,7 @@ export const mining_test = () => {
     const miningResult = new MiningResult();
     miningResult.hit = 10;
     miningResult.itemType = 1001;
-    miningResult.mineNum = 3;
+    miningResult.mineNum = 2;
     clientRpcFunc(mining_result, miningResult, (r: MiningResponse) => {
         console.log(r);
     });
@@ -467,7 +484,7 @@ export const queryConvertLogTest = ()  => {
 
 // 获取指定红包的详情
 export const queryRedBagDetailTest = ()  => {
-    const arg = 'VDGJDMFPRLN';
+    const arg = 'L95UX874GSF';
     clientRpcFunc(queryRedBagDetail, arg, (r: Result) => {
         console.log(r);
     });
@@ -475,6 +492,10 @@ export const queryRedBagDetailTest = ()  => {
 
 const props = {
     bts: [
+        {
+            name: '创建连接',
+            func: () => { creat(); }
+        },
         {
             name: '登录',
             func: () => { loginTest(); }
