@@ -5,11 +5,7 @@
 import { getStoreData } from '../../../../../app/api/walletApi';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
-import { CloudCurrencyType } from '../../../../../app/public/interface';
-import { chooseAdType, watchAd } from '../../../../../app/public/native';
-import { getCloudBalances, register } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/pureUtils';
-import { PlayEvent } from '../../../../../pi/browser/ad_unoin';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';
 import { getRealNode } from '../../../../../pi/widget/painter';

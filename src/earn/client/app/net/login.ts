@@ -3,6 +3,7 @@
  */
 import { getStoreData } from '../../../../app/api/walletApi';
 import { logoutWallet } from '../../../../app/net/login';
+import { getOpenId } from '../../../../app/net/pull';
 import { Result } from '../../../server/data/db/guessing.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -70,16 +71,21 @@ export const getLoginDays = () => {
  * 活动登录
  */
 export const earnLogin = (cb:Function) => {
-    (<any>window).pi_sdk.api.authorize({ appId:'11' },(err, result) => {
-        console.log('authorize',err,JSON.stringify(result));
-        if (err === 0) { // 网络未连接
-            console.log('网络未连接');
-        } else {
-            console.log('活动注册成功',result);
-            initClient(result,loginSuccess);
-            cb();
-        }
+    getOpenId('11').then(r => {
+        console.log('活动注册成功',r);
+        initClient(r,loginSuccess);
+        cb();
     });
+    // (<any>window).pi_sdk.api.authorize({ appId:'11' },(err, result) => {
+    //     console.log('authorize',err,JSON.stringify(result));
+    //     if (err === 0) { // 网络未连接
+    //         console.log('网络未连接');
+    //     } else {
+    //         console.log('活动注册成功',result);
+    //         initClient(result,loginSuccess);
+    //         cb();
+    //     }
+    // });
 };
 
 // 登出

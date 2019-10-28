@@ -403,18 +403,6 @@ registerStoreData('cloud',(r:any) => {
     STATE.miningNumber = r.KT;
     forelet.paint(STATE);
 });
-
-// // 监听嗨豆
-// register('balance/KT',(r:number) => {
-//     STATE.miningNumber = getCloudBalances().get(CloudCurrencyType.KT) || 0;
-//     // const mineHai = getStore('mine',{});    
-//     const mine = getEarnStore('mine',{});
-//     // mine.miningRank = mineHai.miningRank || mine.miningRank;
-//     mine.miningKTnum = getCloudBalances().get(CloudCurrencyType.KT) || 0;      
-//     setEarnStore('mine',mine);
-//     console.log('ssssssssssssssssssssssssss',STATE);
-//     forelet.paint(STATE);
-// });
 register('flags/earnHomeHidden',(earnHomeHidden:boolean) => {
     if (earnHomeHidden) {
         setTimeout(() => {
