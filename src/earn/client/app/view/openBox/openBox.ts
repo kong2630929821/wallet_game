@@ -4,8 +4,6 @@
 import { getStoreData } from '../../../../../app/api/walletApi';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig } from '../../../../../app/public/config';
-import { CloudCurrencyType } from '../../../../../app/public/interface';
-import { getCloudBalances, register } from '../../../../../app/store/memstore';
 import { popNewMessage } from '../../../../../app/utils/pureUtils';
 import { popModalBoxs, popNew } from '../../../../../pi/ui/root';
 import { Forelet } from '../../../../../pi/widget/forelet';

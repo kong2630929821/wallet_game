@@ -1,6 +1,6 @@
 <div class="new-page" w-class="new-page">
     <div w-class="body">
-        <app-components1-blankDiv-topDiv></app-components1-blankDiv-topDiv>
+        <app-publicComponents-blankDiv-topDiv></app-publicComponents-blankDiv-topDiv>
         <div w-class="container">
             <div on-tap="clickTop" w-class="holded-hoes" >
                 <div id="stop" ev-hoe-click="selectHoeClick(e,{{it.hoeType.IronHoe}})">

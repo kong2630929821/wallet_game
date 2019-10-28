@@ -2,11 +2,11 @@
  * earn home 
  */
 // ================================ 导入
-import { OfflienType } from '../../../../../app/components1/offlineTip/offlineTip';
 import { registerStoreData } from '../../../../../app/postMessage/listenerStore';
 import { getModulConfig, uploadFileUrlPrefix } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
-import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
+import { OfflienType } from '../../../../../app/publicComponents/offlineTip/offlineTip';
+import { register as walletRegister } from '../../../../../app/store/memstore';
 import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -97,8 +97,6 @@ export class EarnHome extends Widget {
         if (isLogin) {
             this.initPropsNoviceTask();
         }
-        const cloudBalances = getCloudBalances();
-        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
         forelet.paint(STATE);
     }
 
@@ -206,7 +204,7 @@ export class EarnHome extends Widget {
      * 热门活动进入
      */
     public goHotActivity(ind: number) {
-        const loading = popNew('app-components1-loading-loading1');
+        const loading = popNew('app-publicComponents-loading-loading1');
         switch (ind) {
             case 0:
                 loadMiningSource().then(() => {
@@ -378,13 +376,6 @@ const STATE = {
 register('mine',(mine:Mine) => {
     STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
-    forelet.paint(STATE);
-});
-
-// 云端余额变化
-walletRegister('cloud/cloudWallets',(cloudBalances:any) => {
-
-    STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
     forelet.paint(STATE);
 });
 

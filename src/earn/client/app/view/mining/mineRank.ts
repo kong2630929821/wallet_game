@@ -2,9 +2,8 @@
  * 挖矿排名
  */
 
-import { getFriendsKTTops, getHighTop } from '../../../../../app/net/pull';
+import { getFriendsKTTops } from '../../../../../app/net/pull';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
-import { getCloudBalances } from '../../../../../app/store/memstore';
 import { getUserInfo } from '../../../../../app/utils/pureUtils';
 import { getAllFriendIDs } from '../../../../../chat/client/app/logic/logic';
 import { getChatUid } from '../../../../../chat/client/app/net/rpc';
@@ -79,38 +78,7 @@ export class MineRank extends Widget {
     public initData() {
         getUserInfo().then(userInfo => {
             if (this.props.topbarSel === 0) {
-                getHighTop(100).then(async (res: any) => {  // TODO排名
-                    console.log('排行榜++++++++++++++++++++++',res);
-                    
-                    const medalest = [];
-                    res.rank.forEach((v) => {
-                        medalest.push(v.acc_id);
-                    });
-                    console.log(medalest,userInfo.acc_id,'=========================');         
-                    getMedalest(medalest).then((resList:any) => {
-                        console.log('最高勋章列表',resList);
-                        const mine = getStore('mine',{});
-                        mine.miningRank = res.miningRank || 0;
-                        setStore('mine',mine);                                   
-                        res.rank.forEach((v,i) => {
-                            if (v.avatar === '')v.avatar = 'earn/client/app/res/image1/default_head.png';
-                            v.medal = resList.arr[i].medalType || '8001';
-                        });
-                        if (JSON.stringify(this.props.rankList) !== JSON.stringify(res.rank)) {
-                            this.props.rankList = res.rank;
-                            setStore('rankList',res.rank);
-                        }
-                        this.props.myRank.avatar = userInfo.avatar || 'earn/client/app/res/image1/default_head.png';
-                        this.props.myRank.userName = userInfo.nickName;
-                        this.props.myRank.rank = res.miningRank;
-                        this.props.myRank.medal = mine.miningMedalId || '8001';
-                        console.log('我的排名+++++++++++++++++++++++++++',this.props);
-                        const balances = getCloudBalances();
-                        mine.miningKTnum = balances.get(CloudCurrencyType.KT) || 0;
-                        this.props.myRank.ktNum = formateCurrency(mine.miningKTnum);
-                        this.paint();
-                    });
-                });
+                
             } else {
                 const  chatIDs = getAllFriendIDs();
                 const chatAccID = [];

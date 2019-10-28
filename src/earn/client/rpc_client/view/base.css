@@ -1,0 +1,12 @@
+@keyframes rotated{
+    0% {transform: rotateY(0deg);}
+    100% {transform: rotateY(360deg);}
+}
+@keyframes popUpMess{
+    0%{opacity: 0; transform: translate(-50%,0)}
+    100%{opacity: 1; transform: translate(-50%,-150%)}
+}
+@keyframes removeMess{
+    0%{opacity: 1; transform: translate(-50%,-150%)}
+    100%{opacity: 0; transform: translate(-50%,0)}
+}
