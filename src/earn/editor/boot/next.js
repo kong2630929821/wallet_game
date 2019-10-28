@@ -101,7 +101,7 @@ winit.initNext = function () {
 				console.log("res time:", Date.now() - startTime);
 
 				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.registerRpcStruct(fm);
-				pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.initClient();
+				// pi_modules.commonjs.exports.relativeGet("earn/client/rpc_client/net/init").exports.initClient();
 			}, function (r) {
 				alert("加载目录失败, " + (r.error ? (r.error + ":" + r.reason) : r));
 			}, dirProcess.handler);
