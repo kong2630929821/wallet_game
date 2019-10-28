@@ -6,7 +6,7 @@ import { registerStoreData } from '../../../../../app/postMessage/listenerStore'
 import { getModulConfig, uploadFileUrlPrefix } from '../../../../../app/public/config';
 import { CloudCurrencyType } from '../../../../../app/public/interface';
 import { OfflienType } from '../../../../../app/publicComponents/offlineTip/offlineTip';
-import { getCloudBalances, register as walletRegister } from '../../../../../app/store/memstore';
+import { register as walletRegister } from '../../../../../app/store/memstore';
 import { piRequire } from '../../../../../app/utils/commonjsTools';
 import { getUserInfo, rippleShow, throttle } from '../../../../../app/utils/pureUtils';
 import { gotoChat } from '../../../../../app/view/base/app';
@@ -97,8 +97,6 @@ export class EarnHome extends Widget {
         if (isLogin) {
             this.initPropsNoviceTask();
         }
-        const cloudBalances = getCloudBalances();
-        STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
         forelet.paint(STATE);
     }
 
@@ -378,13 +376,6 @@ const STATE = {
 register('mine',(mine:Mine) => {
     STATE.miningRank = mine.miningRank;
     STATE.miningMedalId = mine.miningMedalId;
-    forelet.paint(STATE);
-});
-
-// 云端余额变化
-walletRegister('cloud/cloudWallets',(cloudBalances:any) => {
-
-    STATE.miningKTnum = cloudBalances.get(CloudCurrencyType.KT) || 0;
     forelet.paint(STATE);
 });
 

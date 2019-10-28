@@ -72,6 +72,7 @@ export const getLoginDays = () => {
  */
 export const earnLogin = (cb:Function) => {
     getOpenId('11').then(r => {
+        console.log('活动注册成功',r);
         initClient(r,loginSuccess);
         cb();
     });
