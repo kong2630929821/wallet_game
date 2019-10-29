@@ -428,6 +428,7 @@ export const task_query = (): Result => {
     }
     result.msg = JSON.stringify(userTask);
     result.reslutCode = RESULT_SUCCESS;
+    console.log('result!!!!!!!!!!!!!!!!!', result);
 
     return result;
 };

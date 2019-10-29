@@ -119,8 +119,9 @@ export const kt_rotary = (rotaryType:number): Result => {
             return result;
         }
         add_itemCount(uid, newitemType, count);
-        const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
-        if (!award) {
+        const award = add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
+        if (!award || award.desc === '-1') {
+            returnCost(1, 0, 0, 0, uid);
             result.reslutCode = DB_ERROR;
 
             return result;
@@ -148,9 +149,10 @@ export const kt_rotary = (rotaryType:number): Result => {
         }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, ktCount, 0, uid);
             result.reslutCode = DB_ERROR;
-    
+
             return result;
         }
         result.msg = JSON.stringify(award);
@@ -209,7 +211,8 @@ export const st_rotary = (rotaryType:number): Result => {
         }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_ROTARY);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(1, 0, 0, 0, uid);
             result.reslutCode = DB_ERROR;
 
             return result;
@@ -306,9 +309,10 @@ export const rotary_pay_query = (oid: string): Result => {
     if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, order.awardType, order.awardCount); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_ROTARY);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, 0, order.stNum, uid);
             result.reslutCode = DB_ERROR;
-    
+
             return result;
         }
         result.msg = JSON.stringify(award);
@@ -324,9 +328,10 @@ export const rotary_pay_query = (oid: string): Result => {
             return result;
         }
         const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_ROTARY, convertAward.convert, convertInfo.name, convertAward.deadTime);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, 0, order.stNum, uid);
             result.reslutCode = DB_ERROR;
-    
+
             return result;
         }
         // 奖品已发放 更改订单状态
@@ -389,7 +394,8 @@ export const st_treasurebox = (treasureboxType:number): Result => {
         }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 1, 0, 0, uid);
             result.reslutCode = DB_ERROR;
 
             return result;
@@ -481,7 +487,8 @@ export const kt_treasurebox = (boxType:number): Result => {
         }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 1, 0, 0, uid);
             result.reslutCode = DB_ERROR;
 
             return result;
@@ -509,9 +516,10 @@ export const kt_treasurebox = (boxType:number): Result => {
         }
         add_itemCount(uid, newitemType, count);
         const award =  add_award(uid, newitemType, count, AWARD_SRC_TREASUREBOX);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, ktCount, 0, uid);
             result.reslutCode = DB_ERROR;
-    
+
             return result;
         }
         result.msg = JSON.stringify(award);
@@ -576,9 +584,10 @@ export const box_pay_query = (oid: string): Result => {
     if (convertInfoResult.reslutCode !== RESULT_SUCCESS) {    // 判断奖品是否为虚拟兑换类奖品
         add_itemCount(uid, order.awardType, order.awardCount); // 不是可兑换奖品 作为普通物品添加
         const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_TREASUREBOX);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, 0, order.stNum, uid);
             result.reslutCode = DB_ERROR;
-            
+
             return result;
         }
         result.msg = JSON.stringify(award);
@@ -594,9 +603,10 @@ export const box_pay_query = (oid: string): Result => {
             return result;
         }
         const award =  add_award(uid, order.awardType, order.awardCount, AWARD_SRC_TREASUREBOX, convertAward.convert, convertInfo.name, convertAward.deadTime);
-        if (!award) {
+        if (!award || award.desc === '-1') {
+            returnCost(0, 0, 0, order.stNum, uid);
             result.reslutCode = DB_ERROR;
-            
+
             return result;
         }
         // 奖品已发放 更改订单状态
@@ -988,4 +998,23 @@ export const repeat_random_award = (id: number): RandomAward => {
     randomAward.count = count;
 
     return randomAward;
+};
+
+// 退回花费
+const returnCost = (freeRotaryCount, freeBoxCount, ktCount, stCount, uid) => {
+    const bucket = new Bucket(WARE_NAME, FreePlay._$info.name);
+    const freePlay = bucket.get<number, [FreePlay]>(uid)[0];
+    const time = Date.now();
+    const oid = `${time}${uid}${randomInt(10000, 99999)}`;
+    if (freeRotaryCount > 0) {
+        freePlay.freeRotary += 1;
+        bucket.put(uid, freePlay);
+    } else if (freeBoxCount > 0) {
+        freePlay.freeBox += 1;
+        bucket.put(uid, freePlay);
+    } else if (ktCount > 0) {
+        oauth_alter_balance(KT_TYPE, oid, ktCount);
+    } else if (stCount > 0) {
+        oauth_alter_balance(ST_TYPE, oid, stCount);
+    }
 };

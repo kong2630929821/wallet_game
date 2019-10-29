@@ -7,7 +7,7 @@ import { Bucket } from '../../utils/db';
 import { CID_START_LENGTH, CODE_MAX_CONFLICTS, NORMAL_RED_BAG, RANDOM_RED_BAG, RED_BAG_TIMEOUT, RESULT_SUCCESS, RID_START_LENGTH, WARE_NAME } from '../data/constant';
 import { Result } from '../data/db/guessing.s';
 import { CidAmount, RedBagConvert, RedBagConvertData, RedBagConvertList, RedBagData, RedBagInfo, RedBagInfoList, UserRedBag } from '../data/db/redBag.s';
-import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, REDUCE_PRICE_FAIL } from '../data/errorNum';
+import { CREATE_RED_BAG_ERROR, GET_RED_BAG_REPEAT, RED_BAG_ADD_MONEY_FAIL, RED_BAG_CODE_ERROR, RED_BAG_CONVERT_ERROR, RED_BAG_CONVERT_USED, RED_BAG_FINISH, RED_BAG_TIMEOUT_ERROR, REDUCE_PRICE_FAIL } from '../data/errorNum';
 import { oauth_alter_balance } from '../util/oauth_lib';
 import { EmitRedBag } from './redBag.s';
 import { get_openid, get_userInfo, getOpenid, getUid } from './user.r';
@@ -109,16 +109,25 @@ export const OutgetRedBagConvert = (rid: string): Result => {
     const result = new Result();
     const redBagInfoBucket = new Bucket(WARE_NAME, RedBagInfo._$info.name);
     const redBagInfo = redBagInfoBucket.get<string, RedBagInfo[]>(rid)[0];
+
     // 红包不存在
     if (!redBagInfo) {
         result.reslutCode = RED_BAG_CODE_ERROR;
 
         return result;
     }
+
     // 红包已超时失效
     const time = Date.now();
     if (time > parseInt(redBagInfo.timeout, 10)) {
-        result.reslutCode = RED_BAG_TIMEOUT;
+        result.reslutCode = RED_BAG_TIMEOUT_ERROR;
+
+        return result;
+    }
+
+    // 红包已领完
+    if (redBagInfo.left_cid_list.length <= 0) {
+        result.reslutCode = RED_BAG_FINISH;
 
         return result;
     }
@@ -266,6 +275,7 @@ export const queryConvertLog = (): Result => {
 // 获取指定红包的详情
 // #[rpc=rpcServer]
 export const queryRedBagDetail = (rid: string): Result => {
+    console.log('============queryRedBagDetail in', rid);
     const result = new Result();
     const redBagData = getRedBagData(rid);
     if (redBagData) result.msg = JSON.stringify(redBagData);
@@ -361,6 +371,7 @@ export const returnTimeout = (rid: string): boolean => {
 
 // 获取红包详情
 export const getRedBagData = (rid: string): RedBagData => {
+    console.log('============getRedBagData in', rid);
     const redBagInfoBucket = new Bucket(WARE_NAME, RedBagInfo._$info.name);
     const redBagConvertBucket = new Bucket(WARE_NAME, RedBagConvert._$info.name);
     const redBagInfo = redBagInfoBucket.get<string, RedBagInfo[]>(rid)[0];
