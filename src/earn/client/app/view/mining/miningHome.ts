@@ -76,7 +76,8 @@ export class MiningHome extends Widget {
         getStoreData('cloud').then(r => {
             this.state.miningNumber = r.KT;
             this.paint();
-        });        
+        });   
+        getTodayMineNum();
     }
 
     public closeClick() {
