@@ -374,13 +374,15 @@ const STATE = {
  */
 registerStoreData('cloud',(r) => {
     const KTbalance = r.KT;
-    if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
-        STATE.KTbalance = KTbalance;
-        forelet.paint(STATE);
-    } else {
-        setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
-            STATE.KTbalance = KTbalance;
-            forelet.paint(STATE);
-        },3500);
-    }
+    STATE.KTbalance = KTbalance;
+    forelet.paint(STATE);
+    // if (KTbalance < STATE.KTbalance) {   // 余额减少表示使用中级或者高级挖矿  余额变化立即显示
+    //     STATE.KTbalance = KTbalance;
+    //     forelet.paint(STATE);
+    // } else {
+    //     setTimeout(() => {  // 余额增加  挖矿挖到嗨豆  余额变化延迟到动画完成显示
+    //         STATE.KTbalance = KTbalance;
+    //         forelet.paint(STATE);
+    //     },2500);
+    // }
 });
