@@ -70,11 +70,10 @@ export const getLoginDays = () => {
 /**
  * 活动登录
  */
-export const earnLogin = (cb:Function) => {
+export const earnLogin = () => {
     getOpenId('11').then(r => {
         console.log('活动注册成功',r);
         initClient(r,loginSuccess);
-        cb();
     });
     // (<any>window).pi_sdk.api.authorize({ appId:'11' },(err, result) => {
     //     console.log('authorize',err,JSON.stringify(result));
