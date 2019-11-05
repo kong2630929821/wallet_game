@@ -2,8 +2,8 @@
  * 登录
  */
 import { getStoreData } from '../../../../app/api/walletApi';
-import { logoutWallet } from '../../../../app/net/login';
 import { getOpenId } from '../../../../app/net/pull';
+import { logoutWallet } from '../../../../app/utils/tools';
 import { Result } from '../../../server/data/db/guessing.s';
 import { UserInfo } from '../../../server/data/db/user.s';
 import { SeriesDaysRes } from '../../../server/rpc/itemQuery.s';
@@ -74,6 +74,8 @@ export const earnLogin = () => {
     getOpenId('11').then(r => {
         console.log('活动注册成功',r);
         initClient(r,loginSuccess);
+    }).catch(err => {
+        console.log('活动注册失败',err);
     });
     // (<any>window).pi_sdk.api.authorize({ appId:'11' },(err, result) => {
     //     console.log('authorize',err,JSON.stringify(result));
