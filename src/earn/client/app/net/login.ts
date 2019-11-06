@@ -70,23 +70,15 @@ export const getLoginDays = () => {
 /**
  * 活动登录
  */
-export const earnLogin = () => {
+export const earnLogin = (cb?:Function) => {
     getOpenId('11').then(r => {
         console.log('活动注册成功',r);
         initClient(r,loginSuccess);
+        cb && cb();
+
     }).catch(err => {
         console.log('活动注册失败',err);
     });
-    // (<any>window).pi_sdk.api.authorize({ appId:'11' },(err, result) => {
-    //     console.log('authorize',err,JSON.stringify(result));
-    //     if (err === 0) { // 网络未连接
-    //         console.log('网络未连接');
-    //     } else {
-    //         console.log('活动注册成功',result);
-    //         initClient(result,loginSuccess);
-    //         cb();
-    //     }
-    // });
 };
 
 // 登出
