@@ -2,7 +2,6 @@
  * 登录
  */
 import { getStoreData } from '../../../../app/api/walletApi';
-import { getOpenId } from '../../../../app/net/pull';
 import { logoutWallet } from '../../../../app/utils/tools';
 import { Result } from '../../../server/data/db/guessing.s';
 import { UserInfo } from '../../../server/data/db/user.s';
@@ -67,18 +66,43 @@ export const getLoginDays = () => {
         });
     });
 };
+
 /**
  * 活动登录
  */
 export const earnLogin = (cb?:Function) => {
-    getOpenId('11').then(r => {
-        console.log('活动注册成功',r);
-        initClient(r,loginSuccess);
+    (<any>window).pi_sdk.api.authorize({ appId:'11' },async (err, result) => {
+        console.log('authorize',err,JSON.stringify(result));
+        initClient(result,loginSuccess);
         cb && cb();
 
-    }).catch(err => {
-        console.log('活动注册失败',err);
+        if (err === 0) { // 网络未连接
+            console.log('网络未连接');
+        } else {
+            console.log('活动注册成功',result);
+        }
     });
+
+    // getOpenId('11').then(r => {
+    //     console.log('活动注册成功',r);
+    //     initClient(r,loginSuccess);
+    //     cb && cb();
+
+    // }).catch(err => {
+    //     console.log('活动注册失败',err);
+    // });
+};
+
+
+/**
+ * 判断VM中是否已经有账号
+ * 有账号则执行授权，无账号则等到触发事件时执行
+ */
+export const checkAccount = async (cb:Function) => {    
+    const conUid = await getStoreData('user/conUid','');
+    if (conUid) {  // 已有账号执行授权
+        earnLogin(cb);
+    }
 };
 
 // 登出
