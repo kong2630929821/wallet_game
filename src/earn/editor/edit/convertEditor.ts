@@ -1,15 +1,11 @@
-import { Widget } from '../../../pi/widget/widget';
-
-import { clientRpcFunc } from '../../client/app/net/init';
-
-import { add_convert, add_convert_info, add_convert_infos, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
-
-import { Result } from '../../server/data/db/guessing.s';
-
-import { RESULT_SUCCESS } from '../../server/data/constant';
-
 import { uploadFileUrl } from '../../../app/public/config';
+import { piFetch } from '../../../app/utils/pureUtils';
+import { Widget } from '../../../pi/widget/widget';
+import { clientRpcFunc } from '../../client/app/net/init';
+import { RESULT_SUCCESS } from '../../server/data/constant';
+import { Result } from '../../server/data/db/guessing.s';
 import { AddConvert, AddConvertList, ConvertAwardList, ProductInfo } from '../../server/data/db/item.s';
+import { add_convert, add_convert_info, add_convert_infos, delete_convert_info, get_convert_list, modify_convert_info } from '../../server/rpc/stParties.p';
 
 /**
  * 商城编辑
@@ -308,7 +304,7 @@ export const uploadFile = async (base64) => {
     const file = base64ToFile(base64);
     const formData = new FormData();
     formData.append('upload',file);
-    fetch(`${uploadFileUrl}?$forceServer=1`, {
+    piFetch(`${uploadFileUrl}?$forceServer=1`, {
         body: formData, // must match 'Content-Type' header
         // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         // credentials: 'same-origin', // include, same-origin, *omit

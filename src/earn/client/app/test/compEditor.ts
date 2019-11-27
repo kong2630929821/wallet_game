@@ -1,4 +1,5 @@
-import { base64ToFile, popNewMessage } from '../../../../app/utils/tools';
+import { uploadFileUrl } from '../../../../app/public/config';
+import { base64ToFile, piFetch, popNewMessage } from '../../../../app/utils/pureUtils';
 import { popModalBoxs } from '../../../../pi/ui/root';
 import { Widget } from '../../../../pi/widget/widget';
 import { RESULT_SUCCESS } from '../../../server/data/constant';
@@ -252,7 +253,7 @@ export const uploadFile = async (base64) => {
     const file = base64ToFile(base64);
     const formData = new FormData();
     formData.append('upload',file);
-    fetch(`${uploadFileUrl}?$forceServer=1`, {
+    piFetch(`${uploadFileUrl}?$forceServer=1`, {
         body: formData, // must match 'Content-Type' header
         // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         // credentials: 'same-origin', // include, same-origin, *omit

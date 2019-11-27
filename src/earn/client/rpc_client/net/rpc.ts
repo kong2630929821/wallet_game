@@ -3,6 +3,7 @@
  */
 
 import { erlangLogicIp, erlangLogicPayPort, sourceIp } from '../../../../app/public/config';
+import { piFetch } from '../../../../app/utils/pureUtils';
 import { Result } from '../../../server/data/db/guessing.s';
 import { OutgetRedBagConvert, queryRedBagDetail } from '../../../server/rpc/redBag.p';
 import { clientRpcFunc } from './init';
@@ -57,7 +58,7 @@ export const getUserList = async (uid: any[], isOpenid?: number) => {
         src = `http://${erlangLogicIp}:${erlangLogicPayPort}/user/get_infos?list=${JSON.stringify(uids)}`;
     }
 
-    return fetch(src).then(res => {
+    return piFetch(src).then(res => {
         return res.json().then(r => {
             const userInfo = [];
             r.value.forEach((v,i) => {
