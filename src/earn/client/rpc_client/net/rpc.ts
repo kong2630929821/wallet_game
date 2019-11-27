@@ -59,35 +59,30 @@ export const getUserList = async (uid: any[], isOpenid?: number) => {
     }
 
     return piFetch(src).then(res => {
-        return res.json().then(r => {
-            const userInfo = [];
-            r.value.forEach((v,i) => {
-                const item = JSON.parse(v);
-                let avatar = '';
-                if (item.avatar && item.avatar.indexOf('data:image') < 0) {
-                    if (item.avatar.slice(0,4) === 'http') {
-                        avatar = item.avatar;   
-                    } else {
-                        avatar = `${uploadFileUrlPrefix}${item.avatar}`;
-                    }
-                    
+        const userInfo = [];
+        r.value.forEach((v,i) => {
+            const item = JSON.parse(v);
+            let avatar = '';
+            if (item.avatar && item.avatar.indexOf('data:image') < 0) {
+                if (item.avatar.slice(0,4) === 'http') {
+                    avatar = item.avatar;   
                 } else {
-                    avatar = '../icon/img_avatar1.png';
+                    avatar = `${uploadFileUrlPrefix}${item.avatar}`;
                 }
-                const data = {
-                    nickName:item.nickName ? item.nickName :'昵称未设置',
-                    avatar,
-                    time:uid[i].time,
-                    sum:uid[i].sum,
-                    fg:i === max ? true :false
-                };
-                userInfo.push(data);
-            });
-
-            return userInfo;
-        }). catch (e => {
-            return ;
+                
+            } else {
+                avatar = '../icon/img_avatar1.png';
+            }
+            const data = {
+                nickName:item.nickName ? item.nickName :'昵称未设置',
+                avatar,
+                time:uid[i].time,
+                sum:uid[i].sum,
+                fg:i === max ? true :false
+            };
+            userInfo.push(data);
         });
-      
+
+        return userInfo;
     });
 };

@@ -264,18 +264,17 @@ export const uploadFile = async (base64) => {
         mode: 'no-cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
-    }).then(response => response.json())
-        .then(res => {
-            console.log('uploadFile success ',res);
-            popNewMessage('图片上传成功');
-            if (res.result === 1) {
-                const sid = res.sid;
-                alert(`图片上传成功${sid}`);
-            }
-        }).catch(err => {
-            console.log('uploadFile fail ',err);
-            popNewMessage('图片上传失败');
-        });
+    }).then(res => {
+        console.log('uploadFile success ',res);
+        popNewMessage('图片上传成功');
+        if (res.result === 1) {
+            const sid = res.sid;
+            alert(`图片上传成功${sid}`);
+        }
+    }).catch(err => {
+        console.log('uploadFile fail ',err);
+        popNewMessage('图片上传失败');
+    });
 };
 
 export const getTeamCfg = (cfgName: string, teamNum?: number, teamName?: string) => {

@@ -315,17 +315,16 @@ export const uploadFile = async (base64) => {
         mode: 'no-cors' // no-cors, cors, *same-origin
         // redirect: 'follow', // manual, *follow, error
         // referrer: 'no-referrer' // *client, no-referrer
-    }).then(response => response.json())
-        .then(res => {
-            console.log('uploadFile success ',res);
-            if (res.result === 1) {
-                alert(`图片上传成功${res.sid}`);
+    }).then(res => {
+        console.log('uploadFile success ',res);
+        if (res.result === 1) {
+            alert(`图片上传成功${res.sid}`);
 
-                return Promise.resolve(res.sid);
-            }
-        }).catch(err => {
-            console.log('uploadFile fail ',err);
-        });
+            return Promise.resolve(res.sid);
+        }
+    }).catch(err => {
+        console.log('uploadFile fail ',err);
+    });
 };
 
 /**
